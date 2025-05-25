@@ -231,6 +231,8 @@ namespace CGDev {
 				template<typename In, typename Out>
 				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const In& in, Out& out) const noexcept;
 
+				inline WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device, std::vector<VkSurfaceFormatKHR>& out) const noexcept;
+
 			private:
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
