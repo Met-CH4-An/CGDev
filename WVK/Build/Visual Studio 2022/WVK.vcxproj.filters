@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\_wvk.cpp" />
+    <ClCompile Include="..\..\Source\wvk_base_commands.cpp" />
+    <ClCompile Include="..\..\Source\wvk_command_buffer.cpp" />
+    <ClCompile Include="..\..\Source\wvk_command_pool.cpp" />
+    <ClCompile Include="..\..\Source\wvk_commands.cpp" />
+    <ClCompile Include="..\..\Source\wvk_instance.cpp" />
+    <ClCompile Include="..\..\Source\wvk_layer.cpp" />
+    <ClCompile Include="..\..\Source\wvk_loader.cpp" />
+    <ClCompile Include="..\..\Source\wvk_logical_device.cpp" />
+    <ClCompile Include="..\..\Source\wvk_physical_device.cpp" />
+    <ClCompile Include="..\..\Source\wvk_queue.cpp" />
+    <ClCompile Include="..\..\Source\wvk_queue_family.cpp" />
+    <ClCompile Include="..\..\Source\wvk_status.cpp" />
+    <ClCompile Include="..\..\Source\MSWindows\wvk_loader_mswindows.cpp">
+      <Filter>MSWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\wvk_ext_debug_utils.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\wvk_surface.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Layers\wvk_layer_khronos_validation.cpp">
+      <Filter>Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\wvk_base_object.cpp" />
+    <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_khr_win32_surface_dispatch_table.cpp">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.cpp">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\wvk_loader_dispatch_table.cpp" />
+    <ClCompile Include="..\..\Source\wvk_instance_dispatch_table.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\_wvk.h" />
+    <ClInclude Include="..\..\Source\wvk_base_commands.h" />
+    <ClInclude Include="..\..\Source\wvk_base_commands.hpp" />
+    <ClInclude Include="..\..\Source\wvk_command_buffer.h" />
+    <ClInclude Include="..\..\Source\wvk_command_buffer.hpp" />
+    <ClInclude Include="..\..\Source\wvk_command_pool.h" />
+    <ClInclude Include="..\..\Source\wvk_command_pool.hpp" />
+    <ClInclude Include="..\..\Source\wvk_commands.h" />
+    <ClInclude Include="..\..\Source\wvk_commands.hpp" />
+    <ClInclude Include="..\..\Source\wvk_extension.h" />
+    <ClInclude Include="..\..\Source\wvk_extension.hpp" />
+    <ClInclude Include="..\..\Source\wvk_instance.h" />
+    <ClInclude Include="..\..\Source\wvk_instance.hpp" />
+    <ClInclude Include="..\..\Source\wvk_layer.h" />
+    <ClInclude Include="..\..\Source\wvk_layer.hpp" />
+    <ClInclude Include="..\..\Source\wvk_loader.h" />
+    <ClInclude Include="..\..\Source\wvk_loader.hpp" />
+    <ClInclude Include="..\..\Source\wvk_logical_device.h" />
+    <ClInclude Include="..\..\Source\wvk_logical_device.hpp" />
+    <ClInclude Include="..\..\Source\wvk_physical_device.h" />
+    <ClInclude Include="..\..\Source\wvk_physical_device.hpp" />
+    <ClInclude Include="..\..\Source\wvk_queue.h" />
+    <ClInclude Include="..\..\Source\wvk_queue.hpp" />
+    <ClInclude Include="..\..\Source\wvk_queue_family.h" />
+    <ClInclude Include="..\..\Source\wvk_queue_family.hpp" />
+    <ClInclude Include="..\..\Source\wvk_status.h" />
+    <ClInclude Include="..\..\Source\wvk_status.hpp" />
+    <ClInclude Include="..\..\Source\MSWindows\_mswindows.h">
+      <Filter>MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MSWindows\wvk_loader_mswindows.h">
+      <Filter>MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MSWindows\wvk_loader_mswindows.hpp">
+      <Filter>MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\_extensions.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_surface.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_surface.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Layers\_layers.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Layers\wvk_layer_khronos_validation.h">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Layers\wvk_layer_khronos_validation.hpp">
+      <Filter>Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\wvk_base_object.h" />
+    <ClInclude Include="..\..\Source\wvk_base_object.hpp" />
+    <ClInclude Include="..\..\Source\Extensions\MSWindows\_mswindows.h">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_khr_win32_surface_dispatch_table.h">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_khr_win32_surface_dispatch_table.hpp">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.h">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.hpp">
+      <Filter>Extensions\MSWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.h" />
+    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_loader_dispatch_table.h" />
+    <ClInclude Include="..\..\Source\wvk_loader_dispatch_table.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="MSWindows">
+      <UniqueIdentifier>{2f4457ab-554a-433f-aacd-8de2e12bb7e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extensions">
+      <UniqueIdentifier>{80520045-47bc-4f07-b8cc-9757cefbb787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Layers">
+      <UniqueIdentifier>{8638bde4-707e-4382-a77e-04ea4f4fd79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extensions\MSWindows">
+      <UniqueIdentifier>{bd72b041-98fd-45ff-b885-c0bce3d0ae8c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

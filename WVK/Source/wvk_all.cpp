@@ -1,0 +1,28 @@
+#include "wvk_base_commands.cpp"
+#include "wvk_base_object.cpp"
+#include "wvk_commands.cpp"
+#include "wvk_command_buffer.cpp"
+#include "wvk_command_pool.cpp"
+//#include "wvk_extension.cpp"
+
+#include "wvk_layer.cpp"
+#include "wvk_loader.cpp"
+#include "wvk_loader_dispatch_table.cpp"
+#include "wvk_logical_device.cpp"
+#include "wvk_instance.cpp"
+#include "wvk_instance_dispatch_table.cpp"
+#include "wvk_physical_device.cpp"
+#include "wvk_queue.cpp"
+#include "wvk_queue_family.cpp"
+#include "wvk_status.cpp"
+
+#include "MSWindows/wvk_loader_mswindows.cpp"
+
+#include "Extensions/wvk_ext_debug_utils.cpp"
+#include "Extensions/wvk_ext_debug_utils_commands.cpp"
+#include "Extensions/wvk_surface.cpp"
+#include "Extensions/wvk_khr_surface_dispatch_table.cpp"
+#include "Extensions/wvk_khr_get_surface_capabilities2.cpp"
+
+#include "Extensions/MSWindows/wvk_khr_win32_surface_dispatch_table.cpp"
+#include "Extensions/MSWindows/wvk_surface_mswindows.cpp"
