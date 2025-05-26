@@ -20,12 +20,12 @@ namespace CGDev {
 		// Проверка:
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		TEST_F(WvkKhrGetSurfaceCapabilities2Test, Create) {
-			//auto _status = m_wvk_khr_get_surface.create(m_wvk_khr_get_surface_create_info);
+		//TEST_F(WvkKhrGetSurfaceCapabilities2Test, Create) {
+		//	//auto _status = m_wvk_khr_get_surface.create(m_wvk_khr_get_surface_create_info);
 
 			// Проверка: должен быть возвращён статус ошибки
 			//EXPECT_EQ(_status.isOk(), true);
-		}
+		//}
 
 	} // namespace tests
 } // namespace CGDev

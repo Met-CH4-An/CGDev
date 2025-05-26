@@ -36,7 +36,7 @@
     <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_khr_win32_surface_dispatch_table.cpp">
       <Filter>Extensions\MSWindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.cpp">
+    <ClCompile Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.cpp">
       <Filter>Extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.cpp">
@@ -132,10 +132,10 @@
     <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.h">
       <Filter>Extensions\MSWindows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.h">
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.h">
       <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2.hpp">
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.hpp">

@@ -14,6 +14,7 @@
 #include "wvk_physical_device.h"
 
 #include "Extensions/wvk_khr_surface_dispatch_table.h"
+#include "Extensions/wvk_khr_get_surface_capabilities2_dispatch_table.h"
 #include "Extensions/wvk_surface.h"
 
 #include "Extensions/MSWindows/wvk_khr_win32_surface_dispatch_table.h"
@@ -110,6 +111,18 @@ protected:
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
+        if (s_wvk_khr_get_surface_capabilities2_dispatch_table == nullptr) {
+            s_wvk_khr_get_surface_capabilities2_dispatch_table = std::make_unique<CGDev::wvk::Extensions::WvkKhrGetSurfaceCapabilities2DispatchTable>();
+
+            CGDev::wvk::Extensions::WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo _create_info;
+            _create_info.wvk_loader = s_wvk_loader.get();
+            _create_info.wvk_instance = s_wvk_instance.get();
+
+            auto _wvk_res = s_wvk_khr_get_surface_capabilities2_dispatch_table->create(_create_info);
+
+            ASSERT_EQ(_wvk_res.isOk(), true);
+        }
+
         if (s_wvk_surface == nullptr) {
             HINSTANCE _hInstance = NULL;
             HWND _hWnd = NULL;
@@ -126,6 +139,7 @@ protected:
             CGDev::wvk::Extensions::WvkSurfaceCreateInfo _create_info;
             _create_info.wvk_instance_dispatch_table = s_wvk_instance_dispatch_table.get();
             _create_info.wvk_khr_surface_dispatch_table = s_wvk_khr_surface_dispatch_table.get();
+            _create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
             _create_info.wvk_surface_platform_create_info = &_create_info_mswindows;
 
             auto _wvk_res = s_wvk_surface->create(_create_info);
@@ -142,6 +156,7 @@ protected:
     inline static CGDev::wvk::WvkInstanceDispatchTableUptr s_wvk_instance_dispatch_table = nullptr;
     inline static CGDev::wvk::WvkPhysicalDeviceUptr s_wvk_physical_device = nullptr;
     inline static CGDev::wvk::Extensions::WvkKhrSurfaceDispatchTableUptr s_wvk_khr_surface_dispatch_table = nullptr;
+    inline static CGDev::wvk::Extensions::WvkKhrGetSurfaceCapabilities2DispatchTableUptr s_wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
     inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
     inline static CGDev::wvk::Extensions::mswindows::WvkKhrWin32SurfaceDispatchTableUptr s_wvk_khr_win32_surface_dispatch_table = nullptr;
 };

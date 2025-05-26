@@ -35,6 +35,7 @@ namespace CGDev {
 			struct WvkSurfaceCreateInfo {
 				WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
 				WvkKhrSurfaceDispatchTablePtr wvk_khr_surface_dispatch_table = nullptr;
+				WvkKhrGetSurfaceCapabilities2DispatchTablePtr wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
 				WvkSurfacePlatformCreateInfo* wvk_surface_platform_create_info = nullptr;
 			}; // struct WvkSurfaceCreateInfo
 
@@ -196,6 +197,11 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				WvkStatus requestScalingCompatibility(const WvkPhysicalDevicePtr wvk_physical_device, const VkPresentModeKHR& vk_present_mode, VkSurfacePresentScalingCapabilitiesEXT& out) const noexcept;
 
+				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept;
+
+				template<typename In, typename Out>
+				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const In& in, Out& out) const noexcept;
+
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*     Выполняет запрос расширенной информации о surface capabilities с использованием структуры `VkBaseInStructure` и `VkBaseOutStructure`.
@@ -224,14 +230,69 @@ namespace CGDev {
 				* @endcode
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept;
-
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept;
-
-				template<typename In, typename Out>
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const In& in, Out& out) const noexcept;
-
+				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept;			
+				
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				* *Запрашивает поддерживаемые форматы поверхности для указанного физического устройства.*
+				*
+				* Этот метод сначала получает количество доступных форматов, а затем сам список форматов,
+				* используя метод `vkGetPhysicalDeviceSurfaceFormatsKHR` через обёртку `invokeWithVkPhysicalDeviceMethod`.
+				*
+				* @param[in] wvk_physical_device
+				* *Умный указатель на физическое устройство Vulkan, с которым будет происходить взаимодействие.*
+				*
+				* @param[out] out
+				* *Вектор, куда будут записаны поддерживаемые форматы поверхности (`VkSurfaceFormatKHR`).*
+				*
+				* @return
+				* *Объект WvkStatus, указывающий на успех или конкретную ошибку вызова.*
+				*
+				* @code
+				* std::vector<VkSurfaceFormatKHR> formats;
+				* WvkStatus status = surface->requestFormats(physicalDevice, formats);
+				* if (!status) {
+				*     std::cerr << status.what() << std::endl;
+				* }
+				* @endcode
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				inline WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device, std::vector<VkSurfaceFormatKHR>& out) const noexcept;
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*     Запрашивает расширенный список поддерживаемых форматов поверхности с использованием vkGetPhysicalDeviceSurfaceFormats2KHR.
+				*
+				* @details
+				*     Метод позволяет получить расширенную информацию о форматах поверхности, используя цепочку pNext для передачи дополнительных структур.
+				*     Сначала производится запрос количества доступных форматов, затем выделяется память и запрашиваются сами форматы с дополнительными свойствами.
+				*
+				* @tparam T
+				*     Тип структуры, унаследованной от VkBaseOutStructure, в которую будут записаны дополнительные свойства формата (например, VkSurfaceFormatKHR + расширения).
+				*
+				* @param[in]  wvk_physical_device
+				*     Указатель на обёртку физического устройства Vulkan, для которого выполняется запрос.
+				* @param[in]  in
+				*     Указатель на цепочку входных структур (VkBaseInStructure), либо nullptr, если не требуется.
+				* @param[in]  prop_sType
+				*     Значение VkStructureType для структуры T, которая будет помещена в pNext каждого VkSurfaceFormat2KHR.
+				* @param[out] out_props
+				*     Вектор, в который будут записаны структуры T с расширенной информацией о форматах.
+				*
+				* @return
+				*     Объект WvkStatus, отражающий успешность операции.
+				*
+				* @code
+				* std::vector<VkDrmFormatModifierPropertiesEXT> modifiers;
+				* WvkStatus status = surface->requestFormats(device, &inStruct, VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT, modifiers);
+				* if (!status) {
+				*     // Обработка ошибки
+				* }
+				* @endcode
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				template<typename T>
+				inline WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device, const VkBaseInStructure* in, const VkStructureType& prop_sType, std::vector<T>& out_props) const noexcept;
 
 			private:
 

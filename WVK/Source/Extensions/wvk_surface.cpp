@@ -23,7 +23,7 @@ namespace CGDev {
 	namespace wvk {
 
 		namespace Extensions {
-
+			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
@@ -137,10 +137,13 @@ namespace CGDev {
 				else if (m_create_info.wvk_khr_surface_dispatch_table == nullptr) {
 					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_surface_dispatch_table - nullptr.");
 				}
+				else if (m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table == nullptr) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_get_surface_capabilities2_dispatch_table - nullptr.");
+				}
 				else if (m_create_info.wvk_surface_platform_create_info == nullptr) {
 					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_surface_platform_create_info - nullptr.");
-				}
-
+				}				
+			
 				return _status.setOk();
 			}
 

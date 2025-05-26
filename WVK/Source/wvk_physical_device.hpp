@@ -114,7 +114,7 @@ namespace CGDev {
 			std::is_invocable_v<Method, VkPhysicalDevice, Args...> &&
 			!std::is_void_v<std::invoke_result_t<Method, VkPhysicalDevice, Args...>>,
 			std::invoke_result_t<Method, VkPhysicalDevice, Args...>
-		> WvkPhysicalDevice::invokeWithVkPhysicalDeviceMethod(Method&& method, Args&&... args) const noexcept {
+		> WvkPhysicalDevice::invokeWithVkPhysicalDeviceFunction(Method&& method, Args&&... args) const noexcept {
 			return std::invoke(std::forward<Method>(method),
 				m_vk_physical_device,
 				std::forward<Args>(args)...);

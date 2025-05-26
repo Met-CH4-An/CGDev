@@ -38,7 +38,7 @@ namespace CGDev {
 
 				WvkStatus WvkSurfaceMSWindows::create(const WvkSurfaceMSWindowsCreateInfo& create_info) noexcept {
 					WvkStatus _status;
-
+					
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Сохраняем входную структуру создания
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

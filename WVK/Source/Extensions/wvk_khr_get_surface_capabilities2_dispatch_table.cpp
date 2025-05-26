@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////
 // секция заголовочного файла
 ////////////////////////////////////////////////////////////////
-#include "wvk_khr_get_surface_capabilities2.h"
+#include "wvk_khr_get_surface_capabilities2_dispatch_table.h"
 ////////////////////////////////////////////////////////////////
 // секция имплементации
 ////////////////////////////////////////////////////////////////
@@ -21,19 +21,19 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkKhrGetSurfaceCapabilities2::WvkKhrGetSurfaceCapabilities2(void) noexcept {
+			WvkKhrGetSurfaceCapabilities2DispatchTable::WvkKhrGetSurfaceCapabilities2DispatchTable(void) noexcept {
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkKhrGetSurfaceCapabilities2::~WvkKhrGetSurfaceCapabilities2(void) noexcept {
+			WvkKhrGetSurfaceCapabilities2DispatchTable::~WvkKhrGetSurfaceCapabilities2DispatchTable(void) noexcept {
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkStatus WvkKhrGetSurfaceCapabilities2::create(const WvkKhrGetSurfaceCapabilities2CreateInfo& create_info) noexcept {
+			WvkStatus WvkKhrGetSurfaceCapabilities2DispatchTable::create(const WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo& create_info) noexcept {
 				WvkStatus _status;
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +48,7 @@ namespace CGDev {
 					_status = validationCreateInfo();
 
 					if (_status.m_code != VknStatusCode::SUCCESSFUL) {
-						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2::validationCreateInfo() - fail.");
+						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::validationCreateInfo() - fail.");
 					}
 				}
 
@@ -58,7 +58,7 @@ namespace CGDev {
 				_status = loadVulkanCommand();
 
 				if (_status.m_code != VknStatusCode::SUCCESSFUL) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2::loadVulkanCommand() - fail.");
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::loadVulkanCommand() - fail.");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,64 +70,61 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			void WvkKhrGetSurfaceCapabilities2::destroy(void) noexcept {
+			void WvkKhrGetSurfaceCapabilities2DispatchTable::destroy(void) noexcept {
+				reset();
+			}
 
-				// ~~~~~~~~~~~~~~~~
-				// очистка данных
-				// ~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			WvkStatus WvkKhrGetSurfaceCapabilities2DispatchTable::validationCreateInfo(void) const noexcept {
+				WvkStatus _status;
+
+				if (m_create_info.wvk_loader == nullptr) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo::wvk_loader - nullptr.");
+				}
+				else if (m_create_info.wvk_instance == nullptr) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo::wvk_instance - nullptr.");
+				}
+
+				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			WvkStatus WvkKhrGetSurfaceCapabilities2DispatchTable::loadVulkanCommand(void) noexcept {
+				WvkStatus _status;
+
+				std::vector<WvkVulkanProcedureInfo> _procedures = {
+					{ "vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR) },
+					{ "vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR) }
+				};
+
+				_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
+					&WvkLoader::loadProcedure,
+					m_create_info.wvk_loader,
+					_procedures
+				);
+
+				if (!_status) {
+					return _status.set(VknStatusCode::FAIL,
+						"\n\tWvkInstance::invokeWithVkInstanceMethod - fail.");
+				}
+
+				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			void WvkKhrGetSurfaceCapabilities2DispatchTable::reset(void) noexcept {
+				m_vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
+				m_vkGetPhysicalDeviceSurfaceFormats2KHR = VK_NULL_HANDLE;
 
 				m_create_info = {};
 
-				m_vk_get_physical_device_surface_capabilities2_khr = VK_NULL_HANDLE;
-				m_vk_get_physical_device_surface_formats2_khr = VK_NULL_HANDLE;
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			WvkStatus WvkKhrGetSurfaceCapabilities2::validationCreateInfo(void) const noexcept {
-				WvkStatus _status;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 1. Проверяем, что wvk_commands задан.
-				// Это обязательное поле для дальнейшей загрузки Vulkan-команд.
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if (m_create_info.wvk_commands == nullptr) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2CreateInfo::wvk_commands - nullptr.");
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Все проверки пройдены — возвращаем успешный статус.
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				return _status.setOk();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			WvkStatus WvkKhrGetSurfaceCapabilities2::loadVulkanCommand(void) noexcept {
-				WvkStatus _status;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 1. Пытаемся загрузить все необходимые функции расширения KHR Surface
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				_status = m_create_info.wvk_commands->tryLoadFunction({
-					{ "vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vk_get_physical_device_surface_capabilities2_khr) },
-					{ "vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vk_get_physical_device_surface_formats2_khr) }
-					});
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Проверяем результат загрузки
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if (!_status) {
-					return _status.set(VknStatusCode::FAIL,
-						"\n\tWvkCommands::tryLoadFunction - fail.");
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Все функции загружены успешно
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				return _status.setOk();
+				m_valid = false;
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

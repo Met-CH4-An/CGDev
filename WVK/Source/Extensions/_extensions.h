@@ -65,6 +65,20 @@ namespace CGDev {
 					using			WvkKhrSurfaceDispatchTableWptr = std::weak_ptr<WvkKhrSurfaceDispatchTable>;
 					using			WvkKhrSurfaceDispatchTableWptrArr1 = std::vector<WvkKhrSurfaceDispatchTableWptr>;
 					
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+					class			WvkKhrGetSurfaceCapabilities2DispatchTable;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTablePtr = WvkKhrGetSurfaceCapabilities2DispatchTable * ;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTablePtrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTablePtr>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableSptr = std::shared_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableSptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableSptr>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableUptr = std::unique_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableUptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableUptr>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableWptr = std::weak_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableWptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableWptr>;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
@@ -80,19 +94,6 @@ namespace CGDev {
 					using			WvkSurfaceUptrArr1 = std::vector<WvkSurfaceUptr>;
 					using			WvkSurfaceWptr = std::weak_ptr<WvkSurface>;
 					using			WvkSurfaceWptrArr1 = std::vector<WvkSurfaceWptr>;					
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-					class			WvkKhrGetSurfaceCapabilities2;
-					using			WvkKhrGetSurfaceCapabilities2Ptr = WvkKhrGetSurfaceCapabilities2 * ;
-					using			WvkKhrGetSurfaceCapabilities2PtrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2Ptr>;
-					using			WvkKhrGetSurfaceCapabilities2Wptr = std::weak_ptr<WvkKhrGetSurfaceCapabilities2>;
-					using			WvkKhrGetSurfaceCapabilities2WptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2Wptr>;
-					using			WvkKhrGetSurfaceCapabilities2Sptr = std::shared_ptr<WvkKhrGetSurfaceCapabilities2>;
-					using			WvkKhrGetSurfaceCapabilities2SptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2Sptr>;
 					
 				} // namespace Extensions
 

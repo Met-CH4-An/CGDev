@@ -13,6 +13,7 @@
 // секция для остального
 ////////////////////////////////////////////////////////////////
 #include "wvk_khr_surface_dispatch_table.h"
+#include "wvk_khr_get_surface_capabilities2_dispatch_table.h"
 #include "../wvk_instance_dispatch_table.h"
 #include "../wvk_physical_device.h"
 
@@ -27,7 +28,7 @@ namespace CGDev {
 
 			inline WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, VkSurfaceCapabilitiesKHR& vk_surface_capabilities_khr) const noexcept {
 				WvkStatus _status;
-
+				
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Вызов метода получения surface capabilities через invoke
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,6 +238,15 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+			inline WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept {
+				out.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
+				out.pNext = nullptr;
+				return requestCapabilities(wvk_physical_device, nullptr, reinterpret_cast<VkBaseOutStructure*>(&out));
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 			inline WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept {
 				WvkStatus _status;
 
@@ -271,16 +281,13 @@ namespace CGDev {
 				if (_vk_res != VK_SUCCESS) {
 					switch (_vk_res) {
 					case VK_ERROR_OUT_OF_HOST_MEMORY:
-						_status.append("\n\tWvkSurface::requestCapability - VK_ERROR_OUT_OF_HOST_MEMORY.");
+						_status.append("\n\tWvkInstanceDispatchTable::wvkGetPhysicalDeviceSurfaceCapabilities2KHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
 						break;
 					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-						_status.append("\n\tWvkSurface::requestCapability - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+						_status.append("\n\tWvkInstanceDispatchTable::wvkGetPhysicalDeviceSurfaceCapabilities2KHR - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
 						break;
 					case VK_ERROR_SURFACE_LOST_KHR:
-						_status.append("\n\tWvkSurface::requestCapability - VK_ERROR_SURFACE_LOST_KHR.");
-						break;
-					default:
-						_status.append("\n\tWvkSurface::requestCapability - Неизвестная ошибка Vulkan.");
+						_status.append("\n\tWvkInstanceDispatchTable::wvkGetPhysicalDeviceSurfaceCapabilities2KHR - VK_ERROR_SURFACE_LOST_KHR.");
 						break;
 					}
 
@@ -295,15 +302,6 @@ namespace CGDev {
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			inline WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept {
-				out.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
-				out.pNext = nullptr;
-				return requestCapabilities(wvk_physical_device, nullptr, reinterpret_cast<VkBaseOutStructure*>(&out));
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			
 			template<typename In, typename Out>
 			inline WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device, const In& in, Out& out) const noexcept {
@@ -314,12 +312,171 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 			inline WvkStatus WvkSurface::requestFormats(const WvkPhysicalDevicePtr wvk_physical_device, std::vector<VkSurfaceFormatKHR>& out) const noexcept {
+				// Объявляем статус, который будем возвращать
 				WvkStatus _status;
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 1. Очистить вектор и подготовить переменную для подсчёта форматов
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				uint32_t _count = 0;
+				out.clear();
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2. Первый вызов: получить количество поддерживаемых форматов
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				auto _vk_res = wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+					&WvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR,
+					m_create_info.wvk_khr_surface_dispatch_table,
+					m_vk_surface,
+					&_count,
+					nullptr
+				);
+
+				if (_vk_res != VK_SUCCESS) {
+					switch (_vk_res) {
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+						break;
+					case VK_ERROR_SURFACE_LOST_KHR:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_SURFACE_LOST_KHR.");
+						break;
+					}
+					return _status.set(VknStatusCode::FAIL);
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 3. Выделить место в векторе под нужное количество элементов
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				out.resize(_count);
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 4. Второй вызов: получить сами форматы
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				_vk_res = wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+					&WvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR,
+					m_create_info.wvk_khr_surface_dispatch_table,
+					m_vk_surface,
+					&_count,
+					out.data()
+				);
+
+				if (_vk_res != VK_SUCCESS) {
+					switch (_vk_res) {
+					case VK_INCOMPLETE:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_INCOMPLETE.");
+						break;
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+						break;
+					case VK_ERROR_SURFACE_LOST_KHR:
+						_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_SURFACE_LOST_KHR.");
+						break;
+					}
+					return _status.set(VknStatusCode::FAIL);
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 5. Успешное завершение
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				return _status.setOk();
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			template<typename T>
+			inline WvkStatus WvkSurface::requestFormats(const WvkPhysicalDevicePtr wvk_physical_device, const VkBaseInStructure* in, const VkStructureType& prop_sType, std::vector<T>& out_props) const noexcept {
+				WvkStatus _status;
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 1. Подготовка структуры VkPhysicalDeviceSurfaceInfo2KHR для запроса
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				VkPhysicalDeviceSurfaceInfo2KHR _info2 = {};
+				_info2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+				_info2.pNext = in;
+				_info2.surface = m_vk_surface;
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2. Первый вызов: получить количество поддерживаемых форматов
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				uint32_t _count = 0;
+				auto _vk_res = wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+					&WvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR,
+					m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table,
+					&_info2,
+					&_count,
+					nullptr
+				);
+
+				if (_vk_res != VK_SUCCESS) {
+					switch (_vk_res) {
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+						break;
+					case VK_ERROR_SURFACE_LOST_KHR:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_SURFACE_LOST_KHR.");
+						break;
+					}
+					return _status.set(VknStatusCode::FAIL);
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 3. Выделяем память под массив VkSurfaceFormat2KHR и вектор out_props
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				std::vector<VkSurfaceFormat2KHR> _formats2(_count);
+				out_props.resize(_count);
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 4. Инициализация структур VkSurfaceFormat2KHR и цепочек pNext
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				for (uint32_t i = 0; i < _count; ++i) {
+					_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+					_formats2[i].pNext = &out_props[i];
+
+					out_props[i].sType = prop_sType;
+					out_props[i].pNext = nullptr;
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 5. Второй вызов: получить расширенную информацию о форматах
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				_vk_res = wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+					&WvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR,
+					m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table,
+					&_info2,
+					&_count,
+					_formats2.data()
+				);
+
+				if (_vk_res != VK_SUCCESS) {
+					switch (_vk_res) {
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+						break;
+					case VK_ERROR_SURFACE_LOST_KHR:
+						_status.append("\n\tWvkKhrGetSurfaceCapabilities2DispatchTable::wvkGetPhysicalDeviceSurfaceFormats2KHR - VK_ERROR_SURFACE_LOST_KHR.");
+						break;
+					}
+					return _status.set(VknStatusCode::FAIL);
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 6. Возврат успешного статуса
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				return _status.setOk();
+			}
 
 		} // namespace Extensions
 

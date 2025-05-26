@@ -91,7 +91,23 @@ namespace CGDev {
 
 			s_wvk_surface->requestCapabilities(s_wvk_physical_device.get(), _in, _out);
 		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkSurfaceTest, requestFormats) {
+			std::vector<VkSurfaceFormatKHR> _formats;
+			s_wvk_surface->requestFormats(s_wvk_physical_device.get(), _formats);
+		}
 		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkSurfaceTest, requestFormats_in_out) {
+			std::vector<VkImageCompressionPropertiesEXT> _compres = {};
+			s_wvk_surface->requestFormats(s_wvk_physical_device.get(), nullptr, VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT,_compres);
+		}
+
 	} // namespace tests
 
 } // namespace CGDev
