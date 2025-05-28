@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\Source\wvk_loader_dispatch_table_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device_test.cpp" />
+    <ClCompile Include="..\..\Source\wvk_queue_family_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_surface_test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="..\..\Source\wvk_loader_dispatch_table_test.h" />
     <ClInclude Include="..\..\Source\wvk_loader_test.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />
+    <ClInclude Include="..\..\Source\wvk_queue_family_test.h" />
     <ClInclude Include="..\..\Source\wvk_surface_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,7 +24,7 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline VknExtension::VknExtension(const std::string& name) noexcept
+				inline VknExtension::VknExtension(const std::string_view name) noexcept
 					: m_name(name) {
 				}
 

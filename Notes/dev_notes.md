@@ -1,0 +1,4 @@
+- [ ] добавить reset() в wvksurface
+- [ ] добавить wvkGetPhysicalDeviceSurfaceSupportKHR в wvksurface
+- [ ] добавить fullscreen exclusive
+- [ ] добавить прямой вывод на дисплей

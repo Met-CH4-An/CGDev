@@ -23,19 +23,19 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				VknQueueFamily::VknQueueFamily(void) noexcept {
+				WvkQueueFamily::WvkQueueFamily(void) noexcept {
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				VknQueueFamily::~VknQueueFamily(void) noexcept {
+				WvkQueueFamily::~WvkQueueFamily(void) noexcept {
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus VknQueueFamily::create(const VknQueueFamilyCreateInfo& create_info) noexcept {
+				WvkStatus WvkQueueFamily::create(const WvkQueueFamilyCreateInfo& create_info) noexcept {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Объявляем переменную для возвращаемого статуса
@@ -53,14 +53,14 @@ namespace CGDev {
 					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 
 						// Выполняем проверку структуры
-						_status = validationCreateInfo();
+						//_status = validationCreateInfo();
 
 						// Если проверка не прошла — возвращаем ошибку
-						if (_status.m_code != VknStatusCode::SUCCESSFUL) {
-							_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-							_status.append("\n\tVknQueueFamily::validationCreateInfo() - fail");
-							return _status;
-						}
+						//if (_status.m_code != VknStatusCode::SUCCESSFUL) {
+						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
+						//	_status.append("\n\tVknQueueFamily::validationCreateInfo() - fail");
+						//	return _status;
+						//}
 					}
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,7 +73,7 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				void VknQueueFamily::destroy(void) noexcept {
+				void WvkQueueFamily::destroy(void) noexcept {
 
 					// ~~~~~~~~~~~~~~~~
 					// очистка данных
@@ -85,7 +85,7 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus VknQueueFamily::validationCreateInfo(void) const noexcept {
+				WvkStatus WvkQueueFamily::validationCreateInfo(void) const noexcept {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Объявляем переменную для возвращаемого статуса
@@ -109,20 +109,20 @@ namespace CGDev {
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Шаг 4. Проверяем, что указатель на объект команд не равен nullptr
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						else if (m_create_info.wvk_commands == nullptr) {
-							_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-							_status.append("\n\tVknQueueFamilyCreateInfo::wvk_commands = nullptr");
-							return _status;
-						}
+						//else if (m_create_info.wvk_commands == nullptr) {
+						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
+						//	_status.append("\n\tVknQueueFamilyCreateInfo::wvk_commands = nullptr");
+						//	return _status;
+						//}
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Шаг 5. Проверяем, что задан объект физического устройства
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						else if (m_create_info.wvk_physical_device == nullptr) {
-							_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-							_status.append("\n\tVknQueueFamilyCreateInfo::wvk_physical_device = nullptr");
-							return _status;
-						}
+						//else if (m_create_info.wvk_physical_device == nullptr) {
+						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
+						//	_status.append("\n\tVknQueueFamilyCreateInfo::wvk_physical_device = nullptr");
+						//	return _status;
+						//}
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Шаг 6. Все проверки пройдены успешно

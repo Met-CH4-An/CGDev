@@ -22,7 +22,7 @@ namespace CGDev {
         TEST_F(WvkInstanceDispatchTableTest, wvkEnumeratePhysicalDevices) {
             uint32_t deviceCount = 0;
 
-            s_wvk_instance_dispatch_table->wvkEnumeratePhysicalDevices(&deviceCount, nullptr);
+            //s_wvk_instance_dt->wvkEnumeratePhysicalDevices(&deviceCount, nullptr);
 
             EXPECT_NE(deviceCount, 0);
         }

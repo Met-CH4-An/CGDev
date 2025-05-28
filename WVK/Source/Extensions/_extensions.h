@@ -55,6 +55,21 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+					class			WvkKhrGetPhysicalDeviceProperties2DT;
+					using			WvkKhrGetPhysicalDeviceProperties2DTPtr = WvkKhrGetPhysicalDeviceProperties2DT * ;
+					using			WvkKhrGetPhysicalDeviceProperties2DTPtrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTPtr>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTSptr = std::shared_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTSptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTSptr>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTUptr = std::unique_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTUptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTUptr>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTWptr = std::weak_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using			WvkKhrGetPhysicalDeviceProperties2DTWptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTWptr>;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 					class			WvkKhrSurfaceDispatchTable;
 					using			WvkKhrSurfaceDispatchTablePtr = WvkKhrSurfaceDispatchTable * ;
 					using			WvkKhrSurfaceDispatchTablePtrArr1 = std::vector<WvkKhrSurfaceDispatchTablePtr>;

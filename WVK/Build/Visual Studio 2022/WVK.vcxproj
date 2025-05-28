@@ -146,7 +146,6 @@
     <ClCompile Include="..\..\Source\wvk_command_buffer.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_pool.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance.cpp" />
-    <ClCompile Include="..\..\Source\wvk_instance_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_layer.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader_dispatch_table.cpp" />
@@ -167,6 +166,7 @@
     <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.hpp" />
     <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.h" />
     <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.hpp" />
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_physical_device_properties2_dt.hpp" />
     <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.h" />
     <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.hpp" />
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.h" />
@@ -190,8 +190,8 @@
     <ClInclude Include="..\..\Source\wvk_command_buffer.hpp" />
     <ClInclude Include="..\..\Source\wvk_command_pool.h" />
     <ClInclude Include="..\..\Source\wvk_command_pool.hpp" />
-    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.h" />
-    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_instance_dt.hpp" />
     <ClInclude Include="..\..\Source\wvk_extension.h" />
     <ClInclude Include="..\..\Source\wvk_extension.hpp" />
     <ClInclude Include="..\..\Source\wvk_instance.h" />

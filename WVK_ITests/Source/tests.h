@@ -10,9 +10,12 @@
 #include "wvk_loader.h"
 #include "wvk_loader_dispatch_table.h"
 #include "wvk_instance.h"
-#include "wvk_instance_dispatch_table.h"
+#include "wvk_instance_dt.hpp"
 #include "wvk_physical_device.h"
+#include "wvk_dispatch_table.hpp"
+#include "wvk_queue_family.h"
 
+#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
 #include "Extensions/wvk_khr_surface_dispatch_table.h"
 #include "Extensions/wvk_khr_get_surface_capabilities2_dispatch_table.h"
 #include "Extensions/wvk_surface.h"
@@ -58,35 +61,93 @@ protected:
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
+        createExtensions();
+        if (s_wvk_instance_dt == nullptr) {
+            s_wvk_instance_dt = std::make_unique<CGDev::wvk::WvkInstanceDt>();
 
-        if (s_wvk_instance_dispatch_table == nullptr) {
-            s_wvk_instance_dispatch_table = std::make_unique<CGDev::wvk::WvkInstanceDispatchTable>();
-
-            CGDev::wvk::WvkInstanceDispatchTableCreateInfo _create_info;
+            CGDev::wvk::WvkInstanceDtCreateInfo _create_info;
             _create_info.wvk_loader = s_wvk_loader.get();
             _create_info.wvk_instance = s_wvk_instance.get();
 
-            auto _wvk_res = s_wvk_instance_dispatch_table->create(_create_info);
+            auto _wvk_res = s_wvk_instance_dt->create(_create_info);
+
+            s_wvk_instance_dt->setUp(s_wvk_khr_get_phys_dev_props2_dt.get());
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
-        if (s_wvk_physical_device == nullptr) {
+        /*if (s_wvk_physical_device == nullptr) {
             uint32_t _count = 1;
             std::vector<VkPhysicalDevice> _vk_physical_device_collection1(1);
-            s_wvk_instance_dispatch_table->wvkEnumeratePhysicalDevices(&_count, _vk_physical_device_collection1.data());
+            //s_wvk_instance_dt->wvkEnumeratePhysicalDevices(&_count, _vk_physical_device_collection1.data());
 
             s_wvk_physical_device = std::make_unique<CGDev::wvk::WvkPhysicalDevice>();
 
             CGDev::wvk::WvkPhysicalDeviceCreateInfo _create_info;
             _create_info.vk_physical_device = _vk_physical_device_collection1[0];
-            _create_info.wvk_instance_dispatch_table = s_wvk_instance_dispatch_table.get();
+            _create_info.wvk_instance_dispatch_table = s_wvk_instance_dt.get();
 
             auto _wvk_res = s_wvk_physical_device->create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
+        }*/
+        
+        //if (s_wvk_dispatch_table == nullptr) {
+        //    s_wvk_dispatch_table = std::make_unique<CGDev::wvk::WvkDispatchTable>();
+
+        //    CGDev::wvk::WvkDispatchTableCreateInfo _create_info;
+            //_create_info.wvk_loader = s_wvk_loader.get();
+            //_create_info.wvk_instance = s_wvk_instance.get();
+
+         //   auto _wvk_res = s_wvk_dispatch_table->create(_create_info);
+
+         //   s_wvk_dispatch_table->setUp(s_wvk_instance_dt.get());
+         //   s_wvk_dispatch_table->setUp(s_wvk_khr_get_phys_dev_props2_dt.get());
+
+        //    ASSERT_EQ(_wvk_res.isOk(), true);
+        //}
+
+        if (s_wvk_queue_family == nullptr) {
+            s_wvk_queue_family = std::make_unique<CGDev::wvk::WvkQueueFamily>();
+
+            CGDev::wvk::WvkQueueFamilyCreateInfo _create_info;
+            _create_info.index = 0;
+            _create_info.instance_dt_ptr = s_wvk_instance_dt.get();
+            _create_info.wvk_physical_device = s_wvk_physical_device.get();
+
+            auto _wvk_res = s_wvk_queue_family->create(_create_info);
+
+            ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
+       
+
+        if (s_wvk_surface == nullptr) {
+            HINSTANCE _hInstance = NULL;
+            HWND _hWnd = NULL;
+
+            CreateTestWindow(_hInstance, _hWnd);
+
+            s_wvk_surface = std::make_unique<CGDev::wvk::Extensions::WvkSurface>();
+
+            CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindowsCreateInfo _create_info_mswindows;
+            _create_info_mswindows.wvk_khr_win32_surface_dispatch_table = s_wvk_khr_win32_surface_dispatch_table.get();
+            _create_info_mswindows.hInstance = _hInstance;
+            _create_info_mswindows.hWnd = _hWnd;
+
+            CGDev::wvk::Extensions::WvkSurfaceCreateInfo _create_info;
+            _create_info.wvk_instance_dispatch_table = s_wvk_instance_dt.get();
+            _create_info.wvk_khr_surface_dispatch_table = s_wvk_khr_surface_dispatch_table.get();
+            _create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
+            _create_info.wvk_surface_platform_create_info = &_create_info_mswindows;
+
+            auto _wvk_res = s_wvk_surface->create(_create_info);
+
+            ASSERT_EQ(_wvk_res.isOk(), true);
+        }   
+    }
+
+    void createExtensions() {
         if (s_wvk_khr_surface_dispatch_table == nullptr) {
             s_wvk_khr_surface_dispatch_table = std::make_unique<CGDev::wvk::Extensions::WvkKhrSurfaceDispatchTable>();
 
@@ -123,26 +184,14 @@ protected:
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
-        if (s_wvk_surface == nullptr) {
-            HINSTANCE _hInstance = NULL;
-            HWND _hWnd = NULL;
+        if (s_wvk_khr_get_phys_dev_props2_dt == nullptr) {
+            s_wvk_khr_get_phys_dev_props2_dt = std::make_unique<CGDev::wvk::Extensions::WvkKhrGetPhysicalDeviceProperties2DT>();
 
-            CreateTestWindow(_hInstance, _hWnd);
+            CGDev::wvk::Extensions::WvkKhrGetPhysicalDeviceProperties2DTCreateInfo _create_info;
+            _create_info.wvk_loader = s_wvk_loader.get();
+            _create_info.wvk_instance = s_wvk_instance.get();
 
-            s_wvk_surface = std::make_unique<CGDev::wvk::Extensions::WvkSurface>();
-
-            CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindowsCreateInfo _create_info_mswindows;
-            _create_info_mswindows.wvk_khr_win32_surface_dispatch_table = s_wvk_khr_win32_surface_dispatch_table.get();
-            _create_info_mswindows.hInstance = _hInstance;
-            _create_info_mswindows.hWnd = _hWnd;
-
-            CGDev::wvk::Extensions::WvkSurfaceCreateInfo _create_info;
-            _create_info.wvk_instance_dispatch_table = s_wvk_instance_dispatch_table.get();
-            _create_info.wvk_khr_surface_dispatch_table = s_wvk_khr_surface_dispatch_table.get();
-            _create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
-            _create_info.wvk_surface_platform_create_info = &_create_info_mswindows;
-
-            auto _wvk_res = s_wvk_surface->create(_create_info);
+            auto _wvk_res = s_wvk_khr_get_phys_dev_props2_dt->create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
@@ -153,11 +202,16 @@ protected:
     inline static CGDev::wvk::WvkLoaderUptr s_wvk_loader = nullptr;
     inline static CGDev::wvk::WvkLoaderDispatchTableUptr s_wvk_loader_dispatch_table = nullptr;
     inline static CGDev::wvk::WvkInstanceUptr s_wvk_instance = nullptr;
-    inline static CGDev::wvk::WvkInstanceDispatchTableUptr s_wvk_instance_dispatch_table = nullptr;
+    inline static CGDev::wvk::WvkInstanceDtUptr s_wvk_instance_dt = nullptr;
     inline static CGDev::wvk::WvkPhysicalDeviceUptr s_wvk_physical_device = nullptr;
+    inline static std::unique_ptr<CGDev::wvk::WvkDispatchTable> s_wvk_dispatch_table = nullptr;
+    inline static CGDev::wvk::WvkQueueFamilyUptr s_wvk_queue_family = nullptr;
+    
+    inline static CGDev::wvk::Extensions::WvkKhrGetPhysicalDeviceProperties2DTUptr s_wvk_khr_get_phys_dev_props2_dt = nullptr;
     inline static CGDev::wvk::Extensions::WvkKhrSurfaceDispatchTableUptr s_wvk_khr_surface_dispatch_table = nullptr;
     inline static CGDev::wvk::Extensions::WvkKhrGetSurfaceCapabilities2DispatchTableUptr s_wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
     inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
+    
     inline static CGDev::wvk::Extensions::mswindows::WvkKhrWin32SurfaceDispatchTableUptr s_wvk_khr_win32_surface_dispatch_table = nullptr;
 };
 

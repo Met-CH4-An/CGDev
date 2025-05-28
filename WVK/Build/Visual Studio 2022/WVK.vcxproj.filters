@@ -43,7 +43,6 @@
       <Filter>Extensions\MSWindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\wvk_loader_dispatch_table.cpp" />
-    <ClCompile Include="..\..\Source\wvk_instance_dispatch_table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\_wvk.h" />
@@ -141,10 +140,13 @@
     <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.hpp">
       <Filter>Extensions\MSWindows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.h" />
-    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_instance_dt.hpp" />
     <ClInclude Include="..\..\Source\wvk_loader_dispatch_table.h" />
     <ClInclude Include="..\..\Source\wvk_loader_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_physical_device_properties2_dt.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MSWindows">

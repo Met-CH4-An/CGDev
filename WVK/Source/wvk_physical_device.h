@@ -24,7 +24,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkPhysicalDeviceCreateInfo {
 			VkPhysicalDevice vk_physical_device = VK_NULL_HANDLE;
-			WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+			WvkInstanceDtPtr wvk_instance_dispatch_table = nullptr;
 		}; // struct WvkPhysicalDeviceCreateInfo
 				
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

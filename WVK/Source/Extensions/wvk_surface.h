@@ -33,7 +33,7 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct WvkSurfaceCreateInfo {
-				WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+				WvkInstanceDtPtr wvk_instance_dispatch_table = nullptr;
 				WvkKhrSurfaceDispatchTablePtr wvk_khr_surface_dispatch_table = nullptr;
 				WvkKhrGetSurfaceCapabilities2DispatchTablePtr wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
 				WvkSurfacePlatformCreateInfo* wvk_surface_platform_create_info = nullptr;

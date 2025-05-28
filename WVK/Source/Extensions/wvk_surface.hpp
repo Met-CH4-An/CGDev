@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////
 #include "wvk_khr_surface_dispatch_table.h"
 #include "wvk_khr_get_surface_capabilities2_dispatch_table.h"
-#include "../wvk_instance_dispatch_table.h"
+#include "../wvk_instance_dt.hpp"
 #include "../wvk_physical_device.h"
 
 namespace CGDev {
@@ -269,7 +269,7 @@ namespace CGDev {
 				// Шаг 3. Вызов Vulkan-функции через метод-обёртку
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				auto _vk_res = wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
-					&WvkInstanceDispatchTable::wvkGetPhysicalDeviceSurfaceCapabilities2KHR,
+					&WvkInstanceDt::wvkGetPhysicalDeviceSurfaceCapabilities2KHR,
 					m_create_info.wvk_instance_dispatch_table,
 					&_info2,
 					&_caps2

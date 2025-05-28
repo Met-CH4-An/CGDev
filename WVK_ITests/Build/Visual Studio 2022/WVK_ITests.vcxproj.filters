@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\Source\wvk_khr_get_surface_capabilities2_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader_dispatch_table_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_dispatch_table_test.cpp" />
+    <ClCompile Include="..\..\Source\wvk_queue_family_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\tests.h" />
@@ -44,5 +45,6 @@
     <ClInclude Include="..\..\Source\wvk_khr_get_surface_capabilities2_test.h" />
     <ClInclude Include="..\..\Source\wvk_loader_dispatch_table_test.h" />
     <ClInclude Include="..\..\Source\wvk_instance_dispatch_table_test.h" />
+    <ClInclude Include="..\..\Source\wvk_queue_family_test.h" />
   </ItemGroup>
 </Project>

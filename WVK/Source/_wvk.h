@@ -183,8 +183,22 @@ namespace CGDev {
 					struct WvkBuildInfo {
 						static constexpr bool enable = true;
 						static constexpr uint32_t vulkan_sdk_version = VK_HEADER_VERSION;
-						static constexpr VulkanVersion vulkan_api_version = VulkanVersion::VERSION_13;
+						static constexpr VulkanVersion vulkan_api_version = VulkanVersion::VERSION_10;
 						static constexpr PlatformType platform_type = PlatformType::MSWindows;
+
+						static constexpr bool find(std::string_view value) {
+							for (std::string_view item : extensions) {
+								if (item == value) {
+									return true;
+								}
+							}
+							return false;
+						}
+
+					private:
+						static constexpr std::array<std::string_view, 1> extensions = {
+							"VK_KHR_get_physical_device_properties2"
+						};
 					};
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -328,78 +342,78 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			WvkLoader;
-				using			WvkLoaderPtr = WvkLoader * ;
-				using			WvkLoaderPtrArr1 = std::vector<WvkLoaderPtr>;
-				using			WvkLoaderSptr = std::shared_ptr<WvkLoader>;
-				using			WvkLoaderSptrArr1 = std::vector<WvkLoaderSptr>;
-				using			WvkLoaderUptr = std::unique_ptr<WvkLoader>;
-				using			WvkLoaderUptrArr1 = std::vector<WvkLoaderUptr>;
-				using			WvkLoaderWptr = std::weak_ptr<WvkLoader>;
-				using			WvkLoaderWptrArr1 = std::vector<WvkLoaderWptr>;
+				class WvkLoader;
+				using WvkLoaderPtr = WvkLoader * ;
+				using WvkLoaderPtrArr1 = std::vector<WvkLoaderPtr>;
+				using WvkLoaderSptr = std::shared_ptr<WvkLoader>;
+				using WvkLoaderSptrArr1 = std::vector<WvkLoaderSptr>;
+				using WvkLoaderUptr = std::unique_ptr<WvkLoader>;
+				using WvkLoaderUptrArr1 = std::vector<WvkLoaderUptr>;
+				using WvkLoaderWptr = std::weak_ptr<WvkLoader>;
+				using WvkLoaderWptrArr1 = std::vector<WvkLoaderWptr>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			WvkLoaderDispatchTable;
-				using			WvkLoaderDispatchTablePtr = WvkLoaderDispatchTable * ;
-				using			WvkLoaderDispatchTablePtrArr1 = std::vector<WvkLoaderDispatchTablePtr>;
-				using			WvkLoaderDispatchTableSptr = std::shared_ptr<WvkLoaderDispatchTable>;
-				using			WvkLoaderDispatchTableSptrArr1 = std::vector<WvkLoaderDispatchTableSptr>;
-				using			WvkLoaderDispatchTableUptr = std::unique_ptr<WvkLoaderDispatchTable>;
-				using			WvkLoaderDispatchTableUptrArr1 = std::vector<WvkLoaderDispatchTableUptr>;
-				using			WvkLoaderDispatchTableWptr = std::weak_ptr<WvkLoaderDispatchTable>;
-				using			WvkLoaderDispatchTableWptrArr1 = std::vector<WvkLoaderDispatchTableWptr>;
+				class WvkLoaderDispatchTable;
+				using WvkLoaderDispatchTablePtr = WvkLoaderDispatchTable * ;
+				using WvkLoaderDispatchTablePtrArr1 = std::vector<WvkLoaderDispatchTablePtr>;
+				using WvkLoaderDispatchTableSptr = std::shared_ptr<WvkLoaderDispatchTable>;
+				using WvkLoaderDispatchTableSptrArr1 = std::vector<WvkLoaderDispatchTableSptr>;
+				using WvkLoaderDispatchTableUptr = std::unique_ptr<WvkLoaderDispatchTable>;
+				using WvkLoaderDispatchTableUptrArr1 = std::vector<WvkLoaderDispatchTableUptr>;
+				using WvkLoaderDispatchTableWptr = std::weak_ptr<WvkLoaderDispatchTable>;
+				using WvkLoaderDispatchTableWptrArr1 = std::vector<WvkLoaderDispatchTableWptr>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			WvkInstance;
-				using			WvkInstancePtr = WvkInstance * ;
-				using			WvkInstancePtrArr1 = std::vector<WvkInstancePtr>;
-				using			WvkInstanceSptr = std::shared_ptr<WvkInstance>;
-				using			WvkInstanceSptrArr1 = std::vector<WvkInstanceSptr>;
-				using			WvkInstanceUptr = std::unique_ptr<WvkInstance>;
-				using			WvkInstanceUptrArr1 = std::vector<WvkInstanceUptr>;
-				using			WvkInstanceWptr = std::weak_ptr<WvkInstance>;
-				using			WvkInstanceWptrArr1 = std::vector<WvkInstanceWptr>;	
+				class WvkInstance;
+				using WvkInstancePtr = WvkInstance * ;
+				using WvkInstancePtrArr1 = std::vector<WvkInstancePtr>;
+				using WvkInstanceSptr = std::shared_ptr<WvkInstance>;
+				using WvkInstanceSptrArr1 = std::vector<WvkInstanceSptr>;
+				using WvkInstanceUptr = std::unique_ptr<WvkInstance>;
+				using WvkInstanceUptrArr1 = std::vector<WvkInstanceUptr>;
+				using WvkInstanceWptr = std::weak_ptr<WvkInstance>;
+				using WvkInstanceWptrArr1 = std::vector<WvkInstanceWptr>;	
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			WvkInstanceDispatchTable;
-				using			WvkInstanceDispatchTablePtr = WvkInstanceDispatchTable * ;
-				using			WvkInstanceDispatchTablePtrArr1 = std::vector<WvkInstanceDispatchTablePtr>;
-				using			WvkInstanceDispatchTableSptr = std::shared_ptr<WvkInstanceDispatchTable>;
-				using			WvkInstanceDispatchTableSptrArr1 = std::vector<WvkInstanceDispatchTableSptr>;
-				using			WvkInstanceDispatchTableUptr = std::unique_ptr<WvkInstanceDispatchTable>;
-				using			WvkInstanceDispatchTableUptrArr1 = std::vector<WvkInstanceDispatchTableUptr>;
-				using			WvkInstanceDispatchTableWptr = std::weak_ptr<WvkInstanceDispatchTable>;
-				using			WvkInstanceDispatchTableWptrArr1 = std::vector<WvkInstanceDispatchTableWptr>;
+				class WvkInstanceDt;
+				using WvkInstanceDtPtr = WvkInstanceDt * ;
+				using WvkInstanceDtPtrArr1 = std::vector<WvkInstanceDtPtr>;
+				using WvkInstanceDtSptr = std::shared_ptr<WvkInstanceDt>;
+				using WvkInstanceDtSptrArr1 = std::vector<WvkInstanceDtSptr>;
+				using WvkInstanceDtUptr = std::unique_ptr<WvkInstanceDt>;
+				using WvkInstanceDtUptrArr1 = std::vector<WvkInstanceDtUptr>;
+				using WvkInstanceDtWptr = std::weak_ptr<WvkInstanceDt>;
+				using WvkInstanceDtWptrArr1 = std::vector<WvkInstanceDtWptr>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			WvkPhysicalDevice;
-				using			WvkPhysicalDevicePtr = WvkPhysicalDevice * ;
-				using			WvkPhysicalDevicePtrArr1 = std::vector<WvkPhysicalDevicePtr>;
-				using			WvkPhysicalDevicePtrArr2 = std::vector<WvkPhysicalDevicePtrArr1>;
-				using			WvkPhysicalDeviceSptr = std::shared_ptr<WvkPhysicalDevice>;
-				using			WvkPhysicalDeviceSptrArr1 = std::vector<WvkPhysicalDeviceSptr>;
-				using			WvkPhysicalDeviceSptrArr2 = std::vector<WvkPhysicalDeviceSptrArr1>;
-				using			WvkPhysicalDeviceUptr = std::unique_ptr<WvkPhysicalDevice>;
-				using			WvkPhysicalDeviceUptrArr1 = std::vector<WvkPhysicalDeviceUptr>;
-				using			WvkPhysicalDeviceUptrArr2 = std::vector<WvkPhysicalDeviceUptrArr1>;
-				using			WvkPhysicalDeviceWptr = std::weak_ptr<WvkPhysicalDevice>;
-				using			WvkPhysicalDeviceWptrArr1 = std::vector<WvkPhysicalDeviceWptr>;
+				class WvkPhysicalDevice;
+				using WvkPhysicalDevicePtr = WvkPhysicalDevice * ;
+				using WvkPhysicalDevicePtrArr1 = std::vector<WvkPhysicalDevicePtr>;
+				using WvkPhysicalDevicePtrArr2 = std::vector<WvkPhysicalDevicePtrArr1>;
+				using WvkPhysicalDeviceSptr = std::shared_ptr<WvkPhysicalDevice>;
+				using WvkPhysicalDeviceSptrArr1 = std::vector<WvkPhysicalDeviceSptr>;
+				using WvkPhysicalDeviceSptrArr2 = std::vector<WvkPhysicalDeviceSptrArr1>;
+				using WvkPhysicalDeviceUptr = std::unique_ptr<WvkPhysicalDevice>;
+				using WvkPhysicalDeviceUptrArr1 = std::vector<WvkPhysicalDeviceUptr>;
+				using WvkPhysicalDeviceUptrArr2 = std::vector<WvkPhysicalDeviceUptrArr1>;
+				using WvkPhysicalDeviceWptr = std::weak_ptr<WvkPhysicalDevice>;
+				using WvkPhysicalDeviceWptrArr1 = std::vector<WvkPhysicalDeviceWptr>;
 				
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -407,14 +421,17 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			VknQueueFamily;
-				using			VknQueueFamilyArr1										= std::vector<VknQueueFamily>;
-				using			VknQueueFamilyPtr										= VknQueueFamily * ;
-				using			VknQueueFamilyPtrArr1									= std::vector<VknQueueFamilyPtr>;
-				using			VknQueueFamilyWptr										= std::weak_ptr<VknQueueFamily>;
-				using			VknQueueFamilyWptrArr1									= std::vector<VknQueueFamilyWptr>;
-				using			VknQueueFamilySptr										= std::shared_ptr<VknQueueFamily>;
-				using			VknQueueFamilySptrArr1									= std::vector<VknQueueFamilySptr>;
+				class WvkQueueFamily;
+				using WvkQueueFamilyArr1 = std::vector<WvkQueueFamily>;
+				using WvkQueueFamilyPtr = WvkQueueFamily * ;
+				using WvkQueueFamilyPtrArr1 = std::vector<WvkQueueFamilyPtr>;
+				using WvkQueueFamilySptr = std::shared_ptr<WvkQueueFamily>;
+				using WvkQueueFamilySptrArr1 = std::vector<WvkQueueFamilySptr>;
+				using WvkQueueFamilyUptr = std::unique_ptr<WvkQueueFamily>;
+				using WvkQueueFamilyUptrArr1 = std::vector<WvkQueueFamilyUptr>;
+				using WvkQueueFamilyWptr = std::weak_ptr<WvkQueueFamily>;
+				using WvkQueueFamilyWptrArr1 = std::vector<WvkQueueFamilyWptr>;
+				
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief

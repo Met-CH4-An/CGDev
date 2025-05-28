@@ -35,7 +35,7 @@ namespace CGDev {
 					/*!	\brief
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					inline VknExtension(const std::string& name) noexcept;
+					inline VknExtension(const std::string_view name) noexcept;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief

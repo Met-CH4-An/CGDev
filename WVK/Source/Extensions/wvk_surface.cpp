@@ -14,7 +14,7 @@
 #include "MSWindows/wvk_surface_mswindows.h"
 using WvkSurfacePlatform = CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindows;
 
-#include "../wvk_instance_dispatch_table.h"
+#include "../wvk_instance_dt.hpp"
 #include "../wvk_physical_device.h"
 #include "wvk_khr_surface_dispatch_table.h"
 

@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_QUEUE_FAMILY_HPP
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_QUEUE_FAMILY_HPP
+#ifndef CGDEV_WVK_SOURCE__WVK_QUEUE_FAMILY_HPP
+#define CGDEV_WVK_SOURCE__WVK_QUEUE_FAMILY_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_instance_dt.hpp"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
 
 namespace CGDev {
 
@@ -24,102 +26,113 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline const uint32_t VknQueueFamily::getIndexFamily(void) const noexcept {
+				inline const uint32_t WvkQueueFamily::getIndexFamily(void) const noexcept {
 					return m_create_info.index.value();
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				 
-				inline const VknQueueFamilyCreateInfo& VknQueueFamily::getCreateInfo(void) const noexcept {
+				inline const WvkQueueFamilyCreateInfo& WvkQueueFamily::getCreateInfo(void) const noexcept {
 					return m_create_info;
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline void VknQueueFamily::requestQueueFamilyProperties(VkQueueFamilyProperties& vk_queue_family_properties) const noexcept {
-
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 1. Получаем количество доступных семейств очередей на устройстве
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				inline void WvkQueueFamily::requestProperties(VkQueueFamilyProperties& vk_queue_family_properties) const noexcept {
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 1. Запрашиваем количество семейств очередей у физического устройства
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					uint32_t _count = 0;
-					//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties(
-					//	m_create_info.wvk_physical_device->getVkPhysicalDevice(),
-					//	&_count,
-					//	nullptr
-					//);
+					m_create_info.wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+						&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties,
+						m_create_info.instance_dt_ptr,
+						&_count,
+						nullptr
+					);
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 2. Выделяем временный массив для хранения свойств всех семейств
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					VkQueueFamilyPropertiesArr1 _vk_queue_family_properties_collection(_count);
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 2. Выделяем вектор для хранения свойств всех семейств очередей
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					std::vector<VkQueueFamilyProperties> _vk_queue_family_properties_collection(_count);
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 3. Запрашиваем свойства всех семейств и сохраняем в массив
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties(
-					//	m_create_info.wvk_physical_device->getVkPhysicalDevice(),
-					//	&_count,
-					//	_vk_queue_family_properties_collection.data()
-					//);
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 3. Запрашиваем свойства всех семейств очередей
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					m_create_info.wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+						&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties,
+						m_create_info.instance_dt_ptr,
+						&_count,
+						_vk_queue_family_properties_collection.data()
+					);
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 4. Копируем свойства интересующего нас семейства по индексу
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 4. Копируем свойства интересующего семейства по индексу в выходной параметр
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					vk_queue_family_properties = _vk_queue_family_properties_collection[m_create_info.index.value()];
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline void VknQueueFamily::requestQueueFamilyProperties(VkQueueFamilyProperties2& vk_queue_family_properties2) const noexcept {
-
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Проверка: используем только если сборка поддерживает Vulkan 1.1+
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				template<typename Properties>
+				inline void WvkQueueFamily::requestProperties(Properties& out) const noexcept {
 					if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 1. Запрашиваем количество семейств очередей
+						// Шаг 1. Запрашиваем количество семейств очередей у физического устройства
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						uint32_t _count = 0;
-						//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties2(
-						//	m_create_info.wvk_physical_device->getVkPhysicalDevice(),
-						//	&_count,
-						//	nullptr
-						//);
+						m_create_info.wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+							&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties2,
+							m_create_info.instance_dt_ptr,
+							&_count,
+							nullptr
+						);
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 2. Выделяем массив под VkQueueFamilyProperties2
+						// Шаг 2. Выделяем массивы для VkQueueFamilyProperties2 и расширенной структуры Properties
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						VkQueueFamilyProperties2Arr1 _vk_queue_family_properties2_collection(_count);
+						std::vector<VkQueueFamilyProperties2> _props2(_count);
+						std::vector<Properties> _base_out(_count);
+						for (uint32_t ct_0 = 0; ct_0 < _count; ++ct_0) {
+							// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+							// Шаг 3. Инициализация структур: sType и pNext
+							// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+							_base_out[ct_0] = {};
+							_base_out[ct_0].sType = out.sType;
+							_base_out[ct_0].pNext = nullptr;
 
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 3. Инициализируем структуры — задаём sType и pNext
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						for (uint32_t i = 0; i < _count; ++i) {
-							_vk_queue_family_properties2_collection[i] = {};
-							_vk_queue_family_properties2_collection[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
-							_vk_queue_family_properties2_collection[i].pNext = nullptr;
+							_props2[ct_0] = {};
+							_props2[ct_0].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
+							_props2[ct_0].pNext = &_base_out[ct_0];
 						}
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 4. Получаем свойства всех семейств в массив
+						// Шаг 4. Запрашиваем свойства всех семейств очередей
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties2(
-						//	m_create_info.wvk_physical_device->getVkPhysicalDevice(),
-						//	&_count,
-						//	_vk_queue_family_properties2_collection.data()
-						//);
+						m_create_info.wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+							&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties2,
+							m_create_info.instance_dt_ptr,
+							&_count,
+							_props2.data()
+						);
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 5. Копируем свойства нужного семейства в выходной параметр
+						// Шаг 5. Копируем свойства интересующего семейства по индексу
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						vk_queue_family_properties2 = _vk_queue_family_properties2_collection[m_create_info.index.value()];
+						out = _base_out[m_create_info.index.value()];
 					}
-					else {
-						// Vulkan API < 1.1 — свойства через VkQueueFamilyProperties2 недоступны
+					else if constexpr (Build::WvkBuildInfo::find(Extensions::WvkKhrGetPhysicalDeviceProperties2DT::s_getName())) {
+						//m_create_info.wvk_physical_device->invokeWithVkPhysicalDeviceMethod(
+						//	&Extensions::WvkKhrGetPhysicalDeviceProperties2DT::wvkGetPhysicalDeviceQueueFamilyProperties2KHR,
+						//	m_create_info.instance_dt_ptr,
+						//	&_count,
+						//	_props2.data()
+						//);
+						
+						
 					}
 				}
 
@@ -127,7 +140,7 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 				template<typename VkQueueFamilyXProperties>
-				inline void VknQueueFamily::requestQueueFamilyProperties(VkQueueFamilyXProperties& vk_queue_family_x_properties) const noexcept {
+				inline void WvkQueueFamily::requestQueueFamilyProperties(VkQueueFamilyXProperties& vk_queue_family_x_properties) const noexcept {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Проверяем, поддерживается ли Vulkan 1.1 или выше
@@ -198,7 +211,7 @@ namespace CGDev {
 				}
 				template <typename ... Chains>
 
-				void VknQueueFamily::requestQueueFamilyProperties(Chains &... chains) const noexcept {
+				void WvkQueueFamily::requestQueueFamilyProperties(Chains &... chains) const noexcept {
 
 					// Проверка на наличие поддержки Vulkan 1.1
 					if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
@@ -277,4 +290,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_QUEUE_FAMILY_HPP
+#endif // CGDEV_WVK_SOURCE__WVK_QUEUE_FAMILY_HPP

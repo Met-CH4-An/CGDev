@@ -29,7 +29,7 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				struct VknLogicalDeviceQueueCreateInfo {
 
-					VknQueueFamilyPtr				wvk_queue_family = nullptr;
+					WvkQueueFamilyPtr				wvk_queue_family = nullptr;
 					std::optional<uint32_t> queue_count;
 					std::vector<float>				priority_collection = {};
 
