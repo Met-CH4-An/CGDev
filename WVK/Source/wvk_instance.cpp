@@ -347,7 +347,7 @@ namespace CGDev {
 			_vkApplicationInfo.applicationVersion = 0;
 			_vkApplicationInfo.pEngineName = "GPU";
 			_vkApplicationInfo.engineVersion = 0;
-			_vkApplicationInfo.apiVersion = static_cast<uint32_t>(wvk::Build::vulkan_version);
+			_vkApplicationInfo.apiVersion = static_cast<uint32_t>(wvk::Build::WvkBuildInfo::vulkan_api_version);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 2. Инициализация структуры VkInstanceCreateInfo

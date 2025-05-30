@@ -14,137 +14,99 @@
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			namespace wvk {
+		WvkQueueFamily::WvkQueueFamily(void) noexcept {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkQueueFamily::WvkQueueFamily(void) noexcept {
-				}
+		WvkQueueFamily::~WvkQueueFamily(void) noexcept {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkQueueFamily::~WvkQueueFamily(void) noexcept {
-				}
+		WvkStatus WvkQueueFamily::create(const WvkQueueFamilyCreateInfo& create_info) noexcept {
+			WvkStatus _status;
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 1. Сохраняем структуру параметров создания
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = create_info;
 
-				WvkStatus WvkQueueFamily::create(const WvkQueueFamilyCreateInfo& create_info) noexcept {
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 2. Проверка валидности структуры CreateInfo
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = validationCreateInfo();
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 1. Объявляем переменную для возвращаемого статуса
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					WvkStatus _status;
+			if (!_status) {
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 3. Сброс состояния при ошибке валидации
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				reset();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkQueueFamily::validationCreateInfo() - fail.");
+			}
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 2. Сохраняем структуру параметров создания
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					m_create_info = create_info;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Помечаем объект как валидный и возвращаем успешный статус
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_valid = true;
+			return _status.setOk();
+		}
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 3. Проверка валидности структуры CreateInfo (если включена валидация)
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-						// Выполняем проверку структуры
-						//_status = validationCreateInfo();
+		void WvkQueueFamily::destroy(void) noexcept {
 
-						// Если проверка не прошла — возвращаем ошибку
-						//if (_status.m_code != VknStatusCode::SUCCESSFUL) {
-						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-						//	_status.append("\n\tVknQueueFamily::validationCreateInfo() - fail");
-						//	return _status;
-						//}
-					}
+			// ~~~~~~~~~~~~~~~~
+			// очистка данных
+			// ~~~~~~~~~~~~~~~~
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 4. Возвращаем успешный статус
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					_status.m_code = VknStatusCode::SUCCESSFUL;
-					return _status;
-				}
+			m_create_info = {};
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				void WvkQueueFamily::destroy(void) noexcept {
+		WvkStatus WvkQueueFamily::validationCreateInfo(void) const noexcept {
+			WvkStatus _status;
+													
+			if (m_create_info.index.has_value() == false) {
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkQueueFamilyCreateInfo::index - unknown.");
+			}
+			else if (m_create_info.instance_dt_ptr == nullptr &&
+				!m_create_info.instance_dt_ptr->isOk()) {
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkQueueFamilyCreateInfo::instance_dt_ptr - nullptr or no valid.");
+			}
+			else if (m_create_info.wvk_physical_device_ptr == nullptr &&
+				!m_create_info.wvk_physical_device_ptr->isOk()) {
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkQueueFamilyCreateInfo::wvk_physical_device_ptr - nullptr or no valid.");
+			}
 
-					// ~~~~~~~~~~~~~~~~
-					// очистка данных
-					// ~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
 
-					m_create_info = {};
-				}
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		void WvkQueueFamily::reset(void) noexcept {
+			// ~~~~~~~~~~~~~~~~
+			// очистка данных
+			// ~~~~~~~~~~~~~~~~
+			m_create_info = {};
 
-				WvkStatus WvkQueueFamily::validationCreateInfo(void) const noexcept {
+			m_valid = false;
+		}
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 1. Объявляем переменную для возвращаемого статуса
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					WvkStatus _status;
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 2. Проверка активна только при включенной валидации
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
-
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 3. Проверяем, задан ли индекс семейства очередей
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						if (m_create_info.index.has_value() == false) {
-							_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-							_status.append("\n\tVknQueueFamilyCreateInfo::index = unknown");
-							return _status;
-						}
-
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 4. Проверяем, что указатель на объект команд не равен nullptr
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						//else if (m_create_info.wvk_commands == nullptr) {
-						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-						//	_status.append("\n\tVknQueueFamilyCreateInfo::wvk_commands = nullptr");
-						//	return _status;
-						//}
-
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 5. Проверяем, что задан объект физического устройства
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						//else if (m_create_info.wvk_physical_device == nullptr) {
-						//	_status.m_code = VknStatusCode::CREATE_INFO_NO_VALID;
-						//	_status.append("\n\tVknQueueFamilyCreateInfo::wvk_physical_device = nullptr");
-						//	return _status;
-						//}
-
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						// Шаг 6. Все проверки пройдены успешно
-						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						_status.m_code = VknStatusCode::SUCCESSFUL;
-						return _status;
-					}
-
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Шаг 7. Если валидация отключена — возвращаем успех
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					_status.m_code = VknStatusCode::SUCCESSFUL;
-					return _status;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			} // namespace wvk
-
-		//} // namespace Private
-
-	//} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev

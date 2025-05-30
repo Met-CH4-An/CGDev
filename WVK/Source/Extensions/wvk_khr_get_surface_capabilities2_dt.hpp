@@ -1,5 +1,5 @@
-#ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DISPATCH_TABLE_H
-#define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DISPATCH_TABLE_H
+#ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DT_HPP
+#define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DT_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -26,20 +26,16 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			struct WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo {
+			struct WvkKhrGetSurfaceCapabilities2DTCreateInfo {
 				WvkLoaderPtr wvk_loader = nullptr;
 				WvkInstancePtr wvk_instance = nullptr;
-			}; // WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo
-
-
-
-
+			}; // WvkKhrGetSurfaceCapabilities2DTCreateInfo
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			class WvkKhrGetSurfaceCapabilities2DispatchTable : public GpuObject {
+			class WvkKhrGetSurfaceCapabilities2DT : public GpuObject {
 
 			public:
 
@@ -47,16 +43,20 @@ namespace CGDev {
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline static const std::string& s_getName(void) noexcept;
+				inline static constexpr std::string_view s_getName(void) noexcept {
+					return s_name;
+				}
 
 			private:
 
-				inline static const std::string s_name = "VK_KHR_get_surface_capabilities2";
+				inline static constexpr std::string_view s_name = "VK_KHR_get_surface_capabilities2";
 
 			public:
 
-				inline VkResult wvkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const noexcept;
-				inline VkResult wvkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const noexcept;				
+				inline VkResult wvkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const noexcept {
+					return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities); }
+				inline VkResult wvkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const noexcept {
+					return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats); }
 
 			private:
 
@@ -69,13 +69,13 @@ namespace CGDev {
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkKhrGetSurfaceCapabilities2DispatchTable(void) noexcept;
+				inline WvkKhrGetSurfaceCapabilities2DT(void) noexcept {}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				~WvkKhrGetSurfaceCapabilities2DispatchTable(void) noexcept;
+				inline ~WvkKhrGetSurfaceCapabilities2DT(void) noexcept {}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -111,13 +111,48 @@ namespace CGDev {
 				* @see WvkKhrSurface::loadVulkanCommand
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkStatus create(const WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo& create_info) noexcept;
+				inline WvkStatus create(const WvkKhrGetSurfaceCapabilities2DTCreateInfo& create_info) noexcept {
+					WvkStatus _status;
+
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 1. Сохраняем переданную структуру создания.
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					m_create_info = create_info;
+
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 2. Запускаем проверку данных.
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~					
+					_status = validationCreateInfo();
+
+					if (!_status) {
+						reset();
+						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DT::validationCreateInfo() - fail.");
+					}					
+
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 3. Загружаем указатели на Vulkan-функции, связанные с Surface.
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					_status = loadVulkanCommand();
+
+					if (!_status) {
+						reset();
+						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DT::loadVulkanCommand() - fail.");
+					}
+
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					// Шаг 4. Успешное завершение создания.
+					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					m_valid = true;
+					return _status.setOk();
+				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				void destroy(void) noexcept;
+				inline void destroy(void) noexcept {
+					reset();
+				}
 
 			public:
 
@@ -149,7 +184,18 @@ namespace CGDev {
 				* @see WvkKhrSurface::loadVulkanCommand
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkStatus validationCreateInfo(void) const noexcept;
+				inline WvkStatus validationCreateInfo(void) const noexcept {
+					WvkStatus _status;
+
+					if (m_create_info.wvk_loader == nullptr) {
+						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo::wvk_loader - nullptr.");
+					}
+					else if (m_create_info.wvk_instance == nullptr) {
+						return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo::wvk_instance - nullptr.");
+					}
+
+					return _status.setOk();
+				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -175,18 +221,45 @@ namespace CGDev {
 				* @see WvkCommands::tryLoadFunction
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkStatus loadVulkanCommand(void) noexcept;
+				inline WvkStatus loadVulkanCommand(void) noexcept {
+					WvkStatus _status;
+
+					std::vector<WvkVulkanProcedureInfo> _procedures = {
+						{ "vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR) },
+						{ "vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR) }
+					};
+
+					_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
+						&WvkLoader::loadProcedure,
+						m_create_info.wvk_loader,
+						_procedures
+					);
+
+					if (!_status) {
+						return _status.set(VknStatusCode::FAIL,
+							"\n\tWvkInstance::invokeWithVkInstanceMethod - fail.");
+					}
+
+					return _status.setOk();
+				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				void reset(void) noexcept;
+				inline void reset(void) noexcept {
+					m_vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
+					m_vkGetPhysicalDeviceSurfaceFormats2KHR = VK_NULL_HANDLE;
+
+					m_create_info = {};
+
+					m_valid = false;
+				}
 
 			private:
 
-				WvkKhrGetSurfaceCapabilities2DispatchTableCreateInfo m_create_info = {};
-			}; // class WvkKhrGetSurfaceCapabilities2DispatchTable
+				WvkKhrGetSurfaceCapabilities2DTCreateInfo m_create_info = {};
+			}; // class WvkKhrGetSurfaceCapabilities2DT
 
 		} // namespace Extensions
 
@@ -194,6 +267,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#include "wvk_khr_get_surface_capabilities2_dispatch_table.hpp"
-
-#endif // CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DISPATCH_TABLE_H
+#endif // CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_SURFACE_CAPABILITIES2_DT_HPP

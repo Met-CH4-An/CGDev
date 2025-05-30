@@ -16,7 +16,7 @@ using WvkSurfacePlatform = CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindow
 
 #include "../wvk_instance_dt.hpp"
 #include "../wvk_physical_device.h"
-#include "wvk_khr_surface_dispatch_table.h"
+#include "wvk_khr_surface_dt.hpp"
 
 namespace CGDev {
 
@@ -131,11 +131,11 @@ namespace CGDev {
 			WvkStatus WvkSurface::validationCreateInfo(void) const noexcept {
 				WvkStatus _status;
 
-				if (m_create_info.wvk_instance_dispatch_table == nullptr) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_instance_dispatch_table - nullptr.");
+				if (m_create_info.wvk_instance_dt_ptr == nullptr) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_instance_dt_ptr - nullptr.");
 				}
-				else if (m_create_info.wvk_khr_surface_dispatch_table == nullptr) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_surface_dispatch_table - nullptr.");
+				else if (m_create_info.wvk_khr_surface_dt == nullptr) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_surface_dt - nullptr.");
 				}
 				else if (m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table == nullptr) {
 					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_get_surface_capabilities2_dispatch_table - nullptr.");

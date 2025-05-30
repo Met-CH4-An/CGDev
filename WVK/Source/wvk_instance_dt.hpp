@@ -39,6 +39,9 @@ namespace CGDev {
 
 		public:
 
+			inline VkResult wvkEnumeratePhysicalDevices(uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices)const noexcept {
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDevices, pPhysicalDeviceCount, pPhysicalDevices); }
+
 			// ~~~~~~~~~~~~~~~~
 			// 1.0
 			// ~~~~~~~~~~~~~~~~
@@ -117,7 +120,9 @@ namespace CGDev {
 			PFN_vkGetPhysicalDeviceMemoryProperties2 m_vkGetPhysicalDeviceMemoryProperties2 = VK_NULL_HANDLE;
 			PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 m_vkGetPhysicalDeviceSparseImageFormatProperties2 = VK_NULL_HANDLE;
 
-			// VkSurface 1.1
+			// ~~~~~~~~~~~~~~~~
+			// 1.1 or VK_KHR_get_surface_capabilities2
+			// ~~~~~~~~~~~~~~~~
 			PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR m_vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
 
 		public:

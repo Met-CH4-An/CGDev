@@ -33,8 +33,9 @@ namespace CGDev {
 					SUCCESSFUL = 1,
 					FAIL = 2,
 					ALREADY_INITIALIZED = 3,
-					CREATE_INFO_NO_VALID = 4,
-					VKN_PHYSICAL_DEVICE_FAIL = 5				
+					FEATURE_NOT_ENABLED = 4,
+					CREATE_INFO_NO_VALID = 5,
+					VKN_PHYSICAL_DEVICE_FAIL = 6				
 				};
 
 

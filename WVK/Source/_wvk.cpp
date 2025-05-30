@@ -13,31 +13,25 @@
 ////////////////////////////////////////////////////////////////
 #include "Layers/wvk_layer_khronos_validation.h"
 #include "Extensions/wvk_ext_debug_utils.h"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
+#include "Extensions/wvk_khr_surface_dt.hpp"
 
 namespace CGDev {
 
-	namespace GPU {
+	namespace wvk {
 
-		namespace Private {
+		namespace Build {
 
-			namespace wvk {
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				namespace Build {
+			constexpr const std::array<std::string_view, 1> layer_name_collection = { "VK_LAYER_KHRONOS_validation" };
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					constexpr const std::array<std::string_view, 1> layer_name_collection = { "VK_LAYER_KHRONOS_validation" };
+		}
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				}
-
-			} // namespace wvk
-
-		} // namespace Private
-
-	} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev

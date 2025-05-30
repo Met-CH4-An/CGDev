@@ -135,7 +135,7 @@ namespace CGDev {
 			* };
 			*
 			* DeviceHandler handler;
-			* wvk_physical_device->invokeWithVkPhysicalDevice(&DeviceHandler::handle, handler, 5);
+			* wvk_physical_device_ptr->invokeWithVkPhysicalDevice(&DeviceHandler::handle, handler, 5);
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

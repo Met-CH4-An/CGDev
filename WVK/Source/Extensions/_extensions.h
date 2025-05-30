@@ -55,44 +55,44 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class			WvkKhrGetPhysicalDeviceProperties2DT;
-					using			WvkKhrGetPhysicalDeviceProperties2DTPtr = WvkKhrGetPhysicalDeviceProperties2DT * ;
-					using			WvkKhrGetPhysicalDeviceProperties2DTPtrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTPtr>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTSptr = std::shared_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTSptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTSptr>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTUptr = std::unique_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTUptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTUptr>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTWptr = std::weak_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using			WvkKhrGetPhysicalDeviceProperties2DTWptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTWptr>;
+					class WvkKhrGetPhysicalDeviceProperties2DT;
+					using WvkKhrGetPhysicalDeviceProperties2DTPtr = WvkKhrGetPhysicalDeviceProperties2DT * ;
+					using WvkKhrGetPhysicalDeviceProperties2DTPtrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTPtr>;
+					using WvkKhrGetPhysicalDeviceProperties2DTSptr = std::shared_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using WvkKhrGetPhysicalDeviceProperties2DTSptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTSptr>;
+					using WvkKhrGetPhysicalDeviceProperties2DTUptr = std::unique_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using WvkKhrGetPhysicalDeviceProperties2DTUptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTUptr>;
+					using WvkKhrGetPhysicalDeviceProperties2DTWptr = std::weak_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
+					using WvkKhrGetPhysicalDeviceProperties2DTWptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTWptr>;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class			WvkKhrSurfaceDispatchTable;
-					using			WvkKhrSurfaceDispatchTablePtr = WvkKhrSurfaceDispatchTable * ;
-					using			WvkKhrSurfaceDispatchTablePtrArr1 = std::vector<WvkKhrSurfaceDispatchTablePtr>;
-					using			WvkKhrSurfaceDispatchTableSptr = std::shared_ptr<WvkKhrSurfaceDispatchTable>;
-					using			WvkKhrSurfaceDispatchTableSptrArr1 = std::vector<WvkKhrSurfaceDispatchTableSptr>;
-					using			WvkKhrSurfaceDispatchTableUptr = std::unique_ptr<WvkKhrSurfaceDispatchTable>;
-					using			WvkKhrSurfaceDispatchTableUptrArr1 = std::vector<WvkKhrSurfaceDispatchTableUptr>;
-					using			WvkKhrSurfaceDispatchTableWptr = std::weak_ptr<WvkKhrSurfaceDispatchTable>;
-					using			WvkKhrSurfaceDispatchTableWptrArr1 = std::vector<WvkKhrSurfaceDispatchTableWptr>;
+					class WvkKhrSurfaceDT;
+					using WvkKhrSurfaceDTPtr = WvkKhrSurfaceDT * ;
+					using WvkKhrSurfaceDTPtrArr1 = std::vector<WvkKhrSurfaceDTPtr>;
+					using WvkKhrSurfaceDTSptr = std::shared_ptr<WvkKhrSurfaceDT>;
+					using WvkKhrSurfaceDTSptrArr1 = std::vector<WvkKhrSurfaceDTSptr>;
+					using WvkKhrSurfaceDTUptr = std::unique_ptr<WvkKhrSurfaceDT>;
+					using WvkKhrSurfaceDTUptrArr1 = std::vector<WvkKhrSurfaceDTUptr>;
+					using WvkKhrSurfaceDTWptr = std::weak_ptr<WvkKhrSurfaceDT>;
+					using WvkKhrSurfaceDTWptrArr1 = std::vector<WvkKhrSurfaceDTWptr>;
 					
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class			WvkKhrGetSurfaceCapabilities2DispatchTable;
-					using			WvkKhrGetSurfaceCapabilities2DispatchTablePtr = WvkKhrGetSurfaceCapabilities2DispatchTable * ;
+					class			WvkKhrGetSurfaceCapabilities2DT;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTablePtr = WvkKhrGetSurfaceCapabilities2DT * ;
 					using			WvkKhrGetSurfaceCapabilities2DispatchTablePtrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTablePtr>;
-					using			WvkKhrGetSurfaceCapabilities2DispatchTableSptr = std::shared_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableSptr = std::shared_ptr<WvkKhrGetSurfaceCapabilities2DT>;
 					using			WvkKhrGetSurfaceCapabilities2DispatchTableSptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableSptr>;
-					using			WvkKhrGetSurfaceCapabilities2DispatchTableUptr = std::unique_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableUptr = std::unique_ptr<WvkKhrGetSurfaceCapabilities2DT>;
 					using			WvkKhrGetSurfaceCapabilities2DispatchTableUptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableUptr>;
-					using			WvkKhrGetSurfaceCapabilities2DispatchTableWptr = std::weak_ptr<WvkKhrGetSurfaceCapabilities2DispatchTable>;
+					using			WvkKhrGetSurfaceCapabilities2DispatchTableWptr = std::weak_ptr<WvkKhrGetSurfaceCapabilities2DT>;
 					using			WvkKhrGetSurfaceCapabilities2DispatchTableWptrArr1 = std::vector<WvkKhrGetSurfaceCapabilities2DispatchTableWptr>;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

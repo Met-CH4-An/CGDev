@@ -23,8 +23,8 @@
 #include "Extensions/wvk_ext_debug_utils.cpp"
 #include "Extensions/wvk_ext_debug_utils_commands.cpp"
 #include "Extensions/wvk_surface.cpp"
-#include "Extensions/wvk_khr_surface_dispatch_table.cpp"
-#include "Extensions/wvk_khr_get_surface_capabilities2_dispatch_table.cpp"
+#include "Extensions/wvk_khr_surface_dt.hpp"
+#include "Extensions/wvk_khr_get_surface_capabilities2_dt.hpp"
 
 #include "Extensions/MSWindows/wvk_khr_win32_surface_dispatch_table.cpp"
 #include "Extensions/MSWindows/wvk_surface_mswindows.cpp"

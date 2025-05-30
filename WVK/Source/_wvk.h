@@ -92,10 +92,6 @@ has_flag(E value, E flag) {
 
 namespace CGDev {
 
-	//namespace GPU {
-
-		//namespace Private {
-
 			namespace wvk {
 
 				namespace Build {
@@ -108,7 +104,7 @@ namespace CGDev {
 
 						UNKNOWN = 0,
 
-						VERSION_10 = VK_MAKE_API_VERSION(0, 0, 0, 0),
+						VERSION_10 = VK_MAKE_API_VERSION(0, 1, 0, 0),
 						VERSION_11 = VK_MAKE_API_VERSION(0, 1, 1, 0),
 						VERSION_12 = VK_MAKE_API_VERSION(0, 1, 2, 0),
 						VERSION_13 = VK_MAKE_API_VERSION(0, 1, 3, 0),
@@ -196,11 +192,14 @@ namespace CGDev {
 						}
 
 					private:
-						static constexpr std::array<std::string_view, 1> extensions = {
-							"VK_KHR_get_physical_device_properties2"
+						static constexpr std::array<std::string_view, 4> extensions = {
+							"VK_KHR_get_physical_device_properties2",
+							"VK_KHR_surface",
+							"VK_KHR_get_surface_capabilities2",
+							"VK_KHR_surface_protected_capabilities"
 						};
 					};
-
+										
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
 					*/

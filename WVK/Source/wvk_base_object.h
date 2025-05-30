@@ -97,6 +97,10 @@ namespace CGDev {
 					template<class Object>
 					inline WvkStatus deallocate(Object& object) noexcept;
 
+					inline bool isOk(void) const noexcept {
+						return m_valid;
+					}
+
 				protected:
 
 					std::vector<void*>					m_alloc;

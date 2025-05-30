@@ -14,8 +14,6 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_commands.h"
-#include "wvk_physical_device.h"
 
 namespace CGDev {
 
@@ -28,12 +26,8 @@ namespace CGDev {
 		struct WvkQueueFamilyCreateInfo {
 			std::optional<uint32_t> index;
 			WvkInstanceDtPtr instance_dt_ptr = nullptr;
-			WvkPhysicalDevicePtr wvk_physical_device = nullptr;
+			WvkPhysicalDevicePtr wvk_physical_device_ptr = nullptr;
 		}; // struct WvkQueueFamilyCreateInfo
-
-
-
-
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
@@ -56,22 +50,27 @@ namespace CGDev {
 			~WvkQueueFamily(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief Инициализирует объект WvkQueueFamily, сохраняя переданные параметры и (опционально) проверяя их валидность.
-			* 
-			* @param [in] create_info Структура с параметрами для создания WvkQueueFamily (указатель на физическое устройство, индекс семейства, указатель на команды и т.п.).
-			* 
-			* @return [out] WvkStatus Возвращает статус операции:
-			* - VknStatusCode::SUCCESSFUL — если инициализация успешна;
-			* - VknStatusCode::CREATE_INFO_NO_VALID — если включена валидация и входные данные невалидны.
-			* 
-			* Метод сохраняет входную структуру `create_info` и при активной валидации выполняет проверку её корректности.
-			* 
+			/*!	\brief
+			*     Инициализирует объект WvkQueueFamily, сохраняя параметры создания и выполняя валидацию.
+			*
+			* @details
+			*     Метод сохраняет переданную структуру WvkQueueFamilyCreateInfo, затем вызывает валидацию входных данных.
+			*     Если валидация не пройдена, объект сбрасывается в невалидное состояние и возвращается статус с кодом FAIL и сообщением об ошибке.
+			*     В случае успеха объект помечается как валидный и возвращается статус OK.
+			*
+			* @param[in] create_info
+			*     Структура с параметрами для создания семейства очередей (индекс семейства, указатель на instance dispatch table, указатель на физическое устройство).
+			*
+			* @return WvkStatus
+			*     - VknStatusCode::SUCCESSFUL — если инициализация прошла успешно.
+			*     - VknStatusCode::FAIL — если валидация входных данных завершилась неудачей.
+			*
 			* @code
 			* WvkQueueFamily queue_family;
 			* WvkQueueFamilyCreateInfo create_info = { ... };
 			* WvkStatus status = queue_family.create(create_info);
-			* if (status.code != VknStatusCode::SUCCESSFUL) {
-			*     std::cerr << "Ошибка: " << status.message << std::endl;
+			* if (!status) {
+			*     std::cerr << status.getMessage() << std::endl;
 			* }
 			* @endcode
 			*/
@@ -85,8 +84,6 @@ namespace CGDev {
 			void destroy(void) noexcept;					
 
 		public:
-
-			inline const WvkQueueFamilyCreateInfo& getCreateInfo(void) const noexcept;
 
 			inline const uint32_t getIndexFamily(void) const noexcept;
 
@@ -123,7 +120,7 @@ namespace CGDev {
 			* @details
 			*     Метод предназначен для получения расширенных свойств семейства очередей физического устройства через структуру VkQueueFamilyProperties2
 			*     и дополнительную структуру (например, VkQueueFamilyCheckpointPropertiesNV, VkQueueFamilyGlobalPriorityPropertiesEXT и др.), переданную через pNext.
-			*     Работает только при сборке с поддержкой Vulkan 1.1 и выше.
+			*     Работает только при сборке с поддержкой Vulkan 1.1 и выше или при наличии расширения VK_KHR_get_physical_device_properties2.
 			*
 			*     Алгоритм работы:
 			*     - Шаг 1. Получает количество семейств очередей у физического устройства.
@@ -139,7 +136,8 @@ namespace CGDev {
 			*     Структура, в которую будут записаны расширенные свойства выбранного семейства очередей.
 			*
 			* @note
-			*     Метод имеет смысл использовать только при наличии поддержки Vulkan 1.1+ и если структура Properties валидна для устройства.
+			*     Метод имеет смысл использовать только при наличии поддержки Vulkan 1.1+ или расширения VK_KHR_get_physical_device_properties2,
+			*     и если структура Properties валидна для устройства.
 			*
 			* @code
 			* VkQueueFamilyCheckpointPropertiesNV checkpointProps{};
@@ -151,36 +149,6 @@ namespace CGDev {
 			template<typename Properties>
 			inline void requestProperties(Properties& out) const noexcept;
 					
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief Запрашивает расширенные свойства семейства очередей устройства.
-			*
-			* \tparam VkQueueFamilyXProperties
-			* Расширенный тип структуры, который должен быть связан с VkQueueFamilyProperties2 через pNext.
-			* Например: `VkQueueFamilyCheckpointPropertiesNV`, `VkQueueFamilyGlobalPriorityPropertiesEXT` и т.д.
-			*
-			* \param [out] vk_queue_family_x_properties
-			* Структура, в которую будут записаны свойства выбранного семейства очередей.
-			*
-			* \details
-			* Метод проверяет, поддерживается ли Vulkan 1.1 или выше, и если да — производит
-			* следующий порядок действий:
-			*
-			* - Шаг 1. Получает количество доступных семейств очередей через `vknGetPhysicalDeviceQueueFamilyProperties2`.
-			* - Шаг 2. Создаёт массив структур `VkQueueFamilyProperties2` и соответствующих расширенных структур `VkQueueFamilyXProperties`.
-			* - Шаг 3. Инициализирует поля `sType` и `pNext` для каждой пары структур.
-			* - Шаг 4. Повторно запрашивает свойства всех семейств, теперь уже с заполнением.
-			* - Шаг 5. Копирует расширенные свойства семейства очередей по индексу `m_create_info.index` в выходной параметр.
-			*
-			* Если активная версия Vulkan ниже 1.1, метод ничего не делает.
-			*
-			* \note
-			* Использование этого метода имеет смысл только при наличии расширения/поддержки структуры `VkQueueFamilyXProperties`,
-			* и если она валидна для версии Vulkan и конкретного физического устройства.
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename VkQueueFamilyXProperties>
-			inline void requestQueueFamilyProperties(VkQueueFamilyXProperties& vk_queue_family_x_properties) const noexcept;
-
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief 
 			*
@@ -215,10 +183,15 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus validationCreateInfo(void) const noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void reset(void) noexcept;
+
 		private:
 				
-			WvkQueueFamilyCreateInfo		m_create_info = {};
-
+			WvkQueueFamilyCreateInfo m_create_info = {};
 		}; // class WvkQueueFamily
 
 	} // namespace wvk

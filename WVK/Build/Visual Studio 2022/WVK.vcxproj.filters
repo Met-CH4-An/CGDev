@@ -26,18 +26,12 @@
     <ClCompile Include="..\..\Source\Extensions\wvk_surface.cpp">
       <Filter>Extensions</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.cpp">
-      <Filter>Extensions</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Layers\wvk_layer_khronos_validation.cpp">
       <Filter>Layers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\wvk_base_object.cpp" />
     <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_khr_win32_surface_dispatch_table.cpp">
       <Filter>Extensions\MSWindows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.cpp">
-      <Filter>Extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.cpp">
       <Filter>Extensions\MSWindows</Filter>
@@ -68,7 +62,6 @@
     <ClInclude Include="..\..\Source\wvk_physical_device.hpp" />
     <ClInclude Include="..\..\Source\wvk_queue.h" />
     <ClInclude Include="..\..\Source\wvk_queue.hpp" />
-    <ClInclude Include="..\..\Source\wvk_queue_family.h" />
     <ClInclude Include="..\..\Source\wvk_queue_family.hpp" />
     <ClInclude Include="..\..\Source\wvk_status.h" />
     <ClInclude Include="..\..\Source\wvk_status.hpp" />
@@ -102,10 +95,7 @@
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.h">
-      <Filter>Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_surface_dispatch_table.hpp">
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_surface_dt.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Layers\_layers.h">
@@ -131,10 +121,7 @@
     <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.h">
       <Filter>Extensions\MSWindows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.h">
-      <Filter>Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dispatch_table.hpp">
+    <ClInclude Include="..\..\Source\Extensions\wvk_khr_get_surface_capabilities2_dt.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.hpp">
@@ -147,6 +134,7 @@
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_queue_family.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MSWindows">

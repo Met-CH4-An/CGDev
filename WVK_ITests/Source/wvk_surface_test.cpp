@@ -20,6 +20,18 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkSurfaceTest, requestSupport) {
+			bool _support = false;
+
+			auto _status = s_wvk_surface->requestSupport(s_wvk_physical_device.get(), s_wvk_queue_family.get(), _support);
+
+			EXPECT_EQ(_status.isOk(), true);
+			EXPECT_EQ(_support, true);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestCapabilities) {
 			VkSurfaceCapabilitiesKHR _caps = {};
 
