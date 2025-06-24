@@ -296,25 +296,37 @@ namespace CGDev {
 				
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
-				* *Запрашивает поддерживаемые форматы поверхности для указанного физического устройства.*
+				*     Запрашивает список поддерживаемых форматов поверхности (VkSurfaceFormatKHR) для указанного физического устройства.
 				*
-				* Этот метод сначала получает количество доступных форматов, а затем сам список форматов,
-				* используя метод `vkGetPhysicalDeviceSurfaceFormatsKHR` через обёртку `invokeWithVkPhysicalDeviceMethod`.
+				* @details
+				*     Метод реализует двухшаговый вызов vkGetPhysicalDeviceSurfaceFormatsKHR через dispatch table:
+				*     сначала получает количество доступных форматов, затем — сами форматы.
+				*     Если расширение VK_KHR_surface не активировано, возвращает статус FEATURE_NOT_ENABLED.
+				*     В случае ошибки возвращает подробное сообщение и код FAIL.
 				*
-				* @param[in] wvk_physical_device_ptr
-				* *Умный указатель на физическое устройство Vulkan, с которым будет происходить взаимодействие.*
+				*     Алгоритм работы:
+				*     - Проверяет, активировано ли расширение VK_KHR_surface.
+				*     - Очищает выходной вектор и запрашивает количество поддерживаемых форматов.
+				*     - Если количество больше нуля, выделяет память под вектор форматов.
+				*     - Повторно вызывает vkGetPhysicalDeviceSurfaceFormatsKHR для получения самих форматов.
+				*     - Обрабатывает возможные ошибки (в том числе VK_INCOMPLETE) и возвращает статус.
+				*
+				* @param[in]  wvk_physical_device_ptr
+				*     Указатель на объект физического устройства Vulkan (WvkPhysicalDevicePtr).
 				*
 				* @param[out] out
-				* *Вектор, куда будут записаны поддерживаемые форматы поверхности (`VkSurfaceFormatKHR`).*
+				*     Вектор, в который будут записаны поддерживаемые форматы поверхности (VkSurfaceFormatKHR).
 				*
-				* @return
-				* *Объект WvkStatus, указывающий на успех или конкретную ошибку вызова.*
+				* @retval WvkStatus
+				*     - VknStatusCode::SUCCESSFUL — если форматы успешно получены.
+				*     - VknStatusCode::FAIL — если произошла ошибка при вызове Vulkan API.
+				*     - VknStatusCode::FEATURE_NOT_ENABLED — если VK_KHR_surface не активирован.
 				*
 				* @code
 				* std::vector<VkSurfaceFormatKHR> formats;
-				* WvkStatus status = surface->requestFormats(physicalDevice, formats);
+				* WvkStatus status = surface.requestFormats(physicalDevice, formats);
 				* if (!status) {
-				*     std::cerr << status.what() << std::endl;
+				*     std::cerr << status.getMessage() << std::endl;
 				* }
 				* @endcode
 				*/
@@ -387,6 +399,12 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				WvkStatus createVkSurface(void) noexcept;
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				void reset(void) noexcept;
 
 			private:
 

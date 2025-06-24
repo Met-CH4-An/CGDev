@@ -1,4 +1,4 @@
-- [ ] добавить reset() в wvksurface
-- [ ] добавить wvkGetPhysicalDeviceSurfaceSupportKHR в wvksurface
-- [ ] добавить fullscreen exclusive
-- [ ] добавить прямой вывод на дисплей
+- нужны ли обёртки для VkSharedPresentSurfaceCapabilitiesKHR и др.?
+- добавить ограничители методов
+- добавить fullscreen exclusive
+- добавить прямой вывод на дисплей

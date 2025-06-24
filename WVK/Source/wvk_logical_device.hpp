@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_LOGICAL_DEVICE_HPP
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_LOGICAL_DEVICE_HPP
+#ifndef CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP
+#define CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -48,4 +48,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_LOGICAL_DEVICE_HPP
+#endif // CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP

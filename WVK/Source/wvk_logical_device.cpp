@@ -111,9 +111,9 @@ namespace CGDev {
 						for (size_t i = 0; i < create_info.wvk_logical_device_queue_create_info_collection.size(); ++i) {
 							const auto& it_logical_device_queue_create_info = create_info.wvk_logical_device_queue_create_info_collection[i];
 
-							if (it_logical_device_queue_create_info.wvk_queue_family == nullptr) {
+							if (it_logical_device_queue_create_info.wvk_queue_family_ptr == nullptr) {
 								_status.m_code = VknStatusCode::FAIL;
-								_status.append("\n\tVknLogicalDeviceCreateInfo::wvk_queue_family - nullptr.");
+								_status.append("\n\tVknLogicalDeviceCreateInfo::wvk_queue_family_ptr - nullptr.");
 								return _status;
 							}
 							if (it_logical_device_queue_create_info.queue_count.has_value() == false) {
@@ -157,7 +157,7 @@ namespace CGDev {
 						vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 						vk_queue_create_info.pNext = nullptr;
 						vk_queue_create_info.flags = 0; // зарезервировано, всегда 0
-						vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family->getIndexFamily();		// индекс семейства очередей
+						vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family_ptr->getIndexFamily();		// индекс семейства очередей
 						vk_queue_create_info.queueCount = it_0.queue_count.value();			// количество создаваемых очередей
 						vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();	// приоритеты очередей (от 0.0f до 1.0f)
 

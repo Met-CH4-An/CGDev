@@ -83,6 +83,12 @@ namespace CGDev {
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus checkCompatibility(const WvkPhysicalDevicePtrArr1& wvk_physical_device_collection, bool& compatibility) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
 			*  Универсальный метод запроса расширенных свойств физического устройства Vulkan.
 			*  Использует VkPhysicalDeviceProperties2 и цепочку pNext для получения информации
 			*  о свойствах, специфичных для переданной структуры VkPhysicalDeviceXProperties.

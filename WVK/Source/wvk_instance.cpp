@@ -305,7 +305,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 4. При включённых поверхностях проверяем наличие нужных расширений
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (wvk::Build::SurfaceBuildInfo::enable == true) {
+			/*if constexpr (wvk::Build::SurfaceBuildInfo::enable == true) {
 				for (const auto& it_name : wvk::Build::SurfaceBuildInfo::extension_name_collection) {
 					bool _found = false;
 
@@ -323,8 +323,9 @@ namespace CGDev {
 						return _status.set(VknStatusCode::FAIL, "\n\t%s - not found.", std::string(it_name));
 					}
 				}
-			}
-			m_extension_name_collection.push_back("VK_KHR_get_physical_device_properties2");
+			}*/
+			m_extension_name_collection.insert(m_extension_name_collection.end(), Build::WvkBuildInfo::getInstanceExtensions().begin(), Build::WvkBuildInfo::getInstanceExtensions().end());
+			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 5. Возвращаем успешный статус
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

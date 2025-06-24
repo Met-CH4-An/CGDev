@@ -86,17 +86,12 @@ namespace CGDev {
 				WvkStatus _status;
 
 				m_create_info = create_info;
-
-				if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 							
-					_status = validationCreateInfo();
-
-							
-					if (_status.m_code != VknStatusCode::SUCCESSFUL) {
-						_status.m_code = VknStatusCode::FAIL;
-						_status.append("\n\tVknExtDebugUtils::validationCreateInfo() - fail");
-						return _status;
-					}
+				_status = validationCreateInfo();
+						
+				if (!_status) {
+					reset();
+					return _status.set(VknStatusCode::FAIL, "\n\tVknExtDebugUtils::validationCreateInfo() - fail.");
 				}
 
 				m_surface_impl = std::make_unique<WvkSurfaceImpl>();
@@ -104,10 +99,11 @@ namespace CGDev {
 				_status = createVkSurface();
 
 				if (!_status) {
-					_status.set(VknStatusCode::FAIL, "\n\tWvkSurface::createVkSurface - fail.");
-					return _status;
+					reset();
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurface::createVkSurface - fail.");
 				}
-												
+							
+				m_valid = true;
 				return _status.setOk();
 			}
 
@@ -158,6 +154,16 @@ namespace CGDev {
 				m_surface_impl->requestVkSurface(m_vk_surface);
 
 				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			void WvkSurface::reset(void) noexcept {
+				m_create_info = {};
+				m_vk_surface = VK_NULL_HANDLE;
+
+				m_valid = false;
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

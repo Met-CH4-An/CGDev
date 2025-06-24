@@ -98,6 +98,18 @@ namespace CGDev {
 			EXPECT_NE(_props.deviceLUID[0], 0u) << "deviceLUID[0] should not be zero (если используется)";
 		}
 
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkPhysicalDeviceTest, checkCompatibility) {
+			std::vector<CGDev::wvk::WvkPhysicalDevicePtr> _wvk_phys_devs = { 
+				s_wvk_physical_device.get(),
+				s_wvk_physical_device.get() };
+
+			bool _result = false;
+			s_wvk_physical_device->checkCompatibility(_wvk_phys_devs, _result);
+		}
+
 	} // namespace tests
 
 } // namespace CGDev

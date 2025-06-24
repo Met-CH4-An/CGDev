@@ -21,8 +21,12 @@
 #include <functional>
 #include <algorithm>
 #include <type_traits>
+#include <span>
+#include <iterator>
+#include <unordered_set>
 #include "wvk_status.h"
 #include "vulkan/vulkan.h"
+
 
 template<typename>
 struct dependent_false : std::false_type {};
@@ -191,12 +195,17 @@ namespace CGDev {
 							return false;
 						}
 
+						static constexpr std::span<const char* const> getInstanceExtensions(void) {
+							return extensions;
+						}
+
 					private:
-						static constexpr std::array<std::string_view, 4> extensions = {
+						static constexpr std::array<const char*, 5> extensions = {
 							"VK_KHR_get_physical_device_properties2",
 							"VK_KHR_surface",
 							"VK_KHR_get_surface_capabilities2",
-							"VK_KHR_surface_protected_capabilities"
+							"VK_KHR_surface_protected_capabilities",
+							"VK_KHR_win32_surface"
 						};
 					};
 										
@@ -445,8 +454,8 @@ namespace CGDev {
 				using			VknLogicalDeviceSptr									= std::shared_ptr<VknLogicalDevice>;
 				using			VknLogicalDeviceSptrArr									= std::vector<VknLogicalDeviceSptr>;
 				struct			VknLogicalDeviceCreateInfo;
-				struct			VknLogicalDeviceQueueCreateInfo;
-				using			VknLogicalDeviceQueueCreateInfoArr						= std::vector<VknLogicalDeviceQueueCreateInfo>;
+				struct			WvkLogicalDeviceQueueCreateInfo;
+				using			VknLogicalDeviceQueueCreateInfoArr						= std::vector<WvkLogicalDeviceQueueCreateInfo>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief

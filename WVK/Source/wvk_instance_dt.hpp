@@ -43,6 +43,12 @@ namespace CGDev {
 				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDevices, pPhysicalDeviceCount, pPhysicalDevices); }
 
 			// ~~~~~~~~~~~~~~~~
+			// 1.1 or VK_KHR_device_group_creation
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkEnumeratePhysicalDeviceGroups(uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept {
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroups, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties); }
+
+			// ~~~~~~~~~~~~~~~~
 			// 1.0
 			// ~~~~~~~~~~~~~~~~
 			inline void wvkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) const noexcept {
@@ -97,6 +103,11 @@ namespace CGDev {
 			PFN_vkEnumerateDeviceExtensionProperties m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
 			PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
 			PFN_vkGetDeviceProcAddr	m_vkGetDeviceProcAddr = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// 1.1 or VK_KHR_device_group_creation
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkEnumeratePhysicalDeviceGroups m_vkEnumeratePhysicalDeviceGroups = VK_NULL_HANDLE;
 
 			// ~~~~~~~~~~~~~~~~
 			// 1.0
@@ -330,6 +341,11 @@ namespace CGDev {
 					{ "vkGetDeviceProcAddr", reinterpret_cast<void**>(&m_vkGetDeviceProcAddr) },
 
 					// ~~~~~~~~~~~~~~~~
+					// 1.1 or VK_KHR_device_group_creation
+					// ~~~~~~~~~~~~~~~~
+					{ "vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups) },
+
+					// ~~~~~~~~~~~~~~~~
 					// 1.0
 					// ~~~~~~~~~~~~~~~~
 					{ "vkGetPhysicalDeviceFeatures", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures) },
@@ -389,6 +405,11 @@ namespace CGDev {
 				m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
 				m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
 				m_vkGetDeviceProcAddr = VK_NULL_HANDLE;
+
+				// ~~~~~~~~~~~~~~~~
+				// 1.1 or VK_KHR_device_group_creation
+				// ~~~~~~~~~~~~~~~~
+				m_vkEnumeratePhysicalDeviceGroups = VK_NULL_HANDLE;
 
 				// ~~~~~~~~~~~~~~~~
 				// 1.0
