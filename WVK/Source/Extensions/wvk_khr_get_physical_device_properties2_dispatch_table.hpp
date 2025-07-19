@@ -1,5 +1,5 @@
-#ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DT_H
-#define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DT_H
+#ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DISPATCH_TABLE_H
+#define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DISPATCH_TABLE_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			class WvkKhrGetPhysicalDeviceProperties2DT : public VknExtension {
+			class WvkKhrGetPhysicalDeviceProperties2DispatchTable : public VknExtension {
 
 			public:
 
@@ -85,13 +85,13 @@ namespace CGDev {
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkKhrGetPhysicalDeviceProperties2DT(void) : VknExtension(s_name) {}
+				inline WvkKhrGetPhysicalDeviceProperties2DispatchTable(void) : VknExtension(s_name) {}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline ~WvkKhrGetPhysicalDeviceProperties2DT(void) noexcept {}
+				inline ~WvkKhrGetPhysicalDeviceProperties2DispatchTable(void) noexcept {}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\
@@ -245,7 +245,7 @@ namespace CGDev {
 			private:
 
 				WvkKhrGetPhysicalDeviceProperties2DTCreateInfo m_create_info = {};
-			}; // class WvkKhrGetPhysicalDeviceProperties2DT
+			}; // class WvkKhrGetPhysicalDeviceProperties2DispatchTable
 
 		} // namespace Extensions
 
@@ -253,4 +253,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DT_H
+#endif // CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_DISPATCH_TABLE_H

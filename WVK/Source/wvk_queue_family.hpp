@@ -12,9 +12,9 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_instance_dt.hpp"
+#include "wvk_instance_dispatch_table.h"
 #include "wvk_physical_device.h"
-#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 
 namespace CGDev {
 
@@ -69,7 +69,7 @@ namespace CGDev {
 		template<typename Properties>
 		inline void WvkQueueFamily::requestProperties(Properties& out) const noexcept {
 			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::WvkBuildInfo::find(Extensions::WvkKhrGetPhysicalDeviceProperties2DT::s_getName())) {
+				Build::WvkBuildInfo::find(Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTable::s_getName())) {
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Запрашиваем количество семейств очередей у физического устройства

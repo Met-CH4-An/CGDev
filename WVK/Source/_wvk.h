@@ -200,12 +200,13 @@ namespace CGDev {
 						}
 
 					private:
-						static constexpr std::array<const char*, 5> extensions = {
+						static constexpr std::array<const char*, 6> extensions = {
 							"VK_KHR_get_physical_device_properties2",
 							"VK_KHR_surface",
 							"VK_KHR_get_surface_capabilities2",
 							"VK_KHR_surface_protected_capabilities",
-							"VK_KHR_win32_surface"
+							"VK_KHR_win32_surface",
+							"VK_KHR_device_group_creation"
 						};
 					};
 										
@@ -274,26 +275,52 @@ namespace CGDev {
 
 
 				
+				using VkLayerPropertiesArr = std::vector<VkLayerProperties>;
+				using VkExtensionPropertiesArr = std::vector<VkExtensionProperties>;
 
+				using VkBaseInStructureArr1 = std::vector< VkBaseInStructure>;
+				using VkBaseOutStructureArr1 = std::vector<VkBaseOutStructure>;
 
+				// =======================================
+				// [Category]: Physical Device
+				// =======================================
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~				
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~			
+				using VkQueueFamilyPropertiesVec1 = std::vector<VkQueueFamilyProperties>;
+				
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.1
+				// ~~~~~~~~~~~~~~~~
+				using VkQueueFamilyProperties2Vec1 = std::vector<VkQueueFamilyProperties2>;
 
-				using VkLayerPropertiesArr														= std::vector<VkLayerProperties>;
-				using VkExtensionPropertiesArr													= std::vector<VkExtensionProperties>;
+					// ~~~~~~~~~~~~~~~~
+					// [Extension] VK_KHR_get_physical_device_properties2
+					// ~~~~~~~~~~~~~~~~
+					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyCheckpointProperties2NV = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyGlobalPriorityProperties = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyGlobalPriorityPropertiesKHR = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyGlobalPriorityPropertiesEXT = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
+					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
+					//,
+					//	VkQueueFamilyCheckpointPropertiesNV,
+					//	,
+					//	VkQueueFamilyOwnershipTransferPropertiesKHR,
+					//	VkQueueFamilyQueryResultStatusPropertiesKHR
+					//	или VkQueueFamilyVideoPropertiesKHR
+				using VkPhysicalDeviceArr1 = std::vector<VkPhysicalDevice>;
+				using VkPhysicalDeviceArr2 = std::vector<VkPhysicalDeviceArr1>;
+				using VkPhysicalDeviceGroupPropertiesArr = std::vector<VkPhysicalDeviceGroupProperties>;
 
-				using VkPhysicalDeviceArr1														= std::vector<VkPhysicalDevice>;
-				using VkPhysicalDeviceArr2														= std::vector<VkPhysicalDeviceArr1>;
-				using VkPhysicalDeviceGroupPropertiesArr										= std::vector<VkPhysicalDeviceGroupProperties>;
-
-				using VkQueueFamilyPropertiesArr1												= std::vector<VkQueueFamilyProperties>;
-				using VkQueueFamilyProperties2Arr1												= std::vector<VkQueueFamilyProperties2>;
-				using VkQueueFamilyGlobalPriorityPropertiesKHRArr1								= std::vector<VkQueueFamilyGlobalPriorityPropertiesKHR>;
-				using VkQueueFamilyQueryResultStatusPropertiesKHRArr1							= std::vector<VkQueueFamilyQueryResultStatusPropertiesKHR>;
-				using VkQueueFamilyVideoPropertiesKHRArr1										= std::vector<VkQueueFamilyVideoPropertiesKHR>;
+				
+				
+				using VkQueueFamilyGlobalPriorityPropertiesKHRVec1 = std::vector<VkQueueFamilyGlobalPriorityPropertiesKHR>;
+				using VkQueueFamilyQueryResultStatusPropertiesKHRVec1 = std::vector<VkQueueFamilyQueryResultStatusPropertiesKHR>;
+				using VkQueueFamilyVideoPropertiesKHRVec1 = std::vector<VkQueueFamilyVideoPropertiesKHR>;
 				
 				using VkDeviceQueueCreateInfoArr1												= std::vector<VkDeviceQueueCreateInfo>;
 

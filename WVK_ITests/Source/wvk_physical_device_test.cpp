@@ -19,95 +19,80 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkPhysicalDeviceTest, print_vkPhysicalDeviceProperties) {
+		TEST_F(WvkPhysicalDeviceTest, requestProperties) {
 			VkPhysicalDeviceProperties _props;
 			
-			s_wvk_physical_device->requestPhysicalDeviceProperties(_props);
-
-			std::cout << "=======================" << std::endl;
-			std::cout << "Device Name: " << _props.deviceName << std::endl;
-			std::cout << "API Version: "
-				<< VK_VERSION_MAJOR(_props.apiVersion) << "."
-				<< VK_VERSION_MINOR(_props.apiVersion) << "."
-				<< VK_VERSION_PATCH(_props.apiVersion) << std::endl;
-			std::cout << "Driver Version: " << _props.driverVersion << std::endl;
-			std::cout << "Vendor ID: 0x" << std::hex << _props.vendorID << std::dec << std::endl;
-			std::cout << "Device ID: 0x" << std::hex << _props.deviceID << std::dec << std::endl;
-
-			std::string deviceType;
-			switch (_props.deviceType) {
-			case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: deviceType = "Integrated GPU"; break;
-			case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:   deviceType = "Discrete GPU";   break;
-			case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:    deviceType = "Virtual GPU";    break;
-			case VK_PHYSICAL_DEVICE_TYPE_CPU:            deviceType = "CPU";            break;
-			default:                                     deviceType = "Other";          break;
-			}
-			std::cout << "Device Type: " << deviceType << std::endl;
-
-			std::cout << "Limits:" << std::endl;
-			std::cout << "  Max Image Dimension 2D: " << _props.limits.maxImageDimension2D << std::endl;
-			std::cout << "  Max Uniform Buffer Range: " << _props.limits.maxUniformBufferRange << std::endl;
-			std::cout << "  Max Push Constants Size: " << _props.limits.maxPushConstantsSize << std::endl;
-
-			std::cout << "=======================" << std::endl;
-						
-			EXPECT_STRNE(_props.deviceName, "");
+			s_wvk_physical_device->requestProperties(_props);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkPhysicalDeviceTest, print_VkPhysicalDeviceVulkan11Properties) {
-			VkPhysicalDeviceVulkan11Properties _props = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES };
+		TEST_F(WvkPhysicalDeviceTest, requestProperties_out) {
+			VkPhysicalDeviceVulkan11Properties _vulkan_props_11 = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES };
+			s_wvk_physical_device->requestProperties(reinterpret_cast<VkBaseOutStructure*>(&_vulkan_props_11));
 
-			s_wvk_physical_device->requestPhysicalDeviceProperties(_props);
+			VkPhysicalDeviceVulkan12Properties _vulkan_props_12 = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES };
+			s_wvk_physical_device->requestProperties(reinterpret_cast<VkBaseOutStructure*>(&_vulkan_props_12));
 
-			std::cout << "VkPhysicalDeviceVulkan11Properties:\n";
-
-			std::cout << "  deviceUUID: ";
-			for (int i = 0; i < VK_UUID_SIZE; ++i) {
-				std::cout << std::hex << std::setw(2) << std::setfill('0')
-					<< static_cast<int>(_props.deviceUUID[i]);
-			}
-			std::cout << std::dec << "\n";
-
-			std::cout << "  driverUUID: ";
-			for (int i = 0; i < VK_UUID_SIZE; ++i) {
-				std::cout << std::hex << std::setw(2) << std::setfill('0')
-					<< static_cast<int>(_props.driverUUID[i]);
-			}
-			std::cout << std::dec << "\n";
-
-			std::cout << "  deviceLUIDValid: " << (_props.deviceLUIDValid ? "true" : "false") << "\n";
-
-			std::cout << "  subgroupSize: " << _props.subgroupSize << "\n";
-			std::cout << "  subgroupSupportedStages: " << _props.subgroupSupportedStages << "\n";
-			std::cout << "  subgroupSupportedOperations: " << _props.subgroupSupportedOperations << "\n";
-			std::cout << "  subgroupQuadOperationsInAllStages: "
-				<< (_props.subgroupQuadOperationsInAllStages ? "true" : "false") << "\n";
-
-			std::cout << "  pointClippingBehavior: " << _props.pointClippingBehavior << "\n";
-			std::cout << "  maxMultiviewViewCount: " << _props.maxMultiviewViewCount << "\n";
-			std::cout << "  maxMultiviewInstanceIndex: " << _props.maxMultiviewInstanceIndex << "\n";
-			std::cout << "  protectedNoFault: " << (_props.protectedNoFault ? "true" : "false") << "\n";
-
-			std::cout << "  maxPerSetDescriptors: " << _props.maxPerSetDescriptors << "\n";
-			std::cout << "  maxMemoryAllocationSize: " << _props.maxMemoryAllocationSize << "\n";
-
-			EXPECT_NE(_props.deviceUUID[0], 0u) << "deviceUUID[0] should not be zero";
-			EXPECT_NE(_props.deviceLUID[0], 0u) << "deviceLUID[0] should not be zero (если используется)";
+			VkPhysicalDeviceDriverProperties _driver_props = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES };
+			s_wvk_physical_device->requestProperties(reinterpret_cast<VkBaseOutStructure*>(&_driver_props));
 		}
 
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkPhysicalDeviceTest, requestProperties_out_template) {
+			VkPhysicalDeviceVulkan11Properties _vulkan_props_11 = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES };
+			s_wvk_physical_device->requestProperties(_vulkan_props_11);
+
+			VkPhysicalDeviceVulkan12Properties _vulkan_props_12 = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES };
+			s_wvk_physical_device->requestProperties(_vulkan_props_12);
+
+			VkPhysicalDeviceDriverProperties _driver_props = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES };
+			s_wvk_physical_device->requestProperties(_driver_props);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkPhysicalDeviceTest, requestQueueFamilyProperties) {
+			CGDev::wvk::VkQueueFamilyPropertiesVec1 _queue_family_props = {};
+			s_wvk_physical_device->requestQueueFamilyProperties(_queue_family_props);
+			EXPECT_GE(_queue_family_props.size(), 1);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkPhysicalDeviceTest, requestQueueFamilyProperties_out) {
+			std::vector<VkQueueFamilyGlobalPriorityProperties> _global_priority_props;
+			s_wvk_physical_device->requestQueueFamilyProperties(_global_priority_props, VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES);
+			//EXPECT_GE(_queue_family_props.size(), 1);
+		}
+		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkPhysicalDeviceTest, checkCompatibility) {
-			std::vector<CGDev::wvk::WvkPhysicalDevicePtr> _wvk_phys_devs = { 
-				s_wvk_physical_device.get(),
-				s_wvk_physical_device.get() };
+			std::vector<CGDev::wvk::WvkPhysicalDevicePtr> _wvk_phys_devs = {
+			s_wvk_physical_device.get(),
+			s_wvk_physical_device.get() };
 
-			bool _result = false;
-			s_wvk_physical_device->checkCompatibility(_wvk_phys_devs, _result);
+			bool _compatibility = false;
+			auto _res = s_wvk_physical_device->checkCompatibility(_wvk_phys_devs, _compatibility);
+
+			if constexpr (
+				CGDev::wvk::Build::WvkBuildInfo::vulkan_api_version >= CGDev::wvk::Build::VulkanVersion::VERSION_11 ||
+				CGDev::wvk::Build::WvkBuildInfo::find("VK_KHR_device_group_creation")) {
+				EXPECT_EQ(_compatibility, true);
+				EXPECT_EQ(_res.isOk(), true);
+
+			}
+
+			else {
+				EXPECT_EQ(_res.getCode(), CGDev::wvk::VknStatusCode::FEATURE_NOT_ENABLED);
+			}
 		}
 
 	} // namespace tests

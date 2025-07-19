@@ -75,44 +75,152 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 
-			void requestPhysicalDeviceProperties(VkPhysicalDeviceProperties& vk_physical_device_properties) const noexcept;
-
-			void requestPhysicalDeviceProperties(VkPhysicalDeviceProperties2& vk_physical_device_properties) const noexcept;
-
+		// hpp
 		public:			
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus checkCompatibility(const WvkPhysicalDevicePtrArr1& wvk_physical_device_collection, bool& compatibility) const noexcept;
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*  Универсальный метод запроса расширенных свойств физического устройства Vulkan.
-			*  Использует VkPhysicalDeviceProperties2 и цепочку pNext для получения информации
-			*  о свойствах, специфичных для переданной структуры VkPhysicalDeviceXProperties.
+			/*!	\brief Запрашивает базовые свойства физического устройства Vulkan.
 			*
-			* @tparam VkPhysicalDeviceXProperties Тип расширенной структуры свойств Vulkan.
+			* Данный метод получает основные свойства физического устройства Vulkan и заполняет
+			* переданную структуру VkPhysicalDeviceProperties с помощью функции
+			* wvkGetPhysicalDeviceProperties из таблицы диспетчеризации инстанса.
 			*
-			* @param[out] vk_physical_device_x_properties
-			*  Ссылка на структуру расширенных свойств физического устройства, которая будет заполнена.
+			* @param[out] vk_physical_device_properties
+			*   Структура VkPhysicalDeviceProperties, которая будет заполнена свойствами физического устройства.
 			*
 			* @note
-			*  Метод работает только с Vulkan API версии 1.1 и выше.
-			*  Для более старых версий метод не производит никаких действий.
+			*   Метод не выполняет дополнительных проверок и всегда обращается к Vulkan через таблицу диспетчеризации.
 			*
 			* @code
-			* VkPhysicalDeviceVulkan11Properties props11{};
-			* wvkPhysicalDevice.requestPhysicalDeviceProperties(props11);
-			* // props11 заполнен расширенными свойствами Vulkan 1.1
+			* VkPhysicalDeviceProperties props{};
+			* wvk_physical_device.requestPhysicalDeviceProperties(props);
+			* // props теперь содержит основные свойства физического устройства
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename VkPhysicalDeviceXProperties>
-			inline void requestPhysicalDeviceProperties(VkPhysicalDeviceXProperties& vk_physical_device_x_properties) const noexcept;
+			inline void requestProperties(VkPhysicalDeviceProperties& vk_physical_device_properties) const noexcept;
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief Запрашивает свойства физического устройства через цепочку `pNext`, используя `vkGetPhysicalDeviceProperties2`.
+			*
+			* Метод активен только если доступен Vulkan 1.1 или включено расширение `VK_KHR_get_physical_device_properties2`.
+			* Если функциональность недоступна — возвращается ошибка `FEATURE_NOT_ENABLED`.
+			*
+			* @param[out] out
+			* Указатель на первую структуру в цепочке `VkBaseOutStructure`, содержащую расширенные свойства.
+			* Например, это могут быть :
+			* -`VkPhysicalDeviceIDProperties`
+			* -`VkPhysicalDeviceSubgroupProperties`
+			* -`VkPhysicalDevicePointClippingProperties`
+			* и т.п.
+			*
+			* @return
+			* Возвращает `WvkStatus::ok()`, если свойства успешно получены.
+			* Иначе — возвращает `FEATURE_NOT_ENABLED` с пояснением.
+			*
+			* @code
+			* VkPhysicalDeviceIDProperties id_props = {};
+			* id_props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
+			*
+			* WvkStatus status = physical_device->requestProperties(reinterpret_cast<VkBaseOutStructure*>(&id_props));
+			* if (status.isOk()) {
+			*   // Свойства успешно загружены
+			*	processUUID(id_props.deviceUUID);
+			* } else {
+			*	log->error("Свойства устройства не были загружены: {}", status.message());
+			* }
+			*@endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus requestProperties(VkBaseOutStructure* out) const noexcept;
 
-		public:
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			template<typename Out>
+			inline WvkStatus requestProperties(Out& out) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief Запрашивает свойства всех семейств очередей** у физического устройства и сохраняет их в переданный контейнер.
+			*
+			* @param[out] queue_family_properties_collection
+			* Контейнер, в который будут записаны структуры `VkQueueFamilyProperties` — одна для каждого семейства очередей.
+			*
+			* @return
+			* Объект `WvkStatus`, указывающий на успешность операции.
+			*
+			* @code
+			* WvkPhysicalDevice device = ...;
+			* VkQueueFamilyPropertiesVec1 props;
+			* WvkStatus status = device.requestQueueFamilyProperties(props);
+			* if (status.isOk()) {
+			*     // Обрабатываем props
+			* }
+			* @endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus requestQueueFamilyProperties(VkQueueFamilyPropertiesVec1& queue_family_properties_collection) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\briefbrief
+			* Requests extended properties of all available queue families using the `vkGetPhysicalDeviceQueueFamilyProperties2` mechanism.
+			*
+			* @tparam Out
+			* Type of the extended structure to retrieve per queue family (must begin with `VkStructureType` and be chainable via `pNext`).
+			*
+			* @param[out] out
+			* Vector of `Out` structures to be filled with extended queue family properties.
+			*
+			* @param[in] vk_structure_type
+			* The `VkStructureType` corresponding to the `Out` type (e.g., `VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2` or an extension type).
+			*
+			* @return
+			* `WvkStatus::ok()` if the query was successful and the feature is available.
+			* Otherwise returns `FEATURE_NOT_ENABLED` if Vulkan 1.1 or the extension `VK_KHR_get_physical_device_properties2` is not present.
+			*
+			* @code
+			* std::vector<VkQueueFamilyVideoPropertiesKHR> video_queue_props;
+			* status = device.requestQueueFamilyProperties(video_queue_props, VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR);
+			* if (!status) {
+			*     log->error("Query failed: {}", status.message());
+			* }
+			* @endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			template<typename Out>
+			inline WvkStatus requestQueueFamilyProperties(std::vector<Out>& out, const VkStructureType& vk_structure_type) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief Проверяет, входят ли все заданные физические устройства Vulkan в одну группу устройств.
+			*
+			* Метод использует Vulkan API `vkEnumeratePhysicalDeviceGroups` (или `KHR`-вариант),
+			* чтобы определить, входят ли `this` и все устройства из `wvk_physical_device_collection`
+			* в одну и ту же физическую группу.
+			*
+			* @param[in]  wvk_physical_device_collection  Коллекция указателей на физические устройства.
+			* @param[out] compatibility                   Становится `true`, если все устройства совместимы (в одной группе).
+			*
+			* @return
+			* Возвращает статус выполнения. В случае ошибки — содержит описание причины.
+			*
+			* @code
+			* bool is_compatible = false;
+			* WvkStatus status = wvk_physical_device->checkCompatibility(devices, is_compatible);
+			* if (status.isOk() && is_compatible) {
+			*     // Все устройства в одной группе
+			* }
+			* @endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus checkCompatibility(const WvkPhysicalDevicePtrArr1& wvk_physical_device_collection, bool& compatibility) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//template<typename Out>
+			//inline WvkStatus requestQueueFamilyProperties(std::vector<Out>& out, const VkStructureType& vk_structure_type) const noexcept;
 			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief Универсальный вызов метода с автоматической подстановкой VkPhysicalDevice.
@@ -181,6 +289,7 @@ namespace CGDev {
 				!std::is_void_v<std::invoke_result_t<Method, VkPhysicalDevice, Args...>>,
 				std::invoke_result_t<Method, VkPhysicalDevice, Args...>
 			> invokeWithVkPhysicalDeviceFunction(Method&& method, Args&&... args) const noexcept;
+		
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

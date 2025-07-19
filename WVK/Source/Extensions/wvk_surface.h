@@ -75,6 +75,45 @@ namespace CGDev {
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
+				*     Запрашивает список поддерживаемых форматов поверхности (VkSurfaceFormatKHR) для указанного физического устройства.
+				*
+				* @details
+				*     Метод реализует двухшаговый вызов vkGetPhysicalDeviceSurfaceFormatsKHR через dispatch table:
+				*     сначала получает количество доступных форматов, затем — сами форматы.
+				*     Если расширение VK_KHR_surface не активировано, возвращает статус FEATURE_NOT_ENABLED.
+				*     В случае ошибки возвращает подробное сообщение и код FAIL.
+				*
+				*     Алгоритм работы:
+				*     - Проверяет, активировано ли расширение VK_KHR_surface.
+				*     - Очищает выходной вектор и запрашивает количество поддерживаемых форматов.
+				*     - Если количество больше нуля, выделяет память под вектор форматов.
+				*     - Повторно вызывает vkGetPhysicalDeviceSurfaceFormatsKHR для получения самих форматов.
+				*     - Обрабатывает возможные ошибки (в том числе VK_INCOMPLETE) и возвращает статус.
+				*
+				* @param[in]  wvk_physical_device_ptr
+				*     Указатель на объект физического устройства Vulkan (WvkPhysicalDevicePtr).
+				*
+				* @param[out] out
+				*     Вектор, в который будут записаны поддерживаемые форматы поверхности (VkSurfaceFormatKHR).
+				*
+				* @retval WvkStatus
+				*     - VknStatusCode::SUCCESSFUL — если форматы успешно получены.
+				*     - VknStatusCode::FAIL — если произошла ошибка при вызове Vulkan API.
+				*     - VknStatusCode::FEATURE_NOT_ENABLED — если VK_KHR_surface не активирован.
+				*
+				* @code
+				* std::vector<VkSurfaceFormatKHR> formats;
+				* WvkStatus status = surface.requestFormats(physicalDevice, formats);
+				* if (!status) {
+				*     std::cerr << status.getMessage() << std::endl;
+				* }
+				* @endcode
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device_ptr, std::vector<VkSurfaceFormatKHR>& out) const noexcept;
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
 				*     Проверяет поддержку презентации (present support) для указанного семейства очередей на данном surface.
 				*
 				* @details
@@ -113,7 +152,38 @@ namespace CGDev {
 				* @endcode
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestSupport(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const WvkQueueFamilyPtr wvk_queue_family_ptr, bool& out) const noexcept;
+				WvkStatus requestSupport(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const WvkQueueFamilyPtr wvk_queue_family_ptr, bool& out) const noexcept;
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				* Получает список поддерживаемых режимов презентации (VkPresentModeKHR) для текущей поверхности.
+				*
+				* @param[in]  wvk_physical_device_ptr   Указатель на физическое устройство Vulkan (обёртка WvkPhysicalDevicePtr).
+				* @param[out] vk_present_modes      Вектор, в который будут записаны поддерживаемые режимы презентации.
+				*
+				* @return Возвращает статус выполнения операции.
+				*
+				* Возможные ошибки:
+				* - VK_ERROR_OUT_OF_HOST_MEMORY
+				* - VK_ERROR_OUT_OF_DEVICE_MEMORY
+				* - VK_ERROR_SURFACE_LOST_KHR
+				* - VK_INCOMPLETE (при втором вызове)
+				*
+				* @code
+				* WvkSurface surface = ...;
+				* WvkPhysicalDevicePtr device = ...;
+				* std::vector<VkPresentModeKHR> modes;
+				* WvkStatus status = surface.requestPresentModes(device, modes);
+				* if (status) {
+				*     // Успешно
+				*     printPresentModes(modes);
+				* } else {
+				*     std::cerr << status.message() << std::endl;
+				* }
+				* @endcode
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				WvkStatus requestPresentModes(const WvkPhysicalDevicePtr wvk_physical_device_ptr, std::vector<VkPresentModeKHR>& vk_present_modes) const noexcept;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -150,38 +220,7 @@ namespace CGDev {
 				* @endcode
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceCapabilitiesKHR& vk_surface_capabilities_khr) const noexcept;
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				* Получает список поддерживаемых режимов презентации (VkPresentModeKHR) для текущей поверхности.
-				*
-				* @param[in]  wvk_physical_device_ptr   Указатель на физическое устройство Vulkan (обёртка WvkPhysicalDevicePtr).
-				* @param[out] vk_present_modes      Вектор, в который будут записаны поддерживаемые режимы презентации.
-				*
-				* @return Возвращает статус выполнения операции.
-				*
-				* Возможные ошибки:
-				* - VK_ERROR_OUT_OF_HOST_MEMORY
-				* - VK_ERROR_OUT_OF_DEVICE_MEMORY
-				* - VK_ERROR_SURFACE_LOST_KHR
-				* - VK_INCOMPLETE (при втором вызове)
-				*
-				* @code
-				* WvkSurface surface = ...;
-				* WvkPhysicalDevicePtr device = ...;
-				* std::vector<VkPresentModeKHR> modes;
-				* WvkStatus status = surface.requestPresentModes(device, modes);
-				* if (status) {
-				*     // Успешно
-				*     printPresentModes(modes);
-				* } else {
-				*     std::cerr << status.message() << std::endl;
-				* }
-				* @endcode
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestPresentModes(const WvkPhysicalDevicePtr wvk_physical_device_ptr, std::vector<VkPresentModeKHR>& vk_present_modes) const noexcept;
+				WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceCapabilitiesKHR& vk_surface_capabilities_khr) const noexcept;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -212,45 +251,9 @@ namespace CGDev {
 				* @endcode
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestPresentModeCompatibility(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkPresentModeKHR& vk_present_mode, std::vector<VkPresentModeKHR>& out) const noexcept;
+				WvkStatus requestPresentModeCompatibility(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkPresentModeKHR& vk_present_mode, std::vector<VkPresentModeKHR>& out) const noexcept;
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*     Запрашивает возможности масштабирования изображения (scaling capabilities)
-				*     для заданного режима презентации (`VkPresentModeKHR`) через цепочку `pNext`.
-				*
-				* @param [in]  wvk_physical_device_ptr
-				*     Указатель на объект логического представления физического устройства.
-				*
-				* @param [in]  vk_present_mode
-				*     Режим презентации, для которого требуется получить информацию о масштабировании.
-				*
-				* @param [out] out
-				*     Структура `VkSurfacePresentScalingCapabilitiesEXT`, куда будет записана
-				*     информация о поддерживаемых режимах масштабирования.
-				*
-				* @return
-				*     Объект `WvkStatus`, содержащий результат операции.
-				*
-				* @code
-				* VkSurfacePresentScalingCapabilitiesEXT scaling_caps = {};
-				* WvkStatus status = wvk_surface->requestScalingCompatibility(
-				*     wvk_physical_device_ptr,
-				*     VK_PRESENT_MODE_FIFO_KHR,
-				*     scaling_caps
-				* );
-				* if (!status) {
-				*     // Обработка ошибки
-				* }
-				* @endcode
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkStatus requestScalingCompatibility(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkPresentModeKHR& vk_present_mode, VkSurfacePresentScalingCapabilitiesEXT& out) const noexcept;
-
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept;
-
-				template<typename In, typename Out>
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const In& in, Out& out) const noexcept;
+				
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -292,46 +295,13 @@ namespace CGDev {
 				* @endcode
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept;			
-				
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*     Запрашивает список поддерживаемых форматов поверхности (VkSurfaceFormatKHR) для указанного физического устройства.
-				*
-				* @details
-				*     Метод реализует двухшаговый вызов vkGetPhysicalDeviceSurfaceFormatsKHR через dispatch table:
-				*     сначала получает количество доступных форматов, затем — сами форматы.
-				*     Если расширение VK_KHR_surface не активировано, возвращает статус FEATURE_NOT_ENABLED.
-				*     В случае ошибки возвращает подробное сообщение и код FAIL.
-				*
-				*     Алгоритм работы:
-				*     - Проверяет, активировано ли расширение VK_KHR_surface.
-				*     - Очищает выходной вектор и запрашивает количество поддерживаемых форматов.
-				*     - Если количество больше нуля, выделяет память под вектор форматов.
-				*     - Повторно вызывает vkGetPhysicalDeviceSurfaceFormatsKHR для получения самих форматов.
-				*     - Обрабатывает возможные ошибки (в том числе VK_INCOMPLETE) и возвращает статус.
-				*
-				* @param[in]  wvk_physical_device_ptr
-				*     Указатель на объект физического устройства Vulkan (WvkPhysicalDevicePtr).
-				*
-				* @param[out] out
-				*     Вектор, в который будут записаны поддерживаемые форматы поверхности (VkSurfaceFormatKHR).
-				*
-				* @retval WvkStatus
-				*     - VknStatusCode::SUCCESSFUL — если форматы успешно получены.
-				*     - VknStatusCode::FAIL — если произошла ошибка при вызове Vulkan API.
-				*     - VknStatusCode::FEATURE_NOT_ENABLED — если VK_KHR_surface не активирован.
-				*
-				* @code
-				* std::vector<VkSurfaceFormatKHR> formats;
-				* WvkStatus status = surface.requestFormats(physicalDevice, formats);
-				* if (!status) {
-				*     std::cerr << status.getMessage() << std::endl;
-				* }
-				* @endcode
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				inline WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device_ptr, std::vector<VkSurfaceFormatKHR>& out) const noexcept;
+				WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept;
+
+			// hpp
+			public:
+
+				template<typename In, typename Out>
+				inline WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const In& in, Out& out) const noexcept;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -367,6 +337,44 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				template<typename T>
 				inline WvkStatus requestFormats(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkBaseInStructure* in, const VkStructureType& prop_sType, std::vector<T>& out_props) const noexcept;
+
+			// helper
+			public:
+
+				WvkStatus requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceProtectedCapabilitiesKHR& out) const noexcept;
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*     Запрашивает возможности масштабирования изображения (scaling capabilities)
+				*     для заданного режима презентации (`VkPresentModeKHR`) через цепочку `pNext`.
+				*
+				* @param [in]  wvk_physical_device_ptr
+				*     Указатель на объект логического представления физического устройства.
+				*
+				* @param [in]  vk_present_mode
+				*     Режим презентации, для которого требуется получить информацию о масштабировании.
+				*
+				* @param [out] out
+				*     Структура `VkSurfacePresentScalingCapabilitiesEXT`, куда будет записана
+				*     информация о поддерживаемых режимах масштабирования.
+				*
+				* @return
+				*     Объект `WvkStatus`, содержащий результат операции.
+				*
+				* @code
+				* VkSurfacePresentScalingCapabilitiesEXT scaling_caps = {};
+				* WvkStatus status = wvk_surface->requestScalingCompatibility(
+				*     wvk_physical_device_ptr,
+				*     VK_PRESENT_MODE_FIFO_KHR,
+				*     scaling_caps
+				* );
+				* if (!status) {
+				*     // Обработка ошибки
+				* }
+				* @endcode
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				WvkStatus requestScalingCompatibility(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkPresentModeKHR& vk_present_mode, VkSurfacePresentScalingCapabilitiesEXT& out) const noexcept;		
 
 			private:
 

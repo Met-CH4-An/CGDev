@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 
 namespace CGDev {
 
@@ -107,7 +107,7 @@ namespace CGDev {
 			//	dt->loadInto(_procedures);
 			//}
 
-			//inline void setUp(Extensions::WvkKhrGetPhysicalDeviceProperties2DTPtr dt) {
+			//inline void setUp(Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTablePtr dt) {
 			//	std::vector<WvkVulkanProcedureInfo> _procedures = {
 			//			{ "vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2) }						
 			//	};

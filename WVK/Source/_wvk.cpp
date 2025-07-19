@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////////
 #include "Layers/wvk_layer_khronos_validation.h"
 #include "Extensions/wvk_ext_debug_utils.h"
-#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 #include "Extensions/wvk_khr_surface_dt.hpp"
 
 namespace CGDev {

@@ -55,15 +55,15 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class WvkKhrGetPhysicalDeviceProperties2DT;
-					using WvkKhrGetPhysicalDeviceProperties2DTPtr = WvkKhrGetPhysicalDeviceProperties2DT * ;
-					using WvkKhrGetPhysicalDeviceProperties2DTPtrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTPtr>;
-					using WvkKhrGetPhysicalDeviceProperties2DTSptr = std::shared_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using WvkKhrGetPhysicalDeviceProperties2DTSptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTSptr>;
-					using WvkKhrGetPhysicalDeviceProperties2DTUptr = std::unique_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using WvkKhrGetPhysicalDeviceProperties2DTUptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTUptr>;
-					using WvkKhrGetPhysicalDeviceProperties2DTWptr = std::weak_ptr<WvkKhrGetPhysicalDeviceProperties2DT>;
-					using WvkKhrGetPhysicalDeviceProperties2DTWptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DTWptr>;
+					class WvkKhrGetPhysicalDeviceProperties2DispatchTable;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTablePtr = WvkKhrGetPhysicalDeviceProperties2DispatchTable * ;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTablePtrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DispatchTablePtr>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableSptr = std::shared_ptr<WvkKhrGetPhysicalDeviceProperties2DispatchTable>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableSptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DispatchTableSptr>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableUptr = std::unique_ptr<WvkKhrGetPhysicalDeviceProperties2DispatchTable>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableUptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DispatchTableUptr>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableWptr = std::weak_ptr<WvkKhrGetPhysicalDeviceProperties2DispatchTable>;
+					using WvkKhrGetPhysicalDeviceProperties2DispatchTableWptrArr1 = std::vector<WvkKhrGetPhysicalDeviceProperties2DispatchTableWptr>;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief

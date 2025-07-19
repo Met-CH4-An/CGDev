@@ -10,7 +10,7 @@
 #include "wvk_loader_dispatch_table.cpp"
 #include "wvk_logical_device.cpp"
 #include "wvk_instance.cpp"
-#include "wvk_instance_dt.hpp"
+#include "wvk_instance_dispatch_table.cpp"
 #include "wvk_physical_device.cpp"
 #include "wvk_queue.cpp"
 #include "wvk_dispatch_table.hpp"
@@ -19,7 +19,7 @@
 
 #include "MSWindows/wvk_loader_mswindows.cpp"
 
-#include "Extensions/wvk_khr_get_physical_device_properties2_dt.hpp"
+#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 #include "Extensions/wvk_ext_debug_utils.cpp"
 #include "Extensions/wvk_ext_debug_utils_commands.cpp"
 #include "Extensions/wvk_surface.cpp"
