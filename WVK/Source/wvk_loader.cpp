@@ -37,8 +37,8 @@ namespace CGDev {
 				// Шаг 1. Проверка compile-time условий сборки
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				if constexpr (
-					wvk::Build::WvkBuildInfo::enable &&
-					wvk::Build::WvkBuildInfo::platform_type == wvk::Build::PlatformType::MSWindows) {
+					wvk::Build::enable &&
+					wvk::Build::platform_type == wvk::Build::PlatformType::MSWindows) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Подготовка структуры для создания платформенного загрузчика
@@ -123,12 +123,10 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 3. Валидация входных данных, если включена
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (Build::ValidationBuildInfo::enable) {
-				_status = validationCreateInfo();
-				if (!_status) {
-					reset();
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkLoader::validationCreateInfo - fail");
-				}
+			_status = validationCreateInfo();
+			if (!_status) {
+				reset();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLoader::validationCreateInfo - fail");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

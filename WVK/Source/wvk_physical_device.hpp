@@ -38,8 +38,8 @@ namespace CGDev {
 			// Шаг 2. Проверяем поддержку Vulkan 1.1 или расширения
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if constexpr (
-				Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::WvkBuildInfo::find("VK_KHR_get_physical_device_properties2")) {
+				Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
+				Build::find("VK_KHR_get_physical_device_properties2")) {
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 3. Подготавливаем основную структуру запроса
@@ -87,7 +87,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(VkQueueFamilyPropertiesVec1& queue_family_properties_collection) const noexcept {
+		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<VkQueueFamilyProperties>& queue_family_properties_collection) const noexcept {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 1. Создаём объект статуса
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,8 +136,8 @@ namespace CGDev {
 			// Шаг 1. Проверка доступности Vulkan 1.1 или расширения VK_KHR_get_physical_device_properties2
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if constexpr (
-				Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::WvkBuildInfo::find("VK_KHR_get_physical_device_properties2")) {
+				Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
+				Build::find("VK_KHR_get_physical_device_properties2")) {
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 2. Запрашиваем количество доступных семейств очередей
@@ -152,7 +152,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 3. Выделяем временный буфер для VkQueueFamilyProperties2
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				VkQueueFamilyProperties2Vec1 _props2_collection(_count);
+				std::vector<VkQueueFamilyProperties2> _props2_collection(_count);
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 4. Ресайзим выходной вектор и инициализируем цепочки pNext
@@ -193,135 +193,129 @@ namespace CGDev {
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//VkResult(WvkInstanceDt:: * method_ptr)(uint32_t*, VkPhysicalDeviceGroupProperties*) const noexcept = nullptr;
+		//VkResult(WvkInstanceDispatchTable:: * method_ptr)(uint32_t*, VkPhysicalDeviceGroupProperties*) const noexcept = nullptr;
 				//if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
-				//	method_ptr = &WvkInstanceDt::wvkEnumeratePhysicalDeviceGroups;
+				//	method_ptr = &WvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups;
 				//}
 				//else if constexpr (Build::WvkBuildInfo::find("VK_KHR_device_group_creation")) {
-				//	method_ptr = &WvkInstanceDt::wvkEnumeratePhysicalDeviceGroupsKHR;
+				//	method_ptr = &WvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroupsKHR;
 				//}
 				//auto* obj = m_create_info.wvk_instance_dispatch_table;
 				//VkResult _vk_res = (obj->*method_ptr)(&_count, nullptr);
-		inline WvkStatus WvkPhysicalDevice::checkCompatibility(const WvkPhysicalDevicePtrArr1& wvk_physical_device_collection, bool& compatibility) const noexcept {
+		inline WvkStatus WvkPhysicalDevice::checkCompatibility(const WvkPhysicalDevicePtrVec1& wvk_physical_device_collection, bool& compatibility) const noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Проверка: поддерживается ли Vulkan 1.1 или расширение VK_KHR_device_group_creation
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::WvkBuildInfo::find("VK_KHR_device_group_creation")) {
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Получаем количество доступных физических групп
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				uint32_t _count = 0;
-
-				VkResult _vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, nullptr);
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Обработка ошибок первого вызова
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if (_vk_res != VK_SUCCESS) {
-					switch (_vk_res) {
-					case VK_ERROR_OUT_OF_HOST_MEMORY:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
-						break;
-					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
-						break;
-					case VK_ERROR_INITIALIZATION_FAILED:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
-						break;
-					}
-					return _status.set(VknStatusCode::FAIL);
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 4. Выделяем память и получаем свойства групп
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				std::vector<VkPhysicalDeviceGroupProperties> _vk_physical_device_group_properties_collection(_count);
-
-				_vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, _vk_physical_device_group_properties_collection.data());
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 5. Обработка ошибок второго вызова
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if (_vk_res != VK_SUCCESS) {
-					switch (_vk_res) {
-					case VK_ERROR_OUT_OF_HOST_MEMORY:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
-						break;
-					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
-						break;
-					case VK_ERROR_INITIALIZATION_FAILED:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
-						break;
-					case VK_INCOMPLETE:
-						_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_INCOMPLETE.");
-						break;
-					}
-					return _status.set(VknStatusCode::FAIL);
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 6. Вспомогательная функция: превращаем группу в множество устройств
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				auto makeDeviceSet = [](const VkPhysicalDeviceGroupProperties& group) {
-					return std::unordered_set<VkPhysicalDevice>(
-						group.physicalDevices,
-						group.physicalDevices + group.physicalDeviceCount
-					);
-					};
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 7. Создаём временный список указателей на устройства + добавляем текущее
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				std::vector<const WvkPhysicalDevice*> _wvk_physical_device_collection_temp;
-				std::transform(
-					wvk_physical_device_collection.begin(),
-					wvk_physical_device_collection.end(),
-					std::back_inserter(_wvk_physical_device_collection_temp),
-					[](WvkPhysicalDevice* ptr) {
-						return static_cast<const WvkPhysicalDevice*>(ptr);
-					}
-				);
-				_wvk_physical_device_collection_temp.push_back(this);
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 8. Проверка: находятся ли все устройства в одной группе
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				for (const auto& group : _vk_physical_device_group_properties_collection) {
-					std::unordered_set<VkPhysicalDevice> device_set = makeDeviceSet(group);
-
-					bool all_found = std::all_of(
-						_wvk_physical_device_collection_temp.begin(),
-						_wvk_physical_device_collection_temp.end(),
-						[&](const WvkPhysicalDevice* wvk_phys_dev) {
-							return device_set.contains(wvk_phys_dev->m_vk_physical_device);
-						}
-					);
-
-					if (all_found) {
-						compatibility = true;
-						return _status.setOk();
-					}
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 9. Если ни одна группа не содержит все устройства — несовместимо
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				compatibility = false;
-				return _status.setOk();
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 10. Поддержка устройства групп не включена
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_DISABLE
 			return _status.set(
 				VknStatusCode::FEATURE_NOT_ENABLED,
 				"\nVulkan 1.1 or VK_KHR_device_group_creation is not enabled."
 			);
+#endif
+#if (VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_ENABLE) || VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2. Получаем количество доступных физических групп
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			uint32_t _count = 0;
+
+			VkResult _vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, nullptr);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 3. Обработка ошибок первого вызова
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (_vk_res != VK_SUCCESS) {
+				switch (_vk_res) {
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
+					break;
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+					break;
+				case VK_ERROR_INITIALIZATION_FAILED:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
+					break;
+				}
+				return _status.set(VknStatusCode::FAIL);
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Выделяем память и получаем свойства групп
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::vector<VkPhysicalDeviceGroupProperties> _vk_physical_device_group_properties_collection(_count);
+
+			_vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, _vk_physical_device_group_properties_collection.data());
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 5. Обработка ошибок второго вызова
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (_vk_res != VK_SUCCESS) {
+				switch (_vk_res) {
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
+					break;
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+					break;
+				case VK_ERROR_INITIALIZATION_FAILED:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
+					break;
+				case VK_INCOMPLETE:
+					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_INCOMPLETE.");
+					break;
+				}
+				return _status.set(VknStatusCode::FAIL);
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 6. Вспомогательная функция: превращаем группу в множество устройств
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			auto makeDeviceSet = [](const VkPhysicalDeviceGroupProperties& group) {
+				return std::unordered_set<VkPhysicalDevice>(
+					group.physicalDevices,
+					group.physicalDevices + group.physicalDeviceCount
+				);
+				};
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 7. Создаём временный список указателей на устройства + добавляем текущее
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::vector<VkPhysicalDevice> _vk_physical_device_collection;
+			std::transform(
+				wvk_physical_device_collection.begin(),
+				wvk_physical_device_collection.end(),
+				std::back_inserter(_vk_physical_device_collection),
+				[](const WvkPhysicalDevicePtr ptr) {
+					return ptr->m_vk_physical_device;
+				}
+			);
+			_vk_physical_device_collection.push_back(m_vk_physical_device);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 8. Проверка: находятся ли все устройства в одной группе
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			for (const auto& group : _vk_physical_device_group_properties_collection) {
+				std::unordered_set<VkPhysicalDevice> device_set = makeDeviceSet(group);
+
+				bool all_found = std::all_of(
+					_vk_physical_device_collection.begin(),
+					_vk_physical_device_collection.end(),
+					[&](const VkPhysicalDevice vk_phys_dev) {
+						return device_set.contains(vk_phys_dev);
+					}
+				);
+
+				if (all_found) {
+					compatibility = true;
+					return _status.setOk();
+				}
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 9. Если ни одна группа не содержит все устройства — несовместимо
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			compatibility = false;
+			return _status.setOk();
+#endif
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -388,6 +382,13 @@ namespace CGDev {
 			return std::invoke(std::forward<Method>(method),
 				m_vk_physical_device,
 				std::forward<Args>(args)...);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline VkPhysicalDevice WvkPhysicalDevice::getVkPhysicalDevice(void) const noexcept {
+			return m_vk_physical_device;
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

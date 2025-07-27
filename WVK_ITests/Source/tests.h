@@ -14,7 +14,9 @@
 #include "wvk_physical_device.h"
 #include "wvk_dispatch_table.hpp"
 #include "wvk_queue_family.h"
+#include "wvk_logical_device.h"
 
+#include "Extensions/wvk_ext_debug_utils.h"
 #include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 #include "Extensions/wvk_khr_surface_dt.hpp"
 #include "Extensions/wvk_khr_get_surface_capabilities2_dt.hpp"
@@ -61,64 +63,105 @@ protected:
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
+        
         createExtensions();
-        if (s_wvk_instance_dispatch_table == nullptr) {
-            s_wvk_instance_dispatch_table = std::make_unique<CGDev::wvk::WvkInstanceDt>();
-
+        
+        // WvkInstanceDispatchTable
+        {
             CGDev::wvk::WvkInstanceDtCreateInfo _create_info;
             _create_info.wvk_loader = s_wvk_loader.get();
             _create_info.wvk_instance = s_wvk_instance.get();
 
-            auto _wvk_res = s_wvk_instance_dispatch_table->create(_create_info);
+            auto _wvk_res = wvk_instance_dispatch_table.create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
-        if (s_wvk_physical_device == nullptr) {
+        // WvkExtDebugUtils
+        {
+            CGDev::wvk::Extensions::WvkExtDebugUtilsCreateInfo _create_info;
+            _create_info.wvk_instance_dispatch_table = &wvk_instance_dispatch_table;
+            _create_info.mode = CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_SEVERITIES | CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_TYPES;
+            
+            auto _wvk_res = wvk_ext_debug_utils.create(_create_info);
+            ASSERT_EQ(_wvk_res.isOk(), true);
+        }
+
+        // WvkPhysicalDevice
+        {
             uint32_t _count = 1;
             std::vector<VkPhysicalDevice> _vk_physical_device_collection1(1);
-            s_wvk_instance_dispatch_table->wvkEnumeratePhysicalDevices(&_count, _vk_physical_device_collection1.data());
-
-            s_wvk_physical_device = std::make_unique<CGDev::wvk::WvkPhysicalDevice>();
+            wvk_instance_dispatch_table.wvkEnumeratePhysicalDevices(&_count, _vk_physical_device_collection1.data());
 
             CGDev::wvk::WvkPhysicalDeviceCreateInfo _create_info;
             _create_info.vk_physical_device = _vk_physical_device_collection1[0];
-            _create_info.wvk_instance_dispatch_table = s_wvk_instance_dispatch_table.get();
+            _create_info.wvk_instance_dispatch_table = &wvk_instance_dispatch_table;
 
-            auto _wvk_res = s_wvk_physical_device->create(_create_info);
+            auto _wvk_res = wvk_physical_device.create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
-        
-        //if (s_wvk_dispatch_table == nullptr) {
-        //    s_wvk_dispatch_table = std::make_unique<CGDev::wvk::WvkDispatchTable>();
 
-        //    CGDev::wvk::WvkDispatchTableCreateInfo _create_info;
-            //_create_info.wvk_loader = s_wvk_loader.get();
-            //_create_info.wvk_instance = s_wvk_instance.get();
-
-         //   auto _wvk_res = s_wvk_dispatch_table->create(_create_info);
-
-         //   s_wvk_dispatch_table->setUp(s_wvk_instance_dispatch_table.get());
-         //   s_wvk_dispatch_table->setUp(s_wvk_khr_get_phys_dev_props2_dt.get());
-
-        //    ASSERT_EQ(_wvk_res.isOk(), true);
-        //}
-
-        if (s_wvk_queue_family == nullptr) {
-            s_wvk_queue_family = std::make_unique<CGDev::wvk::WvkQueueFamily>();
-
+        // WvkQueueFamily
+        {
             CGDev::wvk::WvkQueueFamilyCreateInfo _create_info;
             _create_info.index = 0;
-            _create_info.instance_dt_ptr = s_wvk_instance_dispatch_table.get();
-            _create_info.wvk_physical_device_ptr = s_wvk_physical_device.get();
+            _create_info.instance_dt_ptr = &wvk_instance_dispatch_table;
+            _create_info.wvk_physical_device_ptr = &wvk_physical_device;
 
-            auto _wvk_res = s_wvk_queue_family->create(_create_info);
+            auto _wvk_res = wvk_queue_family.create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
-       
+        // WvkLogicalDevice
+        {
+            auto f16 = VkPhysicalDevice16BitStorageFeatures{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
+                .storageBuffer16BitAccess = VK_TRUE
+            }; 
+            auto f16_ = VkPhysicalDevice16BitStorageFeatures{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
+                .storageBuffer16BitAccess = VK_TRUE
+            };
+            auto f8 = VkPhysicalDevice8BitStorageFeatures{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES,
+                .storageBuffer8BitAccess = VK_TRUE
+            };
+            auto f11 = VkPhysicalDeviceVulkan11Features{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+				.multiview = VK_TRUE
+            };
+            auto f12 = VkPhysicalDeviceVulkan12Features{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+                .bufferDeviceAddressCaptureReplay = VK_TRUE
+            };
+
+            //auto f16 = CGDev::wvk::WvkLogicalDeviceFeature::make("VK_KHR_16bit_storage", );
+            //VkPhysicalDevice16BitStorageFeatures f16{};
+            //f16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
+            //f16.pNext = nullptr;
+            //f16.storageBuffer16BitAccess = VK_TRUE;
+            //CGDev::wvk::WvkLogicalDeviceFeature::make("VK_KHR_16bit_storage", f16);
+            //CGDev::wvk::WvkLogicalDeviceFeatureVec1 m_wvk_logical_device_feature_collection;
+            CGDev::wvk::WvkLogicalDeviceQueueCreateInfo _queue_create_info = {};
+            _queue_create_info.wvk_queue_family_ptr = &wvk_queue_family;
+            _queue_create_info.queue_count = 1;
+            _queue_create_info.priority_collection = { 1.0f };
+            
+            CGDev::wvk::WvkLogicalDeviceCreateInfo _create_info;
+            _create_info.wvk_instance_dispatch_table = &wvk_instance_dispatch_table;
+            _create_info.wvk_physical_device_collection.push_back(&wvk_physical_device);
+            _create_info.wvk_logical_device_queue_create_info_collection.push_back(_queue_create_info);
+			_create_info.m_wvk_logical_device_feature_collection.push_back(CGDev::wvk::WvkLogicalDeviceFeature("VK_KHR_16bit_storage", f16));
+            _create_info.m_wvk_logical_device_feature_collection.push_back(CGDev::wvk::WvkLogicalDeviceFeature("VK_KHR_8bit_storage", f8));
+            _create_info.m_wvk_logical_device_feature_collection.push_back(CGDev::wvk::WvkLogicalDeviceFeature("VK_KHR_8bit_storage", f11));
+            //_create_info.m_wvk_logical_device_feature_collection.push_back(CGDev::wvk::WvkLogicalDeviceFeature("VK_KHR_8bit_storage", f12));
+            
+            auto _wvk_res = wvk_logical_device.create(_create_info);
+
+           //ASSERT_EQ(_wvk_res.isOk(), true);
+        }
 
         if (s_wvk_surface == nullptr) {
             HINSTANCE _hInstance = NULL;
@@ -134,7 +177,7 @@ protected:
             _create_info_mswindows.hWnd = _hWnd;
 
             CGDev::wvk::Extensions::WvkSurfaceCreateInfo _create_info;
-            _create_info.wvk_instance_dt_ptr = s_wvk_instance_dispatch_table.get();
+            _create_info.wvk_instance_dt_ptr = &wvk_instance_dispatch_table;
             _create_info.wvk_khr_surface_dt = s_wvk_khr_surface_dt.get();
             _create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
             _create_info.wvk_surface_platform_create_info = &_create_info_mswindows;
@@ -200,11 +243,13 @@ protected:
     inline static CGDev::wvk::WvkLoaderUptr s_wvk_loader = nullptr;
     inline static CGDev::wvk::WvkLoaderDispatchTableUptr s_wvk_loader_dispatch_table = nullptr;
     inline static CGDev::wvk::WvkInstanceUptr s_wvk_instance = nullptr;
-    inline static CGDev::wvk::WvkInstanceDtUptr s_wvk_instance_dispatch_table = nullptr;
-    inline static CGDev::wvk::WvkPhysicalDeviceUptr s_wvk_physical_device = nullptr;
+    inline static CGDev::wvk::WvkInstanceDispatchTable wvk_instance_dispatch_table;
+    inline static CGDev::wvk::WvkPhysicalDevice wvk_physical_device;
     inline static std::unique_ptr<CGDev::wvk::WvkDispatchTable> s_wvk_dispatch_table = nullptr;
-    inline static CGDev::wvk::WvkQueueFamilyUptr s_wvk_queue_family = nullptr;
+    inline static CGDev::wvk::WvkQueueFamily wvk_queue_family;
+    inline static CGDev::wvk::WvkLogicalDevice wvk_logical_device;
     
+    inline static CGDev::wvk::Extensions::WvkExtDebugUtils wvk_ext_debug_utils;
     inline static CGDev::wvk::Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTableUptr s_wvk_khr_get_phys_dev_props2_dt = nullptr;
     inline static CGDev::wvk::Extensions::WvkKhrSurfaceDTUptr s_wvk_khr_surface_dt = nullptr;
     inline static CGDev::wvk::Extensions::WvkKhrGetSurfaceCapabilities2DispatchTableUptr s_wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;

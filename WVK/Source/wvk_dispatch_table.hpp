@@ -100,7 +100,7 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			inline void destroy(void) noexcept {}
 
-			//inline void setUp(WvkInstanceDtPtr dt) {
+			//inline void setUp(WvkInstanceDispatchTablePtr dt) {
 			//	std::vector<WvkVulkanProcedureInfo> _procedures = {
 			//			{ "vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2) }
 			//	};

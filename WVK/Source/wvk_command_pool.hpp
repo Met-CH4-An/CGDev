@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_HPP
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_HPP
+#ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
+#define CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -15,37 +15,20 @@
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		 
+		inline const VkCommandPool& WvkCommandPool::getVkCommandPool(void) const noexcept {
+			return m_vk_command_pool;
+		}
 
-			namespace wvk {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				inline const VknCommandPoolCreateInfo& VknCommandPool::getCreateInfo(void) const noexcept {
-
-					return m_create_info;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				inline const VkCommandPool& VknCommandPool::getVkCommandPool(void) const noexcept {
-
-					return m_vk_command_pool;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			} // namespace wvk
-
-		//} // namespace Private
-
-	//} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_HPP
+#endif // CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP

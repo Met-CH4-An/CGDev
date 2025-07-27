@@ -16,7 +16,6 @@
 #include "wvk_physical_device.h"		// что тестируем
 
 #include "wvk_instance_test.h"
-#include "wvk_commands_instance_test.h"
 
 namespace CGDev {
 

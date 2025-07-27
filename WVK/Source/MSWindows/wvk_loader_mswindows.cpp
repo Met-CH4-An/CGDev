@@ -51,12 +51,10 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 3. Валидируем входные параметры, если включена проверка
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::ValidationBuildInfo::enable) {
-					_status = validationCreateInfo(create_info);
-
-					if (!_status) {
-						return _status.set(VknStatusCode::FAIL, "\n\tWknLoaderMSWindows::validationCreateInfo - fail");
-					}
+				_status = validationCreateInfo(create_info);
+				
+				if (!_status) {
+					return _status.set(VknStatusCode::FAIL, "\n\tWknLoaderMSWindows::validationCreateInfo - fail");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

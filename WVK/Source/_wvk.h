@@ -154,6 +154,25 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					extern const std::vector<std::string> extension_name_collection;
 
+#define VULKAN_API_VERSION_10 10
+#define VULKAN_API_VERSION_11 11
+#define VULKAN_API_VERSION_12 12
+#define VULKAN_API_VERSION_13 13
+#define VULKAN_API_VERSION_14 14
+
+#define WVK_EXTENSION_DISABLE 0
+#define WVK_EXTENSION_ENABLE 1
+
+#define VULKAN_API_VERSION VULKAN_API_VERSION_11
+
+#define WVK_KHR_get_physical_device_properties2 WVK_EXTENSION_ENABLE
+//#define WVK_KHR_get_physical_device_properties2 WVK_EXTENSION_DISABLE
+#define WVK_KHR_device_group_creation WVK_EXTENSION_DISABLE
+
+
+
+
+
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
 					*/
@@ -161,66 +180,32 @@ namespace CGDev {
 					//static const bool s_wvk_debug = []() { if constexpr (Build::type_build == Private::Build::TypeBuild::DEBUG) return true; else return false; }();
 					static const bool s_wvk_debug = true;
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief Информация о сборке Vulkan-проекта.
-					*
-					* Структура `WvkBuildInfo` содержит статические параметры, определяющие характеристики текущей сборки.
-					* Она предоставляет информацию о версии Vulkan SDK, целевой версии Vulkan API и платформе, под которую производится сборка.
-					*
-					* Все поля являются `constexpr` и задаются на этапе компиляции.
-					*
-					* @note Эта структура может использоваться для условий компиляции или логирования в отладочных целях.
-					*
-					* @code
-					* // Пример использования WvkBuildInfo
-					* if constexpr (WvkBuildInfo::enable) {
-					*     std::cout << "Сборка разрешена для платформы "
-					*               << static_cast<int>(WvkBuildInfo::platform_type) << std::endl;
-					* }
-					* @endcode
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					struct WvkBuildInfo {
-						static constexpr bool enable = true;
-						static constexpr uint32_t vulkan_sdk_version = VK_HEADER_VERSION;
-						static constexpr VulkanVersion vulkan_api_version = VulkanVersion::VERSION_10;
-						static constexpr PlatformType platform_type = PlatformType::MSWindows;
-
-						static constexpr bool find(std::string_view value) {
-							for (std::string_view item : extensions) {
-								if (item == value) {
-									return true;
-								}
+					static constexpr bool enable = true;
+					static constexpr uint32_t vulkan_sdk_version = VK_HEADER_VERSION;
+					static constexpr VulkanVersion vulkan_api_version = VulkanVersion::VERSION_10;
+					static constexpr PlatformType platform_type = PlatformType::MSWindows;
+					static constexpr std::array<const char*, 7> vulkan_compile_time_extensions = {
+						"VK_EXT_debug_utils",
+						"VK_KHR_get_physical_device_properties2",
+						"VK_KHR_surface",
+						"VK_KHR_get_surface_capabilities2",
+						"VK_KHR_surface_protected_capabilities",
+						"VK_KHR_win32_surface",
+						"VK_KHR_device_group_creation"
+					};
+					static constexpr std::span<const char* const> getInstanceExtensions(void) {
+						return vulkan_compile_time_extensions;
+					}
+					static constexpr bool find(std::string_view value) {
+						for (std::string_view item : vulkan_compile_time_extensions) {
+							if (item == value) {
+								return true;
 							}
-							return false;
 						}
+						return false;
+					}
 
-						static constexpr std::span<const char* const> getInstanceExtensions(void) {
-							return extensions;
-						}
-
-					private:
-						static constexpr std::array<const char*, 6> extensions = {
-							"VK_KHR_get_physical_device_properties2",
-							"VK_KHR_surface",
-							"VK_KHR_get_surface_capabilities2",
-							"VK_KHR_surface_protected_capabilities",
-							"VK_KHR_win32_surface",
-							"VK_KHR_device_group_creation"
-						};
-					};
-										
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					struct ValidationBuildInfo {
-
-						static constexpr const bool enable = true;
-						static constexpr std::array<std::string_view, 1> layer_name_collection = { "VK_LAYER_KHRONOS_validation" };
-						static constexpr std::array<std::string_view, 1> extension_name_collection = { "VK_EXT_debug_utils" };
-
-					};
+					
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief
@@ -231,7 +216,7 @@ namespace CGDev {
 						static constexpr const bool enable = true;
 						static constexpr std::array<std::string_view, 0> layer_name_collection = {};
 						static constexpr std::array<std::string_view, 2> extension_name_collection = { "VK_KHR_surface", "VK_KHR_win32_surface" };
-						static constexpr PlatformType platform_type = WvkBuildInfo::platform_type;
+						static constexpr PlatformType platform_type = platform_type;
 					};
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -239,34 +224,6 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					static const bool s_vk_ext_debug_utils = []() { if constexpr (s_wvk_debug == true) return true; else return false; }();
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					//static const bool s_dynamic_rendering = false;
-					
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					//constexpr auto get_layer_names() noexcept {
-
-						//constexpr Features _features = Features::DEBUG | Features::DYNAMIC_RENDERING;
-
-						//constexpr uint32_t countBase = 0;
-
-						//constexpr uint32_t _count = countBase
-						//	+ ((_features & Features::DEBUG) ? 1 : 0)
-						//	+ ((_features & Features::DYNAMIC_RENDERING) ? 1 : 0);
-
-						//std::array<std::string, _count>{};
-
-						//return std::array<int, _count>{};
-						//return std::array<std::string_view, 2>{"a", "b"};
-						//return std::array<std::string, 1>{
-					//	//	layer_name_collection[0]};
-					//};
 
 				} //namespace Build
 
@@ -280,72 +237,12 @@ namespace CGDev {
 
 				using VkBaseInStructureArr1 = std::vector< VkBaseInStructure>;
 				using VkBaseOutStructureArr1 = std::vector<VkBaseOutStructure>;
-
-				// =======================================
-				// [Category]: Physical Device
-				// =======================================
-
-				// ~~~~~~~~~~~~~~~~
-				// [Version] 1.0
-				// ~~~~~~~~~~~~~~~~			
-				using VkQueueFamilyPropertiesVec1 = std::vector<VkQueueFamilyProperties>;
-				
-				// ~~~~~~~~~~~~~~~~
-				// [Version] 1.1
-				// ~~~~~~~~~~~~~~~~
-				using VkQueueFamilyProperties2Vec1 = std::vector<VkQueueFamilyProperties2>;
-
-					// ~~~~~~~~~~~~~~~~
-					// [Extension] VK_KHR_get_physical_device_properties2
-					// ~~~~~~~~~~~~~~~~
-					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyCheckpointProperties2NV = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyGlobalPriorityProperties = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyGlobalPriorityPropertiesKHR = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyGlobalPriorityPropertiesEXT = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
-					//using VkQueueFamilyProperties2KHRVec1 = std::vector<VkQueueFamilyProperties2KHR>;
-					//,
-					//	VkQueueFamilyCheckpointPropertiesNV,
-					//	,
-					//	VkQueueFamilyOwnershipTransferPropertiesKHR,
-					//	VkQueueFamilyQueryResultStatusPropertiesKHR
-					//	или VkQueueFamilyVideoPropertiesKHR
-				using VkPhysicalDeviceArr1 = std::vector<VkPhysicalDevice>;
-				using VkPhysicalDeviceArr2 = std::vector<VkPhysicalDeviceArr1>;
-				using VkPhysicalDeviceGroupPropertiesArr = std::vector<VkPhysicalDeviceGroupProperties>;
-
-				
+						
 				
 				using VkQueueFamilyGlobalPriorityPropertiesKHRVec1 = std::vector<VkQueueFamilyGlobalPriorityPropertiesKHR>;
 				using VkQueueFamilyQueryResultStatusPropertiesKHRVec1 = std::vector<VkQueueFamilyQueryResultStatusPropertiesKHR>;
 				using VkQueueFamilyVideoPropertiesKHRVec1 = std::vector<VkQueueFamilyVideoPropertiesKHR>;
 				
-				using VkDeviceQueueCreateInfoArr1												= std::vector<VkDeviceQueueCreateInfo>;
-
-				using VkCommandBufferArr														= std::vector<VkCommandBuffer>;
-
-				struct VknVulkanFunctionInfo;
-				using VknVulkanFunctionInfoArr1 = std::vector<VknVulkanFunctionInfo>;
-				using VknVulkanFunctionInfoArr2 = std::vector<VknVulkanFunctionInfoArr1>;
-				using VknVulkanFunctionInfoPtr = VknVulkanFunctionInfo * ;
-				using VknVulkanFunctionInfoPtrArr1 = std::vector<VknVulkanFunctionInfoPtr>;
-				using VknVulkanFunctionInfoPtrArr2 = std::vector<VknVulkanFunctionInfoPtrArr1>;
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				class			WvkGlobalCommands;
-				using			WvkCommandsPtr													= WvkGlobalCommands * ;
-				using			WvkCommandsPtrArr1												= std::vector<WvkCommandsPtr>;
-				using			WvkCommandsWptr													= std::weak_ptr<WvkGlobalCommands>;
-				using			WvkCommandsWptrArr1												= std::vector<WvkCommandsWptr>;
-				using			WvkCommandsSptr													= std::shared_ptr<WvkGlobalCommands>;
-				using			WvkCommandsSptrArr1												= std::vector<WvkCommandsSptr>;
-
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
@@ -422,15 +319,15 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class WvkInstanceDt;
-				using WvkInstanceDtPtr = WvkInstanceDt * ;
-				using WvkInstanceDtPtrArr1 = std::vector<WvkInstanceDtPtr>;
-				using WvkInstanceDtSptr = std::shared_ptr<WvkInstanceDt>;
-				using WvkInstanceDtSptrArr1 = std::vector<WvkInstanceDtSptr>;
-				using WvkInstanceDtUptr = std::unique_ptr<WvkInstanceDt>;
-				using WvkInstanceDtUptrArr1 = std::vector<WvkInstanceDtUptr>;
-				using WvkInstanceDtWptr = std::weak_ptr<WvkInstanceDt>;
-				using WvkInstanceDtWptrArr1 = std::vector<WvkInstanceDtWptr>;
+				class WvkInstanceDispatchTable;
+				using WvkInstanceDispatchTablePtr = WvkInstanceDispatchTable * ;
+				using WvkInstanceDispatchTablePtrVec1 = std::vector<WvkInstanceDispatchTablePtr>;
+				using WvkInstanceDispatchTableSptr = std::shared_ptr<WvkInstanceDispatchTable>;
+				using WvkInstanceDispatchTableSptrVec1 = std::vector<WvkInstanceDispatchTableSptr>;
+				using WvkInstanceDispatchTableUptr = std::unique_ptr<WvkInstanceDispatchTable>;
+				using WvkInstanceDispatchTableUptrVec1 = std::vector<WvkInstanceDispatchTableUptr>;
+				using WvkInstanceDispatchTableWptr = std::weak_ptr<WvkInstanceDispatchTable>;
+				using WvkInstanceDispatchTableWptrVec1 = std::vector<WvkInstanceDispatchTableWptr>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
@@ -439,16 +336,16 @@ namespace CGDev {
 
 				class WvkPhysicalDevice;
 				using WvkPhysicalDevicePtr = WvkPhysicalDevice * ;
-				using WvkPhysicalDevicePtrArr1 = std::vector<WvkPhysicalDevicePtr>;
-				using WvkPhysicalDevicePtrArr2 = std::vector<WvkPhysicalDevicePtrArr1>;
+				using WvkPhysicalDevicePtrVec1 = std::vector<WvkPhysicalDevicePtr>;
+				using WvkPhysicalDevicePtrVec2 = std::vector<WvkPhysicalDevicePtrVec1>;
 				using WvkPhysicalDeviceSptr = std::shared_ptr<WvkPhysicalDevice>;
-				using WvkPhysicalDeviceSptrArr1 = std::vector<WvkPhysicalDeviceSptr>;
-				using WvkPhysicalDeviceSptrArr2 = std::vector<WvkPhysicalDeviceSptrArr1>;
+				using WvkPhysicalDeviceSptrVec1 = std::vector<WvkPhysicalDeviceSptr>;
+				using WvkPhysicalDeviceSptrVec2 = std::vector<WvkPhysicalDeviceSptrVec1>;
 				using WvkPhysicalDeviceUptr = std::unique_ptr<WvkPhysicalDevice>;
-				using WvkPhysicalDeviceUptrArr1 = std::vector<WvkPhysicalDeviceUptr>;
-				using WvkPhysicalDeviceUptrArr2 = std::vector<WvkPhysicalDeviceUptrArr1>;
+				using WvkPhysicalDeviceUptrVec1 = std::vector<WvkPhysicalDeviceUptr>;
+				using WvkPhysicalDeviceUptrVec2 = std::vector<WvkPhysicalDeviceUptrVec1>;
 				using WvkPhysicalDeviceWptr = std::weak_ptr<WvkPhysicalDevice>;
-				using WvkPhysicalDeviceWptrArr1 = std::vector<WvkPhysicalDeviceWptr>;
+				using WvkPhysicalDeviceWptrVec1 = std::vector<WvkPhysicalDeviceWptr>;
 				
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -473,16 +370,16 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				class			VknLogicalDevice;
-				using			VknLogicalDevicePtr										= VknLogicalDevice * ;
-				using			VknLogicalDevicePtrArr									= std::vector<VknLogicalDevicePtr>;
-				using			VknLogicalDeviceWptr									= std::weak_ptr<VknLogicalDevice>;
-				using			VknLogicalDeviceWptrArr									= std::vector<VknLogicalDeviceWptr>;
-				using			VknLogicalDeviceSptr									= std::shared_ptr<VknLogicalDevice>;
-				using			VknLogicalDeviceSptrArr									= std::vector<VknLogicalDeviceSptr>;
-				struct			VknLogicalDeviceCreateInfo;
-				struct			WvkLogicalDeviceQueueCreateInfo;
-				using			VknLogicalDeviceQueueCreateInfoArr						= std::vector<WvkLogicalDeviceQueueCreateInfo>;
+				class WvkLogicalDevice;
+				using WvkLogicalDevicePtr = WvkLogicalDevice * ;
+				using WvkLogicalDevicePtrVec1 = std::vector<WvkLogicalDevicePtr>;
+				using WvkLogicalDeviceWptr = std::weak_ptr<WvkLogicalDevice>;
+				using WvkLogicalDeviceWptrVec1 = std::vector<WvkLogicalDeviceWptr>;
+				using WvkLogicalDeviceSptr = std::shared_ptr<WvkLogicalDevice>;
+				using WvkLogicalDeviceSptrVec1 = std::vector<WvkLogicalDeviceSptr>;
+				struct WvkLogicalDeviceCreateInfo;
+				struct WvkLogicalDeviceQueueCreateInfo;
+				using WvkLogicalDeviceQueueCreateInfoVec1 = std::vector<WvkLogicalDeviceQueueCreateInfo>;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief

@@ -23,6 +23,21 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		struct WvkLogicalDeviceFeature {
+			std::string identifier = {};		
+			VkBaseInStructure* vk_base_in = nullptr;
+
+			template<typename In>
+			WvkLogicalDeviceFeature(const char* extension_name, In& feature) {
+				vk_base_in = reinterpret_cast<VkBaseInStructure*>(&feature);
+			}
+		};
+		using WvkLogicalDeviceFeatureVec1 = std::vector<WvkLogicalDeviceFeature>;
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkLogicalDeviceQueueCreateInfo {
 			WvkQueueFamilyPtr wvk_queue_family_ptr = nullptr;
 			std::optional<uint32_t> queue_count;
@@ -33,19 +48,19 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		struct VknLogicalDeviceCreateInfo {
-
-			WvkCommandsPtr											wvk_commands = nullptr;
-			WvkPhysicalDevicePtrArr1								wvk_physical_device_collection;
-			VknLogicalDeviceQueueCreateInfoArr						wvk_logical_device_queue_create_info_collection = {};
-
-		}; // struct VknLogicalDeviceCreateInfo
+		struct WvkLogicalDeviceCreateInfo {
+			WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+			WvkPhysicalDevicePtrVec1 wvk_physical_device_collection;
+			WvkLogicalDeviceQueueCreateInfoVec1 wvk_logical_device_queue_create_info_collection = {};
+			VkPhysicalDeviceFeatures m_vk_physical_device_features = {};
+			WvkLogicalDeviceFeatureVec1 m_wvk_logical_device_feature_collection;
+		}; // struct WvkLogicalDeviceCreateInfo
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class VknLogicalDevice : public GpuObject {
+		class WvkLogicalDevice : public GpuObject {
 
 		public:
 
@@ -53,19 +68,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VknLogicalDevice(void) noexcept;
+			WvkLogicalDevice(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			~VknLogicalDevice(void) noexcept;
+			~WvkLogicalDevice(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			bool create(const VknLogicalDeviceCreateInfo& create_info) noexcept;
+			WvkStatus create(const WvkLogicalDeviceCreateInfo& create_info) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -73,13 +88,8 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 
-		public:
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline const VknLogicalDeviceCreateInfo& getCreateInfo(void) const noexcept;
+		// hpp
+		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -87,13 +97,14 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			inline const VkDevice& getVkDevice(void) const noexcept;
 
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus validationCreateInfo(const VknLogicalDeviceCreateInfo& create_info) const noexcept;
+			WvkStatus validationCreateInfo(void) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	brief Подготавливает коллекцию VkDeviceQueueCreateInfo на основе пользовательской конфигурации.
@@ -105,7 +116,7 @@ namespace CGDev {
 			* @param[out] queue_create_info_collection1 Коллекция, куда добавляются описания очередей.
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void prepareVkQueueCreateInfo(VkDeviceQueueCreateInfoArr1& queue_create_info_collection1) const noexcept;
+			WvkStatus prepareVkQueueCreateInfo(std::vector<VkDeviceQueueCreateInfo>& queue_create_info_collection1) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief Создаёт объект логического устройства Vulkan (`VkDevice`) на основе заданного физического устройства и настроек очередей.
@@ -119,7 +130,7 @@ namespace CGDev {
 			* @return [out] WvkStatus — результат создания логического устройства: SUCCESSFUL или FAIL с описанием ошибки.
 			* 
 			* @code
-			* VknLogicalDevice device;
+			* WvkLogicalDevice device;
 			* WvkStatus status = device.createVkDevice();
 			* if (status.failed()) {
 			*     log->error(status.message_old);
@@ -129,9 +140,15 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus createVkDevice(void) noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void reset(void) noexcept;
+
 		private:
 					
-			VknLogicalDeviceCreateInfo						m_create_info = {};
+			WvkLogicalDeviceCreateInfo						m_create_info = {};
 			//VkPhysicalDevice								m_vk_physical_device = VK_NULL_HANDLE;
 			//void*											m_next = VK_NULL_HANDLE;
 			//std::vector<void*>								m_next_collection1;
@@ -139,7 +156,7 @@ namespace CGDev {
 			VkDevice										m_vk_device = VK_NULL_HANDLE;
 			//VkPhysicalDeviceArr1							m_vk_physical_device_collection;
 
-		}; // class VknLogicalDevice
+		}; // class WvkLogicalDevice
 
 	} // namespace wvk
 

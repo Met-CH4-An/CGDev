@@ -36,29 +36,48 @@ namespace CGDev {
 		WvkStatus WvkPhysicalDevice::create(const WvkPhysicalDeviceCreateInfo& create_info) noexcept {
 			WvkStatus _status;
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 1. Проверка: если уже инициализирован, возвращаем ALREADY_INITIALIZED
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (m_valid) {
 				return _status.set(VknStatusCode::ALREADY_INITIALIZED);
 			}
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 2. Сохраняем параметры создания
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_create_info = create_info;
 
-			if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
-				_status = validationCreateInfo();
-
-				if (!_status) {
-					reset();
-					return _status.set(VknStatusCode::FAIL, "\n\tVknPhysicalDevice::validationCreateInfo() - fail.");
-				}
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 3. Валидация create_info
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = validationCreateInfo();
+			if (!_status) {
+				reset();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkPhysicalDevice::validationCreateInfo() - fail.");
 			}
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Создаём объект VkPhysicalDevice
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = createVkPhysicalDevice();
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4.1. Если создание не удалось — сбрасываем состояние и возвращаем ошибку
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (!_status) {
 				reset();
 				return _status.set(VknStatusCode::FAIL, "\n\tcreateVkPhysicalDevice - fail.");
 			}
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 5. Установка флага валидности объекта
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_valid = true;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 6. Возвращаем успешный статус
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
 

@@ -96,9 +96,9 @@ namespace CGDev {
 					//	return false;
 					//}
 
-					if (create_info.wvk_commands == nullptr) {
+					if (create_info.wvk_instance_dispatch_table == nullptr) {
 
-						//Tools::addEntry(create_info.log, Tools::LogEntryError("VknQueueCreateInfo::wvk_commands = nullptr"));
+						//Tools::addEntry(create_info.log, Tools::LogEntryError("VknQueueCreateInfo::wvk_instance_dispatch_table = nullptr"));
 
 						return false;
 					}

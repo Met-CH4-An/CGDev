@@ -14,19 +14,20 @@
 ////////////////////////////////////////////////////////////////
 // секци€ дл€ остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_logical_device.h"
 namespace CGDev {
 
 	namespace wvk {
-
+		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkPhysicalDeviceCreateInfo {
 			VkPhysicalDevice vk_physical_device = VK_NULL_HANDLE;
-			WvkInstanceDtPtr wvk_instance_dispatch_table = nullptr;
+			WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
 		}; // struct WvkPhysicalDeviceCreateInfo
-				
+		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
@@ -48,22 +49,27 @@ namespace CGDev {
 			~WvkPhysicalDevice(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief —оздаЄт физическое устройство Vulkan.
-			* 
-			* ћетод выполн€ет полную инициализацию физического устройства Vulkan, включа€ проверку
-			* данных через метод `validationCreateInfo()`, а также инициализацию физического устройства
-			* через метод `createVkPhysicalDevice()`. Ёти шаги обеспечивают корректное создание устройства,
-			* готового к дальнейшему использованию.
+			/*!	\brief
+			* —оздаЄт и инициализирует физическое Vulkan-устройство.
 			*
-			* @note ≈сли включены проверки на этапе сборки (через `ValidationBuildInfo`), метод
-			*      сначала выполн€ет валидацию с использованием `validationCreateInfo()`.
-			*      ≈сли валидаци€ не проходит, метод возвращает ошибку.
+			* @param[in] create_info
+			*        —труктура с параметрами инициализации физического устройства.
+			*
+			* @return
+			*        ¬озвращает статус выполнени€ операции:
+			*        - OK, если устройство успешно создано,
+			*        - ALREADY_INITIALIZED, если устройство уже было создано ранее,
+			*        - FAIL с подробным сообщением об ошибке, если инициализаци€ завершилась неудачно.
+			*
+			* @note
+			*        ћетод безопасно сбрасывает внутреннее состо€ние в случае ошибки.
 			*
 			* @code
-			* WvkPhysicalDevice physical_device;
-			* WvkPhysicalDeviceCreateInfo create_info;
-			* // «аполнение create_info необходимыми данными...
-			* physical_device.create(create_info); // —оздание и инициализаци€ физического устройства
+			* WvkPhysicalDevice device;
+			* WvkPhysicalDeviceCreateInfo info = { ... };
+			* if (!device.create(info)) {
+			*     // ќбработка ошибки
+			* }
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,7 +82,7 @@ namespace CGDev {
 			void destroy(void) noexcept;
 
 		// hpp
-		public:			
+		public:		
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief «апрашивает базовые свойства физического устройства Vulkan.
@@ -160,7 +166,7 @@ namespace CGDev {
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus requestQueueFamilyProperties(VkQueueFamilyPropertiesVec1& queue_family_properties_collection) const noexcept;
+			inline WvkStatus requestQueueFamilyProperties(std::vector<VkQueueFamilyProperties>& queue_family_properties_collection) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\briefbrief
@@ -213,7 +219,7 @@ namespace CGDev {
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus checkCompatibility(const WvkPhysicalDevicePtrArr1& wvk_physical_device_collection, bool& compatibility) const noexcept;
+			inline WvkStatus checkCompatibility(const WvkPhysicalDevicePtrVec1& wvk_physical_device_collection, bool& compatibility) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -290,6 +296,17 @@ namespace CGDev {
 				std::invoke_result_t<Method, VkPhysicalDevice, Args...>
 			> invokeWithVkPhysicalDeviceFunction(Method&& method, Args&&... args) const noexcept;
 		
+		// hpp
+		private:
+
+			friend class WvkLogicalDevice;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline VkPhysicalDevice getVkPhysicalDevice(void) const noexcept;
+					
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -15,8 +15,6 @@
 ////////////////////////////////////////////////////////////////
 #include "wvk_instance.h"	// что тестируем
 
-#include "wvk_commands_global_test.h"
-
 namespace CGDev {
 
 	namespace tests {

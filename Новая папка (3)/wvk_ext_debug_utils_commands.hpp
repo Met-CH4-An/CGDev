@@ -26,21 +26,21 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					inline VkResult VknExtDebugUtilsCommands::vknCreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
-						return m_vkCreateDebugUtilsMessengerEXT(m_create_info.wvk_commands->getCreateInfo().wvk_instance->getVkInstance(), pCreateInfo, pAllocator, pMessenger);
-					}
+					//inline VkResult VknExtDebugUtilsCommands::vknCreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
+					//	return m_vkCreateDebugUtilsMessengerEXT(m_create_info.wvk_commands->getCreateInfo().wvk_instance->getVkInstance(), pCreateInfo, pAllocator, pMessenger);
+					//}
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					inline void VknExtDebugUtilsCommands::vknDestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
-						m_vkDestroyDebugUtilsMessengerEXT(m_create_info.wvk_commands->getCreateInfo().wvk_instance->getVkInstance(), messenger, pAllocator);
-					}
+					//inline void VknExtDebugUtilsCommands::vknDestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
+					//	m_vkDestroyDebugUtilsMessengerEXT(m_create_info.wvk_commands->getCreateInfo().wvk_instance->getVkInstance(), messenger, pAllocator);
+					//}
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					inline void VknExtDebugUtilsCommands::vknSubmitDebugUtilsMessageEXT(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
+					//inline void VknExtDebugUtilsCommands::vknSubmitDebugUtilsMessageEXT(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
 						m_vkSubmitDebugUtilsMessageEXT(m_create_info.wvk_commands->getCreateInfo().wvk_instance->getVkInstance(), messageSeverity, messageTypes, pCallbackData);
 					}
 

@@ -36,7 +36,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			uint32_t _count = 0;
 			m_create_info.wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-				&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties,
+				&WvkInstanceDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties,
 				m_create_info.instance_dt_ptr,
 				&_count,
 				nullptr
@@ -51,7 +51,7 @@ namespace CGDev {
 			// Шаг 3. Запрашиваем свойства всех семейств очередей
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_create_info.wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-				&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties,
+				&WvkInstanceDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties,
 				m_create_info.instance_dt_ptr,
 				&_count,
 				_vk_queue_family_properties_collection.data()
@@ -68,15 +68,15 @@ namespace CGDev {
 
 		template<typename Properties>
 		inline void WvkQueueFamily::requestProperties(Properties& out) const noexcept {
-			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::WvkBuildInfo::find(Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTable::s_getName())) {
+			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
+				Build::find(Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTable::s_getName())) {
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Запрашиваем количество семейств очередей у физического устройства
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				uint32_t _count = 0;
 				m_create_info.wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-					&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties2,
+					&WvkInstanceDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties2,
 					m_create_info.instance_dt_ptr,
 					&_count,
 					nullptr
@@ -104,7 +104,7 @@ namespace CGDev {
 				// Шаг 4. Запрашиваем свойства всех семейств очередей
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				m_create_info.wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-					&WvkInstanceDt::wvkGetPhysicalDeviceQueueFamilyProperties2,
+					&WvkInstanceDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties2,
 					m_create_info.instance_dt_ptr,
 					&_count,
 					_props2.data()
@@ -134,11 +134,11 @@ namespace CGDev {
 		void WvkQueueFamily::requestQueueFamilyProperties(Chains &... chains) const noexcept {
 
 			// Проверка на наличие поддержки Vulkan 1.1
-			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
+			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
 
 				// Получаем количество семейств очередей для физического устройства
 				uint32_t _family_count = 0;
-				//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties2(
+				//m_create_info.wvk_instance_dispatch_table->vknGetPhysicalDeviceQueueFamilyProperties2(
 				//	m_create_info.wvk_physical_device_ptr->getVkPhysicalDevice(),
 				//	&_family_count,
 				//	nullptr
@@ -175,7 +175,7 @@ namespace CGDev {
 						}, chains_array);
 				}
 
-				//m_create_info.wvk_commands->vknGetPhysicalDeviceQueueFamilyProperties2(
+				//m_create_info.wvk_instance_dispatch_table->vknGetPhysicalDeviceQueueFamilyProperties2(
 				//	m_create_info.wvk_physical_device_ptr->getVkPhysicalDevice(),
 				//	&_family_count,
 				//	properties2_list.data()

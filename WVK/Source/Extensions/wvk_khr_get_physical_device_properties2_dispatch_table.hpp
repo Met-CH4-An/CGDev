@@ -115,14 +115,14 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Если включена сборка с валидацией, запускаем проверку данных.
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+					//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 						_status = validationCreateInfo();
 
 						if (_status.m_code != VknStatusCode::SUCCESSFUL) {
 							reset();
 							return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrSurfaceDispatchTable::validationCreateInfo() - fail.");
 						}
-					}
+					//}
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Загружаем указатели на Vulkan-функции, связанные с Surface.

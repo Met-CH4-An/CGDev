@@ -39,7 +39,7 @@ namespace CGDev {
 				struct WvkCommandsCreateInfo {
 					WvkLoaderPtr				wvk_loader = nullptr;
 					WvkInstancePtr				wvk_instance = nullptr;
-					VknLogicalDevicePtr			wvk_logical_device = nullptr;
+					WvkLogicalDevicePtr			wvk_logical_device = nullptr;
 				
 				}; // struct WvkCommandsCreateInfo
 

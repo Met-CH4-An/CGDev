@@ -130,7 +130,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::WvkBuildInfo::find(WvkKhrSurfaceDT::s_getName())) {
+				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Очистить вектор и подготовить переменную для подсчёта форматов
@@ -219,7 +219,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::WvkBuildInfo::find(WvkKhrSurfaceDT::s_getName())) {
+				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 					VkBool32 _support = VK_FALSE;
 					out = false;
 
@@ -281,7 +281,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::WvkBuildInfo::find(WvkKhrSurfaceDT::s_getName())) {
+				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Инициализация объекта статуса
@@ -376,7 +376,7 @@ namespace CGDev {
 			WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceCapabilitiesKHR& vk_surface_capabilities_khr) const noexcept {
 				WvkStatus _status;
 
-				if constexpr (Build::WvkBuildInfo::find(WvkKhrSurfaceDT::s_getName())) {
+				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Вызов метода получения surface capabilities через invoke
@@ -431,8 +431,8 @@ namespace CGDev {
 			WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept {
 				WvkStatus _status;
 
-				if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-					Build::WvkBuildInfo::find(WvkKhrGetSurfaceCapabilities2DT::s_getName())) {
+				if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
+					Build::find(WvkKhrGetSurfaceCapabilities2DT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Подготовка структуры входных параметров запроса
@@ -453,7 +453,7 @@ namespace CGDev {
 					// Шаг 3. Вызов Vulkan-функции через метод-обёртку
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-						&WvkInstanceDt::wvkGetPhysicalDeviceSurfaceCapabilities2KHR,
+						&WvkInstanceDispatchTable::wvkGetPhysicalDeviceSurfaceCapabilities2KHR,
 						m_create_info.wvk_instance_dt_ptr,
 						&_info2,
 						&_caps2

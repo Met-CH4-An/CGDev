@@ -48,14 +48,12 @@ namespace CGDev {
 			m_create_info = create_info;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Проверка валидности входных данных (если валидация включена)
+			// Шаг 3. Проверка валидности входных данных
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (Build::ValidationBuildInfo::enable) {
-				_status = validationCreateInfo();
-				if (!_status) {
-					reset();  // Очистка ресурсов перед выходом
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkLoaderDispatchTable::validationCreateInfo - fail.");
-				}
+			_status = validationCreateInfo();
+			if (!_status) {
+				reset();  // Очистка ресурсов перед выходом
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLoaderDispatchTable::validationCreateInfo - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

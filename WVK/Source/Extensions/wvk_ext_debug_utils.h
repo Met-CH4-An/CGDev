@@ -32,7 +32,7 @@ namespace CGDev {
 					* системой отладки Vulkan. Она используется в коллекции внутри `VknExtDebugUtils`
 					* для хранения истории сообщений и последующего анализа.
 					*
-					* \sa VknExtDebugUtils::hasStatus
+					* \sa WvkExtDebugUtils::hasStatus
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					struct DebugMessage {
@@ -60,8 +60,8 @@ namespace CGDev {
 					*
 					* \note Макрос ENABLE_ENUM_FLAGS позволяет использовать побитовые операции с этим перечислением.
 					*
-					* \sa VknExtDebugUtils::create
-					* \sa VknExtDebugUtils::convertDebugUtilsModeToVkFlags
+					* \sa WvkExtDebugUtils::create
+					* \sa WvkExtDebugUtils::convertDebugUtilsModeToVkFlags
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					enum class VknDebugUtilsMode : uint32_t {
@@ -94,13 +94,13 @@ namespace CGDev {
 					*
 					* \note Указатель `wvk_debug_utils_commands` обязателен и не должен быть nullptr.
 					*
-					* \sa VknExtDebugUtils
-					* \sa VknExtDebugUtils::create
+					* \sa WvkExtDebugUtils
+					* \sa WvkExtDebugUtils::create
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					struct VknExtDebugUtilsCreateInfo {
-						VknExtDebugUtilsCommandsPtr wvk_debug_utils_commands = nullptr; //!< Указатель на обёртку функций расширения.
-						VknDebugUtilsMode mode = VknDebugUtilsMode::UNKNOWN;            //!< Режим фильтрации отладочных сообщений.
+					struct WvkExtDebugUtilsCreateInfo {
+						WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+						VknDebugUtilsMode mode = VknDebugUtilsMode::UNKNOWN;
 					};
 
 
@@ -123,8 +123,8 @@ namespace CGDev {
 					*
 					* Пример:
 					* @code
-					* VknExtDebugUtils debugUtils;
-					* VknExtDebugUtilsCreateInfo info = {...};
+					* WvkExtDebugUtils debugUtils;
+					* WvkExtDebugUtilsCreateInfo info = {...};
 					* debugUtils.create(info);
 					* if (debugUtils.hasStatus(VknDebugUtilsMode::ERRORS_ONLY)) {
 					*     std::cerr << "Ошибки отладки обнаружены!" << std::endl;
@@ -135,7 +135,7 @@ namespace CGDev {
 					* \see VknDebugUtilsMode
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					class VknExtDebugUtils : public VknExtension {
+					class WvkExtDebugUtils : public VknExtension {
 
 					public:
 
@@ -159,13 +159,13 @@ namespace CGDev {
 						/*!	\brief
 						*/
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						VknExtDebugUtils(void) noexcept;
+						WvkExtDebugUtils(void) noexcept;
 
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						/*!	\brief
 						*/
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						~VknExtDebugUtils(void) noexcept;
+						~WvkExtDebugUtils(void) noexcept;
 
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						/*!	\brief Инициализирует расширение отладчика Vulkan с заданной конфигурацией.
@@ -181,11 +181,11 @@ namespace CGDev {
 						*
 						* Пример использования:
 						* @code
-						* VknExtDebugUtilsCreateInfo info = {};
+						* WvkExtDebugUtilsCreateInfo info = {};
 						* info.mode = VknDebugUtilsMode::ALL;
 						* info.wvk_debug_utils_commands = &debugCommands;
 						*
-						* VknExtDebugUtils debugUtils;
+						* WvkExtDebugUtils debugUtils;
 						* WvkStatus status = debugUtils.create(info);
 						* if (!status) {
 						*     std::cerr << "Failed to create debug utils: " << status.message_old << std::endl;
@@ -193,7 +193,7 @@ namespace CGDev {
 						* @endcode
 						*/
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						WvkStatus create(const VknExtDebugUtilsCreateInfo& create_info) noexcept;
+						WvkStatus create(const WvkExtDebugUtilsCreateInfo& create_info) noexcept;
 
 						//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						/*!	\brief
@@ -203,7 +203,7 @@ namespace CGDev {
 
 					public:
 
-						inline const VknExtDebugUtilsCreateInfo& getCreateInfo(void) const noexcept {
+						inline const WvkExtDebugUtilsCreateInfo& getCreateInfo(void) const noexcept {
 							return m_create_info;
 						}
 
@@ -222,7 +222,7 @@ namespace CGDev {
 						*
 						* Пример:
 						* @code
-						* VknExtDebugUtils debugUtils;
+						* WvkExtDebugUtils debugUtils;
 						* if (debugUtils.check(VknDebugUtilsMode::ERRORS_ONLY | VknDebugUtilsMode::VALIDATION)) {
 						*     std::cerr << "Validation error detected!" << std::endl;
 						* }
@@ -245,8 +245,8 @@ namespace CGDev {
 						*         - VknStatusCode::FAIL — если обнаружена ошибка, с поясняющим сообщением в поле `message`.
 						* 
 						* @code
-						* VknExtDebugUtils debugUtils;
-						* VknExtDebugUtilsCreateInfo info = {...};
+						* WvkExtDebugUtils debugUtils;
+						* WvkExtDebugUtilsCreateInfo info = {...};
 						* debugUtils.create(info); // Внутри будет вызвана validationCreateInfo()
 						* @endcode
 						*/
@@ -279,7 +279,7 @@ namespace CGDev {
 						* VkDebugUtilsMessageSeverityFlagsEXT severity = 0;
 						* VkDebugUtilsMessageTypeFlagsEXT type = 0;
 						*
-						* VknExtDebugUtils debugUtils;
+						* WvkExtDebugUtils debugUtils;
 						* debugUtils.convertDebugUtilsModeToVkFlags(mode, severity, type);
 						* // Теперь severity содержит VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
 						* // а type содержит VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
@@ -299,7 +299,7 @@ namespace CGDev {
 						*
 						* @code
 						* // Пример использования:
-						* VknExtDebugUtils debugUtils;
+						* WvkExtDebugUtils debugUtils;
 						* WvkStatus status = debugUtils.createVkDebugUtilsMessenger();
 						* if (status) {
 						*     // Мессенджер успешно создан
@@ -321,11 +321,11 @@ namespace CGDev {
 
 					private:
 
-						VknExtDebugUtilsCreateInfo				m_create_info = {};
+						WvkExtDebugUtilsCreateInfo				m_create_info = {};
 						VkDebugUtilsMessengerEXT				m_vk_debug_utils_messenger = nullptr;
 						std::vector<DebugMessage>				m_debug_message_collection;
 
-					}; // class VknExtDebugUtils
+					}; // class WvkExtDebugUtils
 
 				} // namespace Extensions
 

@@ -23,7 +23,7 @@ namespace CGDev {
 		TEST_F(WvkSurfaceTest, requestSupport) {
 			bool _support = false;
 
-			auto _status = s_wvk_surface->requestSupport(s_wvk_physical_device.get(), s_wvk_queue_family.get(), _support);
+			auto _status = s_wvk_surface->requestSupport(&wvk_physical_device, &wvk_queue_family, _support);
 
 			EXPECT_EQ(_status.isOk(), true);
 			EXPECT_EQ(_support, true);
@@ -35,7 +35,7 @@ namespace CGDev {
 		TEST_F(WvkSurfaceTest, requestCapabilities) {
 			VkSurfaceCapabilitiesKHR _caps = {};
 
-			s_wvk_surface->requestCapabilities(s_wvk_physical_device.get(), _caps);
+			s_wvk_surface->requestCapabilities(&wvk_physical_device, _caps);
 
 			EXPECT_GE(_caps.minImageCount, static_cast<uint32_t>(1));
 		}
@@ -45,7 +45,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestCapabilities_VkSurfaceProtectedCapabilitiesKHR) {
 			VkSurfaceProtectedCapabilitiesKHR _caps = {};			
-			s_wvk_surface->requestCapabilities(s_wvk_physical_device.get(), _caps);
+			s_wvk_surface->requestCapabilities(&wvk_physical_device, _caps);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +53,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestPresentModes) {
 			std::vector<VkPresentModeKHR> _modes = {};
-			s_wvk_surface->requestPresentModes(s_wvk_physical_device.get(), _modes);
+			s_wvk_surface->requestPresentModes(&wvk_physical_device, _modes);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,7 +61,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestPresentModeCompatibility) {
 			std::vector<VkPresentModeKHR> _out;
-			s_wvk_surface->requestPresentModeCompatibility(s_wvk_physical_device.get(), VK_PRESENT_MODE_FIFO_KHR, _out);
+			s_wvk_surface->requestPresentModeCompatibility(&wvk_physical_device, VK_PRESENT_MODE_FIFO_KHR, _out);
 		}
 		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,7 +69,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestScalingCompatibility) {
 			VkSurfacePresentScalingCapabilitiesEXT _out = {};
-			s_wvk_surface->requestScalingCompatibility(s_wvk_physical_device.get(), VK_PRESENT_MODE_FIFO_KHR, _out);
+			s_wvk_surface->requestScalingCompatibility(&wvk_physical_device, VK_PRESENT_MODE_FIFO_KHR, _out);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,7 +85,7 @@ namespace CGDev {
 			_out.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_EXT;
 			_out.pNext = nullptr;
 
-			s_wvk_surface->requestCapabilities(s_wvk_physical_device.get(), reinterpret_cast<VkBaseInStructure*>(&_in), reinterpret_cast<VkBaseOutStructure*>(&_out));
+			s_wvk_surface->requestCapabilities(&wvk_physical_device, reinterpret_cast<VkBaseInStructure*>(&_in), reinterpret_cast<VkBaseOutStructure*>(&_out));
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,7 +101,7 @@ namespace CGDev {
 			_out.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_EXT;
 			_out.pNext = nullptr;
 
-			s_wvk_surface->requestCapabilities(s_wvk_physical_device.get(), _in, _out);
+			s_wvk_surface->requestCapabilities(&wvk_physical_device, _in, _out);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +109,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestFormats) {
 			std::vector<VkSurfaceFormatKHR> _formats;
-			s_wvk_surface->requestFormats(s_wvk_physical_device.get(), _formats);
+			s_wvk_surface->requestFormats(&wvk_physical_device, _formats);
 		}
 		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,7 +117,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkSurfaceTest, requestFormats_in_out) {
 			std::vector<VkImageCompressionPropertiesEXT> _compres = {};
-			s_wvk_surface->requestFormats(s_wvk_physical_device.get(), nullptr, VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT,_compres);
+			s_wvk_surface->requestFormats(&wvk_physical_device, nullptr, VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT,_compres);
 		}
 
 	} // namespace tests

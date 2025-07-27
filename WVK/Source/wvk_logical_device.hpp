@@ -15,36 +15,19 @@
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			namespace wvk {
+		inline const VkDevice& WvkLogicalDevice::getVkDevice(void) const noexcept {
+			return m_vk_device;
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline const VknLogicalDeviceCreateInfo& VknLogicalDevice::getCreateInfo(void) const noexcept {
-
-					return m_create_info;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				inline const VkDevice& VknLogicalDevice::getVkDevice(void) const noexcept {
-
-					return m_vk_device;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			} // namespace wvk
-
-		//} // namespace Private
-
-	//} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev
 

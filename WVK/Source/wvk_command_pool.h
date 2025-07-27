@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_H
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_H
+#ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_H
+#define CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -17,117 +17,89 @@
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		struct WvkCommandPoolCreateInfo {
+			
+		}; // struct WvkCommandPoolCreateInfo
 
-			namespace wvk {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		class WvkCommandPool : public GpuObject {
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				struct VknCommandPoolCreateInfo {
-					//VknValidationSptr							validation = nullptr;
-					//WvkCommandsSptr								commands = nullptr;
-					VknLogicalDeviceSptr						logical_device;
-					uint32_t									iq_queue_family;
+		public:
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					bool isValid(void) const noexcept;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkCommandPool(void) noexcept;
 
-				}; // struct VknCommandPoolCreateInfo
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			~WvkCommandPool(void) noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus create(const WvkCommandPoolCreateInfo& create_info) noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void destroy(void) noexcept;
 
+		// hpp
+		private:
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const VkCommandPool& getVkCommandPool(void) const noexcept;
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
-				*/
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				class VknCommandPool : public GpuObject {
+		// cpp
+		private:
 
-				public:
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus validationCreateInfo(void) const noexcept;
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					VknCommandPool(void) noexcept;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus createVkCommandPool(void) noexcept;
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					~VknCommandPool(void) noexcept;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void reset(void) noexcept;
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					void create(const VknCommandPoolCreateInfo& create_info) noexcept;
+		private:
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					void destroy(void) noexcept;
+			WvkCommandPoolCreateInfo m_create_info;
+			VkCommandPool m_vk_command_pool;
 
-				public:
+		}; // class WvkCommandPool
 
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					bool allocateVkCommandBuffer(VkCommandBufferArr& vk_command_buffer_collection, const VkCommandBufferLevel& vk_command_buffer_level) const noexcept;
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					bool freeVkCommandBuffer(VkCommandBufferArr& vk_command_buffer_collection) const noexcept;
-
-				public:
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					inline const VknCommandPoolCreateInfo& getCreateInfo(void) const noexcept;
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					inline const VkCommandPool& getVkCommandPool(void) const noexcept;
-
-				private:
-
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief
-					*/
-					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					bool createVkCommandPool(void) noexcept;
-
-				private:
-
-					VknCommandPoolCreateInfo								m_create_info = {};
-					VkCommandPool											m_vk_command_pool = VK_NULL_HANDLE;
-					
-				}; // class VknCommandPool
-
-			} // namespace wvk
-
-		//} // namespace Private
-
-	//} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev
 
 #include "wvk_command_pool.hpp"
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_POOL_H
+#endif // CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_H

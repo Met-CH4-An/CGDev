@@ -31,7 +31,7 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					struct VknExtDebugUtilsCommandsCreateInfo {					
-						WvkCommandsPtr wvk_commands = nullptr;						
+						WvkInstanceDispatchTablePtr wvk_commands = nullptr;
 					}; // VknExtDebugUtilsCommandsCreateInfo
 
 

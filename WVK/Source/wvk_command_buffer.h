@@ -30,7 +30,7 @@ namespace CGDev {
 				struct VknCommandBufferCreateInfo {
 					//VknValidationSptr							validation = nullptr;
 					//WvkCommandsSptr								commands = nullptr;
-					VknLogicalDeviceSptr						logical_device = nullptr;
+					WvkLogicalDeviceSptr						logical_device = nullptr;
 					VkCommandBuffer								vk_command_buffer = VK_NULL_HANDLE;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

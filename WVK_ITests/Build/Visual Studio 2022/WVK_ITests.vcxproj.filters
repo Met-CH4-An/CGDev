@@ -20,8 +20,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\test.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_commands_global_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_commands_instance_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_khr_win32_surface_dispatch_table_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device_test.cpp" />
@@ -35,8 +33,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Source\tests.h" />
     <ClInclude Include="..\..\Source\wvk_loader_test.h" />
-    <ClInclude Include="..\..\Source\wvk_commands_global_test.h" />
-    <ClInclude Include="..\..\Source\wvk_commands_instance_test.h" />
     <ClInclude Include="..\..\Source\wvk_instance_test.h" />
     <ClInclude Include="..\..\Source\wvk_khr_win32_surface_dispatch_table_test.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />

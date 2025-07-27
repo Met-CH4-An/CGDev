@@ -25,7 +25,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkQueueFamilyCreateInfo {
 			std::optional<uint32_t> index;
-			WvkInstanceDtPtr instance_dt_ptr = nullptr;
+			WvkInstanceDispatchTablePtr instance_dt_ptr = nullptr;
 			WvkPhysicalDevicePtr wvk_physical_device_ptr = nullptr;
 		}; // struct WvkQueueFamilyCreateInfo
 

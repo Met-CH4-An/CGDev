@@ -48,7 +48,7 @@ namespace CGDev {
 						// выполняем проверку корректности структуры CreateInfo.
 						// Это позволяет перехватывать ошибки на этапе разработки.
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+						//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 							_status = validationCreateInfo();
 
 							// Если структура невалидна — завершаем с ошибкой.
@@ -57,7 +57,7 @@ namespace CGDev {
 								_status.append("\n\tVknExtDebugUtilsCommands::validationCreateInfo() - fail");
 								return _status;
 							}
-						}
+						//}
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Пытаемся загрузить адреса функций расширения VK_EXT_debug_utils.

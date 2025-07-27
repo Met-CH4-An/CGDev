@@ -55,14 +55,14 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Валидируем входные данные, если включена валидационная сборка
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+					//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 						_status = validationCreateInfo();
 
 						if (!_status) {
 							reset();
 							return _status.set(VknStatusCode::FAIL, "\n\tWvkKhrWin32SurfaceDispatchTable::validationCreateInfo - fail.");
 						}
-					}
+					//}
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Загружаем указатель на vkCreateWin32SurfaceKHR

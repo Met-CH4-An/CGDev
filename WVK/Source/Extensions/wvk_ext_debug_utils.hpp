@@ -26,7 +26,7 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					inline const std::string& VknExtDebugUtils::s_getName(void) noexcept {
+					inline const std::string& WvkExtDebugUtils::s_getName(void) noexcept {
 
 						return s_name;
 					}

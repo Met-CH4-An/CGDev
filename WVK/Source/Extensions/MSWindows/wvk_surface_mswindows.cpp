@@ -47,7 +47,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Валидация структуры, если включена сборка с проверками
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+					//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 						_status = validationCreateInfo();
 
 						if (!_status) {
@@ -56,7 +56,7 @@ namespace CGDev {
 							return _status.set(VknStatusCode::FAIL,
 								"\n\tWvkSurfaceMSWindows::validationCreateInfo - fail.");
 						}
-					}
+					//}
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Создание Vulkan surface

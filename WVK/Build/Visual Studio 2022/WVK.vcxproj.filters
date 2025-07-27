@@ -2,10 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\Source\_wvk.cpp" />
-    <ClCompile Include="..\..\Source\wvk_base_commands.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_buffer.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_pool.cpp" />
-    <ClCompile Include="..\..\Source\wvk_commands.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance.cpp" />
     <ClCompile Include="..\..\Source\wvk_layer.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader.cpp" />
@@ -18,9 +16,6 @@
       <Filter>MSWindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\wvk_ext_debug_utils.cpp">
-      <Filter>Extensions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.cpp">
       <Filter>Extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\wvk_surface.cpp">
@@ -41,14 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\_wvk.h" />
-    <ClInclude Include="..\..\Source\wvk_base_commands.h" />
-    <ClInclude Include="..\..\Source\wvk_base_commands.hpp" />
     <ClInclude Include="..\..\Source\wvk_command_buffer.h" />
     <ClInclude Include="..\..\Source\wvk_command_buffer.hpp" />
     <ClInclude Include="..\..\Source\wvk_command_pool.h" />
     <ClInclude Include="..\..\Source\wvk_command_pool.hpp" />
-    <ClInclude Include="..\..\Source\wvk_commands.h" />
-    <ClInclude Include="..\..\Source\wvk_commands.hpp" />
     <ClInclude Include="..\..\Source\wvk_extension.h" />
     <ClInclude Include="..\..\Source\wvk_extension.hpp" />
     <ClInclude Include="..\..\Source\wvk_instance.h" />
@@ -82,12 +73,6 @@
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.hpp">
-      <Filter>Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.h">
-      <Filter>Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils_commands.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.h">

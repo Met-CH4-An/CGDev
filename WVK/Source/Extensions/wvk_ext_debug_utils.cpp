@@ -11,7 +11,6 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_ext_debug_utils_commands.h"
 
 namespace CGDev {
 
@@ -26,20 +25,20 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					VknExtDebugUtils::VknExtDebugUtils(void) noexcept
+					WvkExtDebugUtils::WvkExtDebugUtils(void) noexcept
 						: VknExtension(s_name) {
 					}
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					VknExtDebugUtils::~VknExtDebugUtils(void) noexcept {
+					WvkExtDebugUtils::~WvkExtDebugUtils(void) noexcept {
 					}
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					WvkStatus VknExtDebugUtils::create(const VknExtDebugUtilsCreateInfo& create_info) noexcept {
+					WvkStatus WvkExtDebugUtils::create(const WvkExtDebugUtilsCreateInfo& create_info) noexcept {
 						WvkStatus _status;
 
 						// Сохраняем переданную структуру создания во внутренний член класса
@@ -47,9 +46,9 @@ namespace CGDev {
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Если сборка содержит валидацию, то проверяем структуру
-						// VknExtDebugUtilsCreateInfo на корректность заполнения
+						// WvkExtDebugUtilsCreateInfo на корректность заполнения
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-						if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+						//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 							// Выполняем валидацию структуры создания
 							_status = validationCreateInfo();
 
@@ -59,7 +58,7 @@ namespace CGDev {
 								_status.append("\n\tVknExtDebugUtils::validationCreateInfo() - fail");
 								return _status;
 							}
-						}
+						//}
 
 						// Создаём объект VkDebugUtilsMessengerEXT через соответствующий метод
 						_status = createVkDebugUtilsMessenger();
@@ -77,7 +76,7 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					void VknExtDebugUtils::destroy(void) noexcept {
+					void WvkExtDebugUtils::destroy(void) noexcept {
 
 						//m_create_info.wvk_debug_utils_commands->vkDestroyDebugUtilsMessengerEXT();
 
@@ -93,7 +92,7 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					bool VknExtDebugUtils::hasStatus(const VknDebugUtilsMode& mode) const noexcept {
+					bool WvkExtDebugUtils::hasStatus(const VknDebugUtilsMode& mode) const noexcept {
 						// Флаги серьёзности и типа, соответствующие переданному режиму
 						VkDebugUtilsMessageSeverityFlagsEXT _severity = 0;
 						VkDebugUtilsMessageTypeFlagsEXT _type = 0;
@@ -116,16 +115,16 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					WvkStatus VknExtDebugUtils::validationCreateInfo(void) const noexcept {
+					WvkStatus WvkExtDebugUtils::validationCreateInfo(void) const noexcept {
 						WvkStatus _status;
 
 						// ----------------------------------------------
 						// Проверка: должен быть передан валидный указатель 
 						// на объект команд для работы с отладкой Vulkan
 						// ----------------------------------------------
-						if (m_create_info.wvk_debug_utils_commands == nullptr) {
+						if (m_create_info.wvk_instance_dispatch_table == nullptr) {
 							_status.m_code = VknStatusCode::FAIL;
-							_status.append("\n\tVknExtDebugUtilsCreateInfo::wvk_debug_utils_commands = nullptr");
+							_status.append("\n\tVknExtDebugUtilsCreateInfo::wvk_instance_dispatch_table - nullptr.");
 							return _status;
 						}
 
@@ -149,7 +148,7 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					void VknExtDebugUtils::convertDebugUtilsModeToVkFlags(const VknDebugUtilsMode& mode, VkDebugUtilsMessageSeverityFlagsEXT& outSeverity, VkDebugUtilsMessageTypeFlagsEXT& outType) const noexcept {
+					void WvkExtDebugUtils::convertDebugUtilsModeToVkFlags(const VknDebugUtilsMode& mode, VkDebugUtilsMessageSeverityFlagsEXT& outSeverity, VkDebugUtilsMessageTypeFlagsEXT& outType) const noexcept {
 						
 						// --------------------------------------
 						// Уровни серьёзности (Severity flags)
@@ -198,7 +197,7 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					WvkStatus VknExtDebugUtils::createVkDebugUtilsMessenger(void) noexcept {
+					WvkStatus WvkExtDebugUtils::createVkDebugUtilsMessenger(void) noexcept {
 						WvkStatus _status;
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,30 +229,30 @@ namespace CGDev {
 						// Шаг 3. Попытка создания мессенджера для отладки
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Пытаемся создать мессенджер через командный интерфейс
-						VkResult _vk_result = m_create_info.wvk_debug_utils_commands->vknCreateDebugUtilsMessengerEXT(
-							&_debug_utils_messenger_create_info,
-							nullptr,
-							&m_vk_debug_utils_messenger);
+						//VkResult _vk_result = m_create_info.wvk_debug_utils_commands->vknCreateDebugUtilsMessengerEXT(
+						//	&_debug_utils_messenger_create_info,
+						//	nullptr,
+						//	&m_vk_debug_utils_messenger);
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Шаг 4. Обработка результата создания мессенджера
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Обработка результата
-						if (_vk_result != VK_SUCCESS) {
-							_status.m_code = VknStatusCode::FAIL;
+						//if (_vk_result != VK_SUCCESS) {
+						//	_status.m_code = VknStatusCode::FAIL;
 
 							// Добавим конкретное описание ошибки, если известно
-							switch (_vk_result) {
-							case VK_ERROR_OUT_OF_HOST_MEMORY:
-								_status.append("\n\tvknCreateDebugUtilsMessengerEXT - VK_ERROR_OUT_OF_HOST_MEMORY");
-								break;
-							default:
-								_status.append("\n\tvknCreateDebugUtilsMessengerEXT - Unknown error");
-								break;
-							}
+						//	switch (_vk_result) {
+						//	case VK_ERROR_OUT_OF_HOST_MEMORY:
+						//		_status.append("\n\tvknCreateDebugUtilsMessengerEXT - VK_ERROR_OUT_OF_HOST_MEMORY");
+						//		break;
+						//	default:
+						//		_status.append("\n\tvknCreateDebugUtilsMessengerEXT - Unknown error");
+						//		break;
+						//	}
 
-							return _status;
-						}
+						//	return _status;
+						//}
 
 						// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 						// Шаг 5. Успешное завершение
@@ -266,9 +265,9 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					VkBool32 VknExtDebugUtils::s_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) noexcept {
+					VkBool32 WvkExtDebugUtils::s_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) noexcept {
 
-						auto* _this = static_cast<VknExtDebugUtils*>(pUserData);
+						auto* _this = static_cast<WvkExtDebugUtils*>(pUserData);
 
 						// Записываем сообщение в очередь
 						if (_this) {

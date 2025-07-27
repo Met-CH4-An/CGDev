@@ -52,23 +52,30 @@ namespace CGDev {
 			~WvkInstance(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief Инициализирует Vulkan-инстанс на основе входной структуры VknInstanceCreateInfo.
-			* 
-			* @details Метод выполняет валидацию входных параметров (если включена сборка с валидацией),
-			*          подготавливает список слоёв и расширений, инициализирует `VkInstance`.
-			* 
-			* @param[in] create_info Структура с параметрами для создания инстанса.
-			* 
-			* @return Возвращает объект WvkStatus с кодом успеха или описанием ошибки.
-			* 
+			/*!	\brief
+			* Создаёт объект WvkInstance и инициализирует VkInstance.
+			*
+			* @details
+			* Метод выполняет пошаговую инициализацию Vulkan-инстанса:
+			* проверяет входные данные, подготавливает слои и расширения,
+			* затем создаёт VkInstance и обновляет флаг `m_valid`.
+			* В случае ошибки внутреннее состояние сбрасывается.
+			*
+			* @param[in] create_info
+			* Структура, содержащая настройки для создания инстанса.
+			*
+			* @return
+			* Возвращает статус выполнения операции:
+			* - `SUCCESSFUL` — успешное создание.
+			* - `ALREADY_INITIALIZED` — инстанс уже создан.
+			* - `FAIL` — при любой стадии ошибки.
+			*
 			* @code
 			* WvkInstance instance;
-			* WvkInstanceCreateInfo info;
-			* info.log = &logger;
-			* info.wvk_commands = &vulkan_commands;
+			* WvkInstanceCreateInfo info = { ... };
 			* WvkStatus status = instance.create(info);
-			* if (status.m_code != VknStatusCode::SUCCESSFUL) {
-			*     std::cerr << status.message_old;
+			* if (!status) {
+			*     std::cerr << "Ошибка: " << status.message() << std::endl;
 			* }
 			* @endcode
 			*/

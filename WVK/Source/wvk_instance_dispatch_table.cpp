@@ -20,17 +20,17 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkInstanceDt::WvkInstanceDt(void) noexcept {}
+		WvkInstanceDispatchTable::WvkInstanceDispatchTable(void) noexcept {}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkInstanceDt::~WvkInstanceDt(void) noexcept {}
+		WvkInstanceDispatchTable::~WvkInstanceDispatchTable(void) noexcept {}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkInstanceDt::create(const WvkInstanceDtCreateInfo& create_info) noexcept {
+		WvkStatus WvkInstanceDispatchTable::create(const WvkInstanceDtCreateInfo& create_info) noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,14 +46,12 @@ namespace CGDev {
 			m_create_info = create_info;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Валидация входных параметров (если включена)
+			// Шаг 3. Валидация входных параметров
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (Build::ValidationBuildInfo::enable) {
-				_status = validationCreateInfo();
-				if (!_status) {
-					reset(); // очищаем внутреннее состояние
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkInstanceDispatchTable::validationCreateInfo - fail.");
-				}
+			_status = validationCreateInfo();
+			if (!_status) {
+				reset(); // очищаем внутреннее состояние
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstanceDispatchTable::validationCreateInfo - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,14 +74,14 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		void WvkInstanceDt::destroy(void) noexcept {
+		void WvkInstanceDispatchTable::destroy(void) noexcept {
 			reset();
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkInstanceDt::validationCreateInfo(void) const noexcept {
+		WvkStatus WvkInstanceDispatchTable::validationCreateInfo(void) const noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +107,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkInstanceDt::loadProcedure(void) noexcept {
+		WvkStatus WvkInstanceDispatchTable::loadProcedure(void) noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,21 +144,21 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			// [Version] 1.1
 			// ~~~~~~~~~~~~~~~~
-			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
+			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
 				_procedures.emplace_back("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups));
 			}
 
 				// ~~~~~~~~~~~~~~~~
 				// [Extension] VK_KHR_device_group_creation
 				// ~~~~~~~~~~~~~~~~			
-				if constexpr (Build::WvkBuildInfo::find("VK_KHR_device_group_creation")) {
+				if constexpr (Build::find("VK_KHR_device_group_creation")) {
 					_procedures.emplace_back("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR));
 				}
 				
 			// ~~~~~~~~~~~~~~~~
 			// [Version] 1.1
 			// ~~~~~~~~~~~~~~~~
-			if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
+			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
 				_procedures.emplace_back("vkGetPhysicalDeviceFeatures2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2));
 				_procedures.emplace_back("vkGetPhysicalDeviceProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2));
 				_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2));
@@ -173,7 +171,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Extension] VK_KHR_get_physical_device_properties2
 				// ~~~~~~~~~~~~~~~~	
-				if constexpr (Build::WvkBuildInfo::find("VK_KHR_get_physical_device_properties2")) {
+				if constexpr (Build::find("VK_KHR_get_physical_device_properties2")) {
 					_procedures.emplace_back("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR));
 					_procedures.emplace_back("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR));
 					_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR));
@@ -184,11 +182,27 @@ namespace CGDev {
 				}
 				
 			// ~~~~~~~~~~~~~~~~
-			// VkSurface 1.1
+			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
 			// ~~~~~~~~~~~~~~~~
 			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR));
 			
+			// =======================================
+			// [Category]: Logical Device
+			// =======================================
+			_procedures.emplace_back("vkCreateDevice", reinterpret_cast<void**>(&m_vkCreateDevice));
 
+			// =======================================
+			// [Category]: Debug
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_debug_utils
+			// ~~~~~~~~~~~~~~~~
+			_procedures.emplace_back("vkCreateDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkCreateDebugUtilsMessengerEXT));
+			_procedures.emplace_back("vkDestroyDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkDestroyDebugUtilsMessengerEXT));
+			_procedures.emplace_back("vkSubmitDebugUtilsMessageEXT", reinterpret_cast<void**>(&m_vkSubmitDebugUtilsMessageEXT));
+			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 2. Загружаем процедуры через WvkLoader с передачей VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,7 +228,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		void WvkInstanceDt::reset(void) noexcept {
+		void WvkInstanceDispatchTable::reset(void) noexcept {
 			// ~~~~~~~~~~~~~~~~
 			// Vulkan 1.0
 			// ~~~~~~~~~~~~~~~~

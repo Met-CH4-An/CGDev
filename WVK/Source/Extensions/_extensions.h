@@ -42,12 +42,12 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class			VknExtDebugUtils;
-					using			VknExtDebugUtilsPtr = VknExtDebugUtils * ;
+					class			WvkExtDebugUtils;
+					using			VknExtDebugUtilsPtr = WvkExtDebugUtils * ;
 					using			VknExtDebugUtilsPtrArr = std::vector<VknExtDebugUtilsPtr>;
-					using			VknExtDebugUtilsWptr = std::weak_ptr<VknExtDebugUtils>;
+					using			VknExtDebugUtilsWptr = std::weak_ptr<WvkExtDebugUtils>;
 					using			VknExtDebugUtilsWptrArr = std::vector<VknExtDebugUtilsWptr>;
-					using			VknExtDebugUtilsSptr = std::shared_ptr<VknExtDebugUtils>;
+					using			VknExtDebugUtilsSptr = std::shared_ptr<WvkExtDebugUtils>;
 					using			VknExtDebugUtilsSptrArr = std::vector<VknExtDebugUtilsSptr>;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

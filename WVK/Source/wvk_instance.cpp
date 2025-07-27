@@ -41,48 +41,57 @@ namespace CGDev {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Сохраняем входную структуру в член класса
+			// Шаг 1. Проверяем, был ли инстанс уже создан
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (m_valid) {
+				return _status.set(VknStatusCode::ALREADY_INITIALIZED);
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 2. Сохраняем входную структуру в член класса
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_create_info = create_info;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Проверка валидности входной структуры
-			// Выполняется только в валидационной сборке
+			// Шаг 3. Проверка валидности входной структуры
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
-				_status = validationCreateInfo();
-				if (!_status) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::validationCreateInfo() - fail.");
-				}
+			_status = validationCreateInfo();
+			if (!_status) {
+				reset(); // очищаем внутреннее состояние
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::validationCreateInfo() - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Подготовка слоёв (layers) для создания VkInstance
+			// Шаг 4. Подготовка слоёв (layers) для создания VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = prepareLayer();
 			if (_status.m_code != VknStatusCode::SUCCESSFUL) {
+				reset(); // очищаем внутреннее состояние
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::prepareLayer() - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Подготовка расширений (extensions) для VkInstance
+			// Шаг 5. Подготовка расширений (extensions) для VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = prepareExtension();
 			if (_status.m_code != VknStatusCode::SUCCESSFUL) {
+				reset(); // очищаем внутреннее состояние
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::prepareExtension() - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 5. Создание самого VkInstance
+			// Шаг 6. Создание самого VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = createVkInstance();
 			if (_status.m_code != VknStatusCode::SUCCESSFUL) {
+				reset(); // очищаем внутреннее состояние
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::createVkInstance() - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 6. Успешное завершение создания инстанса
+			// Шаг 7. Успешное завершение создания инстанса
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_valid = true;
 			return _status.setOk();
 		}
 
@@ -91,7 +100,7 @@ namespace CGDev {
 
 		void WvkInstance::destroy(void) noexcept {
 
-			//m_create_info.wvk_commands->vkDestroyInstance(m_vk_instance, VK_NULL_HANDLE);
+			//m_create_info.wvk_instance_dispatch_table->vkDestroyInstance(m_vk_instance, VK_NULL_HANDLE);
 				
 			// ~~~~~~~~~~~~~~~~
 			// очистка данных
@@ -193,29 +202,29 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 6. Проверка наличия необходимых слоёв в списке доступных слоёв
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+			//if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 				// Перебор слоёв, указанных в конфигурации сборки
-				for (const auto& it_name : wvk::Build::ValidationBuildInfo::layer_name_collection) {
-					bool _found = false;
+				//for (const auto& it_name : wvk::Build::layer_name_collection) {
+				//	bool _found = false;
 
 					// Перебор доступных слоёв Vulkan
-					for (const auto& it_layer_properties : m_layer_properties_collection) {
+				//	for (const auto& it_layer_properties : m_layer_properties_collection) {
 						// Сравниваем имя слоя с именем из коллекции
-						if (std::strcmp(it_layer_properties.layerName, it_name.data()) == 0) {
+				//		if (std::strcmp(it_layer_properties.layerName, it_name.data()) == 0) {
 							// Добавляем имя найденного слоя в список активированных
-							m_layer_name_collection.push_back(it_layer_properties.layerName);
-							_found = true;
-							break;
-						}
-					}
+				//			m_layer_name_collection.push_back(it_layer_properties.layerName);
+				//			_found = true;
+				//			break;
+				//		}
+				//	}
 
 					// Если хотя бы один слой из списка не найден — выходим с ошибкой
-					if (!_found) {
-						return _status.set(VknStatusCode::FAIL, "\n\t%s - not found.", std::string(it_name));
-					}
-				}
-			}
-
+				//	if (!_found) {
+				//		return _status.set(VknStatusCode::FAIL, "\n\t%s - not found.", std::string(it_name));
+				//	}
+				//}
+			//}
+			m_layer_name_collection.push_back("VK_LAYER_KHRONOS_validation");
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 7. Возвращаем успешный статус
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -282,7 +291,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 3. При включённой валидации проверяем наличие нужных расширений
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
+			/*if constexpr (wvk::Build::ValidationBuildInfo::enable == true) {
 				for (const auto& it_name : wvk::Build::ValidationBuildInfo::extension_name_collection) {
 					bool _found = false;
 
@@ -300,7 +309,7 @@ namespace CGDev {
 						return _status.set(VknStatusCode::FAIL, "\n\t%s - not found.", std::string(it_name));
 					}
 				}
-			}
+			}*/
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 4. При включённых поверхностях проверяем наличие нужных расширений
@@ -324,7 +333,7 @@ namespace CGDev {
 					}
 				}
 			}*/
-			m_extension_name_collection.insert(m_extension_name_collection.end(), Build::WvkBuildInfo::getInstanceExtensions().begin(), Build::WvkBuildInfo::getInstanceExtensions().end());
+			m_extension_name_collection.insert(m_extension_name_collection.end(), Build::getInstanceExtensions().begin(), Build::getInstanceExtensions().end());
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 5. Возвращаем успешный статус
@@ -348,7 +357,7 @@ namespace CGDev {
 			_vkApplicationInfo.applicationVersion = 0;
 			_vkApplicationInfo.pEngineName = "GPU";
 			_vkApplicationInfo.engineVersion = 0;
-			_vkApplicationInfo.apiVersion = static_cast<uint32_t>(wvk::Build::WvkBuildInfo::vulkan_api_version);
+			_vkApplicationInfo.apiVersion = static_cast<uint32_t>(wvk::Build::vulkan_api_version);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 2. Инициализация структуры VkInstanceCreateInfo

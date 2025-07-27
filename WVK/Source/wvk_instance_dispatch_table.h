@@ -17,34 +17,38 @@
 #include "wvk_instance.h"
 
 #define WVK_CALL_IF_VER_OR_EXT(version, call_if_ver, extension, call_if_ext) \
-	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= version) {       \
+	if constexpr (Build::vulkan_api_version >= version) {       \
 		call_if_ver;                                                          \
-	} else if constexpr (Build::WvkBuildInfo::find(extension)) {             \
+	} else if constexpr (Build::find(extension)) {             \
 		call_if_ext;                                                          \
 	}
 
-
-#define WVK_CALL_IF_VER(min_version, call)                             \
-	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
-		call;                                                          \
+#define WVK_CALL_IF_EXT(extension, call_if_ext) \
+	if constexpr (Build::find(extension)) {             \
+		call_if_ext;                                                          \
 	}
 
-#define WVK_RETURN_IF_VER(min_version, call)                             \
-	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
-		return call;                                                          \
-	}\
-	else return VK_SUCCESS;
+//#define WVK_CALL_IF_VER(min_version, call)                             \
+//	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
+//		call;                                                          \
+//	}
 
-#define WVK_CALL_IF_EXT(extension, call)                             \
-	if constexpr (Build::WvkBuildInfo::find(extension)) { \
-		call;                                                          \
-	}
+#//define WVK_RETURN_IF_VER(min_version, call)                             \
+//	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
+//		return call;                                                          \
+//	}\
+//	else return VK_SUCCESS;
 
-#define WVK_RETURN_IF_EXT(extension, call)                             \
-	if constexpr (Build::WvkBuildInfo::find(extension)) { \
-		return call;                                                          \
-	}\
-	else return VK_SUCCESS;
+//#define WVK_CALL_IF_EXT(extension, call)                             \
+//	if constexpr (Build::WvkBuildInfo::find(extension)) { \
+//		call;                                                          \
+//	}
+
+//#define WVK_RETURN_IF_EXT(extension, call)                             \
+//	if constexpr (Build::WvkBuildInfo::find(extension)) { \
+//		return call;                                                          \
+//	}\
+//	else return VK_SUCCESS;
 
 namespace CGDev {
 
@@ -63,7 +67,7 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkInstanceDt : public GpuObject {
+		class WvkInstanceDispatchTable : public GpuObject {
 
 		public:
 
@@ -96,7 +100,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkEnumeratePhysicalDeviceGroups(uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept {
 				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroups,pPhysicalDeviceGroupCount,pPhysicalDeviceGroupProperties),
+					Build::VulkanVersion::VERSION_11, return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroupsKHR,pPhysicalDeviceGroupCount,pPhysicalDeviceGroupProperties),
 					"VK_KHR_device_group_creation", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroupsKHR,pPhysicalDeviceGroupCount,pPhysicalDeviceGroupProperties)); }
 
 			// ~~~~~~~~~~~~~~~~
@@ -130,13 +134,42 @@ namespace CGDev {
 				WVK_CALL_IF_VER_OR_EXT(
 					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties),
 					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties)); }
-
+			
 			// ~~~~~~~~~~~~~~~~
-			// WvkSurface 1.1
+			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const noexcept {
-				return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities); }
+				WVK_CALL_IF_VER_OR_EXT(
+					Build::VulkanVersion::VERSION_11, return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities),
+					"VK_KHR_get_surface_capabilities2", return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities)); }
+			inline VkResult wvkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const noexcept {
+				WVK_CALL_IF_VER_OR_EXT(
+					Build::VulkanVersion::VERSION_11, return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats),
+					"VK_KHR_get_surface_capabilities2", return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats)); }
 
+			// =======================================
+			// [Category]: Logical Device
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) const noexcept {
+				return m_vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice); }
+
+			// =======================================
+			// [Category]: Debug
+			// =======================================
+			
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_debug_utils
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
+				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkCreateDebugUtilsMessengerEXT, pCreateInfo, pAllocator, pMessenger)); }
+			inline void wvkDestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
+				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkDestroyDebugUtilsMessengerEXT, messenger, pAllocator)); }
+			inline void wvkSubmitDebugUtilsMessageEXT(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
+				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkSubmitDebugUtilsMessageEXT, messageSeverity, messageTypes, pCallbackData)); }
 
 		private:
 
@@ -145,7 +178,6 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			PFN_vkDestroyInstance m_vkDestroyInstance = VK_NULL_HANDLE;			
 
-			PFN_vkCreateDevice m_vkCreateDevice = VK_NULL_HANDLE;
 			PFN_vkEnumerateDeviceExtensionProperties m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
 			PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
 			PFN_vkGetDeviceProcAddr	m_vkGetDeviceProcAddr = VK_NULL_HANDLE;
@@ -199,9 +231,30 @@ namespace CGDev {
 				PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = VK_NULL_HANDLE;
 
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1 or VK_KHR_get_surface_capabilities2
+			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
 			// ~~~~~~~~~~~~~~~~
 			PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR m_vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
+			PFN_vkGetPhysicalDeviceSurfaceFormats2KHR m_vkGetPhysicalDeviceSurfaceFormats2KHR = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Logical Device
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateDevice m_vkCreateDevice = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Debug
+			// =======================================
+			
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_debug_utils
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateDebugUtilsMessengerEXT m_vkCreateDebugUtilsMessengerEXT = VK_NULL_HANDLE;
+			PFN_vkDestroyDebugUtilsMessengerEXT m_vkDestroyDebugUtilsMessengerEXT = VK_NULL_HANDLE;
+			PFN_vkSubmitDebugUtilsMessageEXT m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
 
 		public:
 
@@ -209,19 +262,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkInstanceDt(void) noexcept;
+			WvkInstanceDispatchTable(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			~WvkInstanceDt(void) noexcept;
+			~WvkInstanceDispatchTable(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			* Инициализирует таблицу вызовов Vulkan-функций для указанного `VkInstance`.
 			*
-			* Метод сохраняет переданную структуру `WvkInstanceDispatchTableCreateInfo`, проверяет её на корректность (если включена валидация),
+			* Метод сохраняет переданную структуру `WvkInstanceDispatchTableCreateInfo`, проверяет её на корректность,
 			* а затем загружает указатели на необходимые Vulkan-функции. Повторный вызов приведёт к ошибке `ALREADY_INITIALIZED`.
 			*
 			* @param[in] create_info
@@ -237,7 +290,7 @@ namespace CGDev {
 			*
 			* @code
 			* WvkInstanceDtCreateInfo info = { ... };
-			* WvkInstanceDt dispatch_table;
+			* WvkInstanceDispatchTable dispatch_table;
 			* WvkStatus status = dispatch_table.create(info);
 			* if (!status) {
 			*     std::cerr << status.what() << std::endl;
@@ -269,7 +322,7 @@ namespace CGDev {
 			*  - `FAIL`, если хотя бы одно поле (loader или instance) не задано.
 			*
 			* @code
-			* WvkInstanceDt dispatch_table;
+			* WvkInstanceDispatchTable dispatch_table;
 			* WvkStatus status = dispatch_table.validationCreateInfo();
 			* if (!status) {
 			*     std::cerr << status.what() << std::endl;
@@ -294,7 +347,7 @@ namespace CGDev {
 			*  - `FAIL`, если загрузка хотя бы одной процедуры завершилась неудачей.
 			*
 			* @code
-			* WvkInstanceDt table;
+			* WvkInstanceDispatchTable table;
 			* WvkStatus status = table.loadProcedure();
 			* if (!status) {
 			*     std::cerr << status.what() << std::endl;
