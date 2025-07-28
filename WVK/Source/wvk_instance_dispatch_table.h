@@ -10,45 +10,11 @@
 ////////////////////////////////////////////////////////////////
 // секция родительского класса
 ////////////////////////////////////////////////////////////////
-#include "wvk_base_object.h"
+#include "wvk_dispatch_table.h"
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
 #include "wvk_instance.h"
-
-#define WVK_CALL_IF_VER_OR_EXT(version, call_if_ver, extension, call_if_ext) \
-	if constexpr (Build::vulkan_api_version >= version) {       \
-		call_if_ver;                                                          \
-	} else if constexpr (Build::find(extension)) {             \
-		call_if_ext;                                                          \
-	}
-
-#define WVK_CALL_IF_EXT(extension, call_if_ext) \
-	if constexpr (Build::find(extension)) {             \
-		call_if_ext;                                                          \
-	}
-
-//#define WVK_CALL_IF_VER(min_version, call)                             \
-//	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
-//		call;                                                          \
-//	}
-
-#//define WVK_RETURN_IF_VER(min_version, call)                             \
-//	if constexpr (Build::WvkBuildInfo::vulkan_api_version >= min_version) { \
-//		return call;                                                          \
-//	}\
-//	else return VK_SUCCESS;
-
-//#define WVK_CALL_IF_EXT(extension, call)                             \
-//	if constexpr (Build::WvkBuildInfo::find(extension)) { \
-//		call;                                                          \
-//	}
-
-//#define WVK_RETURN_IF_EXT(extension, call)                             \
-//	if constexpr (Build::WvkBuildInfo::find(extension)) { \
-//		return call;                                                          \
-//	}\
-//	else return VK_SUCCESS;
 
 namespace CGDev {
 
@@ -67,7 +33,7 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkInstanceDispatchTable : public GpuObject {
+		class WvkInstanceDispatchTable : public WvkDispatchTable {
 
 		public:
 
@@ -96,56 +62,96 @@ namespace CGDev {
 				m_vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties); }
 
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
+			// [Version] 1.1 / WVK_KHR_device_group_creation
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkEnumeratePhysicalDeviceGroups(uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroupsKHR,pPhysicalDeviceGroupCount,pPhysicalDeviceGroupProperties),
-					"VK_KHR_device_group_creation", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroupsKHR,pPhysicalDeviceGroupCount,pPhysicalDeviceGroupProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11 
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroups, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_device_group_creation == WVK_EXTENSION_ENABLE 
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkEnumeratePhysicalDeviceGroupsKHR, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
+#endif
+			}
 
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
+			// [Version] 1.1 / VK_KHR_get_physical_device_properties2
 			// ~~~~~~~~~~~~~~~~
 			inline void wvkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
+#endif
+			}
 			inline void wvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceProperties2(physicalDevice, pProperties),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceProperties2(physicalDevice, pProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
+#endif
+			}
 			inline void wvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
+#endif
+			}
 			inline VkResult wvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, return m_vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties),
-					"VK_KHR_get_physical_device_properties2", return m_vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				return m_vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				return m_vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+#endif
+			}
 			inline void wvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+#endif
+			}
 			inline void wvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
+#endif
+			}
 			inline void wvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties),
-					"VK_KHR_get_physical_device_properties2", m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+				m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
+#endif
+			}
 			
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
+			// [Version] 1.1 / VK_KHR_get_surface_capabilities2
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities),
-					"VK_KHR_get_surface_capabilities2", return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_surface_capabilities2 == WVK_EXTENSION_ENABLE
+				return m_vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
+#endif
+			}
 			inline VkResult wvkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) const noexcept {
-				WVK_CALL_IF_VER_OR_EXT(
-					Build::VulkanVersion::VERSION_11, return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats),
-					"VK_KHR_get_surface_capabilities2", return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats)); }
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+				return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
+#endif
+#if VULKAN_API_VERSION < VULKAN_API_VERSION_11 && WVK_KHR_get_surface_capabilities2 == WVK_EXTENSION_ENABLE
+				return m_vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
+#endif
+			}
 
 			// =======================================
 			// [Category]: Logical Device
@@ -154,6 +160,8 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
+			inline PFN_vkVoidFunction wvkGetDeviceProcAddr(VkDevice device, const char* pName) const noexcept {
+				return m_vkGetDeviceProcAddr(device, pName); }
 			inline VkResult wvkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) const noexcept {
 				return m_vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice); }
 
@@ -165,96 +173,20 @@ namespace CGDev {
 			// [Extension] VK_EXT_debug_utils
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkCreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
-				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkCreateDebugUtilsMessengerEXT, pCreateInfo, pAllocator, pMessenger)); }
+#if WVK_EXT_debug_utils == WVK_EXTENSION_ENABLE
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkCreateDebugUtilsMessengerEXT, pCreateInfo, pAllocator, pMessenger);
+#endif
+			}
 			inline void wvkDestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
-				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkDestroyDebugUtilsMessengerEXT, messenger, pAllocator)); }
+#if WVK_EXT_debug_utils == WVK_EXTENSION_ENABLE
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkDestroyDebugUtilsMessengerEXT, messenger, pAllocator);
+#endif
+			}
 			inline void wvkSubmitDebugUtilsMessageEXT(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
-				WVK_CALL_IF_EXT("VK_EXT_debug_utils", return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkSubmitDebugUtilsMessageEXT, messageSeverity, messageTypes, pCallbackData)); }
-
-		private:
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.0
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkDestroyInstance m_vkDestroyInstance = VK_NULL_HANDLE;			
-
-			PFN_vkEnumerateDeviceExtensionProperties m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
-			PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
-			PFN_vkGetDeviceProcAddr	m_vkGetDeviceProcAddr = VK_NULL_HANDLE;
-
-			// =======================================
-			// [Category]: Physical Device
-			// =======================================
-			
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.0
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkEnumeratePhysicalDevices m_vkEnumeratePhysicalDevices = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceFeatures m_vkGetPhysicalDeviceFeatures = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceProperties m_vkGetPhysicalDeviceProperties = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceFormatProperties m_vkGetPhysicalDeviceFormatProperties = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceImageFormatProperties m_vkGetPhysicalDeviceImageFormatProperties = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceQueueFamilyProperties m_vkGetPhysicalDeviceQueueFamilyProperties = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceMemoryProperties m_vkGetPhysicalDeviceMemoryProperties = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceSparseImageFormatProperties m_vkGetPhysicalDeviceSparseImageFormatProperties = VK_NULL_HANDLE;
-
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkEnumeratePhysicalDeviceGroups m_vkEnumeratePhysicalDeviceGroups = VK_NULL_HANDLE;
-
-				// ~~~~~~~~~~~~~~~~
-				// [Extension] VK_KHR_device_group_creation
-				// ~~~~~~~~~~~~~~~~
-				PFN_vkEnumeratePhysicalDeviceGroupsKHR m_vkEnumeratePhysicalDeviceGroupsKHR = VK_NULL_HANDLE;
-
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkGetPhysicalDeviceFeatures2 m_vkGetPhysicalDeviceFeatures2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceProperties2 m_vkGetPhysicalDeviceProperties2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceFormatProperties2 m_vkGetPhysicalDeviceFormatProperties2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceImageFormatProperties2 m_vkGetPhysicalDeviceImageFormatProperties2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceQueueFamilyProperties2 m_vkGetPhysicalDeviceQueueFamilyProperties2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceMemoryProperties2 m_vkGetPhysicalDeviceMemoryProperties2 = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 m_vkGetPhysicalDeviceSparseImageFormatProperties2 = VK_NULL_HANDLE;
-
-				// ~~~~~~~~~~~~~~~~
-				// [Extension] VK_KHR_get_physical_device_properties2
-				// ~~~~~~~~~~~~~~~~
-				PFN_vkGetPhysicalDeviceFeatures2KHR m_vkGetPhysicalDeviceFeatures2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceProperties2KHR m_vkGetPhysicalDeviceProperties2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceFormatProperties2KHR m_vkGetPhysicalDeviceFormatProperties2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceImageFormatProperties2KHR m_vkGetPhysicalDeviceImageFormatProperties2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR m_vkGetPhysicalDeviceQueueFamilyProperties2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceMemoryProperties2KHR m_vkGetPhysicalDeviceMemoryProperties2KHR = VK_NULL_HANDLE;
-				PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = VK_NULL_HANDLE;
-
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR m_vkGetPhysicalDeviceSurfaceCapabilities2KHR = VK_NULL_HANDLE;
-			PFN_vkGetPhysicalDeviceSurfaceFormats2KHR m_vkGetPhysicalDeviceSurfaceFormats2KHR = VK_NULL_HANDLE;
-
-			// =======================================
-			// [Category]: Logical Device
-			// =======================================
-
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.0
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkCreateDevice m_vkCreateDevice = VK_NULL_HANDLE;
-
-			// =======================================
-			// [Category]: Debug
-			// =======================================
-			
-			// ~~~~~~~~~~~~~~~~
-			// [Extension] VK_EXT_debug_utils
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkCreateDebugUtilsMessengerEXT m_vkCreateDebugUtilsMessengerEXT = VK_NULL_HANDLE;
-			PFN_vkDestroyDebugUtilsMessengerEXT m_vkDestroyDebugUtilsMessengerEXT = VK_NULL_HANDLE;
-			PFN_vkSubmitDebugUtilsMessageEXT m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
+#if WVK_EXT_debug_utils == WVK_EXTENSION_ENABLE
+				return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkSubmitDebugUtilsMessageEXT, messageSeverity, messageTypes, pCallbackData);
+#endif
+			}
 
 		public:
 

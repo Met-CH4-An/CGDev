@@ -140,12 +140,14 @@
     <ClCompile Include="..\..\Source\wvk_base_object.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_buffer.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_pool.cpp" />
+    <ClCompile Include="..\..\Source\wvk_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_layer.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader.cpp" />
     <ClCompile Include="..\..\Source\wvk_loader_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_logical_device.cpp" />
+    <ClCompile Include="..\..\Source\wvk_logical_device_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device.cpp" />
     <ClCompile Include="..\..\Source\wvk_queue.cpp" />
     <ClCompile Include="..\..\Source\wvk_queue_family.cpp" />
@@ -178,7 +180,7 @@
     <ClInclude Include="..\..\Source\wvk_command_buffer.hpp" />
     <ClInclude Include="..\..\Source\wvk_command_pool.h" />
     <ClInclude Include="..\..\Source\wvk_command_pool.hpp" />
-    <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_dispatch_table.h" />
     <ClInclude Include="..\..\Source\wvk_instance_dispatch_table.h" />
     <ClInclude Include="..\..\Source\wvk_extension.h" />
     <ClInclude Include="..\..\Source\wvk_extension.hpp" />
@@ -192,6 +194,8 @@
     <ClInclude Include="..\..\Source\wvk_loader_dispatch_table.hpp" />
     <ClInclude Include="..\..\Source\wvk_logical_device.h" />
     <ClInclude Include="..\..\Source\wvk_logical_device.hpp" />
+    <ClInclude Include="..\..\Source\wvk_logical_device_dispatch_table.h" />
+    <ClInclude Include="..\..\Source\wvk_logical_device_dispatch_table.hpp" />
     <ClInclude Include="..\..\Source\wvk_physical_device.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device.hpp" />
     <ClInclude Include="..\..\Source\wvk_queue.h" />

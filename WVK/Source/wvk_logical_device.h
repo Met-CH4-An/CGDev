@@ -91,6 +91,7 @@ namespace CGDev {
 		// hpp
 		private:
 
+			friend class WvkLogicalDeviceDispatchTable;
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
@@ -149,13 +150,7 @@ namespace CGDev {
 		private:
 					
 			WvkLogicalDeviceCreateInfo						m_create_info = {};
-			//VkPhysicalDevice								m_vk_physical_device = VK_NULL_HANDLE;
-			//void*											m_next = VK_NULL_HANDLE;
-			//std::vector<void*>								m_next_collection1;
-			//std::vector<void*>								m_allocate_memory_collection1;
 			VkDevice										m_vk_device = VK_NULL_HANDLE;
-			//VkPhysicalDeviceArr1							m_vk_physical_device_collection;
-
 		}; // class WvkLogicalDevice
 
 	} // namespace wvk

@@ -12,9 +12,10 @@
 #include "wvk_instance.h"
 #include "wvk_instance_dispatch_table.h"
 #include "wvk_physical_device.h"
-#include "wvk_dispatch_table.hpp"
+#include "wvk_dispatch_table.h"
 #include "wvk_queue_family.h"
 #include "wvk_logical_device.h"
+#include "wvk_logical_device_dispatch_table.h"
 
 #include "Extensions/wvk_ext_debug_utils.h"
 #include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
@@ -163,6 +164,18 @@ protected:
            //ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
+        // WvkLogicalDeviceDispatchTable
+        {
+            CGDev::wvk::WvkLogicalDeviceDispatchTableCreateInfo _create_info = {
+                .wvk_instance_dispatch_table = &wvk_instance_dispatch_table,
+                .wvk_logical_device = &wvk_logical_device,
+            };
+
+            auto _wvk_res = wvk_logical_device_dispatch_table.create(_create_info);
+
+            //ASSERT_EQ(_wvk_res.isOk(), true);
+        }
+
         if (s_wvk_surface == nullptr) {
             HINSTANCE _hInstance = NULL;
             HWND _hWnd = NULL;
@@ -248,6 +261,7 @@ protected:
     inline static std::unique_ptr<CGDev::wvk::WvkDispatchTable> s_wvk_dispatch_table = nullptr;
     inline static CGDev::wvk::WvkQueueFamily wvk_queue_family;
     inline static CGDev::wvk::WvkLogicalDevice wvk_logical_device;
+    inline static CGDev::wvk::WvkLogicalDeviceDispatchTable wvk_logical_device_dispatch_table;
     
     inline static CGDev::wvk::Extensions::WvkExtDebugUtils wvk_ext_debug_utils;
     inline static CGDev::wvk::Extensions::WvkKhrGetPhysicalDeviceProperties2DispatchTableUptr s_wvk_khr_get_phys_dev_props2_dt = nullptr;

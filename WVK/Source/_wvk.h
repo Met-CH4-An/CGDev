@@ -166,8 +166,8 @@ namespace CGDev {
 #define VULKAN_API_VERSION VULKAN_API_VERSION_11
 
 #define WVK_KHR_get_physical_device_properties2 WVK_EXTENSION_ENABLE
-//#define WVK_KHR_get_physical_device_properties2 WVK_EXTENSION_DISABLE
 #define WVK_KHR_device_group_creation WVK_EXTENSION_DISABLE
+#define WVK_EXT_debug_utils WVK_EXTENSION_ENABLE
 
 
 

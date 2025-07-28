@@ -6,14 +6,16 @@
 #include "wvk_status.cpp"
 #include "wvk_layer.cpp"
 #include "wvk_loader.cpp"
+#include "wvk_dispatch_table.cpp"
 #include "wvk_loader_dispatch_table.cpp"
 #include "wvk_instance.cpp"
 #include "wvk_instance_dispatch_table.cpp"
 #include "wvk_physical_device.cpp"
 #include "wvk_queue.cpp"
-#include "wvk_dispatch_table.hpp"
+#include "wvk_dispatch_table.h"
 #include "wvk_queue_family.cpp"
 #include "wvk_logical_device.cpp"
+#include "wvk_logical_device_dispatch_table.cpp"
 
 #include "MSWindows/wvk_loader_mswindows.cpp"
 

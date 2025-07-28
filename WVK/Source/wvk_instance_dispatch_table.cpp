@@ -142,54 +142,57 @@ namespace CGDev {
 			_procedures.emplace_back("vkGetPhysicalDeviceSparseImageFormatProperties", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties));
 
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
+			// [Version] 1.1 / WVK_KHR_device_group_creation
 			// ~~~~~~~~~~~~~~~~
-			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
-				_procedures.emplace_back("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups));
-			}
-
-				// ~~~~~~~~~~~~~~~~
-				// [Extension] VK_KHR_device_group_creation
-				// ~~~~~~~~~~~~~~~~			
-				if constexpr (Build::find("VK_KHR_device_group_creation")) {
-					_procedures.emplace_back("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR));
-				}
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+			_procedures.emplace_back("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups));
+#endif
+#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_ENABLE
+			_procedures.emplace_back("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR));
+#endif 
 				
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
+			// [Version] 1.1 / VK_KHR_get_physical_device_properties2
 			// ~~~~~~~~~~~~~~~~
-			if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
-				_procedures.emplace_back("vkGetPhysicalDeviceFeatures2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2));
-				_procedures.emplace_back("vkGetPhysicalDeviceProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2));
-				_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2));
-				_procedures.emplace_back("vkGetPhysicalDeviceImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2));
-				_procedures.emplace_back("vkGetPhysicalDeviceMemoryProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2));
-				_procedures.emplace_back("vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2));
-				_procedures.emplace_back("vkGetPhysicalDeviceSparseImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2));
-			}
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
+			_procedures.emplace_back("vkGetPhysicalDeviceFeatures2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2));
+			_procedures.emplace_back("vkGetPhysicalDeviceProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2));
+			_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2));
+			_procedures.emplace_back("vkGetPhysicalDeviceImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2));
+			_procedures.emplace_back("vkGetPhysicalDeviceMemoryProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2));
+			_procedures.emplace_back("vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2));
+			_procedures.emplace_back("vkGetPhysicalDeviceSparseImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2));
+#endif
+#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
+			_procedures.emplace_back("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceMemoryProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceQueueFamilyProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceSparseImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR));
+#endif 
 
-				// ~~~~~~~~~~~~~~~~
-				// [Extension] VK_KHR_get_physical_device_properties2
-				// ~~~~~~~~~~~~~~~~	
-				if constexpr (Build::find("VK_KHR_get_physical_device_properties2")) {
-					_procedures.emplace_back("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceMemoryProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceQueueFamilyProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2KHR));
-					_procedures.emplace_back("vkGetPhysicalDeviceSparseImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR));
-				}
-				
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1 and VK_KHR_get_surface_capabilities2
+			// [Version] 1.1 / VK_KHR_get_surface_capabilities2
 			// ~~~~~~~~~~~~~~~~
+#if VULKAN_API_VERSION >= VULKAN_API_VERSION_11
 			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR));
 			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR));
-			
+#endif
+#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_get_surface_capabilities2 == WVK_EXTENSION_ENABLE
+			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR));
+			_procedures.emplace_back("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR));
+#endif
+					
 			// =======================================
 			// [Category]: Logical Device
 			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			_procedures.emplace_back("vkGetDeviceProcAddr", reinterpret_cast<void**>(&m_vkGetDeviceProcAddr));
 			_procedures.emplace_back("vkCreateDevice", reinterpret_cast<void**>(&m_vkCreateDevice));
 
 			// =======================================
@@ -199,9 +202,11 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			// [Extension] VK_EXT_debug_utils
 			// ~~~~~~~~~~~~~~~~
+#if WVK_EXT_debug_utils == WVK_EXTENSION_ENABLE
 			_procedures.emplace_back("vkCreateDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkCreateDebugUtilsMessengerEXT));
 			_procedures.emplace_back("vkDestroyDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkDestroyDebugUtilsMessengerEXT));
 			_procedures.emplace_back("vkSubmitDebugUtilsMessageEXT", reinterpret_cast<void**>(&m_vkSubmitDebugUtilsMessageEXT));
+#endif
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 2. Загружаем процедуры через WvkLoader с передачей VkInstance
