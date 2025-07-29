@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////
 // секция родительского класса
 ////////////////////////////////////////////////////////////////
-#include "wvk_base_object.h"
+#include "wvk_dispatch_table.h"
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
@@ -31,12 +31,16 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkLoaderDispatchTable : public GpuObject {
+		class WvkLoaderDispatchTable : public WvkDispatchTable {
 
 		public:
 
+			// =======================================
+			// [Category]: Global
+			// =======================================
+
 			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.0
+			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) const noexcept;
 			inline VkResult wvkEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const noexcept;
@@ -46,20 +50,6 @@ namespace CGDev {
 			// Vulkan 1.1
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept;
-
-		private:
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.0
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkCreateInstance                           m_vkCreateInstance = VK_NULL_HANDLE;
-			PFN_vkEnumerateInstanceExtensionProperties     m_vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
-			PFN_vkEnumerateInstanceLayerProperties         m_vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.1
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkEnumerateInstanceVersion                 m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
 
 		public:
 
@@ -115,6 +105,16 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 
+		// hpp
+		public:
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkLoaderDispatchTableCreateInfo& getCreateInfo(void) const noexcept;
+
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,28 +146,31 @@ namespace CGDev {
 			WvkStatus validationCreateInfo(void) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*  Загружает указатели на глобальные Vulkan-функции через `WvkLoader`.
+			/*!	\brief Загружает указатели на глобальные функции загрузчика Vulkan.
 			*
 			* @details
-			*  Метод вызывает `WvkLoader::loadProcedure`, передавая список процедур
-			*  начальной загрузки Vulkan API (глобальные функции до создания экземпляра).
-			*  Каждой функции сопоставляется указатель, в который будет записан результат.
+			* Метод формирует список глобальных процедур Vulkan, доступных до создания инстанса,
+			* и вызывает метод загрузки из `wvk_loader`, который получает адреса этих функций.
+			* В случае ошибки устанавливает статус FAIL и возвращает его.
 			*
 			* @return
-			*  Статус выполнения. Если хотя бы одна процедура не загружена — возвращается FAIL.
+			* WvkStatus — результат выполнения загрузки процедур.
 			*
 			* @code
-			*  WvkLoaderDispatchTable dispatch_table;
-			*  WvkStatus status = dispatch_table.loadProcedure();
-			*  if (!status) {
-			*      // Обработка ошибки загрузки процедур
-			*  }
+			* WvkLoaderDispatchTable loader_dispatch_table;
+			* WvkStatus status = loader_dispatch_table.loadProcedure();
+			* if (!status) {
+			*     // Обработка ошибки загрузки глобальных функций Vulkan
+			* }
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus loadProcedure(void) noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void reset(void) noexcept;
 
 		private:

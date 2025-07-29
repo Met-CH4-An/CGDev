@@ -34,8 +34,8 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct WvkSurfaceCreateInfo {
 				WvkInstanceDispatchTablePtr wvk_instance_dt_ptr = nullptr;
-				WvkKhrSurfaceDTPtr wvk_khr_surface_dt = nullptr;
-				WvkKhrGetSurfaceCapabilities2DispatchTablePtr wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
+				//WvkKhrSurfaceDTPtr wvk_khr_surface_dt = nullptr;
+				//WvkKhrGetSurfaceCapabilities2DispatchTablePtr wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
 				WvkSurfacePlatformCreateInfo* wvk_surface_platform_create_info = nullptr;
 			}; // struct WvkSurfaceCreateInfo
 

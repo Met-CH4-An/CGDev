@@ -98,37 +98,50 @@ namespace CGDev {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Формируем список процедур Vulkan, которые нужно загрузить
+			// Шаг 1. Создание векторов для процедур
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<std::string> _failed_procedures;
-			std::vector<WvkVulkanProcedureInfo> _procedures;
+			std::vector<WvkVulkanProcedureInfo> _procedures = {
 
-			// =======================================
-			// [Category]: CommandPool
-			// =======================================
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2. Добавление Vulkan-процедур
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.0
-			// ~~~~~~~~~~~~~~~~
-			_procedures.emplace_back("vkCreateCommandPool", reinterpret_cast<void**>(&m_vkCreateCommandPool));
-			m_create_info.wvk_instance_dispatch_table->wvkGetDeviceProcAddr(
-				m_create_info.wvk_logical_device->getVkDevice(),
-				"vkCreateCommandPool");
-			for (const auto& it_0 : _procedures) {
-				*it_0.targetPtr = m_create_info.wvk_instance_dispatch_table->wvkGetDeviceProcAddr(
-					m_create_info.wvk_logical_device->getVkDevice(),
-					it_0.name
-				);
+				// =======================================
+				// [Category]: CommandPool
+				// =======================================
 
-				// Если функция не найдена — запоминаем имя
-				if (*it_0.targetPtr == nullptr) {
-					_failed_procedures.emplace_back(it_0.name);
-				}
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~
+				{ "vkCreateCommandPool", reinterpret_cast<void**>(&m_vkCreateCommandPool) }
+
+			};
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 3. Создание обёртки для получения адресов функций
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Лямбда захватывает this, чтобы получить доступ к vkGetDeviceProcAddr
+			//std::function<void* (const char*)> getProc = [this](const char* name) {
+			//	return m_create_info.wvk_instance_dispatch_table->wvkGetDeviceProcAddr(
+			//		m_create_info.wvk_logical_device->getVkDevice(),
+			//		name);
+			//	};
+
+			//m_create_info.wvk_loader->loadProcedure(m_create_info.wvk_logical_device->getCreateInfo().wvk_instance_dispatch_table->getCreateInfo().wvk_instance->get);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Загрузка процедур через общий механизм WvkDispatchTable
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//_status = WvkDispatchTable::loadProcedure(m_create_info.wvk_logical_device->getVkDevice(), _procedures);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 5. Обработка ошибки, если загрузка процедур завершилась неудачно
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (!_status) {
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceDispatchTable::loadProcedure - fail.");
 			}
 
-			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Успешное завершение
+			// Шаг 6. Возврат успешного статуса
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}

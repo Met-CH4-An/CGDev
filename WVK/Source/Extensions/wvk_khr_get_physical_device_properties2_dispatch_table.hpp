@@ -204,11 +204,11 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Вызов метода загрузки через обёртку с VkInstance
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
-						&WvkLoader::loadProcedure,
-						m_create_info.wvk_loader,
-						_procedures
-					);
+					//_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
+					//	&WvkLoader::loadProcedure,
+					//	m_create_info.wvk_loader,
+					//	_procedures
+					//);
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Проверка результата загрузки

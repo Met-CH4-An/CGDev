@@ -25,8 +25,9 @@ namespace CGDev {
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkLogicalDeviceDispatchTableCreateInfo {
-			WvkLogicalDevicePtr wvk_logical_device = nullptr;
-			WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+			//WvkLoaderPtr wvk_loader = nullptr;
+			//WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+			WvkLogicalDevicePtr wvk_logical_device = nullptr;			
 		}; // class WvkLogicalDeviceDispatchTableCreateInfo
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

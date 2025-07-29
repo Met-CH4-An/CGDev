@@ -135,11 +135,11 @@ namespace CGDev {
 					// Шаг 3. Загружаем процедуру через обёртку WvkInstance::invokeWithVkInstanceMethod
 					// Метод вызывает WvkLoader::loadProcedure с передачей указателей и списка процедур
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
-						&WvkLoader::loadProcedure,
-						m_create_info.wvk_loader,
-						_procedures
-					);
+					//_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
+					//	&WvkLoader::loadProcedure,
+					//	m_create_info.wvk_loader,
+					//	_procedures
+					//);
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Обрабатываем результат загрузки

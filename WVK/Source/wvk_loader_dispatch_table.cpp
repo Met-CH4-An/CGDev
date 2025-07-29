@@ -106,10 +106,12 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkLoaderDispatchTable::loadProcedure(void) noexcept {
+			// Объявление переменной статуса для отслеживания успешности выполнения
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Запрос загрузки глобальных процедур Vulkan через WvkLoader
+			// Шаг 1. Формирование списка глобальных процедур Vulkan
+			//        Эти функции должны быть доступны до создания VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<WvkVulkanProcedureInfo> _procedures = {
 				{ "vkEnumerateInstanceVersion", reinterpret_cast<void**>(&m_vkEnumerateInstanceVersion) },
@@ -117,18 +119,22 @@ namespace CGDev {
 				{ "vkEnumerateInstanceExtensionProperties", reinterpret_cast<void**>(&m_vkEnumerateInstanceExtensionProperties) },
 				{ "vkCreateInstance", reinterpret_cast<void**>(&m_vkCreateInstance) }
 			};
-			_status = m_create_info.wvk_loader->loadProcedure(VK_NULL_HANDLE, _procedures);
-				
+
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Проверка результата
-			// Если хотя бы одна функция не загружена — фиксируем ошибку
+			// Шаг 2. Вызов метода загрузки процедур через указанный загрузчик
+			//        Здесь предполагается, что wvk_loader использует vkGetInstanceProcAddr(nullptr, ...)
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = m_create_info.wvk_loader->loadProcedure(_procedures);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 3. Обработка ошибки загрузки глобальных функций
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (!_status) {
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkLoader::loadProcedure - fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Успешная инициализация
+			// Шаг 4. Возврат успешного статуса
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
@@ -137,19 +143,9 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void WvkLoaderDispatchTable::reset(void) noexcept {
+			WvkDispatchTable::reset();
+
 			m_create_info = {};
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.0
-			// ~~~~~~~~~~~~~~~~
-			m_vkCreateInstance = VK_NULL_HANDLE;
-			m_vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
-			m_vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.1
-			// ~~~~~~~~~~~~~~~~
-			m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
 
 			m_valid = false;
 		}

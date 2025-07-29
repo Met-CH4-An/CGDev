@@ -141,15 +141,16 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Первый вызов: получить количество поддерживаемых форматов
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-						&WvkKhrSurfaceDT::wvkGetPhysicalDeviceSurfaceFormatsKHR,
-						m_create_info.wvk_khr_surface_dt,
-						m_vk_surface,
-						&_count,
-						nullptr
-					);
+					//m_create_info.wvk_instance_dt_ptr->
+					//auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
+					//	&WvkKhrSurfaceDT::wvkGetPhysicalDeviceSurfaceFormatsKHR,
+					//	m_create_info.wvk_khr_surface_dt,
+					//	m_vk_surface,
+					//	&_count,
+					//	nullptr
+					//);
 
-					if (_vk_res != VK_SUCCESS) {
+					/*if (_vk_res != VK_SUCCESS) {
 						switch (_vk_res) {
 						case VK_ERROR_OUT_OF_HOST_MEMORY:
 							_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_ERROR_OUT_OF_HOST_MEMORY.");
@@ -162,25 +163,25 @@ namespace CGDev {
 							break;
 						}
 						return _status.set(VknStatusCode::FAIL);
-					}
+					}*/
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Выделить место в векторе под нужное количество элементов
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					out.resize(_count);
+					//out.resize(_count);
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 5. Второй вызов: получить сами форматы
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					_vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
-						&WvkKhrSurfaceDT::wvkGetPhysicalDeviceSurfaceFormatsKHR,
-						m_create_info.wvk_khr_surface_dt,
-						m_vk_surface,
-						&_count,
-						out.data()
-					);
+					//_vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
+					//	&WvkKhrSurfaceDT::wvkGetPhysicalDeviceSurfaceFormatsKHR,
+					//	m_create_info.wvk_khr_surface_dt,
+					//	m_vk_surface,
+					//	&_count,
+					//	out.data()
+					//);
 
-					if (_vk_res != VK_SUCCESS) {
+					/*if (_vk_res != VK_SUCCESS) {
 						switch (_vk_res) {
 						case VK_INCOMPLETE:
 							_status.append("\n\tWvkKhrSurfaceDispatchTable::wvkGetPhysicalDeviceSurfaceFormatsKHR - VK_INCOMPLETE.");
@@ -196,7 +197,7 @@ namespace CGDev {
 							break;
 						}
 						return _status.set(VknStatusCode::FAIL);
-					}
+					}*/
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 6. Успешное завершение
@@ -220,7 +221,7 @@ namespace CGDev {
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
-					VkBool32 _support = VK_FALSE;
+					/*VkBool32 _support = VK_FALSE;
 					out = false;
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -263,7 +264,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 5. Возвращаем успешный статус
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					return _status.setOk();
+					return _status.setOk();*/
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -286,7 +287,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Инициализация объекта статуса
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					WvkStatus _status;
+					/*WvkStatus _status;
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Запрашиваем количество доступных режимов презентации
@@ -361,7 +362,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 5. Возвращаем успешный статус
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					return _status.setOk();
+					return _status.setOk();*/
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -381,7 +382,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Вызов метода получения surface capabilities через invoke
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
+					/*auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
 						&WvkKhrSurfaceDT::wvkGetPhysicalDeviceSurfaceCapabilitiesKHR,
 						m_create_info.wvk_khr_surface_dt,
 						m_vk_surface,
@@ -416,7 +417,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Возврат успешного статуса
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					return _status.setOk();
+					return _status.setOk();*/
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -587,12 +588,12 @@ namespace CGDev {
 				if (m_create_info.wvk_instance_dt_ptr == nullptr) {
 					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_instance_dt_ptr - nullptr.");
 				}
-				else if (m_create_info.wvk_khr_surface_dt == nullptr) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_surface_dt - nullptr.");
-				}
-				else if (m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table == nullptr) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_get_surface_capabilities2_dispatch_table - nullptr.");
-				}
+				//else if (m_create_info.wvk_khr_surface_dt == nullptr) {
+				//	return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_surface_dt - nullptr.");
+				//}
+				//else if (m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table == nullptr) {
+				//	return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_khr_get_surface_capabilities2_dispatch_table - nullptr.");
+				//}
 				else if (m_create_info.wvk_surface_platform_create_info == nullptr) {
 					return _status.set(VknStatusCode::FAIL, "\n\tWvkSurfaceCreateInfo::wvk_surface_platform_create_info - nullptr.");
 				}				

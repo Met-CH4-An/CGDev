@@ -17,8 +17,6 @@ namespace CGDev {
 
     namespace wvk {
 
-        // 1.0
-
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -44,6 +42,13 @@ namespace CGDev {
 
         inline VkResult WvkLoaderDispatchTable::wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept {
             return m_vkEnumerateInstanceVersion(pApiVersion); }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        inline const WvkLoaderDispatchTableCreateInfo& WvkLoaderDispatchTable::getCreateInfo(void) const noexcept {
+            return m_create_info;
+        }
 
     } // namespace wvk
 

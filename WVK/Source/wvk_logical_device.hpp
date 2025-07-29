@@ -20,6 +20,13 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		inline const WvkLogicalDeviceCreateInfo& WvkLogicalDevice::getCreateInfo(void) const noexcept {
+			return m_create_info;
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 		inline const VkDevice& WvkLogicalDevice::getVkDevice(void) const noexcept {
 			return m_vk_device;
 		}

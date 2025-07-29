@@ -228,11 +228,11 @@ namespace CGDev {
 						{ "vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR) }
 					};
 
-					_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
-						&WvkLoader::loadProcedure,
-						m_create_info.wvk_loader,
-						_procedures
-					);
+					//_status = m_create_info.wvk_instance->invokeWithVkInstanceMethod(
+					//	&WvkLoader::loadProcedure,
+					//	m_create_info.wvk_loader,
+					//	_procedures
+					//);
 
 					if (!_status) {
 						return _status.set(VknStatusCode::FAIL,

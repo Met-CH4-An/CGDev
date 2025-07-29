@@ -20,9 +20,9 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		//inline const WvkLoaderDispatchTable& WvkLoader::getDispatchTable(void) const noexcept {
-		//	return m_dispatch_table;
-		//}
+		inline const WvkLoaderCreateInfo& WvkLoader::getCreateInfo(void) const noexcept {
+			return m_create_info;
+		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

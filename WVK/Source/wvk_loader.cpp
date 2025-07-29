@@ -172,6 +172,57 @@ namespace CGDev {
 			reset();			
 		}	
 
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		WvkStatus WvkLoader::loadProcedure(std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 1. Подготавливаем контейнер для хранения не найденных процедур
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::vector<std::string> _failed_procedures;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 2. Проходим по всем описаниям процедур
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			for (const auto& it_0 : wvk_vulkan_procedure_collection1) {
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2.1. Загружаем адрес Vulkan-функции через vkGetInstanceProcAddr
+				// VK_NULL_HANDLE указывается, так как это loader-level функции
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				*it_0.targetPtr = m_vkGetInstanceProcAddr(VK_NULL_HANDLE, it_0.name);
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Шаг 2.2. Если адрес не получен — добавляем имя в список ошибок
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				if (*it_0.targetPtr == nullptr) {
+					_failed_procedures.emplace_back(it_0.name);
+				}
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 3. Если есть ошибки — формируем сообщение и возвращаем FAIL
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (!_failed_procedures.empty()) {
+				std::string _error_message = "\n\tVulkan procedures not found:";
+
+				// Перечисляем все функции, которые не удалось загрузить
+				for (const auto& _name : _failed_procedures) {
+					_error_message += "\n\t- " + _name;
+				}
+
+				// Устанавливаем ошибку и возвращаем статус
+				return _status.set(VknStatusCode::FAIL, _error_message.c_str());
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Все процедуры успешно загружены — возвращаем успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -210,6 +261,34 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 4. Все функции успешно загружены
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		WvkStatus WvkLoader::loadProcedure(VkInstance vk_instance, VkDevice vk_device, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept {
+			WvkStatus _status;
+
+			std::vector<std::string> _failed_procedures;
+
+			auto _vkGetDeviceProcAddr = reinterpret_cast<PFN_vkGetDeviceProcAddr>(m_vkGetInstanceProcAddr(vk_instance, "vkGetDeviceAddr"));
+
+			for (const auto& it_0 : wvk_vulkan_procedure_collection1) {
+				// Получаем адрес функции через vkGetInstanceProcAddr и записываем в targetPtr
+				*it_0.targetPtr = _vkGetDeviceProcAddr(vk_device, it_0.name);
+
+				// Если функция не найдена — запоминаем имя
+				if (*it_0.targetPtr == nullptr) {
+					_failed_procedures.emplace_back(it_0.name);
+				}
+			}
+
+			if (!_failed_procedures.empty()) {
+				std::string _error_message = "\n\tVulkan procedures not found:";
+				for (const auto& _name : _failed_procedures) {
+					_error_message += "\n\t- " + _name;
+				}
+				return _status.set(VknStatusCode::FAIL, _error_message.c_str());
+			}
+
 			return _status.setOk();
 		}
 

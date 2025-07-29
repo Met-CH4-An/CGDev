@@ -104,6 +104,29 @@ namespace CGDev {
 			void destroy(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief Загрузка процедур Vulkan уровня загрузчика (loader-level) с использованием vkGetInstanceProcAddr.
+			*
+			* @param[in,out] wvk_vulkan_procedure_collection1
+			* * Контейнер с описаниями процедур Vulkan (имя + указатель на место хранения адреса).
+			*
+			* @return
+			* * Объект WvkStatus, содержащий код и сообщение об ошибке, если загрузка не удалась.
+			*
+			* @code
+			* std::vector<WvkVulkanProcedureInfo> procedures = {
+			*     { "vkCreateInstance", reinterpret_cast<void**>(&m_vkCreateInstance) },
+			*     { "vkEnumerateInstanceVersion", reinterpret_cast<void**>(&m_vkEnumerateInstanceVersion) }
+			* };
+			* _status = wvk_loader->loadProcedure(procedures);
+			* if (!_status) {
+			*     // Обработка ошибки
+			* }
+			* @endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus loadProcedure(std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			* * Загружает указатели на Vulkan-функции для заданного экземпляра Vulkan.
 			*
@@ -142,6 +165,42 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus loadProcedure(VkInstance vk_instance, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept;
 
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief Загрузка процедур Vulkan уровня загрузчика (loader-level) с использованием vkGetInstanceProcAddr.
+			*
+			* @param[in,out] wvk_vulkan_procedure_collection1
+			* * Контейнер с описаниями процедур Vulkan (имя + указатель на место хранения адреса).
+			*
+			* @return
+			* * Объект WvkStatus, содержащий код и сообщение об ошибке, если загрузка не удалась.
+			*
+			* @code
+			* std::vector<WvkVulkanProcedureInfo> procedures = {
+			*     { "vkCreateInstance", reinterpret_cast<void**>(&m_vkCreateInstance) },
+			*     { "vkEnumerateInstanceVersion", reinterpret_cast<void**>(&m_vkEnumerateInstanceVersion) }
+			* };
+			* _status = wvk_loader->loadProcedure(procedures);
+			* if (!_status) {
+			*     // Обработка ошибки
+			* }
+			* @endcode
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus loadProcedure(VkInstance vk_instance, VkDevice vk_device, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept;
+		
+		// hpp
+		public:
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkLoaderCreateInfo& getCreateInfo(void) const noexcept;
+
+		// hpp
+		private:
+
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

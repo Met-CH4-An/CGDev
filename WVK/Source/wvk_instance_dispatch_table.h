@@ -239,6 +239,18 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 
+		// hpp
+		public:
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkInstanceDtCreateInfo& getCreateInfo(void) const noexcept {
+				return m_create_info;
+			}
+
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -270,8 +282,7 @@ namespace CGDev {
 			* с использованием переданного загрузчика `WvkLoader` и объекта `WvkInstance`.
 			*
 			* Метод формирует список процедур Vulkan, которые необходимо загрузить (включая функции
-			* Vulkan 1.0, 1.1 и 1.2), и передаёт его в `WvkLoader::loadProcedure`, используя
-			* защищённый вызов через `invokeWithVkInstance`, чтобы не раскрывать `VkInstance`.
+			* Vulkan 1.0, 1.1 и 1.2), и передаёт его в `WvkLoader::loadProcedure`
 			*
 			* @return
 			*  Возвращает объект WvkStatus с кодом:

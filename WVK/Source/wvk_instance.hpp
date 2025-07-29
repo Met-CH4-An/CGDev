@@ -20,6 +20,13 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		inline const WvkInstanceCreateInfo& WvkInstance::getCreateInfo(void) const noexcept {
+			return m_create_info;
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 		template<typename Method, typename Object, typename... Args>
 		inline std::enable_if_t<
 			std::is_invocable_v<Method, Object, VkInstance, Args...>&&
@@ -91,13 +98,6 @@ namespace CGDev {
 			return std::invoke(std::forward<Method>(method),
 				m_vk_instance,
 				std::forward<Args>(args)...);
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		inline const WvkInstanceCreateInfo& WvkInstance::getCreateInfo(void) const noexcept {
-			return m_create_info;
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

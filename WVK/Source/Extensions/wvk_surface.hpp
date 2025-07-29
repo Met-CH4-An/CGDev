@@ -67,7 +67,7 @@ namespace CGDev {
 				// Шаг 2. Первый вызов: получить количество поддерживаемых форматов
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				uint32_t _count = 0;
-				auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
+				/*auto _vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
 					&WvkKhrGetSurfaceCapabilities2DT::wvkGetPhysicalDeviceSurfaceFormats2KHR,
 					m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table,
 					&_info2,
@@ -88,7 +88,7 @@ namespace CGDev {
 						break;
 					}
 					return _status.set(VknStatusCode::FAIL);
-				}
+				}*/
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 3. Выделяем память под массив VkSurfaceFormat2KHR и вектор out_props
@@ -110,7 +110,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 5. Второй вызов: получить расширенную информацию о форматах
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				_vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
+				/*_vk_res = wvk_physical_device_ptr->invokeWithVkPhysicalDeviceMethod(
 					&WvkKhrGetSurfaceCapabilities2DT::wvkGetPhysicalDeviceSurfaceFormats2KHR,
 					m_create_info.wvk_khr_get_surface_capabilities2_dispatch_table,
 					&_info2,
@@ -131,7 +131,7 @@ namespace CGDev {
 						break;
 					}
 					return _status.set(VknStatusCode::FAIL);
-				}
+				}*/
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 6. Возврат успешного статуса

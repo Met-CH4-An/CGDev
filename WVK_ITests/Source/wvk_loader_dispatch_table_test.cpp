@@ -22,11 +22,11 @@ namespace CGDev {
         TEST_F(WvkLoaderDispatchTableTest, print_instanceLayerProperties) {
             // Шаг 1: Узнаём количество слоёв
             uint32_t layer_count = 0;
-            s_wvk_loader_dispatch_table->wvkEnumerateInstanceLayerProperties(&layer_count, nullptr);
+            s_wvk_loader_dispatch_table.wvkEnumerateInstanceLayerProperties(&layer_count, nullptr);
 
             // Шаг 2: Получаем список слоёв
             std::vector<VkLayerProperties> layers(layer_count);
-            s_wvk_loader_dispatch_table->wvkEnumerateInstanceLayerProperties(&layer_count, layers.data());
+            s_wvk_loader_dispatch_table.wvkEnumerateInstanceLayerProperties(&layer_count, layers.data());
 
              // Шаг 3: Выводим информацию
             std::cout << "Доступные Vulkan-слои:\n";
@@ -47,11 +47,11 @@ namespace CGDev {
         TEST_F(WvkLoaderDispatchTableTest, print_instanceExtensionProperties) {
             // Шаг 1: Узнаём количество расширений
             uint32_t extension_count = 0;
-            s_wvk_loader_dispatch_table->wvkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
+            s_wvk_loader_dispatch_table.wvkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
 
             // Шаг 2: Получаем список расширений
             std::vector<VkExtensionProperties> extensions(extension_count);
-            s_wvk_loader_dispatch_table->wvkEnumerateInstanceExtensionProperties(nullptr, &extension_count, extensions.data());
+            s_wvk_loader_dispatch_table.wvkEnumerateInstanceExtensionProperties(nullptr, &extension_count, extensions.data());
 
             // Шаг 3: Выводим информацию
             std::cout << "Доступные Vulkan-расширения:\n";

@@ -102,6 +102,34 @@ namespace CGDev {
 			return _status.setOk();
 		}
 
+		WvkStatus WvkDispatchTable::loadProcedure(std::function<void* (const char*)>& get_addr, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) noexcept {
+			WvkStatus _status;
+
+			std::vector<std::string> _failed_procedures;
+			for (const auto& it_0 : wvk_vulkan_procedure_collection1) {
+				*it_0.targetPtr = get_addr(it_0.name);
+
+				// Если функция не найдена — запоминаем имя
+				if (*it_0.targetPtr == nullptr) {
+					_failed_procedures.emplace_back(it_0.name);
+				}
+			}
+
+			if (!_failed_procedures.empty()) {
+				std::string _error_message = "\n\tVulkan procedures not found:";
+				for (const auto& _name : _failed_procedures) {
+					_error_message += "\n\t- " + _name;
+				}
+				return _status.set(VknStatusCode::FAIL, _error_message.c_str());
+			}
+
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Шаг 4. Успешное завершение
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -113,6 +141,23 @@ namespace CGDev {
 
 			m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
 			m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Global
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			m_vkGetInstanceProcAddr = VK_NULL_HANDLE;
+			m_vkCreateInstance = VK_NULL_HANDLE;
+			m_vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
+			m_vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1
+			// ~~~~~~~~~~~~~~~~
+			m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
 
 			// =======================================
 			// [Category]: Physical Device

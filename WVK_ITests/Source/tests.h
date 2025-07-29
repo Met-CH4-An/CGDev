@@ -43,13 +43,12 @@ protected:
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
 
-        if (s_wvk_loader_dispatch_table == nullptr) {
-            s_wvk_loader_dispatch_table = std::make_unique<CGDev::wvk::WvkLoaderDispatchTable>();
-
+        // WvkLoaderDispatchTable
+        {
             CGDev::wvk::WvkLoaderDispatchTableCreateInfo _create_info;
             _create_info.wvk_loader = s_wvk_loader.get();
 
-            auto _wvk_res = s_wvk_loader_dispatch_table->create(_create_info);
+            auto _wvk_res = s_wvk_loader_dispatch_table.create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
@@ -58,14 +57,14 @@ protected:
             s_wvk_instance = std::make_unique<CGDev::wvk::WvkInstance>();
 
             CGDev::wvk::WvkInstanceCreateInfo _create_info;
-            _create_info.wvk_loader_dispatch_table = s_wvk_loader_dispatch_table.get();
+            _create_info.wvk_loader_dispatch_table = &s_wvk_loader_dispatch_table;
 
             auto _wvk_res = s_wvk_instance->create(_create_info);
 
             ASSERT_EQ(_wvk_res.isOk(), true);
         }
         
-        createExtensions();
+        //createExtensions();
         
         // WvkInstanceDispatchTable
         {
@@ -191,8 +190,8 @@ protected:
 
             CGDev::wvk::Extensions::WvkSurfaceCreateInfo _create_info;
             _create_info.wvk_instance_dt_ptr = &wvk_instance_dispatch_table;
-            _create_info.wvk_khr_surface_dt = s_wvk_khr_surface_dt.get();
-            _create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
+           // _create_info.wvk_khr_surface_dt = s_wvk_khr_surface_dt.get();
+            //_create_info.wvk_khr_get_surface_capabilities2_dispatch_table = s_wvk_khr_get_surface_capabilities2_dispatch_table.get();
             _create_info.wvk_surface_platform_create_info = &_create_info_mswindows;
 
             auto _wvk_res = s_wvk_surface->create(_create_info);
@@ -254,7 +253,7 @@ protected:
 protected:
 
     inline static CGDev::wvk::WvkLoaderUptr s_wvk_loader = nullptr;
-    inline static CGDev::wvk::WvkLoaderDispatchTableUptr s_wvk_loader_dispatch_table = nullptr;
+    inline static CGDev::wvk::WvkLoaderDispatchTable s_wvk_loader_dispatch_table;
     inline static CGDev::wvk::WvkInstanceUptr s_wvk_instance = nullptr;
     inline static CGDev::wvk::WvkInstanceDispatchTable wvk_instance_dispatch_table;
     inline static CGDev::wvk::WvkPhysicalDevice wvk_physical_device;

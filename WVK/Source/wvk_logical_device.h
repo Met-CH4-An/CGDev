@@ -89,6 +89,15 @@ namespace CGDev {
 			void destroy(void) noexcept;
 
 		// hpp
+		public:
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkLogicalDeviceCreateInfo& getCreateInfo(void) const noexcept;
+
+		// hpp
 		private:
 
 			friend class WvkLogicalDeviceDispatchTable;

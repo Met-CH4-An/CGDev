@@ -46,6 +46,23 @@ namespace CGDev {
 			PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
 
 			// =======================================
+			// [Category]: Global
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkGetInstanceProcAddr m_vkGetInstanceProcAddr = VK_NULL_HANDLE;
+			PFN_vkCreateInstance m_vkCreateInstance = VK_NULL_HANDLE;
+			PFN_vkEnumerateInstanceExtensionProperties m_vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
+			PFN_vkEnumerateInstanceLayerProperties m_vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkEnumerateInstanceVersion m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
+
+			// =======================================
 			// [Category]: Physical Device
 			// =======================================
 
@@ -144,6 +161,11 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 
+		protected:
+
+			//template<typename GetAddr>
+			WvkStatus loadProcedure(std::function<void* (const char*)>& get_addr, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) noexcept;
+			void reset(void) noexcept;
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,7 +180,7 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus loadProcedure(void) noexcept;
 
-			void reset(void) noexcept;
+			
 
 		private:
 
