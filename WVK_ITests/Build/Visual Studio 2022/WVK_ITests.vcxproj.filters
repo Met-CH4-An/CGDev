@@ -19,28 +19,16 @@
       <Filter>gtestmock</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_loader_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_khr_win32_surface_dispatch_table_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_surface_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_khr_surface_dispatch_table_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_khr_get_surface_capabilities2_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_loader_dispatch_table_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_instance_dispatch_table_test.cpp" />
-    <ClCompile Include="..\..\Source\wvk_queue_family_test.cpp" />
+    <ClCompile Include="..\..\Source\wvk_command_pool_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\tests.h" />
-    <ClInclude Include="..\..\Source\wvk_loader_test.h" />
     <ClInclude Include="..\..\Source\wvk_instance_test.h" />
-    <ClInclude Include="..\..\Source\wvk_khr_win32_surface_dispatch_table_test.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />
     <ClInclude Include="..\..\Source\wvk_surface_test.h" />
-    <ClInclude Include="..\..\Source\wvk_khr_surface_dispatch_table_test.h" />
-    <ClInclude Include="..\..\Source\wvk_khr_get_surface_capabilities2_test.h" />
-    <ClInclude Include="..\..\Source\wvk_loader_dispatch_table_test.h" />
-    <ClInclude Include="..\..\Source\wvk_instance_dispatch_table_test.h" />
-    <ClInclude Include="..\..\Source\wvk_queue_family_test.h" />
+    <ClInclude Include="..\..\Source\wvk_command_pool_test.h" />
   </ItemGroup>
 </Project>

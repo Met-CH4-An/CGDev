@@ -33,7 +33,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static void SetUpTestSuite() {
+			static void SetUpTestSuite() {			
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,15 +49,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void SetUp() override {
+			void SetUp() noexcept override {
+				
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void TearDown() override {
+			void TearDown() noexcept override {
 			}
+
+			const CGDev::wvk::WvkPhysicalDeviceUptrVec2& m_wvk_phys_dev_groups = wvk_instance_ptr->getWvkPhysicalDevices();
+			const CGDev::wvk::WvkPhysicalDeviceUptr& wvk_phys_dev = m_wvk_phys_dev_groups[0][0];
 		};
 
 	} // namespace tests

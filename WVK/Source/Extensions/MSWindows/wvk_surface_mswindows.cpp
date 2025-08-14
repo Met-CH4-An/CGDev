@@ -146,16 +146,16 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Вызов функции создания Vulkan surface
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					VkResult _result = m_create_info.wvk_khr_win32_surface_dispatch_table->wvkCreateWin32SurfaceKHR(
-						&_vk_win32_surface_create_info,
-						nullptr,
-						&m_vk_surface
-					);
+					//VkResult _result = m_create_info.wvk_khr_win32_surface_dispatch_table->wvkCreateWin32SurfaceKHR(
+					//	&_vk_win32_surface_create_info,
+					//	nullptr,
+					//	&m_vk_surface
+					//);
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 3. Обработка ошибок вызова wvkCreateWin32SurfaceKHR
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					if (_result != VK_SUCCESS) {
+					/*if (_result != VK_SUCCESS) {
 						switch (_result) {
 						case VK_ERROR_OUT_OF_HOST_MEMORY:
 							_status.set(VknStatusCode::FAIL,
@@ -172,7 +172,7 @@ namespace CGDev {
 						}
 
 						return _status;
-					}
+					}*/
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 4. Возврат успешного статуса

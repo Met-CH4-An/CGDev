@@ -11,7 +11,6 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "../../wvk_loader.h"
 #include "../../wvk_instance.h"
 
 namespace CGDev {
@@ -127,7 +126,7 @@ namespace CGDev {
 					// Шаг 2. Формируем список процедур Vulkan, которые нужно загрузить
 					// В данном случае — только vkCreateWin32SurfaceKHR
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					std::vector<WvkVulkanProcedureInfo> _procedures = {
+					/*std::vector<WvkVulkanProcedureInfo> _procedures = {
 						{ "vkCreateWin32SurfaceKHR", reinterpret_cast<void**>(&m_vkCreateWin32SurfaceKHR) }
 					};
 
@@ -148,7 +147,7 @@ namespace CGDev {
 					if (!_status) {
 						return _status.set(VknStatusCode::FAIL, "\n\tWvkInstance::invokeWithVkInstanceMethod - fail.");
 					}
-
+					*/
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 5. Возвращаем статус успешной загрузки
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

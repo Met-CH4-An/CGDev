@@ -15,119 +15,169 @@
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			namespace wvk {
+		WvkStatus::WvkStatus(void) noexcept {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus::WvkStatus(void) noexcept {
-				}
+		inline WvkStatus::WvkStatus(const VknStatusCode& code) noexcept
+			:m_code(code) {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus::~WvkStatus(void) noexcept {
-				}
+		WvkStatus::~WvkStatus(void) noexcept {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline bool WvkStatus::isOk(void) const noexcept {
-					if (m_code == VknStatusCode::SUCCESSFUL) return true;
+		inline bool WvkStatus::isOk(void) const noexcept {
+			if (m_code == VknStatusCode::SUCCESSFUL) return true;
 
-					return false;
-				}
+			return false;
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline const VknStatusCode& WvkStatus::getCode(void) const noexcept {
-					return m_code;
-				}
+		inline WvkStatus::operator bool(void) const noexcept {
+			return isOk();
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				const char* WvkStatus::getMessage(void) const noexcept {
-					return m_message;
-				}
+		inline const VknStatusCode& WvkStatus::getCode(void) const noexcept {
+			return m_code;
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				size_t WvkStatus::getLength(void) const noexcept {
-					return m_length;
-				}
+		const char* WvkStatus::getMessage(void) const noexcept {
+			return m_message.c_str();
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus& WvkStatus::set(VknStatusCode code, const char* fmt, ...) noexcept {
-					if (code != VknStatusCode::SUCCESSFUL) {
-						m_code = code;
-					}
+		size_t WvkStatus::getLength(void) const noexcept {
+			return m_length;
+		}
 
-					if (fmt) {
-						va_list args;
-						va_start(args, fmt);
-						append(fmt, args);
-						va_end(args);
-					}
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					return *this;
-				}
+		WvkStatus& WvkStatus::set(VknStatusCode code, const char* fmt, ...) noexcept {
+			//if (code != VknStatusCode::SUCCESSFUL) {
+				m_code = code;
+			//}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (fmt) {
+				va_list args;
+				va_start(args, fmt);
+				append(fmt, args);
+				va_end(args);
+			}
 
-				inline WvkStatus::operator bool(void) const noexcept {
-					return m_code == VknStatusCode::SUCCESSFUL;
-				}
+			return *this;
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				WvkStatus& WvkStatus::append(const char* fmt, ...) noexcept {
-                    va_list args;
-                    va_start(args, fmt);
+		WvkStatus& WvkStatus::set(VknStatusCode code, const char* fmt, va_list args) noexcept {
+			m_code = code;
+			if (fmt) {
+				append(fmt, args);
+			}
+			return *this;
+		}
 
-                    // Вычисляем доступное место в буфере
-                    size_t available = sizeof(m_message) - m_length;
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                    // Проверяем, что места достаточно
-                    if (available > 0) {
-                        // Используем vsnprintf_s для безопасной записи
-                        int written = vsnprintf_s(
-                            m_message + m_length,   // Где писать
-                            available,              // Сколько места осталось
-                            _TRUNCATE,              // Обрезка при переполнении
-                            fmt,                    // Формат
-                            args                    // Аргументы
-                        );
+		WvkStatus& WvkStatus::append(const char* fmt, ...) noexcept {
+            /*va_list args;
+            va_start(args, fmt);
 
-                        // Если записано что-то, обновляем m_length
-                        if (written >= 0) {
-                            m_length += written;
-                        }
-                    }
+            // Вычисляем доступное место в буфере
+            size_t available = sizeof(m_message) - m_length;
 
-                    va_end(args);
+            // Проверяем, что места достаточно
+            if (available > 0) {
+                // Используем vsnprintf_s для безопасной записи
+                int written = vsnprintf_s(
+                    m_message + m_length,   // Где писать
+                    available,              // Сколько места осталось
+                    _TRUNCATE,              // Обрезка при переполнении
+                    fmt,                    // Формат
+                    args                    // Аргументы
+                );
 
-					return *this;
-				}
+                // Если записано что-то, обновляем m_length
+                if (written >= 0) {
+                    m_length += written;
+                }
+            }
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            va_end(args);*/
 
-			} // namespace wvk
+			constexpr size_t TEMP_BUFFER_SIZE = 1024;
+			char temp[TEMP_BUFFER_SIZE];
 
-		//} // namespace Private
+			va_list args;
+			va_start(args, fmt);
 
-	//} // namespace GPU
+			int written = vsnprintf(temp, TEMP_BUFFER_SIZE, fmt, args);
+
+			va_end(args);
+
+			if (written > 0) {
+				m_message.append(temp, written);
+			}
+
+
+			return *this;
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus& WvkStatus::setOk(void) noexcept {
+			return set(VknStatusCode::SUCCESSFUL);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus& WvkStatus::setFail(const char* fmt, ...) noexcept {
+			va_list args;
+			va_start(args, fmt);
+			auto& _result = set(VknStatusCode::FAIL, fmt, args);
+			va_end(args);
+			return _result;
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus& WvkStatus::operator << (const char* fmt) noexcept {
+			return append(fmt);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	} // namespace wvk
 
 } // namespace CGDev
 

@@ -99,7 +99,7 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					struct WvkExtDebugUtilsCreateInfo {
-						WvkInstanceDispatchTablePtr wvk_instance_dispatch_table = nullptr;
+						WvkInstanceDispatchTablePtr wvk_dispatch_table_ptr = nullptr;
 						VknDebugUtilsMode mode = VknDebugUtilsMode::UNKNOWN;
 					};
 

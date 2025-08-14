@@ -11,68 +11,75 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_loader.h"
 #include "wvk_instance.h"
 #include "wvk_physical_device.h"
-#include "wvk_queue_family.h"
+#include "wvk_dispatch_table.h"
 
 namespace CGDev {
 
 	namespace wvk {
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkLogicalDevice::WvkLogicalDevice(void) noexcept {
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkLogicalDevice::~WvkLogicalDevice(void) noexcept {
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkLogicalDevice::create(const WvkLogicalDeviceCreateInfo& create_info) noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Проверка: если уже инициализирован, возвращаем ALREADY_INITIALIZED
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка на повторную инициализацию
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (m_valid) {
 				return _status.set(VknStatusCode::ALREADY_INITIALIZED);
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Сохраняем параметры создания
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			m_create_info = create_info;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Валидация create_info
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_status = validationCreateInfo();
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка валидности входной структуры
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = validationCreateInfo(create_info);
 			if (!_status) {
-				reset();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::validationCreateInfo() - fail.");
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::validationCreateInfo() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Создание логического устройства
+			// Создание логического устройства
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = createVkDevice();
 			if (!_status) {
-				reset();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice() - fail.");
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice() is fail.");
 			}
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Создание таблицы диспетчиризации
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = createWvkDispatchTable();
+			if (!_status) {
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice() is fail.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_valid = true;
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void WvkLogicalDevice::destroy(void) noexcept {
 
@@ -80,7 +87,7 @@ namespace CGDev {
 			// 
 			// ~~~~~~~~~~~~~~~~
 
-			//m_create_info.wvk_instance_dispatch_table->vknDestroyDevice(m_vk_device, VK_NULL_HANDLE);
+			//m_create_info.wvk_dispatch_table_ptr->vknDestroyDevice(m_vk_device, VK_NULL_HANDLE);
 
 			// ~~~~~~~~~~~~~~~~
 			// очистка данных
@@ -90,56 +97,62 @@ namespace CGDev {
 			m_vk_device					= VK_NULL_HANDLE;
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkLogicalDevice::validationCreateInfo(void) const noexcept {
-			WvkStatus _status;
+		WvkStatus WvkLogicalDevice::validationCreateInfo(const WvkLogicalDeviceCreateInfo& create_info) noexcept {
+			WvkStatus _status(VknStatusCode::SUCCESSFUL);
 
-			if (m_create_info.wvk_logical_device_queue_create_info_collection.empty() == true) {
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_info_collection - empty.");
+			if (create_info.wvk_instance_ptr == nullptr) {
+				_status.setFail("\n\tWvkLogicalDeviceCreateInfo::wvk_instance_ptr is nullptr.");
 			}
-
+			if (!create_info.physical_device_group_index.has_value()) {
+				_status.setFail("\n\tWvkLogicalDeviceCreateInfo::physical_device_group_index is not value.");
+			}
+			if (create_info.physical_device_indices.empty()) {
+				_status.setFail("\n\tWvkLogicalDeviceCreateInfo::physical_device_indices is empty.");
+			}
+			if (create_info.wvk_logical_device_queue_create_infos.empty()) {
+				_status.setFail("\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_infos is empty.");
+			}
 			else {
-				for(const auto& it_0 : m_create_info.wvk_logical_device_queue_create_info_collection) {
-					if (it_0.wvk_queue_family_ptr == nullptr) {
-						return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_queue_family_ptr - nullptr.");
+				for(const auto& it_0 : create_info.wvk_logical_device_queue_create_infos) {
+					if (!it_0.index.has_value()) {
+						_status.setFail("\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_infos::index is not value.");
 					}
-					if (it_0.queue_count.has_value() == false) {
-						return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_info_collection::queue_count - not value.");
+					if (!it_0.queue_count.has_value()) {
+						_status.setFail("\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_infos::queue_count is not value.");
 					}
-					if (it_0.priority_collection.empty() == true) {
-						return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_info_collection::priority_collection - empty.");
+					if (it_0.priority_collection.empty()) {
+						_status.setFail("\n\tWvkLogicalDeviceCreateInfo::wvk_logical_device_queue_create_infos::priority_collection is empty.");
 					}
 				}
 			}
-
-			if (m_create_info.wvk_instance_dispatch_table == nullptr) {
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_instance_dispatch_table - nullptr.");
-			}
-					
-			if (m_create_info.wvk_physical_device_collection.empty() == true) {
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDeviceCreateInfo::wvk_physical_device_collection - empty.");
-			}
-					
+			
+			if (!_status) return _status;			
+				
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = create_info;
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkLogicalDevice::prepareVkQueueCreateInfo(std::vector<VkDeviceQueueCreateInfo>& queue_create_info_collection1) const noexcept {
 			WvkStatus _status;
 
 			// Перебираем каждую пользовательскую конфигурацию очереди
-			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_info_collection) {
+			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_infos) {
 
 				// Создаём и заполняем описание очереди
 				VkDeviceQueueCreateInfo vk_queue_create_info{};
 				vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 				vk_queue_create_info.pNext = nullptr;
 				vk_queue_create_info.flags = 0; // зарезервировано, всегда 0
-				vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family_ptr->getIndexFamily();		// индекс семейства очередей
+				//vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family_ptr->getIndexFamily();		// индекс семейства очередей
 				vk_queue_create_info.queueCount = it_0.queue_count.value();			// количество создаваемых очередей
 				vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();	// приоритеты очередей (от 0.0f до 1.0f)
 
@@ -150,116 +163,112 @@ namespace CGDev {
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkLogicalDevice::createVkDevice(void) noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Формирование списка очередей
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<VkDeviceQueueCreateInfo> vk_queue_create_info_vec1;
-			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_info_collection) {
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Формирование списка очередей
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::vector<VkDeviceQueueCreateInfo> vk_queue_create_infos;
+			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_infos) {
 				VkDeviceQueueCreateInfo vk_queue_create_info{};
 				vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 				vk_queue_create_info.pNext = nullptr;
 				vk_queue_create_info.flags = 0;
-				vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family_ptr->getIndexFamily();
+				vk_queue_create_info.queueFamilyIndex = it_0.index.has_value();
 				vk_queue_create_info.queueCount = it_0.queue_count.value();
 				vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();
-				vk_queue_create_info_vec1.emplace_back(std::move(vk_queue_create_info));
+				vk_queue_create_infos.push_back(vk_queue_create_info);
 			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Подготовка feature
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VkPhysicalDeviceFeatures* _vk_physical_device_features = nullptr;
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Подготовка feature
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			VkPhysicalDeviceFeatures* _pEnabledFeatures = nullptr;
 			std::vector<VkBaseInStructure*> _vk_base_in_collection;
 
-#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_DISABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_DISABLE
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Vulkan 1.0 без расширения get_physical_device_properties2
 			//        Используем обычную структуру VkPhysicalDeviceFeatures
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_vk_physical_device_features = &m_create_info.m_vk_physical_device_features;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_pEnabledFeatures = &m_create_info.m_vk_physical_device_features;
 
-#else
-
-#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_EXTENSION_ENABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#elif WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Vulkan 1.0 с расширением VK_KHR_get_physical_device_properties2
 			//        Используем VkPhysicalDeviceFeatures2KHR и добавляем в цепочку
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkPhysicalDeviceFeatures2KHR _features2_khr = {
 				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
 				.pNext = nullptr,
 				.features = m_create_info.m_vk_physical_device_features
 			};
 			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_features2_khr));
-			_vk_physical_device_features = nullptr;
+			_pEnabledFeatures = nullptr;
 
-#elif VULKAN_API_VERSION >= VULKAN_API_VERSION_11
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#elif WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Vulkan 1.1 или выше — используем VkPhysicalDeviceFeatures2
 			//        Добавляем в цепочку расширений
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkPhysicalDeviceFeatures2 _features2 = {
 				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
 				.pNext = nullptr,
 				.features = m_create_info.m_vk_physical_device_features
 			};
 			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_features2));
-			_vk_physical_device_features = nullptr;
+			_pEnabledFeatures = nullptr;
 #endif
 
-#endif
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Подготовка VkDeviceGroupDeviceCreateInfo
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_DISABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Подготовка VkDeviceGroupDeviceCreateInfo
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_DISABLE
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Расширение VK_KHR_device_group_creation отключено при Vulkan 1.0.
 			//        Никакой дополнительной логики не требуется.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #else
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Получаем первый физический GPU из коллекции.
 			//        Этот объект будет использоваться как базовый для проверки совместимости.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			const auto& _wvk_phys_dev = m_create_info.wvk_physical_device_collection.front();
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			const auto& _wvk_phys_dev = m_create_info.wvk_physical_devices.front();
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Проверяем совместимость устройств в коллекции.
 			//        Метод `checkCompatibility` заполняет _compatibility.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			bool _compatibility = false;
-			auto _wvk_status = _wvk_phys_dev->checkCompatibility(m_create_info.wvk_physical_device_collection, _compatibility);
+			//auto _wvk_status = _wvk_phys_dev->checkCompatibility(m_create_info.wvk_physical_devices, _compatibility);
 
-			if (!_wvk_status.isOk()) {
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice - fail.");
-			}
+			//if (!_wvk_status.isOk()) {
+			//	return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice - fail.");
+			//}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создаём вектор `VkPhysicalDevice` из коллекции WvkPhysicalDevice.
 			//        Он понадобится для инициализации структуры группы устройств.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<VkPhysicalDevice> _vk_physical_device_collection;
-			std::transform(
-				m_create_info.wvk_physical_device_collection.begin(),
-				m_create_info.wvk_physical_device_collection.end(),
-				std::back_inserter(_vk_physical_device_collection),
-				[](const WvkPhysicalDevice* wvk_phys_dev) {
-					return wvk_phys_dev->getVkPhysicalDevice();
-				}
-			);
-#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_ENABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//std::transform(
+			//	m_create_info.wvk_physical_devices.begin(),
+			//	m_create_info.wvk_physical_devices.end(),
+			//	std::back_inserter(_vk_physical_device_collection),
+			//	[](const WvkPhysicalDevice* wvk_phys_dev) {
+			//		return wvk_phys_dev->getVkPhysicalDevice();
+			//	}
+			//);
+#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_ENABLE
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создаём структуру `VkDeviceGroupDeviceCreateInfoKHR`
 			//        для расширения `VK_KHR_device_group_creation` при Vulkan 1.0.
 			//        Указываем все доступные физические устройства.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceGroupDeviceCreateInfoKHR _device_group_create_info_khr = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR,
 				.pNext = nullptr,
@@ -267,15 +276,15 @@ namespace CGDev {
 				.pPhysicalDevices = _vk_physical_device_collection.data()
 			};
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Добавляем структуру в цепочку `pNext` через обёртку VkBaseInStructure.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_device_group_create_info_khr));
 #elif VULKAN_API_VERSION >= VULKAN_API_VERSION_11
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создаём структуру `VkDeviceGroupDeviceCreateInfo`
 			//        для API версии 1.1 и выше (входит в ядро).
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceGroupDeviceCreateInfoKHR _device_group_create_info = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO,
 				.pNext = nullptr,
@@ -283,16 +292,16 @@ namespace CGDev {
 				.pPhysicalDevices = _vk_physical_device_collection.data()
 			};
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Добавляем структуру в цепочку `pNext`.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_device_group_create_info));
 #endif
 #endif
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 4. Преобразуем коллекцию wvk_feature'ов в цепочку VkBaseInStructure*
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::transform(
 				m_create_info.m_wvk_logical_device_feature_collection.begin(),
 				m_create_info.m_wvk_logical_device_feature_collection.end(),
@@ -302,90 +311,124 @@ namespace CGDev {
 				}
 			);
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 5. Связываем элементы коллекции через поле pNext
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			for (size_t ct_0 = 0; ct_0 + 1 < _vk_base_in_collection.size(); ++ct_0) {
 				const auto& it_0 = _vk_base_in_collection[ct_0];
 				const auto& it_1 = _vk_base_in_collection[ct_0 + 1];
 				it_0->pNext = it_1;
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 6. Завершаем цепочку, выставляя pNext последнего элемента в nullptr
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_vk_base_in_collection.back()->pNext = nullptr;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 7. Заполнение структуры VkDeviceCreateInfo
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceCreateInfo _vk_device_create_info = {};
 			_vk_device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 			_vk_device_create_info.pNext = _vk_base_in_collection.front();
 			_vk_device_create_info.flags = 0;
-			_vk_device_create_info.queueCreateInfoCount = static_cast<uint32_t>(vk_queue_create_info_vec1.size());
-			_vk_device_create_info.pQueueCreateInfos = vk_queue_create_info_vec1.data();
+			_vk_device_create_info.queueCreateInfoCount = static_cast<uint32_t>(vk_queue_create_infos.size());
+			_vk_device_create_info.pQueueCreateInfos = vk_queue_create_infos.data();
 			_vk_device_create_info.enabledLayerCount = 0;
 			_vk_device_create_info.ppEnabledLayerNames = nullptr;
 			_vk_device_create_info.enabledExtensionCount = 0;
 			_vk_device_create_info.ppEnabledExtensionNames = nullptr;
-			_vk_device_create_info.pEnabledFeatures = _vk_physical_device_features;
+			_vk_device_create_info.pEnabledFeatures = _pEnabledFeatures;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 8. Вызов vkCreateDevice через таблицу диспетчиризации
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			auto _vk_result = m_create_info.wvk_instance_dispatch_table->wvkCreateDevice(
-				m_create_info.wvk_physical_device_collection[0]->getVkPhysicalDevice(),
-				&_vk_device_create_info,
-				VK_NULL_HANDLE,
-				&m_vk_device
-			);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Забираем из WvkInstance физическое устройство
+			// заданное в WvkLogicalDeviceCreateInfo
+			// physical_device_group_index - группа
+			// physical_device_indices - номер в группе
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			const auto& _group_index = m_create_info.physical_device_group_index.value();
+			const auto& _in_group_index = m_create_info.physical_device_indices[0];
+			const auto& _wvk_phys_dev = m_create_info.wvk_instance_ptr->getWvkPhysicalDevices()[_group_index][_in_group_index];
+			const auto& _dispatch_table_ptr = m_create_info.wvk_instance_ptr->getWvkDispatchTable();
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 9. Обработка результата и ошибок
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Создание vkDevice
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			auto _vk_result = _dispatch_table_ptr->wvkCreateDevice(_wvk_phys_dev->getVkPhysicalDevice(), &_vk_device_create_info, VK_NULL_HANDLE, &m_vk_device);
+			
 			if (_vk_result != VK_SUCCESS) {
 				switch (_vk_result) {
 				case VK_ERROR_DEVICE_LOST:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_DEVICE_LOST."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_DEVICE_LOST."); break;
 				case VK_ERROR_EXTENSION_NOT_PRESENT:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_EXTENSION_NOT_PRESENT."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_EXTENSION_NOT_PRESENT."); break;
 				case VK_ERROR_FEATURE_NOT_PRESENT:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_FEATURE_NOT_PRESENT."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_FEATURE_NOT_PRESENT."); break;
 				case VK_ERROR_INITIALIZATION_FAILED:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_INITIALIZATION_FAILED."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_INITIALIZATION_FAILED."); break;
 				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_OUT_OF_DEVICE_MEMORY."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_DEVICE_MEMORY."); break;
 				case VK_ERROR_OUT_OF_HOST_MEMORY:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_OUT_OF_HOST_MEMORY."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_HOST_MEMORY."); break;
 				case VK_ERROR_TOO_MANY_OBJECTS:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_TOO_MANY_OBJECTS."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_TOO_MANY_OBJECTS."); break;
 				case VK_ERROR_UNKNOWN:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_UNKNOWN."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_UNKNOWN."); break;
 				case VK_ERROR_VALIDATION_FAILED_EXT:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = VK_ERROR_VALIDATION_FAILED_EXT."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is VK_ERROR_VALIDATION_FAILED_EXT."); break;
 				default:
-					_status.append("\n\tvkEnumerateInstanceLayerProperties = Unknown error."); break;
+					_status.append("\n\tvkEnumerateInstanceLayerProperties is Unknown error."); break;
 				}
-				return _status.set(VknStatusCode::FAIL, "\n\tvknEnumerateInstanceLayerProperties - fail");
+				return _status.set(VknStatusCode::FAIL, "\n\twvkCreateDevice is fail.");
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 10. Успешное завершение
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status.m_code = VknStatusCode::SUCCESSFUL;
 			return _status;
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		WvkStatus WvkLogicalDevice::createWvkDispatchTable(void) noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Выделяем память,
+			// описываем WvkDispatchTableCreateInfo
+			// и создаём WvkDispatchTable
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_wvk_dispatch_table_ptr = std::make_unique<WvkDispatchTable>();
+			
+			WvkDispatchTableCreateInfo _create_info = {
+				.vkInstance = m_create_info.wvk_instance_ptr->getVkInstance(),
+				.vkDevice = m_vk_device,
+			};
+
+			_status = m_wvk_dispatch_table_ptr->create(_create_info);
+
+			if (!_status) {
+				return _status.setFail("\nWvkDispatchTable::create() is fail.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status.m_code = VknStatusCode::SUCCESSFUL;
+			return _status;
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void WvkLogicalDevice::reset(void) noexcept {
 
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	} // namespace wvk
 

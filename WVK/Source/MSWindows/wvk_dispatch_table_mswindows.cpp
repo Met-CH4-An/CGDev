@@ -4,125 +4,131 @@
 ////////////////////////////////////////////////////////////////
 // секция заголовочного файла
 ////////////////////////////////////////////////////////////////
-#include "wvk_loader_mswindows.h"
+#include "wvk_dispatch_table_mswindows.h"
 ////////////////////////////////////////////////////////////////
 // секция имплементации
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "../wvk_dispatch_table.h"
 
 namespace CGDev {
 
 	namespace wvk {
-
+	
 		namespace mswindows {
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkLoaderMSWindows::WvkLoaderMSWindows(void) noexcept {
+			WvkDispatchTableMSWindows::WvkDispatchTableMSWindows(void) noexcept {
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkLoaderMSWindows::~WvkLoaderMSWindows(void) noexcept {
+			WvkDispatchTableMSWindows::~WvkDispatchTableMSWindows(void) noexcept {
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			WvkStatus WvkLoaderMSWindows::create(const WvkLoaderMSWindowsCreateInfo& create_info) noexcept {
+			WvkStatus WvkDispatchTableMSWindows::create(const WvkDispatchTableMSWindowsCreateInfo& create_info) noexcept {
 				WvkStatus _status;
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 1. Проверка: объект уже инициализирован?
+				// Проверка: объект уже инициализирован?
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				if (m_valid) {
 					return _status.set(VknStatusCode::ALREADY_INITIALIZED);
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Сохраняем параметры создания
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				m_create_info = create_info;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Валидируем входные параметры, если включена проверка
+				// Валидируем входные параметры, если включена проверка
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				_status = validationCreateInfo(create_info);
-				
 				if (!_status) {
+					reset();
 					return _status.set(VknStatusCode::FAIL, "\n\tWknLoaderMSWindows::validationCreateInfo - fail");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 4. Загружаем Vulkan-библиотеку (vulkan-1.dll)
+				// Получаем адресс функции vkGetInstanceAddr
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				_status = requestVkGetInstanceProcAddr();
+				if (!_status) {
+					reset();
+					return _status.set(VknStatusCode::FAIL, "\n\tgetVkGetInstanceProcAddr - fail.");
+				}
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Успех
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				m_valid = true;
+				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			void WvkDispatchTableMSWindows::destroy(void) noexcept {
+				FreeLibrary(m_vulkan_dll);
+				reset();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			WvkStatus WvkDispatchTableMSWindows::validationCreateInfo(const WvkDispatchTableMSWindowsCreateInfo& create_info) noexcept {
+				WvkStatus _status;
+
+				m_create_info = create_info;
+
+				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			WvkStatus WvkDispatchTableMSWindows::requestVkGetInstanceProcAddr(void) noexcept {
+				WvkStatus _status;
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Загружаем Vulkan-библиотеку (vulkan-1.dll)
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				m_vulkan_dll = LoadLibraryA("vulkan-1.dll");
-
+				
 				if (m_vulkan_dll == NULL) {
 					return _status.set(VknStatusCode::FAIL, "\n\tLoadLibraryA - NULL.");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 5. Устанавливаем флаг успешной инициализации
+				// получаем адрес функции vkGetInstanceProcAddr из библиотеки
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				m_valid = true;
-
-				return _status.setOk();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			void WvkLoaderMSWindows::destroy(void) noexcept {
-
-				FreeLibrary(m_vulkan_dll);
-
-				// ~~~~~~~~~~~~~~~~
-				// очистка данных
-				// ~~~~~~~~~~~~~~~~
-
-				m_vulkan_dll = NULL;
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			WvkStatus WvkLoaderMSWindows::validationCreateInfo(const WvkLoaderMSWindowsCreateInfo& create_info) const noexcept {
-				WvkStatus _status;
-				
-				return _status.setOk();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			WvkStatus WvkLoaderMSWindows::requestVkGetInstanceProcAddr(PFN_vkGetInstanceProcAddr& vkGetInstanceProcAddr) const noexcept {
-				WvkStatus _status;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 1. Получаем адрес функции vkGetInstanceProcAddr из библиотеки
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				auto _vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(
+				m_vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(
 					GetProcAddress(m_vulkan_dll, "vkGetInstanceProcAddr")
 					);
 
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Проверка на NULL — критическая ошибка, если функция не найдена
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if (_vkGetInstanceProcAddr == NULL) {
+				if (m_vkGetInstanceProcAddr == NULL) {
 					return _status.set(VknStatusCode::FAIL, "\n\tGetProcAddress - NULL.");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Сохраняем полученный указатель в выходной параметр
+				// Успех.
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				vkGetInstanceProcAddr = _vkGetInstanceProcAddr;
-
 				return _status.setOk();
+			}
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			void WvkDispatchTableMSWindows::reset(void) noexcept {
+				m_valid = false;
+				
+				m_create_info = {};
+				m_vulkan_dll = NULL;
+				m_vkGetInstanceProcAddr = VK_NULL_HANDLE;				
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

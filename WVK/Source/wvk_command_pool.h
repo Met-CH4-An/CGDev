@@ -24,7 +24,8 @@ namespace CGDev {
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkCommandPoolCreateInfo {
-			
+			WvkLogicalDevicePtr wvk_logical_device_ptr = nullptr;
+			std::optional<uint32_t> queue_family_index;
 		}; // struct WvkCommandPoolCreateInfo
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,7 +76,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus validationCreateInfo(void) const noexcept;
+			WvkStatus validationCreateInfo(const WvkCommandPoolCreateInfo& create_info) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief

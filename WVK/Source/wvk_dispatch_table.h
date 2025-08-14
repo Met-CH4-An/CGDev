@@ -14,7 +14,6 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
 
 namespace CGDev {
 
@@ -24,10 +23,26 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		struct WvkVulkanProcedureInfo {
+			const char* name;       ///< Название функции Vulkan, например "vkDestroySurfaceKHR"
+			void** targetPtr;       ///< Указатель на переменную, куда будет сохранён загруженный адрес
+			WvkVulkanProcedureInfo(const char* n, void** ptr)
+				: name(n), targetPtr(ptr) {
+			}
+		}; // struct WvkVulkanProcedureInfo
+
+
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkDispatchTableCreateInfo {
-			//WvkInstancePtr wvk_instance = nullptr;
-			//WvkLoaderPtr wvk_loader = nullptr;
+			VkInstance vkInstance = VK_NULL_HANDLE;
+			VkDevice vkDevice = VK_NULL_HANDLE;
 		}; // class WvkDispatchTableCreateInfo
+
+
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
@@ -35,15 +50,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		class WvkDispatchTable : public GpuObject {
 
-		protected:
-
-			// ~~~~~~~~~~~~~~~~
-			// Vulkan 1.0
-			// ~~~~~~~~~~~~~~~~
-			PFN_vkDestroyInstance m_vkDestroyInstance = VK_NULL_HANDLE;
-
-			PFN_vkEnumerateDeviceExtensionProperties m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
-			PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
+		public:
 
 			// =======================================
 			// [Category]: Global
@@ -52,7 +59,84 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) const noexcept;
+			inline VkResult wvkEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const noexcept;
+			inline VkResult wvkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) const noexcept;						
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept;
+
+			// =======================================
+			// [Category]: Physical Device
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkEnumeratePhysicalDevices(uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) const noexcept;
+			inline void wvkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) const noexcept;
+			inline void wvkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) const noexcept;
+			inline VkResult wvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) const noexcept;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// [Version] 1.1 / WVK_KHR_device_group_creation
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline VkResult wvkEnumeratePhysicalDeviceGroups(uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1 / VK_KHR_get_physical_device_properties2
+			// ~~~~~~~~~~~~~~~~
+			inline void wvkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) const noexcept;
+			inline void wvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) const noexcept;
+			inline VkResult wvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) const noexcept;
+			inline void wvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) const noexcept;
+
+			// =======================================
+			// [Category]: Logical Device
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) const noexcept;
+
+			// =======================================
+			// [Category]: CommandPool
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateCommandPool(const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept;
+
+		protected:
+
+			// ~~~~~~~~~~~~~~~~
+			// Vulkan 1.0
+			// ~~~~~~~~~~~~~~~~
+			//PFN_vkDestroyInstance m_vkDestroyInstance = VK_NULL_HANDLE;
+
+			//PFN_vkEnumerateDeviceExtensionProperties m_vkEnumerateDeviceExtensionProperties = VK_NULL_HANDLE;
+			//PFN_vkEnumerateDeviceLayerProperties m_vkEnumerateDeviceLayerProperties = VK_NULL_HANDLE;
+
 			PFN_vkGetInstanceProcAddr m_vkGetInstanceProcAddr = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Global
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
 			PFN_vkCreateInstance m_vkCreateInstance = VK_NULL_HANDLE;
 			PFN_vkEnumerateInstanceExtensionProperties m_vkEnumerateInstanceExtensionProperties = VK_NULL_HANDLE;
 			PFN_vkEnumerateInstanceLayerProperties m_vkEnumerateInstanceLayerProperties = VK_NULL_HANDLE;
@@ -146,7 +230,10 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkDispatchTable(void) noexcept;
 
-			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			~WvkDispatchTable(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,19 +247,15 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
-
-		protected:
-
-			//template<typename GetAddr>
-			WvkStatus loadProcedure(std::function<void* (const char*)>& get_addr, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) noexcept;
-			void reset(void) noexcept;
+			
+		// cpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*! \brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus validationCreateInfo(void) const noexcept;
+			WvkStatus validationCreateInfo(const WvkDispatchTableCreateInfo& create_info) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*! \brief
@@ -180,9 +263,16 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus loadProcedure(void) noexcept;
 
-			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*! \brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus loadProcedure(std::function<void* (const char*)> getProc, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept;
 
 		private:
+
+			struct WvkDispatchTableImpl;
+			std::unique_ptr<WvkDispatchTableImpl> m_dispatch_table_impl = nullptr;
 
 			WvkDispatchTableCreateInfo m_create_info;
 		}; // class WvkDispatchTable
@@ -191,6 +281,6 @@ namespace CGDev {
 
 } // namespace CGDev
 
-//#include "wvk_instance_dispatch_table.hpp"
+#include "wvk_dispatch_table.hpp"
 
 #endif // CGDEV_WVK_SOURCE__WVK_DISPATCH_TABLE_H

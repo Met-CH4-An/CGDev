@@ -20,10 +20,10 @@ namespace CGDev {
 	namespace tests {
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		/*!	\brief Группа тестов для VknGlobalCommands
+		/*!	\brief Группа тестов для WvkInstance
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkInstanceTest : public ::testing::Test {
+		class WvkInstanceTest : public WvkBaseTest, public ::testing::Test {
 
 		public:
 
@@ -47,14 +47,14 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void SetUp(void) override {
+			void SetUp(void) noexcept override {
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void TearDown(void) override {
+			void TearDown(void) noexcept override {
 			}
 		};
 

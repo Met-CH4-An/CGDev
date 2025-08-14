@@ -1,13 +1,12 @@
-#ifndef CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP
-#define CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
+// секция заголовочного файла
+////////////////////////////////////////////////////////////////
+#include "wvk_command_pool_test.h"
+////////////////////////////////////////////////////////////////
 // секция имплементации
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-// секция родительского класса
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 // секция для остального
@@ -15,20 +14,22 @@
 
 namespace CGDev {
 
-	namespace wvk {
+	namespace tests {
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkCommandPoolTest, createInvalidCreateInfo) {
+			CGDev::wvk::WvkCommandPoolCreateInfo _create_info = {
+				.wvk_logical_device_ptr = nullptr,
+			};
 
-		inline const WvkDispatchTableUptr& WvkLogicalDevice::getDispatchTable(void) const noexcept {
-			return m_wvk_dispatch_table_ptr;
+			wvk_command_pool_ptr = std::make_unique<CGDev::wvk::WvkCommandPool>();
+			auto _wvk_status = wvk_command_pool_ptr->create(_create_info);
+			
+			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::FAIL);
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	} // namespace wvk
+	} // namespace tests
 
 } // namespace CGDev
-
-#endif // CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_HPP

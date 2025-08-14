@@ -14,9 +14,7 @@
 #include "MSWindows/wvk_surface_mswindows.h"
 using WvkSurfacePlatform = CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindows;
 
-#include "../wvk_instance_dispatch_table.h"
 #include "../wvk_physical_device.h"
-#include "wvk_khr_surface_dt.hpp"
 
 namespace CGDev {
 
@@ -130,7 +128,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
+				/*if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 2. Очистить вектор и подготовить переменную для подсчёта форматов
@@ -203,7 +201,7 @@ namespace CGDev {
 					// Шаг 6. Успешное завершение
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					return _status.setOk();
-				}
+				//}*/
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 7. Если VK_KHR_surface не активирован — возвращаем соответствующий статус
@@ -220,7 +218,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
+				/*if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 					/*VkBool32 _support = VK_FALSE;
 					out = false;
 
@@ -265,7 +263,7 @@ namespace CGDev {
 					// Шаг 5. Возвращаем успешный статус
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					return _status.setOk();*/
-				}
+				//}*/
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 6. Если VK_KHR_surface не активирован — возвращаем соответствующий статус
@@ -282,7 +280,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 1. Проверяем, активировано ли расширение VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
+				//if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Инициализация объекта статуса
@@ -363,7 +361,7 @@ namespace CGDev {
 					// Шаг 5. Возвращаем успешный статус
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					return _status.setOk();*/
-				}
+				//}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 5. Если VK_KHR_surface не активирован — возвращаем соответствующий статус
@@ -377,7 +375,7 @@ namespace CGDev {
 			WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, VkSurfaceCapabilitiesKHR& vk_surface_capabilities_khr) const noexcept {
 				WvkStatus _status;
 
-				if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
+				//if constexpr (Build::find(WvkKhrSurfaceDT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Вызов метода получения surface capabilities через invoke
@@ -418,7 +416,7 @@ namespace CGDev {
 					// Шаг 4. Возврат успешного статуса
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					return _status.setOk();*/
-				}
+				//}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 5. Если VK_KHR_surface не активирован — возвращаем соответствующий статус
@@ -432,8 +430,8 @@ namespace CGDev {
 			WvkStatus WvkSurface::requestCapabilities(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkBaseInStructure* in, VkBaseOutStructure* out) const noexcept {
 				WvkStatus _status;
 
-				if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-					Build::find(WvkKhrGetSurfaceCapabilities2DT::s_getName())) {
+				//if constexpr (Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
+					/*Build::find(WvkKhrGetSurfaceCapabilities2DT::s_getName())) {
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 1. Подготовка структуры входных параметров запроса
@@ -476,13 +474,13 @@ namespace CGDev {
 							break;
 						}
 						return _status.set(VknStatusCode::FAIL);
-					}
+					}*/
 
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Шаг 5. Успешное завершение
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					return _status.setOk();
-				}
+					//return _status.setOk();
+				//}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Шаг 6. Если VK_KHR_surface не активирован — возвращаем соответствующий статус

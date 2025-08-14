@@ -11,137 +11,113 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_instance_dispatch_table.h"
-#include "Extensions/wvk_khr_get_physical_device_properties2_dispatch_table.hpp"
+#include "wvk_instance.h"
+#include "wvk_dispatch_table.h"
 
 namespace CGDev {
 
 	namespace wvk {
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkPhysicalDevice::WvkPhysicalDevice(void) noexcept {
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkPhysicalDevice::~WvkPhysicalDevice(void) noexcept {
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkPhysicalDevice::create(const WvkPhysicalDeviceCreateInfo& create_info) noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Проверка: если уже инициализирован, возвращаем ALREADY_INITIALIZED
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка на повторную инициализацию
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (m_valid) {
 				return _status.set(VknStatusCode::ALREADY_INITIALIZED);
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Сохраняем параметры создания
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			m_create_info = create_info;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Валидация create_info
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_status = validationCreateInfo();
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка валидности входной структуры
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = validationCreateInfo(create_info);
 			if (!_status) {
-				reset();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkPhysicalDevice::validationCreateInfo() - fail.");
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkPhysicalDevice::validationCreateInfo() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Создаём объект VkPhysicalDevice
+			// Создаём объект VkPhysicalDevice
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = createVkPhysicalDevice();
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4.1. Если создание не удалось — сбрасываем состояние и возвращаем ошибку
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			if (!_status) {
-				reset();
-				return _status.set(VknStatusCode::FAIL, "\n\tcreateVkPhysicalDevice - fail.");
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tcreateVkPhysicalDevice is fail.");
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 5. Установка флага валидности объекта
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_valid = true;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 6. Возвращаем успешный статус
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void WvkPhysicalDevice::destroy(void) noexcept {
-			reset();
+			m_create_info = {};
+			m_wvk_dispatch_table_ptr = nullptr;
+			m_vk_physical_device = VK_NULL_HANDLE;
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkPhysicalDevice::validationCreateInfo(void) const noexcept {
-			WvkStatus _status;
+		WvkStatus WvkPhysicalDevice::validationCreateInfo(const WvkPhysicalDeviceCreateInfo& create_info) noexcept {
+			WvkStatus _status(VknStatusCode::SUCCESSFUL);
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Проверка: vk_physical_device не должен быть VK_NULL_HANDLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if (m_create_info.vk_physical_device == VK_NULL_HANDLE) {
-				return _status.set(VknStatusCode::FAIL,
-					"\n\tWvkPhysicalDeviceCreateInfo::vk_physical_device - VK_NULL_HANDLE.");
+			if (create_info.wvk_instance_ptr == nullptr) {
+				_status.setFail("\n\tWvkPhysicalDeviceCreateInfo::wvk_instance_ptr is nullptr.");
+			}
+			if (create_info.vk_physical_device == VK_NULL_HANDLE) {
+				_status.setFail("\n\tWvkPhysicalDeviceCreateInfo::vk_physical_device is VK_NULL_HANDLE.");
 			}
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Проверка: wvk_instance_dispatch_table не должен быть nullptr
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			else if (m_create_info.wvk_instance_dispatch_table == nullptr) {
-				return _status.set(VknStatusCode::FAIL,
-					"\n\tWvkPhysicalDeviceCreateInfo::wvk_instance_dispatch_table - nullptr.");
-			}
+			if(!_status)
+				return _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Все проверки пройдены — возвращаем успех
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_wvk_dispatch_table_ptr = create_info.wvk_instance_ptr->getWvkDispatchTable().get();
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = create_info;
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		WvkStatus WvkPhysicalDevice::createVkPhysicalDevice(void) noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Инициализация физического устройства Vulkan
+			// Инициализация физического устройства Vulkan
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_vk_physical_device = m_create_info.vk_physical_device;
 
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		void WvkPhysicalDevice::reset(void) noexcept {
-			m_create_info = {};
-			m_vk_physical_device = VK_NULL_HANDLE;
-
-			m_valid = false;
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	} // namespace wvk
 

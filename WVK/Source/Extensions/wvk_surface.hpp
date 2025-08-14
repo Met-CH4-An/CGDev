@@ -12,11 +12,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_khr_surface_dt.hpp"
-#include "wvk_khr_get_surface_capabilities2_dt.hpp"
-#include "../wvk_instance_dispatch_table.h"
 #include "../wvk_physical_device.h"
-#include "../wvk_queue_family.h"
 
 namespace CGDev {
 

@@ -12,387 +12,163 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_instance_dispatch_table.h"
+#include "wvk_dispatch_table.h"
 
 namespace CGDev {
 
 	namespace wvk {
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline void WvkPhysicalDevice::requestProperties(VkPhysicalDeviceProperties& vk_physical_device_properties) const noexcept {
-			m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceProperties(m_vk_physical_device, &vk_physical_device_properties);
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		inline WvkStatus WvkPhysicalDevice::requestProperties(VkBaseOutStructure* out) const noexcept {
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Создаём объект статуса
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		inline WvkStatus WvkPhysicalDevice::requestProperties(VkPhysicalDeviceProperties& vk_physical_device_properties) const noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Проверяем поддержку Vulkan 1.1 или расширения
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (
-				Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::find("VK_KHR_get_physical_device_properties2")) {
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceProperties(m_vk_physical_device, &vk_physical_device_properties);
 
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Подготавливаем основную структуру запроса
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				VkPhysicalDeviceProperties2 _props2 = {};
-				_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 4. Подключаем внешнюю цепочку расширенных свойств
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				_props2.pNext = out;
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 5. Выполняем запрос через dispatch table
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceProperties2(m_vk_physical_device, &_props2);
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 6. Завершаем успешно
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				return _status.setOk();
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 7. Функциональность недоступна — возвращаем ошибку
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			return _status.set(
-				VknStatusCode::FEATURE_NOT_ENABLED,
-				"\nVulkan 1.1 or VK_KHR_get_physical_device_properties2 is not enabled."
-			);
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		template<typename Out>
-		inline WvkStatus WvkPhysicalDevice::requestProperties(Out& out) const noexcept {
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Приводим входной объект к VkBaseOutStructure*
-			// Это безопасно, так как Out должен быть производным от VkBaseOutStructure
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			return requestProperties(reinterpret_cast<VkBaseOutStructure*>(&out));
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<VkQueueFamilyProperties>& queue_family_properties_collection) const noexcept {
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Создаём объект статуса
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus _status;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 2. Получаем количество семейств очередей
-			// Первый вызов передаёт nullptr, чтобы узнать только количество
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			uint32_t _count = 0;
-			m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceQueueFamilyProperties(
-				m_vk_physical_device,
-				&_count,
-				nullptr
-			);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Выделяем место в векторе под все свойства
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			queue_family_properties_collection.resize(_count);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Повторно вызываем функцию, чтобы получить сами свойства
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceQueueFamilyProperties(
-				m_vk_physical_device,
-				&_count,
-				queue_family_properties_collection.data()
-			);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 5. Возвращаем статус "успешно"
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		template<typename Out>
-		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<Out>& out, const VkStructureType& vk_structure_type) const noexcept {
-			// Объявляем статус выполнения
+		template<typename Type, typename... Args>
+		inline WvkStatus WvkPhysicalDevice::requestProperties(Type& out, Args& ... args) const noexcept {
 			WvkStatus _status;
 
+#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 1. Проверка доступности Vulkan 1.1 или расширения VK_KHR_get_physical_device_properties2
+			// Подготавливаем VkPhysicalDeviceProperties2
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if constexpr (
-				Build::vulkan_api_version >= Build::VulkanVersion::VERSION_11 ||
-				Build::find("VK_KHR_get_physical_device_properties2")) {
+			VkPhysicalDeviceProperties2 _props2 = {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
+				.pNext = &out,
+			};
 
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Запрашиваем количество доступных семейств очередей
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				uint32_t _count = 0;
-				m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceQueueFamilyProperties2(
-					m_vk_physical_device,
-					&_count,
-					nullptr
-				);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Связываем цепочки pNext
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void* prev = &out;
+			((reinterpret_cast<decltype(&args)>(prev)->pNext = &args, prev = &args), ...);
 
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 3. Выделяем временный буфер для VkQueueFamilyProperties2
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				std::vector<VkQueueFamilyProperties2> _props2_collection(_count);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Запрашиваем VkPhysicalDeviceProperties2
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceProperties2(m_vk_physical_device, &_props2);
 
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 4. Ресайзим выходной вектор и инициализируем цепочки pNext
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				out.resize(_count);
-				for (uint32_t ct_0 = 0; ct_0 < _count; ++ct_0) {
-					_props2_collection[ct_0] = {};
-					_props2_collection[ct_0].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
-					_props2_collection[ct_0].pNext = &out[ct_0]; // цепляем расширение
-
-					out[ct_0].sType = vk_structure_type;
-					out[ct_0].pNext = nullptr; // можно позже дополнять, если нужно
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 5. Получаем свойства очередей с расширением
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				m_create_info.wvk_instance_dispatch_table->wvkGetPhysicalDeviceQueueFamilyProperties2(
-					m_vk_physical_device,
-					&_count,
-					_props2_collection.data()
-				);
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 6. Возвращаем успешный статус
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				return _status.setOk();
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 7. Возвращаем ошибку, если функциональность не доступна
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			return _status.set(
-				VknStatusCode::FEATURE_NOT_ENABLED,
-				"\nVulkan 1.1 or VK_KHR_get_physical_device_properties2 is not enabled."
-			);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+#else
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Функционал не доступен
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.set(VknStatusCode::FEATURE_NOT_ENABLED, "Vulkan 1.1 or VK_KHR_get_physical_device_properties2 is not available.");
+#endif
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//VkResult(WvkInstanceDispatchTable:: * method_ptr)(uint32_t*, VkPhysicalDeviceGroupProperties*) const noexcept = nullptr;
-				//if constexpr (Build::WvkBuildInfo::vulkan_api_version >= Build::VulkanVersion::VERSION_11) {
-				//	method_ptr = &WvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups;
-				//}
-				//else if constexpr (Build::WvkBuildInfo::find("VK_KHR_device_group_creation")) {
-				//	method_ptr = &WvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroupsKHR;
-				//}
-				//auto* obj = m_create_info.wvk_instance_dispatch_table;
-				//VkResult _vk_res = (obj->*method_ptr)(&_count, nullptr);
-		inline WvkStatus WvkPhysicalDevice::checkCompatibility(const WvkPhysicalDevicePtrVec1& wvk_physical_device_collection, bool& compatibility) const noexcept {
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<VkQueueFamilyProperties>& out) const noexcept {
 			WvkStatus _status;
 
-	
-#if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_DISABLE
-			return _status.set(
-				VknStatusCode::FEATURE_NOT_ENABLED,
-				"\nVulkan 1.1 or VK_KHR_device_group_creation is not enabled."
-			);
-#endif
-#if (VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_EXTENSION_ENABLE) || VULKAN_API_VERSION >= VULKAN_API_VERSION_11
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Шаг 2. Получаем количество доступных физических групп
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Количество VkQueueFamilyProperties
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			uint32_t _count = 0;
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceQueueFamilyProperties(m_vk_physical_device, &_count, nullptr);
 
-			VkResult _vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, nullptr);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Выделяем память в векторах
+			out.resize(_count);
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 3. Обработка ошибок первого вызова
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if (_vk_res != VK_SUCCESS) {
-				switch (_vk_res) {
-				case VK_ERROR_OUT_OF_HOST_MEMORY:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
-					break;
-				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
-					break;
-				case VK_ERROR_INITIALIZATION_FAILED:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
-					break;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Запрашиваем VkQueueFamilyProperties
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceQueueFamilyProperties(m_vk_physical_device, &_count, out.data());
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		template<typename Type, typename... Args>
+		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<Type>& out, Args ... args) const noexcept {
+			WvkStatus _status;
+
+#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Количество VkQueueFamilyProperties2
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			uint32_t _count = 0;
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceQueueFamilyProperties2(m_vk_physical_device, &_count, nullptr);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Выделяем память в векторах
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			out.resize(_count);
+			(args.resize(_count), ...);
+			std::vector<VkQueueFamilyProperties2> _props2(_count, { VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 });
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Связываем цепочки pNext
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			auto link = [](auto& a, auto& b) noexcept {
+				VkStructureType _type_a = a.front().sType;
+				VkStructureType _type_b = b.front().sType;
+				for (size_t i = 0; i < a.size(); ++i) {
+					a[i].sType = _type_a;
+					b[i].sType = _type_b;
+					a[i].pNext = &b[i];
 				}
-				return _status.set(VknStatusCode::FAIL);
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Выделяем память и получаем свойства групп
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<VkPhysicalDeviceGroupProperties> _vk_physical_device_group_properties_collection(_count);
-
-			_vk_res = m_create_info.wvk_instance_dispatch_table->wvkEnumeratePhysicalDeviceGroups(&_count, _vk_physical_device_group_properties_collection.data());
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 5. Обработка ошибок второго вызова
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if (_vk_res != VK_SUCCESS) {
-				switch (_vk_res) {
-				case VK_ERROR_OUT_OF_HOST_MEMORY:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_HOST_MEMORY.");
-					break;
-				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_OUT_OF_DEVICE_MEMORY.");
-					break;
-				case VK_ERROR_INITIALIZATION_FAILED:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_ERROR_INITIALIZATION_FAILED.");
-					break;
-				case VK_INCOMPLETE:
-					_status.append("\n\tWvkInstanceDispatchTable::wvkEnumeratePhysicalDeviceGroups - VK_INCOMPLETE.");
-					break;
-				}
-				return _status.set(VknStatusCode::FAIL);
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 6. Вспомогательная функция: превращаем группу в множество устройств
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			auto makeDeviceSet = [](const VkPhysicalDeviceGroupProperties& group) {
-				return std::unordered_set<VkPhysicalDevice>(
-					group.physicalDevices,
-					group.physicalDevices + group.physicalDeviceCount
-				);
 				};
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 7. Создаём временный список указателей на устройства + добавляем текущее
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<VkPhysicalDevice> _vk_physical_device_collection;
-			std::transform(
-				wvk_physical_device_collection.begin(),
-				wvk_physical_device_collection.end(),
-				std::back_inserter(_vk_physical_device_collection),
-				[](const WvkPhysicalDevicePtr ptr) {
-					return ptr->m_vk_physical_device;
-				}
-			);
-			_vk_physical_device_collection.push_back(m_vk_physical_device);
+			link(_props2, out);
+			auto* prev = &out;
+			((link(*prev, args), prev = &args), ...);
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 8. Проверка: находятся ли все устройства в одной группе
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			for (const auto& group : _vk_physical_device_group_properties_collection) {
-				std::unordered_set<VkPhysicalDevice> device_set = makeDeviceSet(group);
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Запрашиваем VkQueueFamilyProperties2
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_wvk_dispatch_table_ptr->wvkGetPhysicalDeviceQueueFamilyProperties2(m_vk_physical_device, &_count, _props2.data());
 
-				bool all_found = std::all_of(
-					_vk_physical_device_collection.begin(),
-					_vk_physical_device_collection.end(),
-					[&](const VkPhysicalDevice vk_phys_dev) {
-						return device_set.contains(vk_phys_dev);
-					}
-				);
-
-				if (all_found) {
-					compatibility = true;
-					return _status.setOk();
-				}
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 9. Если ни одна группа не содержит все устройства — несовместимо
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			compatibility = false;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
+#else
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Функционал не доступен
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.set(VknStatusCode::FEATURE_NOT_ENABLED, "Vulkan 1.1 or VK_KHR_get_physical_device_properties2 is not available.");
 #endif
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
-		template<typename Method, typename Object, typename... Args>
-		inline std::enable_if_t<
-			std::is_invocable_v<Method, Object, VkPhysicalDevice, Args...>&&
-			std::is_void_v<std::invoke_result_t<Method, Object, VkPhysicalDevice, Args...>>,
-			void
-		>
-			WvkPhysicalDevice::invokeWithVkPhysicalDeviceMethod(Method&& method, Object&& object, Args&&... args) const noexcept {
-			std::invoke(std::forward<Method>(method),
-				std::forward<Object>(object),
-				m_vk_physical_device,
-				std::forward<Args>(args)...);
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline const WvkInstancePtr& WvkPhysicalDevice::getWvkInstance(void) const noexcept {
+			return m_create_info.wvk_instance_ptr;
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		template<typename Method, typename Object, typename... Args>
-		inline std::enable_if_t<
-			std::is_invocable_v<Method, Object, VkPhysicalDevice, Args...> &&
-			!std::is_void_v<std::invoke_result_t<Method, Object, VkPhysicalDevice, Args...>>,
-			std::invoke_result_t<Method, Object, VkPhysicalDevice, Args...>
-		> 
-			WvkPhysicalDevice::invokeWithVkPhysicalDeviceMethod(Method&& method, Object&& object, Args&&... args) const noexcept {
-			return std::invoke(std::forward<Method>(method),
-				std::forward<Object>(object),
-				m_vk_physical_device,
-				std::forward<Args>(args)...);
+		inline const VkPhysicalDevice& WvkPhysicalDevice::getVkPhysicalDevice(void) const noexcept {
+			return m_create_info.vk_physical_device;
 		}
 
-		template<typename Method, typename Object, typename... Args>
-		inline std::enable_if_t<
-			!std::is_invocable_v<Method, Object, VkPhysicalDevice, Args...>,
-			void
-		>
-			WvkPhysicalDevice::invokeWithVkPhysicalDeviceMethod(Method&&, Object&&, Args&&...) const noexcept {
-			static_assert(dependent_false <Method>::value,
-				"\n[WVK Error] Метод невозможно вызвать как method(object, VkPhysicalDevice, ...)\n");
-		}
-
-		template<typename Method, typename... Args>
-		inline std::enable_if_t<
-			std::is_invocable_v<Method, VkPhysicalDevice, Args...>&&
-			std::is_void_v<std::invoke_result_t<Method, VkPhysicalDevice, Args...>>,
-			void
-		>
-			WvkPhysicalDevice::invokeWithVkPhysicalDeviceFunction(Method&& method, Args&&... args) const noexcept {
-			std::invoke(std::forward<Method>(method),
-				m_vk_physical_device,
-				std::forward<Args>(args)...);
-		}
-
-		template<typename Method, typename... Args>
-
-		inline std::enable_if_t<
-			std::is_invocable_v<Method, VkPhysicalDevice, Args...> &&
-			!std::is_void_v<std::invoke_result_t<Method, VkPhysicalDevice, Args...>>,
-			std::invoke_result_t<Method, VkPhysicalDevice, Args...>
-		> WvkPhysicalDevice::invokeWithVkPhysicalDeviceFunction(Method&& method, Args&&... args) const noexcept {
-			return std::invoke(std::forward<Method>(method),
-				m_vk_physical_device,
-				std::forward<Args>(args)...);
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		inline VkPhysicalDevice WvkPhysicalDevice::getVkPhysicalDevice(void) const noexcept {
-			return m_vk_physical_device;
-		}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	} // namespace wvk
 

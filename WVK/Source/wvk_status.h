@@ -33,9 +33,11 @@ namespace CGDev {
 					SUCCESSFUL = 1,
 					FAIL = 2,
 					ALREADY_INITIALIZED = 3,
-					FEATURE_NOT_ENABLED = 4,
-					CREATE_INFO_NO_VALID = 5,
-					VKN_PHYSICAL_DEVICE_FAIL = 6				
+					CREATE_INFO_NULL_FIELD = 4,
+					CREATE_INFO_INCOMPATIBLE_OBJECTS = 5,
+					FEATURE_NOT_ENABLED = 6,
+					CREATE_INFO_NO_VALID = 7,
+					VKN_PHYSICAL_DEVICE_FAIL = 8				
 				};
 
 
@@ -62,8 +64,15 @@ namespace CGDev {
 					/*!	\brief
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					inline WvkStatus(const VknStatusCode& code) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					inline ~WvkStatus(void) noexcept;
 
+				// hpp
 				public:
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,6 +98,26 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					inline bool isOk(void) const noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief ѕроверка, €вл€етс€ ли статус успешным.
+					*
+					* ћетод позвол€ет использовать объект VknStatus в логических выражени€х.
+					* Ќапример: if (status) { ... }.
+					*
+					* @return true, если статус SUCCESSFUL, иначе false.
+					*
+					* @code
+					* WvkStatus status;
+					* if (status) {
+					*     // ¬сЄ хорошо
+					* } else {
+					*     std::cerr << status.getMessage();
+					* }
+					* @endcode
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					inline operator bool(void) const noexcept;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief 
@@ -140,8 +169,6 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					inline size_t getLength(void) const noexcept;
 
-				public:
-
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief ”станавливает код статуса и добавл€ет форматированное сообщение.
 					*
@@ -170,39 +197,25 @@ namespace CGDev {
 					inline WvkStatus& set(VknStatusCode code, const char* fmt = nullptr, ...) noexcept;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					/*!	\brief ѕроверка, €вл€етс€ ли статус успешным.
-					*
-					* ћетод позвол€ет использовать объект VknStatus в логических выражени€х.
-					* Ќапример: if (status) { ... }.
-					*
-					* @return true, если статус SUCCESSFUL, иначе false.
-					*
-					* @code
-					* WvkStatus status;
-					* if (status) {
-					*     // ¬сЄ хорошо
-					* } else {
-					*     std::cerr << status.getMessage();
-					* }
-					* @endcode
+					/*!	\brief
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					inline operator bool(void) const noexcept;
+					inline WvkStatus& set(VknStatusCode code, const char* fmt, va_list args) noexcept;
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief ƒобавл€ет форматированную строку в сообщение.
-					* 
+					*
 					* Ётот метод использует безопасную версию `vsnprintf_s`, чтобы добавить форматированную строку
 					* в сообщение, провер€€ доступное место в буфере и обреза€ строку при необходимости.
-					* 
+					*
 					* @param fmt ‘орматированна€ строка (как в `printf`), в которую будут подставлены аргументы.
 					* @param ... јргументы, которые будут подставлены в строку согласно формату.
-					* 
+					*
 					* @details
-					* ћетод безопасно добавл€ет данные в строку, провер€€, что не происходит переполнени€ буфера. 
+					* ћетод безопасно добавл€ет данные в строку, провер€€, что не происходит переполнени€ буфера.
 					* ≈сли доступного места недостаточно, строка будет обрезана. ѕосле успешного добавлени€ строки,
 					* метод обновл€ет длину текущего сообщени€.
-					* 
+					*
 					* @code
 					* // ѕример использовани€:
 					* append("Error code: %d", errorCode);
@@ -212,19 +225,100 @@ namespace CGDev {
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					inline WvkStatus& append(const char* fmt, ...) noexcept;
 
-					inline const WvkStatus& setOk(void) noexcept {
-						m_code = VknStatusCode::SUCCESSFUL;
-						return *this;
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					inline WvkStatus& setOk(void) noexcept;	
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					inline WvkStatus& setFail(const char* fmt = nullptr, ...) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					inline WvkStatus& operator << (const char* fmt) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					template <typename T>
+					WvkStatus& operator << (const T& value) noexcept {
+						std::ostringstream oss;
+						oss << value;
+						return append(oss.str().c_str());
 					}
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					friend constexpr bool operator==(const WvkStatus& lhs, VknStatusCode rhs) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					friend constexpr bool operator==(VknStatusCode lhs, const WvkStatus& rhs) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					friend constexpr bool operator!=(const WvkStatus& lhs, VknStatusCode rhs) noexcept;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					friend constexpr bool operator!=(VknStatusCode lhs, const WvkStatus& rhs) noexcept;
 
 				private:
 
 				private:
 
 					size_t m_length = 0;
-					char m_message[4096] = "";
+					//char m_message[409600] = "";
+					std::string m_message;
 
 				}; // class WvkStatus
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				constexpr bool operator==(const WvkStatus& lhs, VknStatusCode rhs) noexcept {
+					return lhs.m_code == rhs;
+				}
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				constexpr bool operator==(VknStatusCode lhs, const WvkStatus& rhs) noexcept {
+					return lhs == rhs.m_code;
+				}
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				constexpr bool operator!=(const WvkStatus& lhs, VknStatusCode rhs) noexcept {
+					return !(lhs == rhs);
+				}
+
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				constexpr bool operator!=(VknStatusCode lhs, const WvkStatus& rhs) noexcept {
+					return !(lhs == rhs);
+				}
 
 			} // namespace wvk
 

@@ -24,7 +24,8 @@ namespace CGDev {
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkInstanceCreateInfo {
-			WvkLoaderDispatchTablePtr wvk_loader_dispatch_table = nullptr;
+			std::vector<std::string> vk_layer_names;
+			std::vector<std::string> vk_extension_names;
 		}; // struct WvkInstanceCreateInfo
 
 
@@ -104,43 +105,70 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename Method, typename Object, typename... Args>
-			inline std::enable_if_t<
-				std::is_invocable_v<Method, Object, VkInstance, Args...>&&
-				std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
-				void
-			>
-				invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args);
+			//template<typename Method, typename Object, typename... Args>
+			//inline std::enable_if_t<
+			//	std::is_invocable_v<Method, Object, VkInstance, Args...>&&
+			//	std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
+			//	void
+			//>
+			//	invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args);
 
-			template<typename Method, typename Object, typename... Args>
-			inline std::enable_if_t<
-				std::is_invocable_v<Method, Object, VkInstance, Args...> &&
-				!std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
-				std::invoke_result_t<Method, Object, VkInstance, Args...>
-			> invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args);
+			//template<typename Method, typename Object, typename... Args>
+			//inline std::enable_if_t<
+			//	std::is_invocable_v<Method, Object, VkInstance, Args...> &&
+			//	!std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
+			//	std::invoke_result_t<Method, Object, VkInstance, Args...>
+			//> invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args);
 
-			template<typename Method, typename Object, typename... Args>
-			inline std::enable_if_t<
-				!std::is_invocable_v<Method, Object, VkInstance, Args...>,
-				void
-			>
-				invokeWithVkInstanceMethod(Method&&, Object&&, Args&&...);
+			//template<typename Method, typename Object, typename... Args>
+			//inline std::enable_if_t<
+			//	!std::is_invocable_v<Method, Object, VkInstance, Args...>,
+			//	void
+			//>
+			//	invokeWithVkInstanceMethod(Method&&, Object&&, Args&&...);
 
-			template<typename Method, typename... Args>
-			inline std::enable_if_t<
-				std::is_invocable_v<Method, VkInstance, Args...>&&
-				std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
-				void
-			>
-				invokeWithVkInstanceFunction(Method&& method, Args&&... args);
+			//template<typename Method, typename... Args>
+			//inline std::enable_if_t<
+			//	std::is_invocable_v<Method, VkInstance, Args...>&&
+			//	std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
+			//	void
+			//>
+			//	invokeWithVkInstanceFunction(Method&& method, Args&&... args);
 
-			template<typename Method, typename... Args>
-			inline std::enable_if_t<
-				std::is_invocable_v<Method, VkInstance, Args...> &&
-				!std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
-				std::invoke_result_t<Method, VkInstance, Args...>
-			>
-				invokeWithVkInstanceFunction(Method&& method, Args&&... args);
+			//template<typename Method, typename... Args>
+			//inline std::enable_if_t<
+			//	std::is_invocable_v<Method, VkInstance, Args...> &&
+			//	!std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
+			//	std::invoke_result_t<Method, VkInstance, Args...>
+			//>
+			//	invokeWithVkInstanceFunction(Method&& method, Args&&... args);
+
+		// cpp
+		public:
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus requestLayerProperties(std::vector<VkLayerProperties>& vk_layer_properties) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus requestExtensionProperties(std::vector<VkExtensionProperties>& vk_extension_properties) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus requestPhysicalDevices(std::vector<WvkPhysicalDevicePtr>& vk_physical_devices) const noexcept;
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkInstanceCreateInfo& getCreateInfo(void) const noexcept;
 
 		// hpp
 		public:
@@ -149,27 +177,25 @@ namespace CGDev {
 			/*!	\@brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline const WvkInstanceCreateInfo& getCreateInfo(void) const noexcept;
+			inline const WvkPhysicalDeviceUptrVec2& getWvkPhysicalDevices(void) const noexcept;
 
 		// hpp
 		private:
-
-			friend class WvkInstanceDispatchTable;
+		
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\@brief Возвращает нативный объект VkInstance.
-			* 
-			* Этот метод предоставляет доступ к внутреннему Vulkan-инстансу (`VkInstance`),
-			* созданному в процессе инициализации объекта `VknInstance`. 
-			* Метод безопасен для вызова и не изменяет состояние объекта.
-			*
-			* @note Возвращаемое значение является ссылкой на внутренний объект.
-			* Пользователь не должен вручную уничтожать или изменять `VkInstance`.
-			* Управление временем жизни объекта остаётся за `VknInstance`.
-			*
-			* @return Константная ссылка на объект `VkInstance`.
+			/*!	\@brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline const VkInstance& getVkInstance(void) const noexcept;
+			friend class WvkPhysicalDevice;
+			friend class WvkLogicalDevice;
+			inline const WvkDispatchTableUptr& getWvkDispatchTable(void) const noexcept;
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\@brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			friend class WvkInstanceDispatchTable;
+			inline const VkInstance& getVkInstance(void) const noexcept;			
 
 		// cpp
 		private:
@@ -198,56 +224,37 @@ namespace CGDev {
 			* @endcode
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus validationCreateInfo(void) const noexcept;
+			WvkStatus validationCreateInfo(const WvkInstanceCreateInfo& create_info) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief Подготавливает и активирует слои Vulkan для экземпляра.
-			*
-			* Метод выполняет перечисление всех доступных слоёв Vulkan и сравнивает их с
-			* предустановленными слоями, указанными в сборке (если включена поддержка валидации).
-			* В случае, если слой не найден, метод возвращает ошибку. Также метод обрабатывает ошибки,
-			* возникающие при перечислении слоёв, и предоставляет подробную информацию о возникших проблемах.
-			*
-			* @note Метод использует `vkEnumerateInstanceLayerProperties` для получения списка доступных слоёв.
-			*
-			* @note Если включена поддержка валидации, метод проверяет наличие требуемых слоёв
-			*       и добавляет их в коллекцию активированных слоёв.
-			*
-			* @note Метод не выбрасывает исключений (`noexcept`).
-			*
-			* @return Возвращает статус выполнения. Если слои успешно подготовлены, возвращает
-			*         статус "OK". В случае ошибки — соответствующий код ошибки с описанием проблемы.
-			*
-			* @code
-			* WvkInstance instance;
-			* WvkStatus status = instance.prepareLayer();
-			* if (!status) {
-			*     log->error("Ошибка подготовки слоёв Vulkan: {}", status.message());
-			* }
-			* @endcode
+			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus prepareLayer(void) noexcept;
+			WvkStatus createGlobalDispatchTable(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief Подготавливает список расширений Vulkan, необходимых для создания экземпляра.
-			*
-			* Метод выполняет запрос доступных расширений на платформе, сравнивает их с требуемыми
-			* (если включена валидация через `wvk::Build::ValidationBuildInfo`) и заполняет
-			* внутренние коллекции для дальнейшего использования.
-			*
-			* @return WvkStatus
-			* - [out] Код состояния и сообщение об ошибке при необходимости.
-			*
-			* @code
-			* WvkStatus status = instance.prepareExtension();
-			* if (status.failed()) {
-			*     std::cerr << status.message_old;
-			* }
-			* @endcode
+			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus prepareExtension(void) noexcept;
+			WvkStatus createInstanceDispatchTable(void) noexcept;
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus createPhysicalDevices(void) noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus prepareLayers(std::vector<const char*>& layer_names) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus prepareExtensions(std::vector<const char*>& extension_names) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief Создаёт экземпляр Vulkan.
@@ -278,12 +285,19 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus createVkInstance(void) noexcept;
 
-			void reset(void) noexcept;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			static VkBool32 s_debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) noexcept;
 
 		private:
-
+			
 			WvkInstanceCreateInfo m_create_info = {};
-			VkInstance m_vk_instance = nullptr;
+			WvkDispatchTableUptr m_wvk_global_dispatch_table_ptr = nullptr;
+			WvkDispatchTableUptr m_wvk_instance_dispatch_table_ptr = nullptr;
+			WvkPhysicalDeviceUptrVec2 m_wvk_physical_devices;
+			VkInstance m_vk_instance = VK_NULL_HANDLE;
 			VkLayerPropertiesArr m_layer_properties_collection;
 			VkExtensionPropertiesArr m_extension_properties_collection;
 			std::vector<const char*> m_layer_name_collection;

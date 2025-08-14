@@ -1,5 +1,5 @@
-#ifndef CGDEV_WVK_SOURCE_MSWINDOWS__WVK_LOADER_MSWINDOWS_HPP
-#define CGDEV_WVK_SOURCE_MSWINDOWS__WVK_LOADER_MSWINDOWS_HPP
+#ifndef CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP
+#define CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -22,6 +22,10 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+			inline PFN_vkGetInstanceProcAddr WvkDispatchTableMSWindows::getVkGetInstanceProcAddr(void) const noexcept {
+				return m_vkGetInstanceProcAddr;
+			}
+
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -31,4 +35,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_WVK_SOURCE_MSWINDOWS__WVK_LOADER_MSWINDOWS_HPP
+#endif // CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP

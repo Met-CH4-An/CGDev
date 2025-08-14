@@ -25,8 +25,9 @@ namespace CGDev {
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline VkResult WvkKhrWin32SurfaceDispatchTable::wvkCreateWin32SurfaceKHR(const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept {
-					return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkCreateWin32SurfaceKHR, pCreateInfo, pAllocator, pSurface); }
+				//inline VkResult WvkKhrWin32SurfaceDispatchTable::wvkCreateWin32SurfaceKHR(const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept {
+					//return m_create_info.wvk_instance->invokeWithVkInstanceFunction(m_vkCreateWin32SurfaceKHR, pCreateInfo, pAllocator, pSurface); 
+				//}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

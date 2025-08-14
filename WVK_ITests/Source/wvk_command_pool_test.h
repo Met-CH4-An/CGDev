@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_POOL_H
+#define CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_POOL_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -12,6 +13,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_command_pool.h"	// что тестируем
 
 namespace CGDev {
 
@@ -21,7 +23,7 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkSurfaceTest : public WvkBaseTest, public ::testing::Test {
+		class WvkCommandPoolTest : public WvkBaseTest, public ::testing::Test {
 
 		public:
 
@@ -29,13 +31,15 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static void SetUpTestSuite(void) {}
+			static void SetUpTestSuite(void) {
+			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static void TearDownTestSuite(void) {}
+			static void TearDownTestSuite(void) {
+			}
 
 		protected:
 
@@ -43,15 +47,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void SetUp() noexcept override {}
+			void SetUp(void) noexcept override {
+			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void TearDown() noexcept override {}
-		};
+			void TearDown(void) noexcept override {
+			}
+		}; // class WvkCommandPoolTest
 
 	} // namespace tests
 
 } // namespace CGDev
+
+#endif // CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_POOL_H
