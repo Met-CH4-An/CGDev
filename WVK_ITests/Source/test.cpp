@@ -86,6 +86,7 @@ namespace CGDev {
                 CGDev::wvk::WvkCommandPoolCreateInfo _create_info = {
                     .wvk_logical_device_ptr = wvk_logical_device_ptr.get(),
                     .queue_family_index = 0,
+					.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
                 };
 
                 wvk_command_pool_ptr = std::make_unique<CGDev::wvk::WvkCommandPool>();
@@ -93,6 +94,17 @@ namespace CGDev {
                 
                 ASSERT_EQ(_wvk_res, true);
             }
+
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // WvkCommandBuffer
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //{
+            //    CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
+
+            //    auto _wvk_res = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+            //    ASSERT_EQ(_wvk_res, true);
+           // }
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

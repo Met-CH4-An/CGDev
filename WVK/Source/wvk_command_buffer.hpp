@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_BUFFER_HPP
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_BUFFER_HPP
+#ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_HPP
+#define CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_HPP
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -12,40 +12,122 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_dispatch_table.h"
+#include "wvk_logical_device.h"
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			namespace wvk {
+		inline VkCommandBuffer WvkCommandBuffer::getVkCommandBuffer(void) const noexcept {
+			return m_vk_command_buffer;
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				inline const VknCommandBufferCreateInfo& VknCommandBuffer::getCreateInfo(void) const noexcept {
+		inline WvkStatus WvkCommandBuffer::reset(const VkCommandBufferResetFlags& flags) const noexcept {
+			WvkStatus _status;
 
-					return m_create_info;
+			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkResetCommandBuffer(m_vk_command_buffer, flags);
+			if (_vk_result != VK_SUCCESS) {
+				switch (_vk_result) {
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+					break;
+				case VK_ERROR_UNKNOWN:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_UNKNOWN.");
+					break;
+				case VK_ERROR_VALIDATION_FAILED_EXT:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_VALIDATION_FAILED.");
+					break;
 				}
+				return _status.setFail();
+			}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
 
-				inline const VkCommandBuffer& VknCommandBuffer::getVkCommandBuffer(void) const noexcept {
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					return me_vk_command_buffer;
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags) const noexcept {
+			WvkStatus _status;
+
+			VkCommandBufferBeginInfo _vk_begin_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+				.pNext = nullptr,
+				.flags = flags,
+				.pInheritanceInfo = nullptr,
+			};
+
+			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkBeginCommandBuffer(m_vk_command_buffer, &_vk_begin_info);
+			if (_vk_result != VK_SUCCESS) {
+				switch (_vk_result) {
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+					break;
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_OUT_OF_HOST_MEMORY.");
+					break;
+				case VK_ERROR_UNKNOWN:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_UNKNOWN.");
+					break;
+				case VK_ERROR_VALIDATION_FAILED_EXT:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_VALIDATION_FAILED.");
+					break;
 				}
+				return _status.setFail();
+			}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
 
-			} // namespace wvk
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		//} // namespace Private
+		inline WvkStatus WvkCommandBuffer::end(void) const noexcept {
+			WvkStatus _status;
 
-	//} // namespace GPU
+			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkEndCommandBuffer(m_vk_command_buffer);
+			if (_vk_result != VK_SUCCESS) {
+				switch (_vk_result) {
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_OUT_OF_DEVICE_MEMORY.");
+					break;
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_OUT_OF_HOST_MEMORY.");
+					break;
+				case VK_ERROR_UNKNOWN:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_UNKNOWN.");
+					break;
+				case VK_ERROR_VALIDATION_FAILED_EXT:
+					_status.append("\nwvkResetCommandBuffer is VK_ERROR_VALIDATION_FAILED.");
+					break;
+				}
+				return _status.setFail();
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	} // namespace wvk
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_COMMAND_BUFFER_HPP
+#endif // CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_HPP

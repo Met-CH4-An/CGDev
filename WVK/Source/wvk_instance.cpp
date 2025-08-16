@@ -612,7 +612,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			extension_names = {
 				#define X(str) str,
-				WVK_COMPILE_TIME_EXTENSIONS
+				WVK_COMPILE_TIME_INSTANCE_EXTENSIONS
 				#undef X
 			};
 			

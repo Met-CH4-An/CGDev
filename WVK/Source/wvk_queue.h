@@ -28,7 +28,7 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				struct VknQueueCreateInfo {
-					WvkInstanceDispatchTablePtr wvk_dispatch_table_ptr = nullptr;
+					//WvkInstanceDispatchTablePtr wvk_dispatch_table_ptr = nullptr;
 					WvkInstancePtr wvk_instance = nullptr;
 
 				}; // struct VknQueueCreateInfo

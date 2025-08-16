@@ -27,19 +27,23 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~
 		// [Version] 1.0
 		// ~~~~~~~~~~~~~~~~
-			
-		inline VkResult WvkDispatchTable::wvkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) const noexcept { 
-			return m_vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties); }
+
+		inline VkResult WvkDispatchTable::wvkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) const noexcept {
+			return m_vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
+		}
 		inline VkResult WvkDispatchTable::wvkEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) const noexcept {
-			return m_vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties); }
+			return m_vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
+		}
 		inline VkResult WvkDispatchTable::wvkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) const noexcept {
-			return m_vkCreateInstance(pCreateInfo, pAllocator, pInstance); }
+			return m_vkCreateInstance(pCreateInfo, pAllocator, pInstance);
+		}
 
 		// ~~~~~~~~~~~~~~~~
 		// [Version] 1.1
 		// ~~~~~~~~~~~~~~~~
-		inline VkResult WvkDispatchTable::wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept { 
-			return m_vkEnumerateInstanceVersion(pApiVersion); }
+		inline VkResult WvkDispatchTable::wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept {
+			return m_vkEnumerateInstanceVersion(pApiVersion);
+		}
 
 		// =======================================
 		// [Category]: Physical Device
@@ -49,21 +53,29 @@ namespace CGDev {
 		// [Version] 1.0
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkEnumeratePhysicalDevices(uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) const noexcept {
-			return m_vkEnumeratePhysicalDevices(m_create_info.vkInstance, pPhysicalDeviceCount, pPhysicalDevices); }
+			return m_vkEnumeratePhysicalDevices(m_create_info.vkInstance, pPhysicalDeviceCount, pPhysicalDevices);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) const noexcept {
-			m_vkGetPhysicalDeviceFeatures(physicalDevice, pFeatures); }
+			m_vkGetPhysicalDeviceFeatures(physicalDevice, pFeatures);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) const noexcept {
-			m_vkGetPhysicalDeviceProperties(physicalDevice, pProperties); }
+			m_vkGetPhysicalDeviceProperties(physicalDevice, pProperties);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) const noexcept {
-			m_vkGetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties); }
+			m_vkGetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
+		}
 		inline VkResult WvkDispatchTable::wvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) const noexcept {
-			m_vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties); }
+			m_vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) const noexcept {
-			m_vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties); }
+			m_vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) const noexcept {
-			m_vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties); }
+			m_vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
+		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) const noexcept {
-			m_vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties); }
+			m_vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
+		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// [Version] 1.1 / WVK_KHR_device_group_creation
@@ -114,6 +126,7 @@ namespace CGDev {
 			m_vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 #endif
 		}
+
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) const noexcept {
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
 			m_vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
@@ -121,6 +134,7 @@ namespace CGDev {
 			m_vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
 #endif
 		}
+
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) const noexcept {
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
 			m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
@@ -137,7 +151,8 @@ namespace CGDev {
 		// [Version] 1.0
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) const noexcept {
-			return m_vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice); }
+			return m_vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
+		}
 
 		// =======================================
 		// [Category]: CommandPool
@@ -147,7 +162,48 @@ namespace CGDev {
 		// [Version] 1.0
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkCreateCommandPool(const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept {
-			return m_vkCreateCommandPool(m_create_info.vkDevice, pCreateInfo, pAllocator, pCommandPool); }
+			return m_vkCreateCommandPool(m_create_info.vkDevice, pCreateInfo, pAllocator, pCommandPool);
+		}
+		inline VkResult WvkDispatchTable::wvkResetCommandPool(VkCommandPool commandPool, VkCommandPoolResetFlags flags) const noexcept {
+			return m_vkResetCommandPool(m_create_info.vkDevice, commandPool, flags);
+		}
+		inline void WvkDispatchTable::wvkDestroyCommandPool(VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) const noexcept {
+			m_vkDestroyCommandPool(m_create_info.vkDevice, commandPool, pAllocator);
+		}
+		inline VkResult WvkDispatchTable::wvkAllocateCommandBuffers(const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) const noexcept {
+			return m_vkAllocateCommandBuffers(m_create_info.vkDevice, pAllocateInfo, pCommandBuffers);
+		}
+		inline void WvkDispatchTable::wvkFreeCommandBuffers(VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept {
+			m_vkFreeCommandBuffers(m_create_info.vkDevice, commandPool, commandBufferCount, pCommandBuffers);
+		}
+
+		// ~~~~~~~~~~~~~~~~
+		// [Version] 1.1 / VK_KHR_maintenance1
+		// ~~~~~~~~~~~~~~~~
+		inline void WvkDispatchTable::wvkTrimCommandPool(VkCommandPool commandPool, VkCommandPoolTrimFlags flags) const noexcept {
+#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11		
+			m_vkTrimCommandPool(m_create_info.vkDevice, commandPool, flags);
+#elif WVK_KHR_maintenance1 == WVK_ENABLE
+			m_vkTrimCommandPoolKHR(m_create_info.vkDevice, commandPool, flags);
+#endif
+		}
+
+		// =======================================
+		// [Category]: CommandBuffer
+		// =======================================
+
+		// ~~~~~~~~~~~~~~~~
+		// [Version] 1.0
+		// ~~~~~~~~~~~~~~~~
+		inline VkResult WvkDispatchTable::wvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) const noexcept {
+			return m_vkResetCommandBuffer(commandBuffer, flags);
+		}
+		inline VkResult WvkDispatchTable::wvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) const noexcept {
+			return m_vkBeginCommandBuffer(commandBuffer, pBeginInfo);
+		}
+		inline VkResult WvkDispatchTable::wvkEndCommandBuffer(VkCommandBuffer commandBuffer) const noexcept {
+			return m_vkEndCommandBuffer(commandBuffer);
+		}
 	} // namespace wvk
 
 } // namespace CGDev

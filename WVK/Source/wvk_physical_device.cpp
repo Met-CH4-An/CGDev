@@ -61,6 +61,8 @@ namespace CGDev {
 				return _status.set(VknStatusCode::FAIL, "\n\tcreateVkPhysicalDevice is fail.");
 			}
 
+			m_wvk_dispatch_table_ptr = create_info.wvk_instance_ptr->getWvkDispatchTable().get();
+
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,8 +94,6 @@ namespace CGDev {
 
 			if(!_status)
 				return _status;
-
-			m_wvk_dispatch_table_ptr = create_info.wvk_instance_ptr->getWvkDispatchTable().get();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех

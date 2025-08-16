@@ -216,6 +216,27 @@ namespace CGDev {
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_vkCreateCommandPool = VK_NULL_HANDLE;
+			m_vkResetCommandPool = VK_NULL_HANDLE;
+			m_vkDestroyCommandPool = VK_NULL_HANDLE;
+			m_vkAllocateCommandBuffers = VK_NULL_HANDLE;
+			m_vkFreeCommandBuffers = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1 / VK_KHR_maintenance1
+			// ~~~~~~~~~~~~~~~~
+			m_vkTrimCommandPool = VK_NULL_HANDLE;
+				m_vkTrimCommandPoolKHR = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: CommandBuffer
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			m_vkResetCommandBuffer = VK_NULL_HANDLE;
+			m_vkBeginCommandBuffer = VK_NULL_HANDLE;
+			m_vkEndCommandBuffer = VK_NULL_HANDLE;
 
 			// =======================================
 			// [Category]: Debug
@@ -410,6 +431,27 @@ namespace CGDev {
 				// [Version] 1.0
 				// ~~~~~~~~~~~~~~~~
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateCommandPool", reinterpret_cast<void**>(&m_vkCreateCommandPool)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkResetCommandPool", reinterpret_cast<void**>(&m_vkResetCommandPool)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyCommandPool", reinterpret_cast<void**>(&m_vkDestroyCommandPool)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkAllocateCommandBuffers", reinterpret_cast<void**>(&m_vkAllocateCommandBuffers)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkFreeCommandBuffers", reinterpret_cast<void**>(&m_vkFreeCommandBuffers)));
+
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.1 / VK_KHR_maintenance1
+				// ~~~~~~~~~~~~~~~~
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPool", reinterpret_cast<void**>(&m_vkTrimCommandPool)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
+
+				// =======================================
+				// [Category]: CommandBuffer
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkResetCommandBuffer", reinterpret_cast<void**>(&m_vkResetCommandBuffer)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkBeginCommandBuffer", reinterpret_cast<void**>(&m_vkBeginCommandBuffer)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEndCommandBuffer", reinterpret_cast<void**>(&m_vkEndCommandBuffer)));
 
 				if (m_create_info.vkDevice != nullptr) {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

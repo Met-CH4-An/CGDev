@@ -11,163 +11,113 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_dispatch_table.h"
 #include "wvk_logical_device.h"
 
 namespace CGDev {
 
-	//namespace GPU {
+	namespace wvk {
 
-		//namespace Private {
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			namespace wvk {
+		WvkCommandBuffer::WvkCommandBuffer(void) noexcept {
+		}
 
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				bool VknCommandBufferCreateInfo::isValid(void) const noexcept {
+		WvkCommandBuffer::~WvkCommandBuffer(void) noexcept {
+		}
 
-					//if (log == nullptr) {
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					//	return false;
-					//}
+		WvkStatus WvkCommandBuffer::create(const WvkCommandBufferCreateInfo& create_info) noexcept {
+			WvkStatus _status;
 
-					// ~~~~~~~~~~~~~~~~
-					// VknCommandBufferCreateInfo::validation
-					// ~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка на повторную инициализацию
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if (m_valid) {
+				return _status.set(VknStatusCode::ALREADY_INITIALIZED);
+			}
 
-					//if (validation == nullptr || validation->isValid() == false) {
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Проверка валидности входной структуры
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = validationCreateInfo(create_info);
+			if (!_status) {
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandBuffer::validationCreateInfo() is fail.");
+			}
 
-					//	CGDev::Tools::addEntry(log, CGDev::Tools::LogEntryError("VknCommandBufferCreateInfo::validation fail"));
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Создание пула комманд
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = createVkCommandBuffer();
+			if (!_status) {
+				destroy();
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandBuffer::createVkCommandBuffer() is fail.");
+			}
 
-					//	return false;
-					//}
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_valid = true;
+			return _status.setOk();
+		}
 
-					// ~~~~~~~~~~~~~~~~
-					// VknCommandBufferCreateInfo::commands
-					// ~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					//if (commands == nullptr || commands->isValid() == false || commands->getCreateInfo().command_level != VknCommandsLevel::INSTANCE) {
+		void WvkCommandBuffer::destroy(void) noexcept {
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// очистка данных
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = {};
+			m_vk_command_buffer = VK_NULL_HANDLE;
+		}
 
-					//	CGDev::Tools::addEntry(log, CGDev::Tools::LogEntryError("VknCommandBufferCreateInfo::commands fail"));
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					//	return false;
-					//}
+		WvkStatus WvkCommandBuffer::validationCreateInfo(const WvkCommandBufferCreateInfo& create_info) noexcept {
+			WvkStatus _status(VknStatusCode::SUCCESSFUL);
 
-					// ~~~~~~~~~~~~~~~~
-					// VknCommandBufferCreateInfo::logical_device
-					// ~~~~~~~~~~~~~~~~
+			if (create_info.wvk_logical_device_ptr == nullptr) {
+				_status.setFail("\nWvkCommandBufferCreateInfo::wvk_logical_device_ptr is nullptr.");
+			}
+			if (create_info.vk_cmd_buffer == VK_NULL_HANDLE) {
+				_status.setFail("\nWvkCommandBufferCreateInfo::vk_cmd_buffer is VK_NULL_HANDLE.");
+			}
 
-					//if (logical_device == nullptr || logical_device->isValid() == false) {
+			if (!_status) return _status;
 
-					//	CGDev::Tools::addEntry(log, CGDev::Tools::LogEntryError("VknCommandBufferCreateInfo::logical_device fail"));
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = create_info;
+			return _status.setOk();
+		}
 
-					//	return false;
-					//}
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					// ~~~~~~~~~~~~~~~~
-					// VknCommandBufferCreateInfo::vk_command_buffer
-					// ~~~~~~~~~~~~~~~~
+		WvkStatus WvkCommandBuffer::createVkCommandBuffer(void) noexcept {
+			WvkStatus _status;
 
-					//if (vk_command_buffer == VK_NULL_HANDLE) {
+			m_vk_command_buffer = m_create_info.vk_cmd_buffer;
 
-					//	CGDev::Tools::addEntry(log, CGDev::Tools::LogEntryError("VknCommandBufferCreateInfo::vk_command_buffer fail"));
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
 
-					//	return false;
-					//}
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					return true;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				VknCommandBuffer::VknCommandBuffer(void) noexcept {
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				VknCommandBuffer::~VknCommandBuffer(void) noexcept {
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				void VknCommandBuffer::create(const VknCommandBufferCreateInfo& create_info) noexcept {
-
-					// ~~~~~~~~~~~~~~~~
-					// отладочный код
-					// проверяем VknCommandBufferCreateInfo на валидность
-					// ~~~~~~~~~~~~~~~~
-
-					//if constexpr (Private::Build::type_build == Private::Build::TypeBuild::DEBUG) {
-
-						if (create_info.isValid() == false) {
-
-							//if (create_info.log != nullptr) Tools::addEntry(create_info.log, Tools::LogEntryError("VknCommandBufferCreateInfo fail"));
-
-							//m_valid = false;
-
-							return;
-						}
-
-					//} // if constexpr (Private::Build::type_build == Private::Build::TypeBuild::DEBUG)
-
-					m_create_info = create_info;
-
-					// ~~~~~~~~~~~~~~~~
-					// создаём VkCommandBuffer
-					// ~~~~~~~~~~~~~~~~
-
-					if (createVkCommandBuffer() == false) {
-
-						//Tools::addEntry(create_info.log, Tools::LogEntryError("createVkCommandBuffer fail"));
-
-						return;
-					}
-
-					//m_valid = true;
-
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				void VknCommandBuffer::destroy(void) noexcept {
-
-					// ~~~~~~~~~~~~~~~~
-					// очистка данных
-					// ~~~~~~~~~~~~~~~~
-
-					m_create_info = {};
-					me_vk_command_buffer = VK_NULL_HANDLE;
-
-					//m_valid = false;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				bool VknCommandBuffer::createVkCommandBuffer(void) noexcept {
-
-					// ~~~~~~~~~~~~~~~~
-					// VkCommandBuffer создаётся внешне, а именно в VknCommandPool 
-					// и затем передаётся в VknCommandBuffer через VknCommandBufferCreateInfo
-					// поэтому тут он просто сохраняется в me_vk_command_buffer
-					// ~~~~~~~~~~~~~~~~
-
-					me_vk_command_buffer = m_create_info.vk_command_buffer;
-
-					return true;
-				}
-
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			} // namespace wvk
-
-		//} // namespace Private
-
-	//} // namespace GPU
+	} // namespace wvk
 
 } // namespace CGDev

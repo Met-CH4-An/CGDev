@@ -26,6 +26,7 @@ namespace CGDev {
 		struct WvkCommandPoolCreateInfo {
 			WvkLogicalDevicePtr wvk_logical_device_ptr = nullptr;
 			std::optional<uint32_t> queue_family_index;
+			VkCommandPoolCreateFlags flags = 0;
 		}; // struct WvkCommandPoolCreateInfo
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,6 +62,33 @@ namespace CGDev {
 			void destroy(void) noexcept;
 
 		// hpp
+		public:
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus trim(const VkCommandPoolTrimFlags& flags = 0) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus reset(const VkCommandPoolResetFlags& flags = 0) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus allocateWvkCommandBuffers(std::vector<WvkCommandBufferPtr>& wvk_cmd_buffers, const VkCommandBufferLevel& level) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus freeWvkCommandBuffers(std::vector<WvkCommandBufferPtr>& wvk_cmd_buffers) const noexcept;
+
+		// hpp
 		private:
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,16 +112,11 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus createVkCommandPool(void) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void reset(void) noexcept;
-
 		private:
 
-			WvkCommandPoolCreateInfo m_create_info;
-			VkCommandPool m_vk_command_pool;
+			WvkCommandPoolCreateInfo m_create_info = {};
+			WvkDispatchTablePtr m_dispatch_table_ptr = nullptr;
+			VkCommandPool m_vk_command_pool = VK_NULL_HANDLE;
 
 		}; // class WvkCommandPool
 

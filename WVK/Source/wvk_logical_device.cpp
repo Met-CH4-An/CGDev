@@ -166,6 +166,39 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		WvkStatus WvkLogicalDevice::prepareExtensions(std::vector<const char*>& extension_names) const noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Добавляем в список расширения, которые зависят от сборки
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			extension_names = {
+				#define X(str) str,
+				WVK_COMPILE_TIME_LOGICAL_DEVICE_EXTENSIONS
+				#undef X
+			};
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Добавляем в список расширения, которые задаются при создании логического устройства
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::transform(
+				m_create_info.extension_names.cbegin(),
+				m_create_info.extension_names.cend(),
+				std::back_inserter(extension_names),
+				[](const std::string& s) {
+					return s.c_str();
+				}
+			);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех.
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 		WvkStatus WvkLogicalDevice::createVkDevice(void) noexcept {
 			WvkStatus _status;
 
@@ -326,6 +359,17 @@ namespace CGDev {
 			_vk_base_in_collection.back()->pNext = nullptr;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Подготовка расширений
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			std::vector<const char*> _ext_names;
+			_status = prepareExtensions(_ext_names);
+
+			if (!_status) {
+				return _status.set(VknStatusCode::FAIL, "\nWvkLogicalDevice::prepareExtensions() is fail.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 7. Заполнение структуры VkDeviceCreateInfo
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceCreateInfo _vk_device_create_info = {};
@@ -336,8 +380,8 @@ namespace CGDev {
 			_vk_device_create_info.pQueueCreateInfos = vk_queue_create_infos.data();
 			_vk_device_create_info.enabledLayerCount = 0;
 			_vk_device_create_info.ppEnabledLayerNames = nullptr;
-			_vk_device_create_info.enabledExtensionCount = 0;
-			_vk_device_create_info.ppEnabledExtensionNames = nullptr;
+			_vk_device_create_info.enabledExtensionCount = static_cast<uint32_t>(_ext_names.size());
+			_vk_device_create_info.ppEnabledExtensionNames = _ext_names.data();
 			_vk_device_create_info.pEnabledFeatures = _pEnabledFeatures;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

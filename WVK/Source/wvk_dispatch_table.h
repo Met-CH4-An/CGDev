@@ -117,7 +117,27 @@ namespace CGDev {
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkCreateCommandPool(const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept;
+			inline VkResult wvkResetCommandPool(VkCommandPool commandPool, VkCommandPoolResetFlags flags) const noexcept;
+			inline void wvkDestroyCommandPool(VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline VkResult wvkAllocateCommandBuffers(const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) const noexcept;
+			inline void wvkFreeCommandBuffers(VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
+						
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1
+			// ~~~~~~~~~~~~~~~~
+			inline void wvkTrimCommandPool(VkCommandPool commandPool, VkCommandPoolTrimFlags flags) const noexcept;
 
+			// =======================================
+			// [Category]: CommandBuffer
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) const noexcept;
+			inline VkResult wvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) const noexcept;
+			inline VkResult wvkEndCommandBuffer(VkCommandBuffer commandBuffer) const noexcept;
+		
 		protected:
 
 			// ~~~~~~~~~~~~~~~~
@@ -210,6 +230,27 @@ namespace CGDev {
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
 			PFN_vkCreateCommandPool m_vkCreateCommandPool = VK_NULL_HANDLE;
+			PFN_vkResetCommandPool m_vkResetCommandPool = VK_NULL_HANDLE;
+			PFN_vkDestroyCommandPool m_vkDestroyCommandPool = VK_NULL_HANDLE;
+			PFN_vkAllocateCommandBuffers m_vkAllocateCommandBuffers = VK_NULL_HANDLE;
+			PFN_vkFreeCommandBuffers m_vkFreeCommandBuffers = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.1 / VK_KHR_maintenance1
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkTrimCommandPool m_vkTrimCommandPool = VK_NULL_HANDLE;
+			PFN_vkTrimCommandPoolKHR m_vkTrimCommandPoolKHR = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: CommandBuffer
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkResetCommandBuffer m_vkResetCommandBuffer = VK_NULL_HANDLE;
+			PFN_vkBeginCommandBuffer m_vkBeginCommandBuffer = VK_NULL_HANDLE;
+			PFN_vkEndCommandBuffer m_vkEndCommandBuffer = VK_NULL_HANDLE;
 
 			// =======================================
 			// [Category]: Debug

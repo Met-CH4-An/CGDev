@@ -30,6 +30,7 @@
 #include <stdexcept>
 #include "wvk_status.h"
 #include "vulkan/vulkan.h"
+#include <ranges>
 
 
 template<typename>
@@ -235,6 +236,18 @@ namespace CGDev {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_KHR_maintenance1 WVK_ENABLE
+#if WVK_KHR_maintenance1 == WVK_ENABLE
+#define WVK_KHR_maintenance1_name \
+		X("VK_KHR_maintenance1")
+#else
+#define WVK_KHR_maintenance1_name
+#endif
+			
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define WVK_EXT_debug_utils WVK_ENABLE
 	#if WVK_EXT_debug_utils == WVK_ENABLE
 		#define WVK_EXT_debug_utils_name \
@@ -252,7 +265,7 @@ namespace CGDev {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_COMPILE_TIME_EXTENSIONS \
+#define WVK_COMPILE_TIME_INSTANCE_EXTENSIONS \
 	WVK_EXT_debug_utils_name \
 	WVK_KHR_get_physical_device_properties2_name \
 	X("VK_KHR_surface") \
@@ -261,6 +274,11 @@ namespace CGDev {
 	X("VK_KHR_win32_surface") \
 	WVK_KHR_device_group_creation_name
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_COMPILE_TIME_LOGICAL_DEVICE_EXTENSIONS \
+	WVK_KHR_maintenance1_name
 
 
 
@@ -416,28 +434,13 @@ namespace CGDev {
 
 		class WvkDispatchTable;
 		using WvkDispatchTablePtr = WvkDispatchTable*;
-		//using WvkDispatchTablePtrVec1 = std::vector<WvkDispatchTablePtr>;
+		using WvkDispatchTablePtrVec1 = std::vector<WvkDispatchTablePtr>;
 		using WvkDispatchTableSptr = std::shared_ptr<WvkDispatchTable>;
-		//using WvkDispatchTableSptrVec1 = std::vector<WvkDispatchTableSptr>;
+		using WvkDispatchTableSptrVec1 = std::vector<WvkDispatchTableSptr>;
 		using WvkDispatchTableUptr = std::unique_ptr<WvkDispatchTable>;
-		//using WvkDispatchTableUptrVec1 = std::vector<WvkDispatchTableUptr>;
+		using WvkDispatchTableUptrVec1 = std::vector<WvkDispatchTableUptr>;
 		using WvkDispatchTableWptr = std::weak_ptr<WvkDispatchTable>;
-		//using WvkDispatchTableWptrVec1 = std::vector<WvkDispatchTableWptr>;
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		/*!	\brief
-		*/
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		class WvkInstanceDispatchTable;
-		using WvkInstanceDispatchTablePtr = WvkInstanceDispatchTable * ;
-		using WvkInstanceDispatchTablePtrVec1 = std::vector<WvkInstanceDispatchTablePtr>;
-		using WvkInstanceDispatchTableSptr = std::shared_ptr<WvkInstanceDispatchTable>;
-		using WvkInstanceDispatchTableSptrVec1 = std::vector<WvkInstanceDispatchTableSptr>;
-		using WvkInstanceDispatchTableUptr = std::unique_ptr<WvkInstanceDispatchTable>;
-		using WvkInstanceDispatchTableUptrVec1 = std::vector<WvkInstanceDispatchTableUptr>;
-		using WvkInstanceDispatchTableWptr = std::weak_ptr<WvkInstanceDispatchTable>;
-		using WvkInstanceDispatchTableWptrVec1 = std::vector<WvkInstanceDispatchTableWptr>;
+		using WvkDispatchTableWptrVec1 = std::vector<WvkDispatchTableWptr>;
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
@@ -530,13 +533,31 @@ namespace CGDev {
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		class			VknCommandBuffer;
-		using			VknCommandBufferPtr										= VknCommandBuffer * ;
-		using			VknCommandBufferPtrArr									= std::vector<VknCommandBufferPtr>;
-		using			VknCommandBufferWptr									= std::weak_ptr<VknCommandBuffer>;
-		using			VknCommandBufferWptrArr									= std::vector<VknCommandBufferWptr>;
-		using			VknCommandBufferSptr									= std::shared_ptr<VknCommandBuffer>;
-		using			VknCommandBufferSptrArr									= std::vector<VknCommandBufferSptr>;
+		class WvkCommandBuffer;
+		using WvkCommandBufferPtr = WvkCommandBuffer * ;
+		using WvkCommandBufferPtrVec1 = std::vector<WvkCommandBufferPtr>;
+		using WvkCommandBufferSptr = std::shared_ptr<WvkCommandBuffer>;
+		using WvkCommandBufferSptrVec1 = std::vector<WvkCommandBufferSptr>;
+		using WvkCommandBufferUptr = std::unique_ptr<WvkCommandBuffer>;
+		using WvkCommandBufferUptrVec1 = std::vector<WvkCommandBufferSptr>;
+		using WvkCommandBufferWptr = std::weak_ptr<WvkCommandBuffer>;
+		using WvkCommandBufferWptrVec1 = std::vector<WvkCommandBufferWptr>;
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		class WvkRenderPass;
+		using WvkRenderPassPtr = WvkRenderPass * ;
+		using WvkRenderPassPtrVec1 = std::vector<WvkRenderPassPtr>;
+		using WvkRenderPassSptr = std::shared_ptr<WvkRenderPass>;
+		using WvkRenderPassSptrVec1 = std::vector<WvkRenderPassSptr>;
+		using WvkRenderPassUptr = std::unique_ptr<WvkRenderPass>;
+		using WvkRenderPassUptrVec1 = std::vector<WvkRenderPassSptr>;
+		using WvkRenderPassWptr = std::weak_ptr<WvkRenderPass>;
+		using WvkRenderPassWptrVec1 = std::vector<WvkRenderPassWptr>;
+		
 
 
 

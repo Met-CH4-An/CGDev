@@ -61,6 +61,8 @@ namespace CGDev {
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandPool::createVkCommandPool() is fail.");
 			}
 
+			m_dispatch_table_ptr = m_create_info.wvk_logical_device_ptr->getDispatchTable().get();
+
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +74,14 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void WvkCommandPool::destroy(void) noexcept {
+			if (m_vk_command_pool != VK_NULL_HANDLE) m_dispatch_table_ptr->wvkDestroyCommandPool(m_vk_command_pool, VK_NULL_HANDLE);
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// очистка данных
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_create_info = {};
+			m_dispatch_table_ptr = nullptr;
+			m_vk_command_pool = VK_NULL_HANDLE;
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +118,7 @@ namespace CGDev {
 			VkCommandPoolCreateInfo _vk_cmd_pool_create_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 				.pNext = nullptr,
-				.flags = 0,
+				.flags = m_create_info.flags,
 				.queueFamilyIndex = m_create_info.queue_family_index.value(),
 			};
 
@@ -138,13 +147,6 @@ namespace CGDev {
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
-		}
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		void WvkCommandPool::reset(void) noexcept {
-
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

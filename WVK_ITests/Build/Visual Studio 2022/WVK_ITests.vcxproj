@@ -135,6 +135,7 @@
     <ClCompile Include="..\..\..\Extern\googletest-1.17.0\googletest\src\gtest-all.cc" />
     <ClCompile Include="..\..\..\WVK\Source\wvk_all.cpp" />
     <ClCompile Include="..\..\Source\test.cpp" />
+    <ClCompile Include="..\..\Source\wvk_command_buffer_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_pool_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device_test.cpp" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\tests.h" />
+    <ClInclude Include="..\..\Source\wvk_command_buffer_test.h" />
     <ClInclude Include="..\..\Source\wvk_command_pool_test.h" />
     <ClInclude Include="..\..\Source\wvk_instance_test.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />

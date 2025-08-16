@@ -122,11 +122,11 @@ namespace CGDev {
 						// Проверка: должен быть передан валидный указатель 
 						// на объект команд для работы с отладкой Vulkan
 						// ----------------------------------------------
-						if (m_create_info.wvk_dispatch_table_ptr == nullptr) {
-							_status.m_code = VknStatusCode::FAIL;
-							_status.append("\n\tVknExtDebugUtilsCreateInfo::wvk_dispatch_table_ptr - nullptr.");
-							return _status;
-						}
+						//if (m_create_info.wvk_dispatch_table_ptr == nullptr) {
+						//	_status.m_code = VknStatusCode::FAIL;
+						//	_status.append("\n\tVknExtDebugUtilsCreateInfo::wvk_dispatch_table_ptr - nullptr.");
+						//	return _status;
+						//}
 
 						// ----------------------------------------------
 						// Проверка: режим отладки должен быть установлен 

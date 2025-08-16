@@ -53,6 +53,7 @@ namespace CGDev {
 			std::optional<uint32_t> physical_device_group_index;
 			std::vector<uint32_t> physical_device_indices;
 			WvkLogicalDeviceQueueCreateInfoVec1 wvk_logical_device_queue_create_infos = {};
+			std::vector<std::string> extension_names = {};
 			VkPhysicalDeviceFeatures m_vk_physical_device_features = {};
 			WvkLogicalDeviceFeatureVec1 m_wvk_logical_device_feature_collection;
 		}; // struct WvkLogicalDeviceCreateInfo
@@ -96,6 +97,7 @@ namespace CGDev {
 		private:
 
 			friend class WvkCommandPool;
+			friend class WvkCommandBuffer;
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
@@ -112,16 +114,16 @@ namespace CGDev {
 			WvkStatus validationCreateInfo(const WvkLogicalDeviceCreateInfo& create_info) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	brief Подготавливает коллекцию VkDeviceQueueCreateInfo на основе пользовательской конфигурации.
-			*
-			* Метод инициализирует структуру VkDeviceQueueCreateInfo для каждой очереди,
-			* указанной в коллекции `wvk_logical_device_queue_create_info_collection`, и
-			* добавляет их в выходной контейнер `queue_create_info_collection1`.
-			*
-			* @param[out] queue_create_info_collection1 Коллекция, куда добавляются описания очередей.
+			/*!	brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus prepareVkQueueCreateInfo(std::vector<VkDeviceQueueCreateInfo>& queue_create_info_collection1) const noexcept;
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus prepareExtensions(std::vector<const char*>& extension_names) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
