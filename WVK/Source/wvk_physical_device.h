@@ -75,7 +75,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename Type, typename... Args>
+			template<typename Type, typename ... Args>
 			inline WvkStatus requestProperties(Type& out, Args& ... args) const noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,14 +88,14 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename Type, typename... Args>
+			template<typename Type, typename ... Args>
 			inline WvkStatus requestQueueFamilyProperties(std::vector<Type>& out, Args ... args) const noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			template<typename Type, typename... Args>
+			template<typename Type, typename ... Args>
 			inline WvkStatus checkCompatibility(std::vector<Type>& out, Args ... args) const noexcept;
 		
 		// hpp

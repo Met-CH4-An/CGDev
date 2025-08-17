@@ -57,12 +57,12 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, void* pNext, VkCommandBufferInheritanceInfo* inheritance) const noexcept {
 			WvkStatus _status;
 
 			VkCommandBufferBeginInfo _vk_begin_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-				.pNext = nullptr,
+				.pNext = pNext,
 				.flags = flags,
 				.pInheritanceInfo = nullptr,
 			};
@@ -85,6 +85,181 @@ namespace CGDev {
 				}
 				return _status.setFail();
 			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin(void) const noexcept {
+			WvkStatus _status;
+
+			begin(0, static_cast<void*>(nullptr), static_cast<VkCommandBufferInheritanceInfo*>(nullptr));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags) const noexcept {
+			WvkStatus _status;
+
+			begin(flags, static_cast<void*>(nullptr), static_cast<VkCommandBufferInheritanceInfo*>(nullptr));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		template<typename Type, typename ... Args, typename>
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, Type& type, Args& ... args) const noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Связываем цепочки pNext
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void* prev = &type;
+			((reinterpret_cast<decltype(&args)>(prev)->pNext = &args, prev = &args), ...);
+
+			begin(flags, static_cast<void*>(&type), static_cast<VkCommandBufferInheritanceInfo*>(nullptr));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, void* pNext) const noexcept {
+			WvkStatus _status;
+
+			void* _pNext = nullptr;
+
+#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_device_group_creation == WVK_ENABLE
+			VkDeviceGroupCommandBufferBeginInfo _vk_dev_group_cmd_buffer_begin_info = {
+				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
+				.pNext = pNext,
+				.deviceMask = dev_indices,
+			};
+
+			_pNext = &_vk_dev_group_cmd_buffer_begin_info;
+#else
+			_pNext = pNext;
+#endif
+			begin(flags, _pNext, static_cast<VkCommandBufferInheritanceInfo*>(nullptr));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices) const noexcept {
+			WvkStatus _status;
+
+			begin(flags, dev_indices, static_cast<void*>(nullptr));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		template<typename Type, typename ... Args>
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, Type& type, Args& ... args) const noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Связываем цепочки pNext
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			void* prev = &type;
+			((reinterpret_cast<decltype(&args)>(prev)->pNext = &args, prev = &args), ...);
+
+			begin(flags, dev_indices, static_cast<void*>(&type));
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin_secondary(void) const noexcept {
+			WvkStatus _status;
+
+			begin_secondary(0);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin_secondary(const VkCommandBufferUsageFlags& flags) const noexcept {
+			WvkStatus _status;
+
+			VkCommandBufferInheritanceInfo _inheritance_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
+				.pNext = nullptr,
+				.renderPass = nullptr,
+				.subpass = 0,
+				.framebuffer = nullptr,
+				.occlusionQueryEnable = VK_FALSE,
+				.queryFlags = 0,
+				.pipelineStatistics = 0,
+			};
+
+			begin(flags, _inheritance_info);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkCommandBuffer::begin_secondary(const VkCommandBufferUsageFlags& flags, const WvkRenderPassPtr wvk_render_pass) const noexcept {
+			WvkStatus _status;
+
+			VkCommandBufferInheritanceInfo _inheritance_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
+				.pNext = nullptr,
+				.renderPass = nullptr,
+				.subpass = 0,
+				.framebuffer = nullptr,
+				.occlusionQueryEnable = VK_FALSE,
+				.queryFlags = 0,
+				.pipelineStatistics = 0,
+			};
+
+			begin(flags, _inheritance_info);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех

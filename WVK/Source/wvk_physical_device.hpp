@@ -35,7 +35,7 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		template<typename Type, typename... Args>
+		template<typename Type, typename ... Args>
 		inline WvkStatus WvkPhysicalDevice::requestProperties(Type& out, Args& ... args) const noexcept {
 			WvkStatus _status;
 
@@ -101,7 +101,7 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		template<typename Type, typename... Args>
+		template<typename Type, typename ... Args>
 		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<Type>& out, Args ... args) const noexcept {
 			WvkStatus _status;
 
