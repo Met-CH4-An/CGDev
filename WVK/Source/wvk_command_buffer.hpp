@@ -57,14 +57,14 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, void* pNext, VkCommandBufferInheritanceInfo* inheritance) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const void* pNext, VkCommandBufferInheritanceInfo* inheritance) const noexcept {
 			WvkStatus _status;
 
 			VkCommandBufferBeginInfo _vk_begin_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 				.pNext = pNext,
 				.flags = flags,
-				.pInheritanceInfo = nullptr,
+				.pInheritanceInfo = inheritance,
 			};
 
 			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkBeginCommandBuffer(m_vk_command_buffer, &_vk_begin_info);
@@ -144,11 +144,12 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, void* pNext) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, const void* pNext) const noexcept {
 			WvkStatus _status;
 
-			void* _pNext = nullptr;
-
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_device_group_creation == WVK_ENABLE
 			VkDeviceGroupCommandBufferBeginInfo _vk_dev_group_cmd_buffer_begin_info = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
@@ -156,10 +157,11 @@ namespace CGDev {
 				.deviceMask = dev_indices,
 			};
 
-			_pNext = &_vk_dev_group_cmd_buffer_begin_info;
+			const void* _pNext = &_vk_dev_group_cmd_buffer_begin_info;
 #else
-			_pNext = pNext;
+			const void* _pNext = pNext;
 #endif
+
 			begin(flags, _pNext, static_cast<VkCommandBufferInheritanceInfo*>(nullptr));
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -206,10 +208,21 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin_secondary(void) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags, const void* pNext) const noexcept {
 			WvkStatus _status;
 
-			begin_secondary(0);
+			VkCommandBufferInheritanceInfo _inheritance_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
+				.pNext = pNext,
+				.renderPass = nullptr,
+				.subpass = 0,
+				.framebuffer = nullptr,
+				.occlusionQueryEnable = query_enable,
+				.queryFlags = vk_query_control_flags,
+				.pipelineStatistics = vk_query_pipeline_stats_flags,
+			};
+
+			begin(vk_cmd_buffer_usage_flags, static_cast<const void*>(nullptr), &_inheritance_info);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
@@ -220,21 +233,10 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin_secondary(const VkCommandBufferUsageFlags& flags) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept {
 			WvkStatus _status;
 
-			VkCommandBufferInheritanceInfo _inheritance_info = {
-				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
-				.pNext = nullptr,
-				.renderPass = nullptr,
-				.subpass = 0,
-				.framebuffer = nullptr,
-				.occlusionQueryEnable = VK_FALSE,
-				.queryFlags = 0,
-				.pipelineStatistics = 0,
-			};
-
-			begin(flags, _inheritance_info);
+			begin(vk_cmd_buffer_usage_flags, wvk_render_pass, wvk_frame_buffer, query_enable, vk_query_control_flags, vk_query_pipeline_stats_flags, static_cast<const void*>(nullptr));
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
@@ -245,21 +247,20 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin_secondary(const VkCommandBufferUsageFlags& flags, const WvkRenderPassPtr wvk_render_pass) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept {
 			WvkStatus _status;
 
-			VkCommandBufferInheritanceInfo _inheritance_info = {
-				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
+			VkCommandBufferInheritanceRenderingInfo _inheritance_rendering_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO,
 				.pNext = nullptr,
-				.renderPass = nullptr,
-				.subpass = 0,
-				.framebuffer = nullptr,
-				.occlusionQueryEnable = VK_FALSE,
-				.queryFlags = 0,
-				.pipelineStatistics = 0,
+				.flags = 0,
+				.viewMask = 0,
+				.colorAttachmentCount = 0,
+				//		.pColorAttachmentFormats = 0,
+				//		//.depthAttachmentFormat = 0,
+						//.stencilAttachmentFormat = 0,
+						//.rasterizationSamples = 0,
 			};
-
-			begin(flags, _inheritance_info);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех

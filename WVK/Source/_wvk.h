@@ -548,6 +548,21 @@ namespace CGDev {
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		class WvkFrameBuffer;
+		using WvkFrameBufferPtr = WvkFrameBuffer*;
+		using WvkFrameBufferPtrVec1 = std::vector<WvkFrameBufferPtr>;
+		using WvkFrameBufferSptr = std::shared_ptr<WvkFrameBuffer>;
+		using WvkFrameBufferSptrVec1 = std::vector<WvkFrameBufferSptr>;
+		using WvkFrameBufferUptr = std::unique_ptr<WvkFrameBuffer>;
+		using WvkFrameBufferUptrVec1 = std::vector<WvkFrameBufferSptr>;
+		using WvkFrameBufferWptr = std::weak_ptr<WvkFrameBuffer>;
+		using WvkFrameBufferWptrVec1 = std::vector<WvkFrameBufferWptr>;
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 		class WvkRenderPass;
 		using WvkRenderPassPtr = WvkRenderPass * ;
 		using WvkRenderPassPtrVec1 = std::vector<WvkRenderPassPtr>;

@@ -76,7 +76,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin(const VkCommandBufferUsageFlags& flags, void* pNext, VkCommandBufferInheritanceInfo* inheritance) const noexcept;
+			inline WvkStatus begin(const VkCommandBufferUsageFlags& flags, const void* pNext, VkCommandBufferInheritanceInfo* inheritance) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -101,7 +101,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, void* pNext) const noexcept;
+			inline WvkStatus begin(const VkCommandBufferUsageFlags& flags, const uint32_t& dev_indices, const void* pNext) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -120,25 +120,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin_secondary(void) const noexcept;
+			inline WvkStatus begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags, const void* pNext) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin_secondary(const VkCommandBufferUsageFlags& flags) const noexcept;
+			inline WvkStatus begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin_secondary(const VkCommandBufferUsageFlags& flags, const WvkRenderPassPtr wvk_render_pass) const noexcept;
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin_secondary(const WvkRenderPassPtr wvk_render_pass, const VkCommandBufferUsageFlags& flags, void* pNext) const noexcept;
+			inline WvkStatus begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
