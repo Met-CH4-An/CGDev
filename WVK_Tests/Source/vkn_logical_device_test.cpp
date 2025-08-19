@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////
 // секция заголовочного файла
 ////////////////////////////////////////////////////////////////
-#include "wvk_queue_family_test.h"
+#include "vkn_logical_device_test.h"
 ////////////////////////////////////////////////////////////////
 // секция имплементации
 ////////////////////////////////////////////////////////////////
@@ -14,31 +14,17 @@
 
 namespace CGDev {
 
-	namespace tests {
+	namespace Tests {
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkQueueFamilyTest, requestProperties) {
-			VkQueueFamilyProperties _props = {};
-			wvk_queue_family.requestProperties(_props);
+
+		TEST_F(VknLogicalDeviceTest, Create) {
+			//m_vkn_logical_device.create(m_vkn_logical_device_create_info);
+			//VknExtDebugUtilsTest::getTestObject()->hasStatus(CGDev::GPU::Private::Vulkan::Extensions::VknDebugUtilsMode::ALL_SEVERITIES | CGDev::GPU::Private::Vulkan::Extensions::VknDebugUtilsMode::ALL_TYPES);
 		}
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// Проверка:
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkQueueFamilyTest, requestProperties_out) {
-			{
-				VkQueueFamilyGlobalPriorityProperties _props = { VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES };
-				wvk_queue_family.requestProperties(_props);
-			}
-			{
-				VkQueueFamilyCheckpointProperties2NV _props = { VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV };
-				wvk_queue_family.requestProperties(_props);
-			}
-			 
-		}
-
-	} // namespace tests
+	} // namespace Tests
 
 } // namespace CGDev

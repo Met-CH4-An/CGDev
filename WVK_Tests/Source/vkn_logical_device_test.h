@@ -1,5 +1,5 @@
-#ifndef CGDEV_SOURCE_TESTS__VKN_STATUS_H
-#define CGDEV_SOURCE_TESTS__VKN_STATUS_H
+#ifndef CGDEV_SOURCE_TESTS__VKN_LOGICAL_DEVICE_H
+#define CGDEV_SOURCE_TESTS__VKN_LOGICAL_DEVICE_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "Private/Vulkan/vkn_status.h"		// что тестируем
+
 
 namespace CGDev {
 
@@ -23,7 +23,7 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class VknStatusTest : public ::testing::Test {
+		class VknLogicalDeviceTest : public ::testing::Test {
 
 		public:
 
@@ -47,7 +47,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void SetUp() override {
+			void SetUp() override {	
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,12 +58,10 @@ namespace CGDev {
 			}
 
 		protected:
-
-			CGDev::GPU::Private::Vulkan::VknStatus m_status;
 		};
 
 	} // namespace Tests
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_TESTS__VKN_STATUS_H
+#endif // CGDEV_SOURCE_TESTS__VKN_LOGICAL_DEVICE_H

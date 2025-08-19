@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CGDEV_SOURCE_TESTS__VKN_STATUS_H
+#define CGDEV_SOURCE_TESTS__VKN_STATUS_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -12,16 +13,17 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_status.h"		// что тестируем
 
 namespace CGDev {
 
-	namespace tests {
+	namespace Tests {
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkQueueFamilyTest : public WvkBaseTest, public ::testing::Test {
+		class VknStatusTest : public ::testing::Test {
 
 		public:
 
@@ -29,13 +31,15 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static void SetUpTestSuite(void) {}
+			static void SetUpTestSuite() {
+			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static void TearDownTestSuite(void) {}
+			static void TearDownTestSuite(void) {
+			}
 
 		protected:
 
@@ -43,15 +47,21 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void SetUp() override {}
+			void SetUp() override {
+			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void TearDown() override {}
+			void TearDown() override {
+			}
+
+		protected:
 		};
 
-	} // namespace tests
+	} // namespace Tests
 
 } // namespace CGDev
+
+#endif // CGDEV_SOURCE_TESTS__VKN_STATUS_H

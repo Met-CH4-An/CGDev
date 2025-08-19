@@ -208,15 +208,15 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags, const void* pNext) const noexcept {
+		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const VkRenderPass& vk_render_pass, const VkFramebuffer& vk_framebuffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags, const void* pNext) const noexcept {
 			WvkStatus _status;
 
 			VkCommandBufferInheritanceInfo _inheritance_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
 				.pNext = pNext,
-				.renderPass = nullptr,
+				.renderPass = vk_render_pass,
 				.subpass = 0,
-				.framebuffer = nullptr,
+				.framebuffer = vk_framebuffer,
 				.occlusionQueryEnable = query_enable,
 				.queryFlags = vk_query_control_flags,
 				.pipelineStatistics = vk_query_pipeline_stats_flags,
@@ -236,7 +236,7 @@ namespace CGDev {
 		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const WvkRenderPassPtr wvk_render_pass, const WvkFrameBufferPtr wvk_frame_buffer, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept {
 			WvkStatus _status;
 
-			begin(vk_cmd_buffer_usage_flags, wvk_render_pass, wvk_frame_buffer, query_enable, vk_query_control_flags, vk_query_pipeline_stats_flags, static_cast<const void*>(nullptr));
+			begin(vk_cmd_buffer_usage_flags, static_cast<const VkRenderPass>(nullptr), static_cast<const VkFramebuffer>(nullptr), query_enable, vk_query_control_flags, vk_query_pipeline_stats_flags, static_cast<const void*>(nullptr));
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
@@ -250,17 +250,10 @@ namespace CGDev {
 		inline WvkStatus WvkCommandBuffer::begin(const VkCommandBufferUsageFlags& vk_cmd_buffer_usage_flags, const bool& query_enable, const VkQueryControlFlags& vk_query_control_flags, const VkQueryPipelineStatisticFlags& vk_query_pipeline_stats_flags) const noexcept {
 			WvkStatus _status;
 
-			VkCommandBufferInheritanceRenderingInfo _inheritance_rendering_info = {
-				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO,
-				.pNext = nullptr,
-				.flags = 0,
-				.viewMask = 0,
-				.colorAttachmentCount = 0,
-				//		.pColorAttachmentFormats = 0,
-				//		//.depthAttachmentFormat = 0,
-						//.stencilAttachmentFormat = 0,
-						//.rasterizationSamples = 0,
+			VkCommandBufferInheritanceRenderingInfo _info = {
 			};
+
+			begin(vk_cmd_buffer_usage_flags, static_cast<const VkRenderPass>(nullptr), static_cast<const VkFramebuffer>(nullptr), query_enable, vk_query_control_flags, vk_query_pipeline_stats_flags, static_cast<const void*>(nullptr));
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех

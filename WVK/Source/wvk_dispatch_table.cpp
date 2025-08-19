@@ -351,7 +351,7 @@ namespace CGDev {
 #if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_ENABLE
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR)));
 #endif 
-
+				
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// [Version] 1.1 / VK_KHR_get_physical_device_properties2
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

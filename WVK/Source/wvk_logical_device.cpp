@@ -203,6 +203,17 @@ namespace CGDev {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Забираем из WvkInstance физическое устройство
+			// заданное в WvkLogicalDeviceCreateInfo
+			// physical_device_group_index - группа
+			// physical_device_indices - номер в группе
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			const auto& _group_index = m_create_info.physical_device_group_index.value();
+			const auto& _in_group_index = m_create_info.physical_device_indices[0];
+			const auto& _wvk_phys_dev = m_create_info.wvk_instance_ptr->getWvkPhysicalDevices()[_group_index][_in_group_index];
+			const auto& _dispatch_table_ptr = m_create_info.wvk_instance_ptr->getWvkDispatchTable();
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Формирование списка очередей
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<VkDeviceQueueCreateInfo> vk_queue_create_infos;
@@ -221,7 +232,17 @@ namespace CGDev {
 			// Подготовка feature
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkPhysicalDeviceFeatures* _pEnabledFeatures = nullptr;
-			std::vector<VkBaseInStructure*> _vk_base_in_collection;
+			void* _pNext = nullptr;
+
+			//std::transform(
+			//	m_create_info.m_wvk_logical_device_feature_collection.begin(),
+			//	m_create_info.m_wvk_logical_device_feature_collection.end(),
+			//	std::back_inserter(_vk_base_in_collection),
+			//	[](const auto& wvk_wvk_logic_dev_feature) {
+			//		return wvk_wvk_logic_dev_feature.vk_base_in;
+			//	}
+			//);
+
 
 #if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_DISABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,7 +261,7 @@ namespace CGDev {
 				.pNext = nullptr,
 				.features = m_create_info.m_vk_physical_device_features
 			};
-			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_features2_khr));
+			_pNext = &_features2_khr;
 			_pEnabledFeatures = nullptr;
 
 #elif WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
@@ -253,7 +274,7 @@ namespace CGDev {
 				.pNext = nullptr,
 				.features = m_create_info.m_vk_physical_device_features
 			};
-			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_features2));
+			_pNext = &_features2_khr;
 			_pEnabledFeatures = nullptr;
 #endif
 
@@ -270,7 +291,7 @@ namespace CGDev {
 			// Получаем первый физический GPU из коллекции.
 			//        Этот объект будет использоваться как базовый для проверки совместимости.
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			const auto& _wvk_phys_dev = m_create_info.wvk_physical_devices.front();
+			const auto& wvk_phys_devs = m_create_info.wvk_instance_ptr->getWvkPhysicalDevices()[m_create_info.physical_device_group_index.value()];
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Проверяем совместимость устройств в коллекции.
@@ -287,15 +308,15 @@ namespace CGDev {
 			// Создаём вектор `VkPhysicalDevice` из коллекции WvkPhysicalDevice.
 			//        Он понадобится для инициализации структуры группы устройств.
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<VkPhysicalDevice> _vk_physical_device_collection;
-			//std::transform(
-			//	m_create_info.wvk_physical_devices.begin(),
-			//	m_create_info.wvk_physical_devices.end(),
-			//	std::back_inserter(_vk_physical_device_collection),
-			//	[](const WvkPhysicalDevice* wvk_phys_dev) {
-			//		return wvk_phys_dev->getVkPhysicalDevice();
-			//	}
-			//);
+			std::vector<VkPhysicalDevice> _vk_phys_devs;
+			std::transform(
+				wvk_phys_devs.begin(),
+				wvk_phys_devs.end(),
+				std::back_inserter(_vk_phys_devs),
+				[](const WvkPhysicalDeviceUptr& wvk_phys_dev) {
+					return wvk_phys_dev->getVkPhysicalDevice();
+				}
+			);
 #if VULKAN_API_VERSION == VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_ENABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создаём структуру `VkDeviceGroupDeviceCreateInfoKHR`
@@ -304,15 +325,11 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceGroupDeviceCreateInfoKHR _device_group_create_info_khr = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR,
-				.pNext = nullptr,
-				.physicalDeviceCount = static_cast<uint32_t>(_vk_physical_device_collection.size()),
-				.pPhysicalDevices = _vk_physical_device_collection.data()
+				.pNext = _pNext,
+				.physicalDeviceCount = static_cast<uint32_t>(_vk_phys_devs.size()),
+				.pPhysicalDevices = _vk_phys_devs.data()
 			};
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Добавляем структуру в цепочку `pNext` через обёртку VkBaseInStructure.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_device_group_create_info_khr));
+			_pNext = &_device_group_create_info_khr;
 #elif VULKAN_API_VERSION >= VULKAN_API_VERSION_11
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создаём структуру `VkDeviceGroupDeviceCreateInfo`
@@ -320,43 +337,13 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceGroupDeviceCreateInfoKHR _device_group_create_info = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO,
-				.pNext = nullptr,
+				.pNext = _pNext,
 				.physicalDeviceCount = static_cast<uint32_t>(_vk_physical_device_collection.size()),
 				.pPhysicalDevices = _vk_physical_device_collection.data()
 			};
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Добавляем структуру в цепочку `pNext`.
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_vk_base_in_collection.push_back(reinterpret_cast<VkBaseInStructure*>(&_device_group_create_info));
+			_pNext = &_device_group_create_info;
 #endif
 #endif
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 4. Преобразуем коллекцию wvk_feature'ов в цепочку VkBaseInStructure*
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::transform(
-				m_create_info.m_wvk_logical_device_feature_collection.begin(),
-				m_create_info.m_wvk_logical_device_feature_collection.end(),
-				std::back_inserter(_vk_base_in_collection),
-				[](const auto& wvk_wvk_logic_dev_feature) {
-					return wvk_wvk_logic_dev_feature.vk_base_in;
-				}
-			);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 5. Связываем элементы коллекции через поле pNext
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			for (size_t ct_0 = 0; ct_0 + 1 < _vk_base_in_collection.size(); ++ct_0) {
-				const auto& it_0 = _vk_base_in_collection[ct_0];
-				const auto& it_1 = _vk_base_in_collection[ct_0 + 1];
-				it_0->pNext = it_1;
-			}
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Шаг 6. Завершаем цепочку, выставляя pNext последнего элемента в nullptr
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_vk_base_in_collection.back()->pNext = nullptr;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка расширений
@@ -374,7 +361,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceCreateInfo _vk_device_create_info = {};
 			_vk_device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			_vk_device_create_info.pNext = _vk_base_in_collection.front();
+			_vk_device_create_info.pNext = _pNext;
 			_vk_device_create_info.flags = 0;
 			_vk_device_create_info.queueCreateInfoCount = static_cast<uint32_t>(vk_queue_create_infos.size());
 			_vk_device_create_info.pQueueCreateInfos = vk_queue_create_infos.data();
@@ -383,17 +370,6 @@ namespace CGDev {
 			_vk_device_create_info.enabledExtensionCount = static_cast<uint32_t>(_ext_names.size());
 			_vk_device_create_info.ppEnabledExtensionNames = _ext_names.data();
 			_vk_device_create_info.pEnabledFeatures = _pEnabledFeatures;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Забираем из WvkInstance физическое устройство
-			// заданное в WvkLogicalDeviceCreateInfo
-			// physical_device_group_index - группа
-			// physical_device_indices - номер в группе
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			const auto& _group_index = m_create_info.physical_device_group_index.value();
-			const auto& _in_group_index = m_create_info.physical_device_indices[0];
-			const auto& _wvk_phys_dev = m_create_info.wvk_instance_ptr->getWvkPhysicalDevices()[_group_index][_in_group_index];
-			const auto& _dispatch_table_ptr = m_create_info.wvk_instance_ptr->getWvkDispatchTable();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создание vkDevice

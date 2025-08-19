@@ -225,7 +225,7 @@ namespace CGDev {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_device_group_creation WVK_DISABLE
+#define WVK_KHR_device_group_creation WVK_ENABLE
 #if WVK_KHR_device_group_creation == WVK_ENABLE
 #define WVK_KHR_device_group_creation_name \
 		X("VK_KHR_device_group_creation")
