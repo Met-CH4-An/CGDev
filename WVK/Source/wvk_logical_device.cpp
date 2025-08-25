@@ -56,10 +56,10 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создание логического устройства
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_status = createVkDevice();
+			_status = create();
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice() is fail.");
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::create() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,7 +68,7 @@ namespace CGDev {
 			_status = createWvkDispatchTable();
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice() is fail.");
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::create() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,7 +199,7 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkLogicalDevice::createVkDevice(void) noexcept {
+		WvkStatus WvkLogicalDevice::create(void) noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,7 +222,7 @@ namespace CGDev {
 				vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 				vk_queue_create_info.pNext = nullptr;
 				vk_queue_create_info.flags = 0;
-				vk_queue_create_info.queueFamilyIndex = it_0.index.has_value();
+				vk_queue_create_info.queueFamilyIndex = it_0.index.value();
 				vk_queue_create_info.queueCount = it_0.queue_count.value();
 				vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();
 				vk_queue_create_infos.push_back(vk_queue_create_info);
@@ -274,7 +274,7 @@ namespace CGDev {
 				.pNext = nullptr,
 				.features = m_create_info.m_vk_physical_device_features
 			};
-			_pNext = &_features2_khr;
+			_pNext = &_features2;
 			_pEnabledFeatures = nullptr;
 #endif
 
@@ -301,7 +301,7 @@ namespace CGDev {
 			//auto _wvk_status = _wvk_phys_dev->checkCompatibility(m_create_info.wvk_physical_devices, _compatibility);
 
 			//if (!_wvk_status.isOk()) {
-			//	return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::createVkDevice - fail.");
+			//	return _status.set(VknStatusCode::FAIL, "\n\tWvkLogicalDevice::create - fail.");
 			//}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

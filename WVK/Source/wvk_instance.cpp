@@ -17,7 +17,6 @@
 #include "wvk_extension.h"
 
 #include "Layers/wvk_layer_khronos_validation.h"
-#include "Extensions/wvk_ext_debug_utils.h"
 
 namespace CGDev {
 

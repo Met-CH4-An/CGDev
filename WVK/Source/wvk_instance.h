@@ -188,13 +188,14 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			friend class WvkPhysicalDevice;
 			friend class WvkLogicalDevice;
+			friend class CGDev::wvk::Extensions::WvkDebugUtilsMessenger;
 			inline const WvkDispatchTableUptr& getWvkDispatchTable(void) const noexcept;
 			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\@brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			friend class WvkInstanceDispatchTable;
+			friend class CGDev::wvk::Extensions::WvkDebugUtilsMessenger;
 			inline const VkInstance& getVkInstance(void) const noexcept;			
 
 		// cpp

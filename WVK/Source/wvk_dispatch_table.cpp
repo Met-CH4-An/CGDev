@@ -239,14 +239,38 @@ namespace CGDev {
 			m_vkEndCommandBuffer = VK_NULL_HANDLE;
 
 			// =======================================
+			// [Category]: Shader
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			m_vkCreateShaderModule = VK_NULL_HANDLE;
+			m_vkDestroyShaderModule = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_shader_object
+			// ~~~~~~~~~~~~~~~~
+			m_vkCreateShadersEXT = VK_NULL_HANDLE;
+			m_vkDestroyShaderEXT = VK_NULL_HANDLE;
+
+			// =======================================
 			// [Category]: Debug
 			// =======================================
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~
 			// [Extension] VK_EXT_debug_utils
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~
+			m_vkCmdBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			m_vkCmdEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			m_vkCmdInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
 			m_vkCreateDebugUtilsMessengerEXT = VK_NULL_HANDLE;
 			m_vkDestroyDebugUtilsMessengerEXT = VK_NULL_HANDLE;
+			m_vkQueueBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			m_vkQueueEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			m_vkQueueInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			m_vkSetDebugUtilsObjectNameEXT = VK_NULL_HANDLE;
+			m_vkSetDebugUtilsObjectTagEXT = VK_NULL_HANDLE;
 			m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
 
 			if (m_dispatch_table_impl != nullptr) m_dispatch_table_impl->destroy();
@@ -347,8 +371,7 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups)));
-#endif
-#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_ENABLE
+#elif WVK_KHR_device_group_creation == WVK_ENABLE
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR)));
 #endif 
 				
@@ -363,8 +386,7 @@ namespace CGDev {
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceMemoryProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2)));
-#endif
-#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
+#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR)));
@@ -380,8 +402,7 @@ namespace CGDev {
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
-#endif
-#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_surface_capabilities2 == WVK_ENABLE
+#elif WVK_KHR_get_surface_capabilities2 == WVK_ENABLE
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
 #endif
@@ -403,11 +424,18 @@ namespace CGDev {
 				// [Extension] VK_EXT_debug_utils
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_EXT_debug_utils == WVK_ENABLE
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdBeginDebugUtilsLabelEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdEndDebugUtilsLabelEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdInsertDebugUtilsLabelEXT)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkCreateDebugUtilsMessengerEXT)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkDestroyDebugUtilsMessengerEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueBeginDebugUtilsLabelEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueEndDebugUtilsLabelEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueInsertDebugUtilsLabelEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectNameEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectNameEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectTagEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectTagEXT)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSubmitDebugUtilsMessageEXT", reinterpret_cast<void**>(&m_vkSubmitDebugUtilsMessageEXT)));
 #endif
- 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Загрузка
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -439,8 +467,11 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Version] 1.1 / VK_KHR_maintenance1
 				// ~~~~~~~~~~~~~~~~
+#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPool", reinterpret_cast<void**>(&m_vkTrimCommandPool)));
+#elif WVK_KHR_maintenance1 == WVK_ENABLE
 					_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
+#endif
 
 				// =======================================
 				// [Category]: CommandBuffer
@@ -452,6 +483,24 @@ namespace CGDev {
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkResetCommandBuffer", reinterpret_cast<void**>(&m_vkResetCommandBuffer)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkBeginCommandBuffer", reinterpret_cast<void**>(&m_vkBeginCommandBuffer)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEndCommandBuffer", reinterpret_cast<void**>(&m_vkEndCommandBuffer)));
+
+				// =======================================
+				// [Category]: Shader
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateShaderModule", reinterpret_cast<void**>(&m_vkCreateShaderModule)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyShaderModule", reinterpret_cast<void**>(&m_vkDestroyShaderModule)));
+				
+				// ~~~~~~~~~~~~~~~~
+				// [Extension] VK_EXT_shader_object
+				// ~~~~~~~~~~~~~~~~
+#if WVK_EXT_shader_object == WVK_ENABLE
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateShadersEXT", reinterpret_cast<void**>(&m_vkCreateShadersEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyShaderEXT", reinterpret_cast<void**>(&m_vkDestroyShaderEXT)));
+#endif
 
 				if (m_create_info.vkDevice != nullptr) {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

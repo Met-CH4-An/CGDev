@@ -7,10 +7,11 @@
 // --gtest_filter=WvkPhysicalDeviceTest.RequestPhysicalDeviceProperties_FillsPropertiesCorrectly
 #include <windows.h>
 
-#include "Extensions/wvk_ext_debug_utils.h"
-#include "Extensions/wvk_surface.h"
+#include "_wvk.h"
+#include "Extensions/_extensions.h"
+//#include "Extensions/wvk_surface.h"
 
-#include "Extensions/MSWindows/wvk_surface_mswindows.h"
+//#include "Extensions/MSWindows/wvk_surface_mswindows.h"
 
 inline bool CreateTestWindow(HINSTANCE& outInstance, HWND& outHwnd);
 
@@ -37,10 +38,8 @@ namespace CGDev {
             static CGDev::wvk::WvkInstanceUptr wvk_instance_ptr;
             static CGDev::wvk::WvkLogicalDeviceUptr wvk_logical_device_ptr;
             static CGDev::wvk::WvkCommandPoolUptr wvk_command_pool_ptr;
-
-            inline static CGDev::wvk::Extensions::WvkExtDebugUtils wvk_ext_debug_utils;
-
-            inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
+            static CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr wvk_debug_utils_messenger_ptr;
+            //inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
         };
 
 	} // namespace tests

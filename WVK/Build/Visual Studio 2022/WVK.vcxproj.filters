@@ -13,7 +13,7 @@
     <ClCompile Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.cpp">
       <Filter>MSWindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Extensions\wvk_ext_debug_utils.cpp">
+    <ClCompile Include="..\..\Source\Extensions\wvk_debug_utils_messenger.cpp">
       <Filter>Extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\wvk_surface.cpp">
@@ -30,6 +30,7 @@
       <Filter>Extensions\MSWindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\wvk_dispatch_table.cpp" />
+    <ClCompile Include="..\..\Source\wvk_shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\_wvk.h" />
@@ -63,10 +64,10 @@
     <ClInclude Include="..\..\Source\Extensions\_extensions.h">
       <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.h">
+    <ClInclude Include="..\..\Source\Extensions\wvk_debug_utils_messenger.h">
       <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Extensions\wvk_ext_debug_utils.hpp">
+    <ClInclude Include="..\..\Source\Extensions\wvk_debug_utils_messenger.hpp">
       <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.h">
@@ -103,6 +104,10 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\wvk_dispatch_table.h" />
     <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
+    <ClInclude Include="..\..\Source\wvk_command_buffer_helpers.h" />
+    <ClInclude Include="..\..\Source\wvk_command_buffer_helpers.hpp" />
+    <ClInclude Include="..\..\Source\wvk_shader.h" />
+    <ClInclude Include="..\..\Source\wvk_shader.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MSWindows">

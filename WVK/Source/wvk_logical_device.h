@@ -129,7 +129,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus createVkDevice(void) noexcept;
+			WvkStatus create(void) noexcept;
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief

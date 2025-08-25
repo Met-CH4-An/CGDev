@@ -123,7 +123,7 @@ namespace CGDev {
 			inline void wvkFreeCommandBuffers(VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
 						
 			// ~~~~~~~~~~~~~~~~
-			// [Version] 1.1
+			// [Version] 1.1 / VK_KHR_maintenance1
 			// ~~~~~~~~~~~~~~~~
 			inline void wvkTrimCommandPool(VkCommandPool commandPool, VkCommandPoolTrimFlags flags) const noexcept;
 
@@ -137,6 +137,41 @@ namespace CGDev {
 			inline VkResult wvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) const noexcept;
 			inline VkResult wvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) const noexcept;
 			inline VkResult wvkEndCommandBuffer(VkCommandBuffer commandBuffer) const noexcept;
+
+			// =======================================
+			// [Category]: Shader
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) const noexcept;
+			inline void wvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_shader_object
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept;
+			inline void wvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept;
+
+			// =======================================
+			// [Category]: Debug
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_debug_utils
+			// ~~~~~~~~~~~~~~~~
+			inline void wvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
+			inline void wvkCmdEndDebugUtilsLabel(VkCommandBuffer commandBuffer) const noexcept;
+			inline void wvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
+			inline VkResult wvkCreateDebugUtilsMessenger(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept;
+			inline void wvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline void wvkQueueBeginDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
+			inline void wvkQueueEndDebugUtilsLabel(VkQueue queue) const noexcept;
+			inline void wvkQueueInsertDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept;
+			inline VkResult wvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) const noexcept;
+			inline VkResult wvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) const noexcept;
+			inline void wvkSubmitDebugUtilsMessage(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept;
 		
 		protected:
 
@@ -253,15 +288,39 @@ namespace CGDev {
 			PFN_vkEndCommandBuffer m_vkEndCommandBuffer = VK_NULL_HANDLE;
 
 			// =======================================
+			// [Category]: Shader
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateShaderModule m_vkCreateShaderModule = VK_NULL_HANDLE;
+			PFN_vkDestroyShaderModule m_vkDestroyShaderModule = VK_NULL_HANDLE;
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_EXT_shader_object
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateShadersEXT m_vkCreateShadersEXT = VK_NULL_HANDLE;
+			PFN_vkDestroyShaderEXT m_vkDestroyShaderEXT = VK_NULL_HANDLE;
+
+			// =======================================
 			// [Category]: Debug
 			// =======================================
 
 			// ~~~~~~~~~~~~~~~~
 			// [Extension] VK_EXT_debug_utils
 			// ~~~~~~~~~~~~~~~~
+			PFN_vkCmdBeginDebugUtilsLabelEXT m_vkCmdBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			PFN_vkCmdEndDebugUtilsLabelEXT m_vkCmdEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			PFN_vkCmdInsertDebugUtilsLabelEXT m_vkCmdInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
 			PFN_vkCreateDebugUtilsMessengerEXT m_vkCreateDebugUtilsMessengerEXT = VK_NULL_HANDLE;
 			PFN_vkDestroyDebugUtilsMessengerEXT m_vkDestroyDebugUtilsMessengerEXT = VK_NULL_HANDLE;
-			PFN_vkSubmitDebugUtilsMessageEXT m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
+			PFN_vkQueueBeginDebugUtilsLabelEXT m_vkQueueBeginDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			PFN_vkQueueEndDebugUtilsLabelEXT m_vkQueueEndDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			PFN_vkQueueInsertDebugUtilsLabelEXT m_vkQueueInsertDebugUtilsLabelEXT = VK_NULL_HANDLE;
+			PFN_vkSetDebugUtilsObjectNameEXT m_vkSetDebugUtilsObjectNameEXT = VK_NULL_HANDLE;
+			PFN_vkSetDebugUtilsObjectTagEXT m_vkSetDebugUtilsObjectTagEXT = VK_NULL_HANDLE;
+			PFN_vkSubmitDebugUtilsMessageEXT m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;		
 
 		public:
 

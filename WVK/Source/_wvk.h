@@ -188,22 +188,63 @@ namespace CGDev {
 #define WVK_DISABLE 0
 #define WVK_ENABLE 1
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define WVK_LAYER_KHRONOS_validation WVK_ENABLE
-	#if WVK_LAYER_KHRONOS_validation == WVK_ENABLE
-	#define WVK_LAYER_KHRONOS_validation_name \
-			X("VK_LAYER_KHRONOS_validation")
-	#else
-	#define WVK_LAYER_KHRONOS_validation_name
-	#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 #define WVK_KHR_get_physical_device_properties2 WVK_ENABLE
+#define WVK_KHR_get_surface_capabilities2 WVK_ENABLE
+#define WVK_KHR_device_group_creation WVK_ENABLE
+
+#define WVK_EXT_shader_object WVK_ENABLE
+#define WVK_KHR_dynamic_rendering_local_read WVK_DISABLE
+#define WVK_KHR_dynamic_rendering WVK_DISABLE
+#define WVK_KHR_create_renderpass2 WVK_DISABLE
+#define WVK_KHR_depth_stencil_resolve WVK_DISABLE
+#define WVK_KHR_maintenance2 WVK_DISABLE
+#define WVK_KHR_maintenance1 WVK_DISABLE
+#define WVK_KHR_multiview WVK_DISABLE
+
+#if WVK_EXT_shader_object == WVK_ENABLE
+	#undef WVK_KHR_get_physical_device_properties2
+	#define WVK_KHR_get_physical_device_properties2 WVK_ENABLE
+	#undef WVK_KHR_dynamic_rendering
+	#define WVK_KHR_dynamic_rendering WVK_ENABLE
+#endif
+
+#if WVK_KHR_dynamic_rendering_local_read == WVK_ENABLE
+	#undef WVK_KHR_dynamic_rendering
+	#define WVK_KHR_dynamic_rendering WVK_ENABLE
+#endif
+
+#if WVK_KHR_dynamic_rendering == WVK_ENABLE
+	#undef WVK_KHR_depth_stencil_resolve
+	#define WVK_KHR_depth_stencil_resolve WVK_ENABLE
+#endif
+
+#if WVK_KHR_depth_stencil_resolve == WVK_ENABLE
+	#undef WVK_KHR_create_renderpass2
+	#define WVK_KHR_create_renderpass2 WVK_ENABLE
+#endif
+
+#if WVK_KHR_create_renderpass2 == WVK_ENABLE
+	#undef WVK_KHR_multiview
+	#define WVK_KHR_multiview WVK_ENABLE
+	#undef WVK_KHR_maintenance2
+	#define WVK_KHR_maintenance2 WVK_ENABLE
+#endif
+
+			
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_LAYER_KHRONOS_validation
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_LAYER_KHRONOS_validation == WVK_ENABLE
+#define WVK_LAYER_KHRONOS_validation_name \
+		X("VK_LAYER_KHRONOS_validation")
+#else
+#define WVK_LAYER_KHRONOS_validation_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_get_physical_device_properties2
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 #define WVK_KHR_get_physical_device_properties2_name \
 		X("VK_KHR_get_physical_device_properties2")
@@ -212,9 +253,8 @@ namespace CGDev {
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// VK_KHR_get_surface_capabilities2
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_get_surface_capabilities2 WVK_ENABLE
 #if WVK_KHR_get_surface_capabilities2 == WVK_ENABLE
 #define WVK_KHR_get_surface_capabilities2_name \
 		X("VK_KHR_get_surface_capabilities2")
@@ -223,9 +263,8 @@ namespace CGDev {
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// VK_KHR_device_group_creation
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_device_group_creation WVK_ENABLE
 #if WVK_KHR_device_group_creation == WVK_ENABLE
 #define WVK_KHR_device_group_creation_name \
 		X("VK_KHR_device_group_creation")
@@ -234,27 +273,95 @@ namespace CGDev {
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// VK_EXT_shader_object
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_maintenance1 WVK_ENABLE
+#if WVK_EXT_shader_object == WVK_ENABLE
+#define WVK_EXT_shader_object_name \
+	X("VK_EXT_shader_object")
+#else
+#define WVK_EXT_shader_object_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_dynamic_rendering_local_read
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_dynamic_rendering_local_read == WVK_ENABLE
+#define WVK_KHR_dynamic_rendering_local_read_name \
+	X("VK_KHR_dynamic_rendering_local_read")
+#else
+#define WVK_KHR_dynamic_rendering_local_read_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_dynamic_rendering
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_dynamic_rendering == WVK_ENABLE
+#define WVK_KHR_dynamic_rendering_name \
+	X("VK_KHR_dynamic_rendering")	
+#else
+#define WVK_KHR_dynamic_rendering_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_depth_stencil_resolve
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_depth_stencil_resolve == WVK_ENABLE
+#define WVK_KHR_depth_stencil_resolve_name \
+	X("VK_KHR_depth_stencil_resolve")
+#else
+#define WVK_KHR_depth_stencil_resolve_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_create_renderpass2
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_create_renderpass2 == WVK_ENABLE
+#define WVK_KHR_create_renderpass2_name \
+	X("VK_KHR_create_renderpass2")
+#else
+#define WVK_KHR_create_renderpass2_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_multiview
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_multiview == WVK_ENABLE
+#define WVK_KHR_multiview_name \
+	X("VK_KHR_multiview")
+#else
+#define WVK_KHR_multiview_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_maintenance1
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_KHR_maintenance1 == WVK_ENABLE
 #define WVK_KHR_maintenance1_name \
-		X("VK_KHR_maintenance1")
+	X("VK_KHR_maintenance1")
 #else
 #define WVK_KHR_maintenance1_name
 #endif
-			
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// VK_KHR_maintenance2
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if WVK_KHR_maintenance2 == WVK_ENABLE
+#define WVK_KHR_maintenance2_name \
+	X("VK_KHR_maintenance2")
+#else
+#define WVK_KHR_maintenance2_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_EXT_debug_utils
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define WVK_EXT_debug_utils WVK_ENABLE
-	#if WVK_EXT_debug_utils == WVK_ENABLE
-		#define WVK_EXT_debug_utils_name \
-		X("VK_EXT_debug_utils")
-	#else
-		#define WVK_EXT_debug_utils_name
-	#endif
+#if WVK_EXT_debug_utils == WVK_ENABLE
+	#define WVK_EXT_debug_utils_name \
+	X("VK_EXT_debug_utils")
+#else
+	#define WVK_EXT_debug_utils_name
+#endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
@@ -278,9 +385,18 @@ namespace CGDev {
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define WVK_COMPILE_TIME_LOGICAL_DEVICE_EXTENSIONS \
-	WVK_KHR_maintenance1_name
+	WVK_EXT_shader_object_name\
+	WVK_KHR_dynamic_rendering_local_read_name\
+	WVK_KHR_dynamic_rendering_name\
+	WVK_KHR_create_renderpass2_name\
+	WVK_KHR_depth_stencil_resolve_name\
+	WVK_KHR_multiview_name\
+	WVK_KHR_maintenance1_name\
+	WVK_KHR_maintenance2_name
 
 
+
+	
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -360,7 +476,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class			VknLayer;
 		using			VknLayerPtr												= VknLayer * ;
 		using			VknLayerPtrArr											= std::vector<VknLayerPtr>;
@@ -373,7 +488,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class			VknExtension;
 		using			VknExtensionPtr											= VknExtension * ;
 		using			VknExtensionPtrArr										= std::vector<VknExtensionPtr>;
@@ -386,7 +500,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkLoader;
 		using WvkLoaderPtr = WvkLoader * ;
 		using WvkLoaderPtrArr1 = std::vector<WvkLoaderPtr>;
@@ -401,7 +514,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkLoaderDispatchTable;
 		using WvkLoaderDispatchTablePtr = WvkLoaderDispatchTable * ;
 		using WvkLoaderDispatchTablePtrArr1 = std::vector<WvkLoaderDispatchTablePtr>;
@@ -416,7 +528,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkInstance;
 		using WvkInstancePtr = WvkInstance * ;
 		using WvkInstancePtrArr1 = std::vector<WvkInstancePtr>;
@@ -431,7 +542,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkDispatchTable;
 		using WvkDispatchTablePtr = WvkDispatchTable*;
 		using WvkDispatchTablePtrVec1 = std::vector<WvkDispatchTablePtr>;
@@ -446,7 +556,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkPhysicalDevice;
 		using WvkPhysicalDevicePtr = WvkPhysicalDevice * ;
 		using WvkPhysicalDevicePtrVec1 = std::vector<WvkPhysicalDevicePtr>;
@@ -465,7 +574,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkQueueFamily;
 		using WvkQueueFamilyArr1 = std::vector<WvkQueueFamily>;
 		using WvkQueueFamilyPtr = WvkQueueFamily * ;
@@ -482,7 +590,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkLogicalDevice;
 		using WvkLogicalDevicePtr = WvkLogicalDevice * ;
 		using WvkLogicalDevicePtrVec1 = std::vector<WvkLogicalDevicePtr>;
@@ -500,7 +607,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class			VknQueue;
 		using			VknQueuePtr												= VknQueue * ;
 		using			VknQueuePtrArr1											= std::vector<VknQueuePtr>;
@@ -516,7 +622,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkCommandPool;
 		using WvkCommandPoolPtr = WvkCommandPool * ;
 		using WvkCommandPoolPtrVec1 = std::vector<WvkCommandPoolPtr>;
@@ -532,7 +637,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkCommandBuffer;
 		using WvkCommandBufferPtr = WvkCommandBuffer * ;
 		using WvkCommandBufferPtrVec1 = std::vector<WvkCommandBufferPtr>;
@@ -547,7 +651,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkFrameBuffer;
 		using WvkFrameBufferPtr = WvkFrameBuffer*;
 		using WvkFrameBufferPtrVec1 = std::vector<WvkFrameBufferPtr>;
@@ -562,7 +665,6 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 		class WvkRenderPass;
 		using WvkRenderPassPtr = WvkRenderPass * ;
 		using WvkRenderPassPtrVec1 = std::vector<WvkRenderPassPtr>;
@@ -572,8 +674,28 @@ namespace CGDev {
 		using WvkRenderPassUptrVec1 = std::vector<WvkRenderPassSptr>;
 		using WvkRenderPassWptr = std::weak_ptr<WvkRenderPass>;
 		using WvkRenderPassWptrVec1 = std::vector<WvkRenderPassWptr>;
-		
 
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		class WvkImage;
+		using WvkImagePtr = WvkImage * ;
+		using WvkImagePtrVec1 = std::vector<WvkImagePtr>;
+		using WvkImageSptr = std::shared_ptr<WvkImage>;
+		using WvkImageSptrVec1 = std::vector<WvkImageSptr>;
+		using WvkImageUptr = std::unique_ptr<WvkImage>;
+		using WvkImageUptrVec1 = std::vector<WvkImageSptr>;
+		using WvkImageWptr = std::weak_ptr<WvkImage>;
+		using WvkImageWptrVec1 = std::vector<WvkImageWptr>;
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		namespace Extensions {
+			class WvkDebugUtilsMessenger;
+		}
 
 
 

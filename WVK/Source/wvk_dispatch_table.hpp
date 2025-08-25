@@ -85,6 +85,8 @@ namespace CGDev {
 			return m_vkEnumeratePhysicalDeviceGroups(m_create_info.vkInstance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
 #elif WVK_KHR_device_group_creation == WVK_ENABLE 
 			return m_vkEnumeratePhysicalDeviceGroupsKHR(m_create_info.vkInstance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
+#else
+			return VK_ERROR_UNKNOWN;
 #endif
 		}
 
@@ -117,6 +119,8 @@ namespace CGDev {
 			return m_vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
 #elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 			return m_vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+#else
+			return VK_ERROR_UNKNOWN;
 #endif
 		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const noexcept {
@@ -203,6 +207,105 @@ namespace CGDev {
 		}
 		inline VkResult WvkDispatchTable::wvkEndCommandBuffer(VkCommandBuffer commandBuffer) const noexcept {
 			return m_vkEndCommandBuffer(commandBuffer);
+		}
+
+		// =======================================
+		// [Category]: Shader
+		// =======================================
+
+		// ~~~~~~~~~~~~~~~~
+		// [Version] 1.0
+		// ~~~~~~~~~~~~~~~~
+		inline VkResult WvkDispatchTable::wvkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) const noexcept {
+			return m_vkCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
+		}
+		inline void WvkDispatchTable::wvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept {
+			m_vkDestroyShaderModule(device, shaderModule, pAllocator);
+		}
+
+		// ~~~~~~~~~~~~~~~~
+		// [Extension] VK_EXT_shader_object
+		// ~~~~~~~~~~~~~~~~
+		inline VkResult WvkDispatchTable::wvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept {
+#if WVK_EXT_shader_object == WVK_ENABLE
+			return m_vkCreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
+#else
+			return VK_ERROR_UNKNOWN;
+#endif
+		}
+		inline void WvkDispatchTable::wvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept {
+#if WVK_EXT_shader_object == WVK_ENABLE
+			m_vkDestroyShaderEXT(device, shader, pAllocator);
+#endif
+		}
+
+		// =======================================
+		// [Category]: Debug
+		// =======================================
+
+		// ~~~~~~~~~~~~~~~~
+		// [Extension] VK_EXT_debug_utils
+		// ~~~~~~~~~~~~~~~~
+		inline void WvkDispatchTable::wvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+#endif
+		}
+		inline void WvkDispatchTable::wvkCmdEndDebugUtilsLabel(VkCommandBuffer commandBuffer) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkCmdEndDebugUtilsLabelEXT(commandBuffer);
+#endif
+		}
+		inline void WvkDispatchTable::wvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+#endif
+		}
+		inline VkResult WvkDispatchTable::wvkCreateDebugUtilsMessenger(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			return m_vkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
+#else
+			return VK_ERROR_UNKNOWN;
+#endif
+		}
+		inline void WvkDispatchTable::wvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
+#endif
+		}
+		inline void WvkDispatchTable::wvkQueueBeginDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
+#endif
+		}
+		inline void WvkDispatchTable::wvkQueueEndDebugUtilsLabel(VkQueue queue) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkQueueEndDebugUtilsLabelEXT(queue);
+#endif
+		}
+		inline void WvkDispatchTable::wvkQueueInsertDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
+#endif
+		}
+		inline VkResult WvkDispatchTable::wvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			return m_vkSetDebugUtilsObjectNameEXT(device, pNameInfo);
+#else
+			return VK_ERROR_UNKNOWN;
+#endif
+		}
+		inline VkResult WvkDispatchTable::wvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			return m_vkSetDebugUtilsObjectTagEXT(device, pTagInfo);
+#else
+			return VK_ERROR_UNKNOWN;
+#endif
+		}
+		inline void WvkDispatchTable::wvkSubmitDebugUtilsMessage(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
+#if WVK_EXT_debug_utils == WVK_ENABLE
+			m_vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
+#endif
 		}
 	} // namespace wvk
 

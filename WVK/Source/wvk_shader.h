@@ -1,5 +1,5 @@
-#ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_H
-#define CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_H
+#ifndef CGDEV_WVK_SOURCE__WVK_SHADER_H
+#define CGDEV_WVK_SOURCE__WVK_SHADER_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#include "wvk_command_buffer_helpers.h"
 
 namespace CGDev {
 
@@ -24,26 +23,15 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		struct WvkImageLocation {
-			WvkImagePtr wvk_image = nullptr;
-			std::optional<uint32_t> location;
-		}; // struct WvkImageLocation
-		using WvkImageLocationVec1 = std::vector<WvkImageLocation>;
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		/*!	\brief
-		*/
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		struct WvkCommandBufferCreateInfo {
+		struct WvkShaderCreateInfo {
 			WvkLogicalDevicePtr wvk_logical_device_ptr = nullptr;
-			VkCommandBuffer vk_cmd_buffer = VK_NULL_HANDLE;
-		}; // struct WvkCommandBufferCreateInfo
+		}; // struct WvkShaderCreateInfo
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		class WvkCommandBuffer : public GpuObject {
+		class WvkShader : public GpuObject {
 
 		public:
 
@@ -51,19 +39,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkCommandBuffer(void) noexcept;
+			WvkShader(void) noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			~WvkCommandBuffer(void) noexcept;
+			~WvkShader(void) noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus create(const WvkCommandBufferCreateInfo& create_info) noexcept;
+			WvkStatus create(const WvkShaderCreateInfo& create_info) noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
@@ -77,30 +65,6 @@ namespace CGDev {
 		// hpp
 		public:
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus reset(const VkCommandBufferResetFlags& flags = 0) const noexcept;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin(const VkCommandBufferBeginInfo& info) const noexcept;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus begin(const WvkCommandBufferBeginHelper& helper) const noexcept;
-			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline WvkStatus end() const noexcept;
-
 		// hpp
 		private:
 
@@ -109,7 +73,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline VkCommandBuffer getVkCommandBuffer(void) const noexcept;
+			//inline VkCommandBuffer getVkCommandBuffer(void) const noexcept;
 
 		// cpp
 		private:
@@ -118,24 +82,28 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus validationCreateInfo(const WvkCommandBufferCreateInfo& create_info) noexcept;
+			WvkStatus validationCreateInfo(const WvkShaderCreateInfo& create_info) noexcept;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus createVkCommandBuffer(void) noexcept;
+			WvkStatus create(void) noexcept;
 
 		private:
 
-			WvkCommandBufferCreateInfo m_create_info = {};
-			VkCommandBuffer m_vk_command_buffer = VK_NULL_HANDLE;
-		}; // class WvkCommandBuffer
+			WvkShaderCreateInfo m_create_info = {};
+
+			VkShaderModule m_vk_shader_module = VK_NULL_HANDLE;
+#if WVK_EXT_shader_object == WVK_ENABLE
+			VkShaderEXT m_vk_shader = VK_NULL_HANDLE;
+#endif
+		}; // class WvkShader
 
 	} // namespace wvk
 
 } // namespace CGDev
 
-#include "wvk_command_buffer.hpp"
+#include "wvk_shader.hpp"
 
-#endif // CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_H
+#endif // CGDEV_WVK_SOURCE__WVK_SHADER_H

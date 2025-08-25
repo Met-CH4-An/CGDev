@@ -42,13 +42,16 @@ namespace CGDev {
 					*/
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-					class			WvkExtDebugUtils;
-					using			VknExtDebugUtilsPtr = WvkExtDebugUtils * ;
-					using			VknExtDebugUtilsPtrArr = std::vector<VknExtDebugUtilsPtr>;
-					using			VknExtDebugUtilsWptr = std::weak_ptr<WvkExtDebugUtils>;
-					using			VknExtDebugUtilsWptrArr = std::vector<VknExtDebugUtilsWptr>;
-					using			VknExtDebugUtilsSptr = std::shared_ptr<WvkExtDebugUtils>;
-					using			VknExtDebugUtilsSptrArr = std::vector<VknExtDebugUtilsSptr>;
+					class WvkDebugUtilsMessenger;
+					using WvkDebugUtilsMessengerPtr = WvkDebugUtilsMessenger * ;
+					using WvkDebugUtilsMessengerPtrVec1 = std::vector<WvkDebugUtilsMessengerPtr>;
+					using WvkDebugUtilsMessengerSptr = std::shared_ptr<WvkDebugUtilsMessenger>;
+					using WvkDebugUtilsMessengerSptrVec1 = std::vector<WvkDebugUtilsMessengerSptr>;
+					using WvkDebugUtilsMessengerUptr = std::unique_ptr<WvkDebugUtilsMessenger>;
+					using WvkDebugUtilsMessengerUptrVec1 = std::vector<WvkDebugUtilsMessengerUptr>;
+					using WvkDebugUtilsMessengerWptr = std::weak_ptr<WvkDebugUtilsMessenger>;
+					using WvkDebugUtilsMessengerWptrVec1 = std::vector<WvkDebugUtilsMessengerWptr>;
+					
 
 					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					/*!	\brief

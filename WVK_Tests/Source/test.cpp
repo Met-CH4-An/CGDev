@@ -14,6 +14,9 @@
 #include "wvk_instance.h"
 #include "wvk_logical_device.h"
 #include "wvk_command_pool.h"
+#include "wvk_shader.h"
+
+#include "Extensions/wvk_debug_utils_messenger.h"
 
 ::testing::Environment* g_vk_env = nullptr;
 
@@ -36,6 +39,7 @@ namespace CGDev {
         CGDev::wvk::WvkInstanceUptr WvkBaseTest::wvk_instance_ptr;
         CGDev::wvk::WvkLogicalDeviceUptr WvkBaseTest::wvk_logical_device_ptr;
         CGDev::wvk::WvkCommandPoolUptr WvkBaseTest::wvk_command_pool_ptr;
+        CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr WvkBaseTest::wvk_debug_utils_messenger_ptr;
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,6 +59,24 @@ namespace CGDev {
             }
 
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // WvkDebugUtilsMessenger
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            {
+                CGDev::wvk::Extensions::WvkDebugUtilsMessengerCreateInfo _create_info = {
+                    .wvk_instance_ptr = wvk_instance_ptr.get(),
+                    .mode = CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_SEVERITIES | CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_TYPES,
+                };
+
+                wvk_debug_utils_messenger_ptr = std::make_unique<CGDev::wvk::Extensions::WvkDebugUtilsMessenger>();
+                auto _wvk_res = wvk_debug_utils_messenger_ptr->create(_create_info);
+
+                //ASSERT_EQ(_wvk_res, true);
+            }
+
+            //std::vector<VkQueueFamilyProperties> _props;
+            //wvk_instance_ptr->getWvkPhysicalDevices()[0][0].get()->requestQueueFamilyProperties(_props);
+
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // WvkLogicalDevice
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             {
@@ -69,7 +91,8 @@ namespace CGDev {
                     .physical_device_group_index = 0,
                     .physical_device_indices = { 0 },
                     .wvk_logical_device_queue_create_infos = { _queue_create_info },
-                    .m_vk_physical_device_features = {},
+                    .m_vk_physical_device_features = {
+                        .inheritedQueries = VK_TRUE },
                     .m_wvk_logical_device_feature_collection = {},
                 };
 
@@ -98,13 +121,25 @@ namespace CGDev {
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // WvkCommandBuffer
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //{
-            //    CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
+            {
+                CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
 
-            //    auto _wvk_res = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+                auto _wvk_res = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+                ASSERT_EQ(_wvk_res, true);
+            }
+
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // WvkShader
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //{
+            //    CGDev::wvk::WvkInstanceCreateInfo _create_info;
+
+            //    wvk_instance_ptr = std::make_unique<CGDev::wvk::WvkInstance>();
+            //    auto _wvk_res = wvk_instance_ptr->create(_create_info);
 
             //    ASSERT_EQ(_wvk_res, true);
-           // }
+            //}
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

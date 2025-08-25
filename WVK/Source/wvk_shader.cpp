@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////
 // секция заголовочного файла
 ////////////////////////////////////////////////////////////////
-#include "wvk_command_pool.h"
+#include "wvk_shader.h"
 ////////////////////////////////////////////////////////////////
 // секция имплементации
 ////////////////////////////////////////////////////////////////
@@ -21,19 +21,19 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkCommandPool::WvkCommandPool(void) noexcept {
+		WvkShader::WvkShader(void) noexcept {
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkCommandPool::~WvkCommandPool(void) noexcept {
+		WvkShader::~WvkShader(void) noexcept {
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkCommandPool::create(const WvkCommandPoolCreateInfo& create_info) noexcept {
+		WvkStatus WvkShader::create(const WvkShaderCreateInfo& create_info) noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,19 +49,17 @@ namespace CGDev {
 			_status = validationCreateInfo(create_info);
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandPool::validationCreateInfo() is fail.");
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkShader::validationCreateInfo() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создание пула комманд
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_status = createVkCommandPool();
+			_status = create();
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandPool::createVkCommandPool() is fail.");
+				return _status.set(VknStatusCode::FAIL, "\n\tWvkShader::create() is fail.");
 			}
-
-			m_dispatch_table_ptr = m_create_info.wvk_logical_device_ptr->getDispatchTable().get();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
@@ -73,76 +71,43 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		void WvkCommandPool::destroy(void) noexcept {
-			if (m_vk_command_pool != VK_NULL_HANDLE) m_dispatch_table_ptr->wvkDestroyCommandPool(m_vk_command_pool, VK_NULL_HANDLE);
-
+		void WvkShader::destroy(void) noexcept {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// очистка данных
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_create_info = {};
-			m_dispatch_table_ptr = nullptr;
-			m_vk_command_pool = VK_NULL_HANDLE;
+
+			m_vk_shader_module = VK_NULL_HANDLE;
+#if WVK_EXT_shader_object == WVK_ENABLE
+			m_vk_shader = VK_NULL_HANDLE;
+#endif
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkCommandPool::validationCreateInfo(const WvkCommandPoolCreateInfo& create_info) noexcept {
+		WvkStatus WvkShader::validationCreateInfo(const WvkShaderCreateInfo& create_info) noexcept {
 			WvkStatus _status(VknStatusCode::SUCCESSFUL);
 
 			if (create_info.wvk_logical_device_ptr == nullptr) {
-				_status.setFail("\nWvkCommandPoolCreateInfo::wvk_logical_device_ptr is nullptr.");
-			}
-			if (!create_info.queue_family_index.has_value()) {
-				_status.setFail("\nWvkCommandPoolCreateInfo::queue_family_index is unknown.");
+				_status.setFail("\nWvkShaderCreateInfo::wvk_logical_device_ptr is nullptr.");
 			}
 
 			if (!_status) return _status;
-			
+
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_create_info = create_info;
 			return _status.setOk();
-		}	
+		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkCommandPool::createVkCommandPool(void) noexcept {
+		WvkStatus WvkShader::create(void) noexcept {
 			WvkStatus _status;
 
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Описываем и создаём VkCommandPool
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VkCommandPoolCreateInfo _vk_cmd_pool_create_info = {
-				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-				.pNext = nullptr,
-				.flags = m_create_info.flags,
-				.queueFamilyIndex = m_create_info.queue_family_index.value(),
-			};
-
-			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkCreateCommandPool(&_vk_cmd_pool_create_info, nullptr, &m_vk_command_pool);
-
-			if (_vk_result != VK_SUCCESS) {
-				switch (_vk_result) {		
-				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-					_status.setFail("\nvkCreateInstance is VK_ERROR_OUT_OF_DEVICE_MEMORY.");
-					break;
-				case VK_ERROR_OUT_OF_HOST_MEMORY:
-					_status.setFail("\nvkCreateInstance is VK_ERROR_OUT_OF_HOST_MEMORY.");
-					break;
-				case VK_ERROR_UNKNOWN:
-					_status.setFail("\nvkCreateInstance is VK_ERROR_UNKNOWN.");
-					break;
-				case VK_ERROR_VALIDATION_FAILED_EXT:
-					_status.setFail("\nvkCreateInstance is VK_ERROR_VALIDATION_FAILED.");
-					break;
-				}
-
-				return _status;
-			}
-			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
