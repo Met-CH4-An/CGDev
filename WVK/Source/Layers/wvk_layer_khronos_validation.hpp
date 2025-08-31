@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (c) 2025 Metelev Met-CH4-An Andrey
+// Project Lead: Metelev Andrey
+// Main Technical Assistant: StarDev aka ChatGPT
 #ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN_LAYERS__VKN_LAYER_KHRONOS_VALIDATION_HPP
 #define CGDEV_SOURCE_GPU_PRIVATE_VULKAN_LAYERS__VKN_LAYER_KHRONOS_VALIDATION_HPP
 ////////////////////////////////////////////////////////////////

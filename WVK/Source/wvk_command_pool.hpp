@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (c) 2025 Metelev Met-CH4-An Andrey
+// Project Lead: Metelev Andrey
+// Main Technical Assistant: StarDev aka ChatGPT
 #ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
 #define CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
 ////////////////////////////////////////////////////////////////
