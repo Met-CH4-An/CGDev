@@ -1,6 +1,9 @@
 # CGDev
 
-License: AGPL-3.0-only
+SPDX-License-Identifier: AGPL-3.0-or-later  
+Copyright (c) 2025 Metelev Met-CH4-An Andrey  
+Project Lead: Metelev Andrey  
+Main Technical Assistant: StarDev aka ChatGPT  
 
 # Настройка пользователя (один раз)
 git config --global user.name "Твоё Имя"
