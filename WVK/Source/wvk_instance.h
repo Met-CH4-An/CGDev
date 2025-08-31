@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_INSTANCE_H
 #define CGDEV_WVK_SOURCE__WVK_INSTANCE_H
 ////////////////////////////////////////////////////////////////
@@ -188,13 +189,16 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			friend class WvkPhysicalDevice;
 			friend class WvkLogicalDevice;
-			friend class CGDev::wvk::Extensions::WvkDebugUtilsMessenger;
+			friend class Extensions::WvkDebugUtilsMessenger;
+			friend class Extensions::WvkSurface;
+			friend class Extensions::WvkSwapchain;
 			inline const WvkDispatchTableUptr& getWvkDispatchTable(void) const noexcept;
 			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\@brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			friend class WvkDispatchTable;
 			friend class CGDev::wvk::Extensions::WvkDebugUtilsMessenger;
 			inline const VkInstance& getVkInstance(void) const noexcept;			
 

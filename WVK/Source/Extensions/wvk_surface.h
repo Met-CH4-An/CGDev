@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_SURFACE_H
 #define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_SURFACE_H
 ////////////////////////////////////////////////////////////////
@@ -26,6 +27,7 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct WvkSurfacePlatformCreateInfo {
+				WvkInstancePtr wvk_instance_ptr = nullptr;
 			}; // struct WvkSurfacePlatformCreateInfo
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,10 +35,36 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct WvkSurfaceCreateInfo {
-				//WvkInstanceDispatchTablePtr wvk_instance_dt_ptr = nullptr;
-				//WvkKhrSurfaceDTPtr wvk_khr_surface_dt = nullptr;
-				//WvkKhrGetSurfaceCapabilities2DispatchTablePtr wvk_khr_get_surface_capabilities2_dispatch_table = nullptr;
-				WvkSurfacePlatformCreateInfo* wvk_surface_platform_create_info = nullptr;
+				WvkInstancePtr wvk_instance_ptr = nullptr;
+				union {
+					struct { // Windows
+						void* hinstance;   // HINSTANCE
+						void* hwnd;        // HWND
+					} win32;
+
+					struct { // Linux XCB
+						void* connection;  // xcb_connection_t*
+						uint64_t window;   // xcb_window_t
+					} xcb;
+
+					struct { // Linux Xlib
+						void* display;     // Display*
+						uint64_t window;   // Window
+					} xlib;
+
+					struct { // Linux Wayland
+						void* display;     // wl_display*
+						void* surface;     // wl_surface*
+					} wayland;
+
+					struct { // Android
+						void* window;      // ANativeWindow*
+					} android;
+
+					struct { // macOS
+						void* nsView;      // NSView* / CAMetalLayer*
+					} macos;
+				};
 			}; // struct WvkSurfaceCreateInfo
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,7 +403,9 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				WvkStatus requestScalingCompatibility(const WvkPhysicalDevicePtr wvk_physical_device_ptr, const VkPresentModeKHR& vk_present_mode, VkSurfacePresentScalingCapabilitiesEXT& out) const noexcept;		
-
+				inline VkSurfaceKHR getVkSurface() const noexcept {
+					return m_vk_surface;
+				}
 			private:
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

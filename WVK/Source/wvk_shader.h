@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_SHADER_H
 #define CGDEV_WVK_SOURCE__WVK_SHADER_H
 ////////////////////////////////////////////////////////////////
@@ -23,8 +24,37 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		enum class WvkShaderStageFlags {
+			WVK_SHADER_STAGE_UNKNOWN = 0,
+			WVK_SHADER_STAGE_VERTEX_BIT = VK_SHADER_STAGE_VERTEX_BIT,
+			WVK_SHADER_STAGE_TESSELLATION_CONTROL_BIT = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+			WVK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+			WVK_SHADER_STAGE_GEOMETRY_BIT = VK_SHADER_STAGE_GEOMETRY_BIT,
+			WVK_SHADER_STAGE_FRAGMENT_BIT = VK_SHADER_STAGE_FRAGMENT_BIT,
+			WVK_SHADER_STAGE_COMPUTE_BIT = VK_SHADER_STAGE_COMPUTE_BIT,
+			WVK_SHADER_STAGE_ALL_GRAPHICS = VK_SHADER_STAGE_ALL_GRAPHICS,
+			WVK_SHADER_STAGE_RAY_GEN = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
+			WVK_SHADER_STAGE_MISS = VK_SHADER_STAGE_MISS_BIT_KHR,
+			WVK_SHADER_STAGE_CLOSEST_HIT = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
+			WVK_SHADER_STAGE_ANY_HIT = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
+		}; // enum class WvkShaderStageFlags
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		struct WvkShaderStageCreateInfo {
+			WvkShaderStageFlags stage = WvkShaderStageFlags::WVK_SHADER_STAGE_UNKNOWN;
+			std::vector<std::byte> code;
+		}; // struct WvkShaderStageCreateInfo
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkShaderCreateInfo {
 			WvkLogicalDevicePtr wvk_logical_device_ptr = nullptr;
+			std::vector<WvkShaderStageCreateInfo> wvk_shader_stage_create_infos;
 		}; // struct WvkShaderCreateInfo
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,6 +95,12 @@ namespace CGDev {
 		// hpp
 		public:
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline WvkStatus getBinary(std::vector<WvkShaderStageCreateInfo>& wvk_shader_stages) const noexcept;
+
 		// hpp
 		private:
 
@@ -96,7 +132,7 @@ namespace CGDev {
 
 			VkShaderModule m_vk_shader_module = VK_NULL_HANDLE;
 #if WVK_EXT_shader_object == WVK_ENABLE
-			VkShaderEXT m_vk_shader = VK_NULL_HANDLE;
+			std::vector<VkShaderEXT> m_vk_shaders;
 #endif
 		}; // class WvkShader
 
@@ -105,5 +141,6 @@ namespace CGDev {
 } // namespace CGDev
 
 #include "wvk_shader.hpp"
+#include "wvk_shader_helper.h"
 
 #endif // CGDEV_WVK_SOURCE__WVK_SHADER_H

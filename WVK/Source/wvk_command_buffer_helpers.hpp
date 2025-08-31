@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_HELPERS_HPP
 #define CGDEV_WVK_SOURCE__WVK_COMMAND_BUFFER_HELPERS_HPP
 ////////////////////////////////////////////////////////////////
@@ -49,7 +50,9 @@ namespace CGDev {
 
         inline WvkCommandBufferBeginHelper& WvkCommandBufferBeginHelper::withRenderPass(const WvkRenderPassPtr& rp, const WvkFrameBufferPtr& fb) noexcept {
             ensureInheritanceAttached();
-            m_inheritance_info.subpass = 0;            
+            m_inheritance_info.renderPass = (VkRenderPass)0x1;
+            m_inheritance_info.subpass = 0; 
+			m_inheritance_info.framebuffer = (VkFramebuffer)0x1;
             return *this;
         }
 

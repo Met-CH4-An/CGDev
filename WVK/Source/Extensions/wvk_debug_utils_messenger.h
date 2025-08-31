@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE_EXTENSION__WVK_DEBUG_UTILS_MESSENGER_H
 #define CGDEV_WVK_SOURCE_EXTENSION__WVK_DEBUG_UTILS_MESSENGER_H
 ////////////////////////////////////////////////////////////////
@@ -97,13 +98,20 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				void destroy(void) noexcept;
 
+			// hpp
 			public:
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				bool hasStatus(const VknDebugUtilsMode& mode) const noexcept;
+				inline WvkStatus hasIssues(const VknDebugUtilsMode& mode = VknDebugUtilsMode::UNKNOWN) noexcept;
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				inline WvkStatus hasErrorsWarnings(void) noexcept;
 
 			// cpp
 			private:
@@ -137,7 +145,7 @@ namespace CGDev {
 			private:
 
 				WvkDebugUtilsMessengerCreateInfo m_create_info = {};
-				VkDebugUtilsMessengerEXT m_vk_debug_utils_messenger = nullptr;
+				VkDebugUtilsMessengerEXT m_vk_debug_utils_messenger = VK_NULL_HANDLE;
 				std::vector<DebugMessage> m_debug_message_collection;
 			}; // class WvkDebugUtilsMessenger
 

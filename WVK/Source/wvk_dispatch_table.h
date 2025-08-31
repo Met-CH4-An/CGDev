@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_DISPATCH_TABLE_H
 #define CGDEV_WVK_SOURCE__WVK_DISPATCH_TABLE_H
 ////////////////////////////////////////////////////////////////
@@ -14,15 +15,19 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+	#include <windows.h>
+	#include "vulkan/vulkan_win32.h"
+#endif
 
 namespace CGDev {
 
 	namespace wvk {
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkVulkanProcedureInfo {
 			const char* name;       ///< Название функции Vulkan, например "vkDestroySurfaceKHR"
 			void** targetPtr;       ///< Указатель на переменную, куда будет сохранён загруженный адрес
@@ -33,21 +38,21 @@ namespace CGDev {
 
 
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct WvkDispatchTableCreateInfo {
-			VkInstance vkInstance = VK_NULL_HANDLE;
-			VkDevice vkDevice = VK_NULL_HANDLE;
+			WvkInstancePtr wvk_instance_ptr = nullptr;
+			WvkLogicalDevicePtr wvk_logical_device_ptr = nullptr;
 		}; // class WvkDispatchTableCreateInfo
 
 
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		/*!	\brief
 		*/
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		class WvkDispatchTable : public GpuObject {
 
 		public:
@@ -116,10 +121,15 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept;
 			inline VkResult wvkCreateCommandPool(const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) const noexcept;
+			inline VkResult wvkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) const noexcept;
 			inline VkResult wvkResetCommandPool(VkCommandPool commandPool, VkCommandPoolResetFlags flags) const noexcept;
+			inline void wvkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) const noexcept;
 			inline void wvkDestroyCommandPool(VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline VkResult wvkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) const noexcept;
 			inline VkResult wvkAllocateCommandBuffers(const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) const noexcept;
+			inline void wvkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
 			inline void wvkFreeCommandBuffers(VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) const noexcept;
 						
 			// ~~~~~~~~~~~~~~~~
@@ -146,13 +156,71 @@ namespace CGDev {
 			// [Version] 1.0
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) const noexcept;
-			inline void wvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept;
-
+			inline VkResult wvkCreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) const noexcept;
+			inline void wvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept;			
+			inline void wvkDestroyShaderModule(VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) const noexcept;
+			
 			// ~~~~~~~~~~~~~~~~
 			// [Extension] VK_EXT_shader_object
 			// ~~~~~~~~~~~~~~~~
 			inline VkResult wvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept;
-			inline void wvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline VkResult wvkCreateShaders(uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept;
+			inline void wvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept;			
+			inline void wvkDestroyShader(VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline VkResult wvkGetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData) const noexcept;
+			inline VkResult wvkGetShaderBinaryDataEXT(VkShaderEXT shader, size_t* pDataSize, void* pData) const noexcept;
+			
+			// =======================================
+			// [Category]: Image
+			// =======================================
+			
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView) const noexcept;
+			inline void wvkCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) const noexcept;
+			inline void wvkCmdEndRendering(VkCommandBuffer commandBuffer) const noexcept;
+			inline void wvkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) const noexcept;
+			inline void wvkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) const noexcept;
+			inline VkResult wvkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) const noexcept;
+			// =======================================
+			// [Category]: Fence
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) const noexcept;
+			inline VkResult wvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout) const noexcept;
+			inline VkResult wvkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) const noexcept;
+
+			// =======================================
+			// [Category]: Swapchain
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_swapchain
+			// ~~~~~~~~~~~~~~~~
+			inline VkResult wvkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) const noexcept;
+			inline VkResult wvkCreateSwapchainKHR(const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) const noexcept;
+			inline void wvkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline void wvkDestroySwapchainKHR(VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) const noexcept;
+			inline VkResult wvkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) const noexcept;
+			inline VkResult wvkGetSwapchainImagesKHR(VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) const noexcept;
+			inline VkResult wvkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) const noexcept;
+			inline VkResult wvkAcquireNextImageKHR(VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) const noexcept;
+			inline VkResult wvkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) const noexcept;
+			
+			// =======================================
+			// [Category]: Surface
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_surface
+			// ~~~~~~~~~~~~~~~~
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+			inline VkResult wvkCreateWin32SurfaceKHR(const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
 
 			// =======================================
 			// [Category]: Debug
@@ -302,6 +370,47 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			PFN_vkCreateShadersEXT m_vkCreateShadersEXT = VK_NULL_HANDLE;
 			PFN_vkDestroyShaderEXT m_vkDestroyShaderEXT = VK_NULL_HANDLE;
+			PFN_vkGetShaderBinaryDataEXT m_vkGetShaderBinaryDataEXT = VK_NULL_HANDLE;
+			PFN_vkCreateImageView m_vkCreateImageView;
+			PFN_vkCmdBeginRenderingKHR m_vkCmdBeginRenderingKHR;
+			PFN_vkCmdEndRenderingKHR m_vkCmdEndRenderingKHR;
+			PFN_vkCmdPipelineBarrier m_vkCmdPipelineBarrier;
+			PFN_vkGetDeviceQueue m_vkGetDeviceQueue;
+			PFN_vkQueueSubmit m_vkQueueSubmit;
+			// =======================================
+			// [Category]: Fence
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateFence m_vkCreateFence = VK_NULL_HANDLE;
+			PFN_vkWaitForFences m_vkWaitForFences = VK_NULL_HANDLE;
+			PFN_vkResetFences m_vkResetFences = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Swapchain
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_swapchain
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkCreateSwapchainKHR m_vkCreateSwapchainKHR = VK_NULL_HANDLE;
+			PFN_vkDestroySwapchainKHR m_vkDestroySwapchainKHR = VK_NULL_HANDLE;
+			PFN_vkGetSwapchainImagesKHR m_vkGetSwapchainImagesKHR = VK_NULL_HANDLE;
+			PFN_vkAcquireNextImageKHR m_vkAcquireNextImageKHR = VK_NULL_HANDLE;
+			PFN_vkQueuePresentKHR m_vkQueuePresentKHR = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Surface
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_surface
+			// ~~~~~~~~~~~~~~~~
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+			PFN_vkCreateWin32SurfaceKHR m_vkCreateWin32SurfaceKHR = VK_NULL_HANDLE;
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
 
 			// =======================================
 			// [Category]: Debug
@@ -324,57 +433,102 @@ namespace CGDev {
 
 		public:
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkDispatchTable(void) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			~WvkDispatchTable(void) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus create(const WvkDispatchTableCreateInfo& create_info) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*! \brief
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			void destroy(void) noexcept;
 			
 		// cpp
+		public:
+
+		// hpp
+		public:
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkInstancePtr getWvkInstance(void) const noexcept;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkLogicalDevicePtr getWvkLogicalDevice(void) const noexcept;
+
+		// hpp
+		private:		
+
+		// cpp
 		private:
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*! \brief
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus validationCreateInfo(const WvkDispatchTableCreateInfo& create_info) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*! \brief
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus create(void) noexcept;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkStatus loadProcedure(void) noexcept;
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*! \brief
+			friend class mswindows::WvkDispatchTableMSWindows;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus loadProcedure(std::function<void* (const char*)> getProc, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept;
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus loadProcedure(std::function<void* (const char*)> getProc, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_proc_infos) const noexcept;
 
+		// data
 		private:
 
-			struct WvkDispatchTableImpl;
-			std::unique_ptr<WvkDispatchTableImpl> m_dispatch_table_impl = nullptr;
-
 			WvkDispatchTableCreateInfo m_create_info;
+
+			// ================================
+			// [Platform]: MSWIndows
+			// ================================
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+		// cpp
+		private:
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			WvkStatus createMSWindows(void) noexcept;
+
+		// data
+		private:
+			HMODULE m_vulkan_dll = NULL;
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+
 		}; // class WvkDispatchTable
 
 	} // namespace wvk

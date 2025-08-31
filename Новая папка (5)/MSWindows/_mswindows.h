@@ -14,6 +14,7 @@
 // секция для остального
 ////////////////////////////////////////////////////////////////
 #include <Windows.h>
+#include "vulkan/vulkan_win32.h"
 
 namespace CGDev {
 

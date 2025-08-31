@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_STATUS_H
 #define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__VKN_STATUS_H
 ////////////////////////////////////////////////////////////////

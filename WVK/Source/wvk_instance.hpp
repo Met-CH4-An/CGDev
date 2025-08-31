@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_INSTANCE_HPP
 #define CGDEV_WVK_SOURCE__WVK_INSTANCE_HPP
 ////////////////////////////////////////////////////////////////

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN__WVK_BASE_OBJECT_H
 #define CGDEV_SOURCE_GPU_PRIVATE_VULKAN__WVK_BASE_OBJECT_H
 ////////////////////////////////////////////////////////////////

@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\Source\wvk_physical_device.cpp" />
     <ClCompile Include="..\..\Source\wvk_queue.cpp" />
     <ClCompile Include="..\..\Source\wvk_status.cpp" />
-    <ClCompile Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.cpp">
-      <Filter>MSWindows</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Extensions\wvk_debug_utils_messenger.cpp">
       <Filter>Extensions</Filter>
     </ClCompile>
@@ -31,6 +28,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\wvk_dispatch_table.cpp" />
     <ClCompile Include="..\..\Source\wvk_shader.cpp" />
+    <ClCompile Include="..\..\Source\Extensions\wvk_swapchain.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\_wvk.h" />
@@ -52,15 +52,6 @@
     <ClInclude Include="..\..\Source\wvk_queue.hpp" />
     <ClInclude Include="..\..\Source\wvk_status.h" />
     <ClInclude Include="..\..\Source\wvk_status.hpp" />
-    <ClInclude Include="..\..\Source\MSWindows\_mswindows.h">
-      <Filter>MSWindows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.h">
-      <Filter>MSWindows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.hpp">
-      <Filter>MSWindows</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Extensions\_extensions.h">
       <Filter>Extensions</Filter>
     </ClInclude>
@@ -108,11 +99,17 @@
     <ClInclude Include="..\..\Source\wvk_command_buffer_helpers.hpp" />
     <ClInclude Include="..\..\Source\wvk_shader.h" />
     <ClInclude Include="..\..\Source\wvk_shader.hpp" />
+    <ClInclude Include="..\..\Source\wvk_shader_helper.h" />
+    <ClInclude Include="..\..\Source\wvk_shader_helper.hpp" />
+    <ClInclude Include="..\..\Source\Extensions\wvk_swapchain.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Extensions\wvk_swapchain.hpp">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\wvk_fence.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="MSWindows">
-      <UniqueIdentifier>{2f4457ab-554a-433f-aacd-8de2e12bb7e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Extensions">
       <UniqueIdentifier>{80520045-47bc-4f07-b8cc-9757cefbb787}</UniqueIdentifier>
     </Filter>

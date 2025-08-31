@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -39,6 +40,7 @@ namespace CGDev {
         CGDev::wvk::WvkInstanceUptr WvkBaseTest::wvk_instance_ptr;
         CGDev::wvk::WvkLogicalDeviceUptr WvkBaseTest::wvk_logical_device_ptr;
         CGDev::wvk::WvkCommandPoolUptr WvkBaseTest::wvk_command_pool_ptr;
+        CGDev::wvk::WvkShaderUptr WvkBaseTest::wvk_shader_ptr;
         CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr WvkBaseTest::wvk_debug_utils_messenger_ptr;
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,14 +134,17 @@ namespace CGDev {
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // WvkShader
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //{
-            //    CGDev::wvk::WvkInstanceCreateInfo _create_info;
+            {
+                auto _create_info = CGDev::wvk::WvkShaderHelper::graphics(wvk_logical_device_ptr.get())
+                    .vertex("D:\\Laboratory\\CGDev\\Extern\\triangle_vs.spv")
+                    .fragment("D:\\Laboratory\\CGDev\\Extern\\triangle_fs.spv")
+                    .build();
 
-            //    wvk_instance_ptr = std::make_unique<CGDev::wvk::WvkInstance>();
-            //    auto _wvk_res = wvk_instance_ptr->create(_create_info);
+                wvk_shader_ptr = std::make_unique<CGDev::wvk::WvkShader>();
+                auto _wvk_res = wvk_shader_ptr->create(_create_info);
 
-            //    ASSERT_EQ(_wvk_res, true);
-            //}
+                ASSERT_EQ(_wvk_res, true);
+            }
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

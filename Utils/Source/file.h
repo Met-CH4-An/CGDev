@@ -1,5 +1,6 @@
-#ifndef CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP
-#define CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP
+// SPDX-License-Identifier: AGPL-3.0-or-later
+#ifndef CGDEV_UTILS_SOURCE__FILE_H
+#define CGDEV_UTILS_SOURCE__FILE_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -12,27 +13,23 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include <vector>
+#include <fstream>
 
 namespace CGDev {
 
 	namespace wvk {
 
-		namespace mswindows {
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			inline PFN_vkGetInstanceProcAddr WvkDispatchTableMSWindows::getVkGetInstanceProcAddr(void) const noexcept {
-				return m_vkGetInstanceProcAddr;
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		} // namespace mswindows
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		inline std::vector<std::byte> loadFileAsChar(const std::string& filename) noexcept;
 
 	} // namespace wvk
 
 } // namespace CGDev
 
-#endif // CGDEV_WVK_SOURCE_MSWINDOWS__WVK_DISPATCH_TABLE_MSWINDOWS_HPP
+#include "file.hpp"
+
+#endif // CGDEV_UTILS_SOURCE__FILE_H

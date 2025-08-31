@@ -1,5 +1,6 @@
-#ifndef CGDEV_SOURCE_TESTS__VKN_PHYSICAL_DEVICE_H
-#define CGDEV_SOURCE_TESTS__VKN_PHYSICAL_DEVICE_H
+// SPDX-License-Identifier: AGPL-3.0-or-later
+#ifndef CGDEV_WVK_TESTS_SOURCE__WVK_PHYSICAL_DEVICE_H
+#define CGDEV_WVK_TESTS_SOURCE__WVK_PHYSICAL_DEVICE_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -68,4 +69,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_TESTS__VKN_PHYSICAL_DEVICE_H
+#endif // CGDEV_WVK_TESTS_SOURCE__WVK_PHYSICAL_DEVICE_H

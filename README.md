@@ -1,5 +1,7 @@
 # CGDev
 
+License: AGPL-3.0-only
+
 # Настройка пользователя (один раз)
 git config --global user.name "Твоё Имя"
 git config --global user.email "email@пример.com"

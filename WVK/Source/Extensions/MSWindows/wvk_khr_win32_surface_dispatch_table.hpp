@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_WIN32_SURFACE_HPP
 #define CGDEV_WVK_SOURCE_EXTENSIONS__WVK_KHR_WIN32_SURFACE_HPP
 ////////////////////////////////////////////////////////////////

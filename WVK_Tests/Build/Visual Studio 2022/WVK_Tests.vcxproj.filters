@@ -11,6 +11,7 @@
     <ClCompile Include="..\..\..\WVK\Source\wvk_all.cpp" />
     <ClCompile Include="..\..\Source\vkn_status_test.cpp" />
     <ClCompile Include="..\..\..\Extern\googletest-1.17.0\googletest\src\gtest-all.cc" />
+    <ClCompile Include="..\..\Source\wvk_shader_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\tests.h" />
@@ -21,5 +22,6 @@
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />
     <ClInclude Include="..\..\Source\wvk_surface_test.h" />
     <ClInclude Include="..\..\Source\vkn_status_test.h" />
+    <ClInclude Include="..\..\Source\wvk_shader_test.h" />
   </ItemGroup>
 </Project>

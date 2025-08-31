@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN___VULKAN_H
 #define CGDEV_SOURCE_GPU_PRIVATE_VULKAN___VULKAN_H
 ////////////////////////////////////////////////////////////////
@@ -23,6 +24,9 @@
 #include <type_traits>
 #include <span>
 #include <iterator>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <unordered_set>
 #include <unordered_map>
 #include <typeindex>
@@ -189,18 +193,26 @@ namespace CGDev {
 #define WVK_ENABLE 1
 
 #define WVK_LAYER_KHRONOS_validation WVK_ENABLE
+
 #define WVK_KHR_get_physical_device_properties2 WVK_ENABLE
 #define WVK_KHR_get_surface_capabilities2 WVK_ENABLE
 #define WVK_KHR_device_group_creation WVK_ENABLE
+#define WVK_KHR_surface WVK_ENABLE
+#define WVK_KHR_win32_surface WVK_ENABLE
 
 #define WVK_EXT_shader_object WVK_ENABLE
 #define WVK_KHR_dynamic_rendering_local_read WVK_DISABLE
 #define WVK_KHR_dynamic_rendering WVK_DISABLE
 #define WVK_KHR_create_renderpass2 WVK_DISABLE
 #define WVK_KHR_depth_stencil_resolve WVK_DISABLE
-#define WVK_KHR_maintenance2 WVK_DISABLE
-#define WVK_KHR_maintenance1 WVK_DISABLE
+#define WVK_KHR_maintenance2 WVK_ENABLE
+#define WVK_KHR_maintenance1 WVK_ENABLE
 #define WVK_KHR_multiview WVK_DISABLE
+
+#if WVK_KHR_win32_surface == WVK_ENABLE
+	#undef WVK_KHR_surface
+	#define WVK_KHR_surface WVK_ENABLE
+#endif
 
 #if WVK_EXT_shader_object == WVK_ENABLE
 	#undef WVK_KHR_get_physical_device_properties2
@@ -243,6 +255,39 @@ namespace CGDev {
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_surface
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_KHR_surface WVK_ENABLE
+#if WVK_KHR_surface == WVK_ENABLE
+#define WVK_KHR_surface_name \
+	X("VK_KHR_surface")
+#else
+#define WVK_KHR_surface_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_win32_surface
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_KHR_win32_surface WVK_ENABLE
+#if WVK_KHR_win32_surface == WVK_ENABLE
+#define WVK_KHR_win32_surface_name \
+	X("VK_KHR_win32_surface")
+#else
+#define WVK_KHR_win32_surface_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_EXT_debug_utils
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_EXT_debug_utils WVK_ENABLE
+#if WVK_EXT_debug_utils == WVK_ENABLE
+#define WVK_EXT_debug_utils_name \
+	X("VK_EXT_debug_utils")
+#else
+#define WVK_EXT_debug_utils_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // VK_KHR_get_physical_device_properties2
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #if WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
@@ -271,6 +316,8 @@ namespace CGDev {
 #else
 #define WVK_KHR_device_group_creation_name
 #endif
+
+// logdev
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // VK_EXT_shader_object
@@ -353,14 +400,25 @@ namespace CGDev {
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_EXT_debug_utils
+// VK_KHR_swapchain
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_EXT_debug_utils WVK_ENABLE
-#if WVK_EXT_debug_utils == WVK_ENABLE
-	#define WVK_EXT_debug_utils_name \
-	X("VK_EXT_debug_utils")
+#define WVK_KHR_swapchain WVK_ENABLE
+#if WVK_KHR_swapchain == WVK_ENABLE
+#define WVK_KHR_swapchain_name \
+	X("VK_KHR_swapchain")
 #else
-	#define WVK_EXT_debug_utils_name
+#define WVK_KHR_swapchain_name
+#endif
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// VK_KHR_synchronization2
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#define WVK_KHR_synchronization2 WVK_ENABLE
+#if WVK_KHR_synchronization2 == WVK_ENABLE
+#define WVK_KHR_synchronization2_name \
+	X("VK_KHR_synchronization2")
+#else
+#define WVK_KHR_synchronization2_name
 #endif
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,10 +433,10 @@ namespace CGDev {
 #define WVK_COMPILE_TIME_INSTANCE_EXTENSIONS \
 	WVK_EXT_debug_utils_name \
 	WVK_KHR_get_physical_device_properties2_name \
-	X("VK_KHR_surface") \
 	WVK_KHR_get_surface_capabilities2_name \
 	/*X("VK_KHR_surface_protected_capabilities")*/\
-	X("VK_KHR_win32_surface") \
+	WVK_KHR_surface_name \
+	WVK_KHR_win32_surface_name \
 	WVK_KHR_device_group_creation_name
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,7 +450,9 @@ namespace CGDev {
 	WVK_KHR_depth_stencil_resolve_name\
 	WVK_KHR_multiview_name\
 	WVK_KHR_maintenance1_name\
-	WVK_KHR_maintenance2_name
+	WVK_KHR_maintenance2_name\
+	WVK_KHR_swapchain_name\
+	WVK_KHR_synchronization2_name
 
 
 
@@ -679,6 +739,20 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		class WvkShader;
+		using WvkShaderPtr = WvkShader * ;
+		using WvkShaderPtrVec1 = std::vector<WvkShaderPtr>;
+		using WvkShaderSptr = std::shared_ptr<WvkShader>;
+		using WvkShaderSptrVec1 = std::vector<WvkShaderSptr>;
+		using WvkShaderUptr = std::unique_ptr<WvkShader>;
+		using WvkShaderUptrVec1 = std::vector<WvkShaderSptr>;
+		using WvkShaderWptr = std::weak_ptr<WvkShader>;
+		using WvkShaderWptrVec1 = std::vector<WvkShaderWptr>;
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		class WvkImage;
 		using WvkImagePtr = WvkImage * ;
 		using WvkImagePtrVec1 = std::vector<WvkImagePtr>;
@@ -693,8 +767,28 @@ namespace CGDev {
 		/*!	\brief
 		*/
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		class WvkFence;
+		using WvkFencePtr = WvkFence * ;
+		using WvkFencePtrVec1 = std::vector<WvkFencePtr>;
+		using WvkFenceSptr = std::shared_ptr<WvkFence>;
+		using WvkFenceSptrVec1 = std::vector<WvkFenceSptr>;
+		using WvkFenceUptr = std::unique_ptr<WvkFence>;
+		using WvkFenceUptrVec1 = std::vector<WvkFenceSptr>;
+		using WvkFenceWptr = std::weak_ptr<WvkFence>;
+		using WvkFenceWptrVec1 = std::vector<WvkFenceWptr>;
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		/*!	\brief
+		*/
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		namespace mswindows {
+			class WvkDispatchTableMSWindows;
+		}
+
 		namespace Extensions {
 			class WvkDebugUtilsMessenger;
+			class WvkSwapchain;
+			class WvkSurface;
 		}
 
 

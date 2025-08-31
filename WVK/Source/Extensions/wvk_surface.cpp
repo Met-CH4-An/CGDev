@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -15,6 +16,7 @@
 using WvkSurfacePlatform = CGDev::wvk::Extensions::mswindows::WvkSurfaceMSWindows;
 
 #include "../wvk_physical_device.h"
+#include "../wvk_instance.h" 
 
 namespace CGDev {
 
@@ -604,10 +606,18 @@ namespace CGDev {
 					
 			WvkStatus WvkSurface::createVkSurface() noexcept {
 				WvkStatus _status;
+
+				VkWin32SurfaceCreateInfoKHR _create_info = {
+					.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+					.pNext = nullptr,
+					.flags = 0,
+					.hinstance = static_cast<HINSTANCE>(m_create_info.win32.hinstance),
+					.hwnd = static_cast<HWND>(m_create_info.win32.hwnd),
+				};
+				auto _vk_result = m_create_info.wvk_instance_ptr->getWvkDispatchTable()->wvkCreateWin32SurfaceKHR(&_create_info, nullptr, &m_vk_surface);
+				//m_surface_impl->create(*static_cast<mswindows::WvkSurfaceMSWindowsCreateInfo*>(m_create_info.wvk_surface_platform_create_info));
 						
-				m_surface_impl->create(*static_cast<mswindows::WvkSurfaceMSWindowsCreateInfo*>(m_create_info.wvk_surface_platform_create_info));
-						
-				m_surface_impl->requestVkSurface(m_vk_surface);
+				//m_surface_impl->requestVkSurface(m_vk_surface);
 
 				return _status.setOk();
 			}

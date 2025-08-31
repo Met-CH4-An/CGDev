@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN_EXTENSIONS___EXTENSIONS_H
 #define CGDEV_SOURCE_GPU_PRIVATE_VULKAN_EXTENSIONS___EXTENSIONS_H
 ////////////////////////////////////////////////////////////////
@@ -111,7 +112,22 @@ namespace CGDev {
 					using			WvkSurfaceUptr = std::unique_ptr<WvkSurface>;
 					using			WvkSurfaceUptrArr1 = std::vector<WvkSurfaceUptr>;
 					using			WvkSurfaceWptr = std::weak_ptr<WvkSurface>;
-					using			WvkSurfaceWptrArr1 = std::vector<WvkSurfaceWptr>;					
+					using			WvkSurfaceWptrArr1 = std::vector<WvkSurfaceWptr>;
+
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					/*!	\brief
+					*/
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+					class			WvkSwapchain;
+					using			WvkSwapchainPtr = WvkSwapchain*;
+					using			WvkSwapchainPtrArr1 = std::vector<WvkSwapchainPtr>;
+					using			WvkSwapchainSptr = std::shared_ptr<WvkSwapchain>;
+					using			WvkSwapchainSptrArr1 = std::vector<WvkSwapchainSptr>;
+					using			WvkSwapchainUptr = std::unique_ptr<WvkSwapchain>;
+					using			WvkSwapchainUptrArr1 = std::vector<WvkSwapchainUptr>;
+					using			WvkSwapchainWptr = std::weak_ptr<WvkSwapchain>;
+					using			WvkSwapchainWptrArr1 = std::vector<WvkSwapchainWptr>;
 					
 				} // namespace Extensions
 

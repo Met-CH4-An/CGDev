@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -243,6 +244,10 @@ namespace CGDev {
 			//	}
 			//);
 
+			VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamicRenderingFeature{};
+			dynamicRenderingFeature.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
+			dynamicRenderingFeature.dynamicRendering = VK_TRUE;
+
 
 #if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_DISABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -258,7 +263,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkPhysicalDeviceFeatures2KHR _features2_khr = {
 				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
-				.pNext = nullptr,
+				.pNext = &dynamicRenderingFeature,
 				.features = m_create_info.m_vk_physical_device_features
 			};
 			_pNext = &_features2_khr;
@@ -423,8 +428,8 @@ namespace CGDev {
 			m_wvk_dispatch_table_ptr = std::make_unique<WvkDispatchTable>();
 			
 			WvkDispatchTableCreateInfo _create_info = {
-				.vkInstance = m_create_info.wvk_instance_ptr->getVkInstance(),
-				.vkDevice = m_vk_device,
+				.wvk_instance_ptr = m_create_info.wvk_instance_ptr,
+				.wvk_logical_device_ptr = this,
 			};
 
 			_status = m_wvk_dispatch_table_ptr->create(_create_info);

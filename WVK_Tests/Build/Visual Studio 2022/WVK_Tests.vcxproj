@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\Bin\x64\Debug\</OutDir>
+    <IntDir>..\..\Bin\x64\Debug\Intermediate\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -103,7 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Laboratory\CGDev\Extern\googletest-1.17.0\googlemock\include\gmock;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googlemock\include;D:\Laboratory\CGDev\Extern\vulkan-1.4.309.0\Include;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googletest;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googletest\include;D:\Laboratory\CGDev\WVK\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Laboratory\CGDev\Utils\Source;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googlemock\include\gmock;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googlemock\include;D:\Laboratory\CGDev\Extern\vulkan-1.4.309.0\Include;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googletest;D:\Laboratory\CGDev\Extern\googletest-1.17.0\googletest\include;D:\Laboratory\CGDev\WVK\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -135,6 +139,7 @@
     <ClCompile Include="..\..\Source\wvk_command_pool_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_instance_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_physical_device_test.cpp" />
+    <ClCompile Include="..\..\Source\wvk_shader_test.cpp" />
     <ClCompile Include="..\..\Source\wvk_surface_test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +150,7 @@
     <ClInclude Include="..\..\Source\wvk_command_pool_test.h" />
     <ClInclude Include="..\..\Source\wvk_instance_test.h" />
     <ClInclude Include="..\..\Source\wvk_physical_device_test.h" />
+    <ClInclude Include="..\..\Source\wvk_shader_test.h" />
     <ClInclude Include="..\..\Source\wvk_surface_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

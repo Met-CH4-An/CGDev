@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секци€ форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ namespace CGDev {
 				_status = create();
 				if (!_status) {
 					destroy();
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkDebugUtilsMessenger::createVkCommandBuffer() is fail.");
+					return _status.set(VknStatusCode::FAIL, "\n\tWvkDebugUtilsMessenger::create() is fail.");
 				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,39 +75,15 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 			void WvkDebugUtilsMessenger::destroy(void) noexcept {
-
-				//m_create_info.wvk_debug_utils_commands->vkDestroyDebugUtilsMessengerEXT();
+				if(m_vk_debug_utils_messenger != VK_NULL_HANDLE)
+					m_create_info.wvk_instance_ptr->getWvkDispatchTable()->wvkDestroyDebugUtilsMessenger(m_create_info.wvk_instance_ptr->getVkInstance(), m_vk_debug_utils_messenger, VK_NULL_HANDLE);
 
 				// ~~~~~~~~~~~~~~~~
 				// очистка данных
 				// ~~~~~~~~~~~~~~~~
-
 				m_create_info = {};
-				m_vk_debug_utils_messenger = nullptr;
+				m_vk_debug_utils_messenger = VK_NULL_HANDLE;
 				m_debug_message_collection.clear();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-			bool WvkDebugUtilsMessenger::hasStatus(const VknDebugUtilsMode& mode) const noexcept {
-				// ‘лаги серьЄзности и типа, соответствующие переданному режиму
-				VkDebugUtilsMessageSeverityFlagsEXT _severity = 0;
-				VkDebugUtilsMessageTypeFlagsEXT _type = 0;
-
-				// ѕреобразуем режим пользовател€ в флаги Vulkan
-				convertDebugUtilsModeToVkFlags(mode, _severity, _type);
-
-				// ѕроходим по всем накопленным сообщени€м отладки
-				for (const auto& msg : m_debug_message_collection) {
-					// ѕровер€ем, соответствует ли сообщение хот€ бы одному из заданных флагов
-					if ((msg.severity & _severity) && (msg.type & _type)) {
-						return true; // Ќайдено соответствующее сообщение
-					}
-				}
-
-				// Ќет сообщений, соответствующих заданным услови€м
-				return false;
 			}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -243,7 +220,9 @@ namespace CGDev {
 					_msg.message = pCallbackData->pMessage;
 					_this->m_debug_message_collection.push_back(std::move(_msg));
 				}
-
+				
+				std::cerr << pCallbackData->pMessage << std::endl;
+				
 				return VK_FALSE; // не прерываем выполнение
 			}
 

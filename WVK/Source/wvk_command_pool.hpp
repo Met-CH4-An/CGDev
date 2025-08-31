@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
 #define CGDEV_WVK_SOURCE__WVK_COMMAND_POOL_HPP
 ////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ namespace CGDev {
 			};
 
 			std::vector<VkCommandBuffer> _vk_cmd_buffers(_count, VK_NULL_HANDLE);
-			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkAllocateCommandBuffers(&_allocate_info, _vk_cmd_buffers.data());
+			auto _vk_result = m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkAllocateCommandBuffers(&_allocate_info, _vk_cmd_buffers.data());
 
 			if (_vk_result != VK_SUCCESS) {
 				switch (_vk_result) {
@@ -147,7 +148,7 @@ namespace CGDev {
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					// Освождаем VkCommandBuffer
 					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkFreeCommandBuffers(m_vk_command_pool, _count, _vk_cmd_buffers.data());
+					m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkFreeCommandBuffers(m_vk_command_pool, _count, _vk_cmd_buffers.data());
 
 					wvk_cmd_buffers.clear();
 
@@ -180,7 +181,7 @@ namespace CGDev {
 			{
 				_vk_cmd_buffers.push_back(buf);
 			}
-			m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkFreeCommandBuffers(m_vk_command_pool, static_cast<uint32_t>(_vk_cmd_buffers.size()), _vk_cmd_buffers.data());
+			m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkFreeCommandBuffers(m_vk_command_pool, static_cast<uint32_t>(_vk_cmd_buffers.size()), _vk_cmd_buffers.data());
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Проходим по созданным WvkCommandBuffer

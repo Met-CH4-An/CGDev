@@ -1,4 +1,5 @@
-﻿#ifndef CGDEV_WVK_SOURCE__WVK_PHYSICAL_DEVICE_H
+﻿// SPDX-License-Identifier: AGPL-3.0-or-later
+#ifndef CGDEV_WVK_SOURCE__WVK_PHYSICAL_DEVICE_H
 #define CGDEV_WVK_SOURCE__WVK_PHYSICAL_DEVICE_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации

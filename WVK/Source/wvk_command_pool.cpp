@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ namespace CGDev {
 				return _status.set(VknStatusCode::FAIL, "\n\tWvkCommandPool::createVkCommandPool() is fail.");
 			}
 
-			m_dispatch_table_ptr = m_create_info.wvk_logical_device_ptr->getDispatchTable().get();
+			m_dispatch_table_ptr = m_create_info.wvk_logical_device_ptr->getWvkDispatchTable().get();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Успех
@@ -122,7 +123,7 @@ namespace CGDev {
 				.queueFamilyIndex = m_create_info.queue_family_index.value(),
 			};
 
-			auto _vk_result = m_create_info.wvk_logical_device_ptr->getDispatchTable()->wvkCreateCommandPool(&_vk_cmd_pool_create_info, nullptr, &m_vk_command_pool);
+			auto _vk_result = m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkCreateCommandPool(&_vk_cmd_pool_create_info, nullptr, &m_vk_command_pool);
 
 			if (_vk_result != VK_SUCCESS) {
 				switch (_vk_result) {		
@@ -138,6 +139,8 @@ namespace CGDev {
 				case VK_ERROR_VALIDATION_FAILED_EXT:
 					_status.setFail("\nvkCreateInstance is VK_ERROR_VALIDATION_FAILED.");
 					break;
+				default:
+					_status.setFail("\nvkCreateInstance is UNKNOWN ERROR.");
 				}
 
 				return _status;

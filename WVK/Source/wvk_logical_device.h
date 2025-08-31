@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_H
 #define CGDEV_WVK_SOURCE__WVK_LOGICAL_DEVICE_H
 ////////////////////////////////////////////////////////////////
@@ -96,13 +97,23 @@ namespace CGDev {
 		// hpp
 		private:
 
-			friend class WvkCommandPool;
-			friend class WvkCommandBuffer;
+			friend class WvkDispatchTable;
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline const WvkDispatchTableUptr& getDispatchTable(void) const noexcept;
+			inline const VkDevice& getVkDevice(void) const noexcept;
+
+			friend class WvkCommandPool;
+			friend class WvkCommandBuffer;
+			friend class WvkShader;
+			friend class WvkFence;
+			friend class Extensions::WvkSwapchain;
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline const WvkDispatchTableUptr& getWvkDispatchTable(void) const noexcept;
 
 		// cpp
 		private:

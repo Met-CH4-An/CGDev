@@ -14,6 +14,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "../wvk_dispatch_table.h"
 
 namespace CGDev {
 
@@ -26,6 +27,7 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct WvkDispatchTableMSWindowsCreateInfo {
+				WvkDispatchTablePtr wvk_dispatch_table_ptr = nullptr;
 			}; // struct WvkDispatchTableMSWindowsCreateInfo
 
 
@@ -36,6 +38,28 @@ namespace CGDev {
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			class WvkDispatchTableMSWindows : public GpuObject {
 
+			public:
+
+				// =======================================
+				// [Category]: Surface
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Extension] VK_KHR_win32_surface
+				// ~~~~~~~~~~~~~~~~
+				inline VkResult wvkCreateWin32SurfaceKHR(const WvkSurfaceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept;
+
+			public:
+
+				// =======================================
+				// [Category]: Surface
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Extension] VK_KHR_win32_surface
+				// ~~~~~~~~~~~~~~~~
+				PFN_vkCreateWin32SurfaceKHR m_vkCreateWin32SurfaceKHR = VK_NULL_HANDLE;
+				
 			public:
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,13 +90,21 @@ namespace CGDev {
 			public:
 
 			// hpp
-			public:
+			private:
 
+				friend class WvkDispatchTable;
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				inline PFN_vkGetInstanceProcAddr getVkGetInstanceProcAddr(void) const noexcept;
+
+				friend class WvkDispatchTable;
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				/*!	\brief
+				*/
+				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				inline std::vector<WvkVulkanProcedureInfo> getWvkVulkanProcedureInfos(void) noexcept;
 
 			// cpp
 			private:
@@ -87,14 +119,15 @@ namespace CGDev {
 				/*!	\brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				WvkStatus requestVkGetInstanceProcAddr(void) noexcept;
+				WvkStatus create(void) noexcept;
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				/*!	\brief
+				/*! \brief
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				void reset(void) noexcept;
+				WvkStatus loadProcedure(void) noexcept;
 
+			// data
 			private:
 
 				WvkDispatchTableMSWindowsCreateInfo m_create_info = {};

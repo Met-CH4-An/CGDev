@@ -1,5 +1,6 @@
-#ifndef CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_BUFFER_H
-#define CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_BUFFER_H
+// SPDX-License-Identifier: AGPL-3.0-or-later
+#ifndef CGDEV_WVK_TESTS_SOURCE__WVK_COMMAND_BUFFER_H
+#define CGDEV_WVK_TESTS_SOURCE__WVK_COMMAND_BUFFER_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -62,4 +63,4 @@ namespace CGDev {
 
 } // namespace CGDev
 
-#endif // CGDEV_WVK_ITESTS_SOURCE__WVK_COMMAND_BUFFER_H
+#endif // CGDEV_WVK_TESTS_SOURCE__WVK_COMMAND_BUFFER_H

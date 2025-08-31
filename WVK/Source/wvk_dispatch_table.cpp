@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -11,68 +12,12 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
-#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
-#include "MSWindows/wvk_dispatch_table_mswindows.h"
-using WvkDispatchTablePlatform = CGDev::wvk::mswindows::WvkDispatchTableMSWindows;
-using WvkDispatchTablePlatformCreateInfo = CGDev::wvk::mswindows::WvkDispatchTableMSWindowsCreateInfo;
-#endif
+#include "wvk_instance.h"
+#include "wvk_logical_device.h"
 
 namespace CGDev {
 
 	namespace wvk {
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		struct WvkDispatchTable::WvkDispatchTableImpl {
-		public:
-			WvkDispatchTableImpl() = default;
-			~WvkDispatchTableImpl() = default;
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus create() {
-				WvkStatus _status;
-
-#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Описываем WvkDispatchTableMSWindows
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				mswindows::WvkDispatchTableMSWindowsCreateInfo _create_info = {};
-#endif
-				_status = m_dispatch_table_platform.create(_create_info);
-				if (!_status) {
-					return _status.set(VknStatusCode::FAIL, "\n\tWvkDispatchTablePlatform::create - fail.");
-				}
-
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// Успех
-				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				return _status.setOk();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void destroy() {
-				m_dispatch_table_platform.destroy();
-			}
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			PFN_vkGetInstanceProcAddr getVkGetInstanceProcAddr(void) const noexcept {
-				return m_dispatch_table_platform.getVkGetInstanceProcAddr();
-			}
-
-		private:
-
-			WvkDispatchTablePlatform m_dispatch_table_platform;
-		};
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,7 +48,16 @@ namespace CGDev {
 			_status = validationCreateInfo(create_info);
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstanceDispatchTable::validationCreateInfo - fail.");
+				return _status.setFail("WvkInstanceDispatchTable::validationCreateInfo is fail.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Создание
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			_status = create();
+			if (!_status) {
+				destroy();
+				return _status.setFail("WvkInstanceDispatchTable::create is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,7 +66,7 @@ namespace CGDev {
 			_status = loadProcedure();
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkInstanceDispatchTable::loadProcedure - fail.");
+				return _status.setFail("WvkInstanceDispatchTable::loadProcedure is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -253,6 +207,42 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~
 			m_vkCreateShadersEXT = VK_NULL_HANDLE;
 			m_vkDestroyShaderEXT = VK_NULL_HANDLE;
+			m_vkGetShaderBinaryDataEXT = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Fence
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			m_vkCreateFence = VK_NULL_HANDLE;
+			m_vkWaitForFences = VK_NULL_HANDLE;
+			m_vkResetFences = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Swapchain
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_swapchain
+			// ~~~~~~~~~~~~~~~~
+			m_vkCreateSwapchainKHR = VK_NULL_HANDLE;
+			m_vkDestroySwapchainKHR = VK_NULL_HANDLE;
+			m_vkGetSwapchainImagesKHR = VK_NULL_HANDLE;
+			m_vkAcquireNextImageKHR = VK_NULL_HANDLE;
+			m_vkQueuePresentKHR = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Surface
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Extension] VK_KHR_surface
+			// ~~~~~~~~~~~~~~~~
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+			m_vkCreateWin32SurfaceKHR = VK_NULL_HANDLE;
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
 
 			// =======================================
 			// [Category]: Debug
@@ -273,13 +263,10 @@ namespace CGDev {
 			m_vkSetDebugUtilsObjectTagEXT = VK_NULL_HANDLE;
 			m_vkSubmitDebugUtilsMessageEXT = VK_NULL_HANDLE;
 
-			if (m_dispatch_table_impl != nullptr) m_dispatch_table_impl->destroy();
-
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// очистка данных
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			m_valid = false;
-			m_dispatch_table_impl = nullptr;
 			m_create_info = {};
 		}
 
@@ -299,22 +286,33 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+		WvkStatus WvkDispatchTable::create(void) noexcept {
+			WvkStatus _status;
+
+			// ================================
+			// [Platform]: MSWIndows
+			// ================================
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS	
+			_status = createMSWindows();
+
+			if(!_status) {
+				return _status.setFail("WvkDispatchTable::createMSWindows is fail.");
+			}
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 		WvkStatus WvkDispatchTable::loadProcedure(void) noexcept {
 			WvkStatus _status;
 
 			std::vector<WvkVulkanProcedureInfo> _procedures;
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Создаём платформо-зависимую часть и получаем PFN_vkGetInstanceProcAddr
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			m_dispatch_table_impl = std::make_unique<WvkDispatchTableImpl>();
-
-			_status = m_dispatch_table_impl->create();
-			if (!_status) {
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkDispatchTableImpl::create is fail.");
-			}
-
-			m_vkGetInstanceProcAddr = m_dispatch_table_impl->getVkGetInstanceProcAddr();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Получаем процедуры, для которых не требуется VkInstance
@@ -340,14 +338,14 @@ namespace CGDev {
 			// Загрузка
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			_status = loadProcedure(
-				[this](const char* name){
+				[this](const char* name) {
 					return m_vkGetInstanceProcAddr(VK_NULL_HANDLE, name); },
-				_procedures);
+					_procedures);
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Получаем процедуры, которые можно получить только при VkInstance
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if (m_create_info.vkInstance != nullptr) {
+			if (m_create_info.wvk_instance_ptr != nullptr) {
 				_procedures.clear();
 
 				// =======================================
@@ -417,6 +415,36 @@ namespace CGDev {
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateDevice", reinterpret_cast<void**>(&m_vkCreateDevice)));
 
 				// =======================================
+				// [Category]: Swapchain
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Extension] VK_KHR_swapchain
+				// ~~~~~~~~~~~~~~~~
+#if WVK_KHR_swapchain == WVK_ENABLE
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateSwapchainKHR", reinterpret_cast<void**>(&m_vkCreateSwapchainKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroySwapchainKHR", reinterpret_cast<void**>(&m_vkDestroySwapchainKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetSwapchainImagesKHR", reinterpret_cast<void**>(&m_vkGetSwapchainImagesKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkAcquireNextImageKHR", reinterpret_cast<void**>(&m_vkAcquireNextImageKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueuePresentKHR", reinterpret_cast<void**>(&m_vkQueuePresentKHR)));
+#endif
+
+				// =======================================
+				// [Category]: Surface
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Extension] VK_KHR_surface
+				// ~~~~~~~~~~~~~~~~
+#if WVK_KHR_win32_surface == WVK_ENABLE
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateWin32SurfaceKHR", reinterpret_cast<void**>(&m_vkCreateWin32SurfaceKHR)));
+#endif
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdBeginRenderingKHR", reinterpret_cast<void**>(&m_vkCmdBeginRenderingKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdEndRenderingKHR", reinterpret_cast<void**>(&m_vkCmdEndRenderingKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdPipelineBarrier", reinterpret_cast<void**>(&m_vkCmdPipelineBarrier)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetDeviceQueue", reinterpret_cast<void**>(&m_vkGetDeviceQueue)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueSubmit", reinterpret_cast<void**>(&m_vkQueueSubmit)));
+				// =======================================
 				// [Category]: Debug
 				// =======================================
 
@@ -441,14 +469,14 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				_status = loadProcedure(
 					[this](const char* name) {
-						return m_vkGetInstanceProcAddr(m_create_info.vkInstance, name); },
+						return m_vkGetInstanceProcAddr(m_create_info.wvk_instance_ptr->getVkInstance(), name); },
 						_procedures);
 			}	
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Получаем процедуры, которые можно получить как при VkInstance, так и при VkDevice
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			if (m_create_info.vkInstance != nullptr || m_create_info.vkDevice != nullptr) {
+			if (m_create_info.wvk_instance_ptr != nullptr || m_create_info.wvk_logical_device_ptr != nullptr) {
 				_procedures.clear();
 
 				// =======================================
@@ -470,7 +498,7 @@ namespace CGDev {
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPool", reinterpret_cast<void**>(&m_vkTrimCommandPool)));
 #elif WVK_KHR_maintenance1 == WVK_ENABLE
-					_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
 #endif
 
 				// =======================================
@@ -500,24 +528,34 @@ namespace CGDev {
 #if WVK_EXT_shader_object == WVK_ENABLE
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateShadersEXT", reinterpret_cast<void**>(&m_vkCreateShadersEXT)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyShaderEXT", reinterpret_cast<void**>(&m_vkDestroyShaderEXT)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetShaderBinaryDataEXT", reinterpret_cast<void**>(&m_vkGetShaderBinaryDataEXT)));
 #endif
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateImageView", reinterpret_cast<void**>(&m_vkCreateImageView)));
+				
+				// =======================================
+				// [Category]: Fence
+				// =======================================
 
-				if (m_create_info.vkDevice != nullptr) {
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Загрузка
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateFence", reinterpret_cast<void**>(&m_vkCreateFence)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkWaitForFences", reinterpret_cast<void**>(&m_vkWaitForFences)));
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkResetFences", reinterpret_cast<void**>(&m_vkResetFences)));
+
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				// Загрузка адресов
+				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				if (m_create_info.wvk_logical_device_ptr != nullptr) {
 					_status = loadProcedure(
 						[this](const char* name) {
-							return m_vkGetDeviceProcAddr(m_create_info.vkDevice, name); },
+							return m_vkGetDeviceProcAddr(m_create_info.wvk_logical_device_ptr->getVkDevice(), name); },
 							_procedures);
 				}
 				else {
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					// Загрузка
-					// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 					_status = loadProcedure(
 						[this](const char* name) {
-							return m_vkGetInstanceProcAddr(m_create_info.vkInstance, name); },
+							return m_vkGetInstanceProcAddr(m_create_info.wvk_instance_ptr->getVkInstance(), name); },
 							_procedures);
 				}
 			}
@@ -531,14 +569,14 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkDispatchTable::loadProcedure(std::function<void* (const char*)> getProc, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_procedure_collection1) const noexcept {
+		WvkStatus WvkDispatchTable::loadProcedure(std::function<void* (const char*)> getProc, std::vector<WvkVulkanProcedureInfo>& wvk_vulkan_proc_infos) const noexcept {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Перебор всех процедур и попытка загрузки каждой
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<std::string> _failed_procedures;
-			for (const auto& it_0 : wvk_vulkan_procedure_collection1) {
+			for (const auto& it_0 : wvk_vulkan_proc_infos) {
 				// Получаем адрес функции через vkGetInstanceProcAddr и записываем в targetPtr
 				*it_0.targetPtr = getProc(it_0.name);
 
@@ -564,6 +602,48 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		// ================================
+		// [Platform]: MSWIndows
+		// ================================
+#if WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS	
+
+		WvkStatus WvkDispatchTable::createMSWindows(void) noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Загружаем Vulkan-библиотеку (vulkan-1.dll)
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_vulkan_dll = LoadLibraryA("vulkan-1.dll");
+
+			if (m_vulkan_dll == NULL) {
+				return _status.setFail("LoadLibraryA is NULL.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// получаем адрес функции vkGetInstanceProcAddr из библиотеки
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			m_vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(
+				GetProcAddress(m_vulkan_dll, "vkGetInstanceProcAddr")
+				);
+
+			if (m_vkGetInstanceProcAddr == NULL) {
+				return _status.setFail("GetProcAddress is NULL.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#endif // WVK_PLATFORM == WVK_PLATFORM_MSWINDOWS
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

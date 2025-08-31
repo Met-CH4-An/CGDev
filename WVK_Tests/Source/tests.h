@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #pragma once
 #include <iomanip>
 
@@ -38,6 +39,8 @@ namespace CGDev {
             static CGDev::wvk::WvkInstanceUptr wvk_instance_ptr;
             static CGDev::wvk::WvkLogicalDeviceUptr wvk_logical_device_ptr;
             static CGDev::wvk::WvkCommandPoolUptr wvk_command_pool_ptr;
+            static CGDev::wvk::WvkShaderUptr wvk_shader_ptr;
+            
             static CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr wvk_debug_utils_messenger_ptr;
             //inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
         };
@@ -45,14 +48,47 @@ namespace CGDev {
 	} // namespace tests
 } // namespace CGDev
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inline std::vector<char> loadFileAsChar(const std::string& filename) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + filename);
+    }
+
+    std::vector<char> spirv_code;
+    
+    file.seekg(0, std::ios::end);
+    int _length = static_cast<int>(file.tellg());
+    file.seekg(0, std::ios::beg);
+
+	spirv_code.resize(_length);
+    file.read(spirv_code.data(), spirv_code.size());
+    return spirv_code;
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Шаг 1. Глобальный флаг для завершения цикла
+// 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inline std::string loadFileAsString(const std::string& filename) {
+    std::ifstream file(filename, std::ios::in | std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + filename);
+    }
+
+    std::ostringstream contents;
+    contents << file.rdbuf();
+    return contents.str();
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Глобальный флаг для завершения цикла
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static bool g_running = true;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Шаг 2. Обработка сообщений окна (закрытие по ESC или крестик)
+// Обработка сообщений окна (закрытие по ESC или крестик)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 inline static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
@@ -70,7 +106,7 @@ inline static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LP
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Шаг 3. Функция создания окна
+// Функция создания окна
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 inline bool CreateTestWindow(HINSTANCE& outInstance, HWND& outHwnd) {
     const wchar_t* className = L"TestWindowClass";

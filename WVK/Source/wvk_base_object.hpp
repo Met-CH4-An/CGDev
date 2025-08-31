@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #ifndef CGDEV_SOURCE_GPU_PRIVATE___GPU_OBJECT_HPP
 #define CGDEV_SOURCE_GPU_PRIVATE___GPU_OBJECT_HPP
 ////////////////////////////////////////////////////////////////

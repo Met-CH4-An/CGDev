@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -55,14 +56,11 @@ namespace CGDev {
 			_wvk_cmd_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->reset();
-			auto wvk_validation = wvk_debug_utils_messenger_ptr->hasStatus(CGDev::wvk::Extensions::VknDebugUtilsMode::ERRORS_ONLY);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, false);
 		}
-		//VkDeviceGroupCommandBufferBeginInfo _vk_dev_group_cmd_buffer_begin_info = {
-		//		.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
-		//		.pNext = nullptr,
-		//		.deviceMask = 1u << 0,
-		//};
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
@@ -78,10 +76,12 @@ namespace CGDev {
 				.pInheritanceInfo = nullptr,
 			};
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_begin_info);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,10 +104,12 @@ namespace CGDev {
 				.pInheritanceInfo = nullptr,
 			};
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_begin_info);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,10 +123,12 @@ namespace CGDev {
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,10 +143,12 @@ namespace CGDev {
 				.withGroupMask(1u << 0);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,10 +163,12 @@ namespace CGDev {
 				.withOcclusionQuery(VK_TRUE);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,10 +184,12 @@ namespace CGDev {
 				.withRenderPass(nullptr, nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,10 +205,12 @@ namespace CGDev {
 				.withRenderingColor({ nullptr, nullptr });
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,10 +226,12 @@ namespace CGDev {
 				.withRenderingDepth(nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,10 +247,12 @@ namespace CGDev {
 				.withRenderingColor({ nullptr });
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,10 +268,12 @@ namespace CGDev {
 				.withRenderingDepth(nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -286,10 +304,12 @@ namespace CGDev {
 				.withInheritanceNext(_location_info);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
+			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
-			_wvk_cmd_buffers[0]->end();
+			//_wvk_cmd_buffers[0]->end();
 
 			EXPECT_EQ(_wvk_result, true);
+			EXPECT_EQ(_wvk_validation, true);
 		}
 
 	} // namespace tests

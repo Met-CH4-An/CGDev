@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 #include "wvk_base_object.cpp"
 #include "wvk_command_buffer.cpp"
 //#include "wvk_extension.cpp"
@@ -13,9 +14,8 @@
 #include "wvk_command_pool.cpp"
 #include "wvk_shader.cpp"
 
-#include "MSWindows/wvk_dispatch_table_mswindows.cpp"
-
 #include "Extensions/wvk_debug_utils_messenger.cpp"
 #include "Extensions/wvk_surface.cpp"
+#include "Extensions/wvk_swapchain.cpp"
 #include "Extensions/MSWindows/wvk_khr_win32_surface_dispatch_table.cpp"
 #include "Extensions/MSWindows/wvk_surface_mswindows.cpp"

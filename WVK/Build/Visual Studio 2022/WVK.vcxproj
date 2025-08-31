@@ -108,7 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Laboratory\CGDev\Extern\vulkan-1.4.309.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Laboratory\CGDev\Utils\Source;D:\Laboratory\CGDev\Extern\vulkan-1.4.309.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -135,8 +135,8 @@
     <ClCompile Include="..\..\Source\Extensions\MSWindows\wvk_surface_mswindows.cpp" />
     <ClCompile Include="..\..\Source\Extensions\wvk_debug_utils_messenger.cpp" />
     <ClCompile Include="..\..\Source\Extensions\wvk_surface.cpp" />
+    <ClCompile Include="..\..\Source\Extensions\wvk_swapchain.cpp" />
     <ClCompile Include="..\..\Source\Layers\wvk_layer_khronos_validation.cpp" />
-    <ClCompile Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.cpp" />
     <ClCompile Include="..\..\Source\wvk_base_object.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_buffer.cpp" />
     <ClCompile Include="..\..\Source\wvk_command_pool.cpp" />
@@ -160,13 +160,12 @@
     <ClInclude Include="..\..\Source\Extensions\wvk_debug_utils_messenger.hpp" />
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.h" />
     <ClInclude Include="..\..\Source\Extensions\wvk_surface.hpp" />
+    <ClInclude Include="..\..\Source\Extensions\wvk_swapchain.h" />
+    <ClInclude Include="..\..\Source\Extensions\wvk_swapchain.hpp" />
     <ClInclude Include="..\..\Source\Extensions\_extensions.h" />
     <ClInclude Include="..\..\Source\Layers\wvk_layer_khronos_validation.h" />
     <ClInclude Include="..\..\Source\Layers\wvk_layer_khronos_validation.hpp" />
     <ClInclude Include="..\..\Source\Layers\_layers.h" />
-    <ClInclude Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.h" />
-    <ClInclude Include="..\..\Source\MSWindows\wvk_dispatch_table_mswindows.hpp" />
-    <ClInclude Include="..\..\Source\MSWindows\_mswindows.h" />
     <ClInclude Include="..\..\Source\wvk_base_object.h" />
     <ClInclude Include="..\..\Source\wvk_base_object.hpp" />
     <ClInclude Include="..\..\Source\wvk_command_buffer.h" />
@@ -179,6 +178,7 @@
     <ClInclude Include="..\..\Source\wvk_dispatch_table.hpp" />
     <ClInclude Include="..\..\Source\wvk_extension.h" />
     <ClInclude Include="..\..\Source\wvk_extension.hpp" />
+    <ClInclude Include="..\..\Source\wvk_fence.h" />
     <ClInclude Include="..\..\Source\wvk_instance.h" />
     <ClInclude Include="..\..\Source\wvk_instance.hpp" />
     <ClInclude Include="..\..\Source\wvk_layer.h" />
@@ -191,6 +191,8 @@
     <ClInclude Include="..\..\Source\wvk_queue.hpp" />
     <ClInclude Include="..\..\Source\wvk_shader.h" />
     <ClInclude Include="..\..\Source\wvk_shader.hpp" />
+    <ClInclude Include="..\..\Source\wvk_shader_helper.h" />
+    <ClInclude Include="..\..\Source\wvk_shader_helper.hpp" />
     <ClInclude Include="..\..\Source\wvk_status.h" />
     <ClInclude Include="..\..\Source\wvk_status.hpp" />
     <ClInclude Include="..\..\Source\_wvk.h" />

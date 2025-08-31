@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -357,7 +358,7 @@ namespace CGDev {
 			// Создаём WvkDispatchTable
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			WvkDispatchTableCreateInfo _create_info = {
-				.vkInstance = m_vk_instance,
+				.wvk_instance_ptr = this,
 			};
 
 			_status = m_wvk_instance_dispatch_table_ptr->create(_create_info);
