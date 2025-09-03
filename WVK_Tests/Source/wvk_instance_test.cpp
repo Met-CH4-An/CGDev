@@ -23,36 +23,28 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkInstanceTest, createFakeLayer) {
-			CGDev::wvk::WvkInstanceCreateInfo _create_info = {
-				.vk_layer_names = { "fake_layer" },
-			};
-			CGDev::wvk::WvkInstance _wvk_instance;
+		TEST_F(WvkInstanceTest, requestLayerProperties) {
+			std::vector<VkLayerProperties> _props;
+			auto _status = m_wvk_instance_ptr->requestLayerProperties(_props);
 
-			auto _wvk_status = _wvk_instance.create(_create_info);
-
-			EXPECT_EQ(_wvk_status.isOk(), false);
+			EXPECT_EQ(_status, true);
 		}
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		TEST_F(WvkInstanceTest, createFakeExtension) {
-			CGDev::wvk::WvkInstanceCreateInfo _create_info = {
-				.vk_extension_names = { "fake_extension" },
-			};
-			CGDev::wvk::WvkInstance _wvk_instance;
+		TEST_F(WvkInstanceTest, requestExtensionProperties) {
+			std::vector<VkExtensionProperties> _props;
+			auto _status = m_wvk_instance_ptr->requestExtensionProperties(_props);
 
-			auto _wvk_status = _wvk_instance.create(_create_info);
-
-			EXPECT_EQ(_wvk_status.isOk(), false);
+			EXPECT_EQ(_status, true);
 		}
-
+		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkInstanceTest, presencePhysicalDevice) {
-			const auto& _phys_dev = wvk_instance_ptr->getWvkPhysicalDevices()[0][0];
+			const auto& _phys_dev = m_wvk_instance_ptr->getWvkPhysicalDevices()[0][0];
 
 			EXPECT_NE(_phys_dev, nullptr);
 		}

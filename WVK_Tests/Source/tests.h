@@ -39,12 +39,12 @@ namespace CGDev {
 
         protected:
 
-            static CGDev::wvk::WvkInstanceUptr wvk_instance_ptr;
-            static CGDev::wvk::WvkLogicalDeviceUptr wvk_logical_device_ptr;
-            static CGDev::wvk::WvkCommandPoolUptr wvk_command_pool_ptr;
-            static CGDev::wvk::WvkShaderUptr wvk_shader_ptr;
+            static CGDev::wvk::WvkInstanceUptr m_wvk_instance_ptr;
+            static CGDev::wvk::WvkLogicalDeviceUptr m_wvk_logical_device_ptr;
+            static CGDev::wvk::WvkCommandPoolUptr m_wvk_command_pool_ptr;
+            static CGDev::wvk::WvkShaderUptr m_wvk_shader_ptr;
             
-            static CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr wvk_debug_utils_messenger_ptr;
+            static CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr m_wvk_debug_utils_messenger_ptr;
             //inline static CGDev::wvk::Extensions::WvkSurfaceUptr s_wvk_surface = nullptr;
         };
 

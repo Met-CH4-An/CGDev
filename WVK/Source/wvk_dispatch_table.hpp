@@ -52,6 +52,17 @@ namespace CGDev {
 		}
 
 		// =======================================
+		// [Category]: Instance
+		// =======================================
+
+		// ~~~~~~~~~~~~~~~~
+		// [Version] 1.0
+		// ~~~~~~~~~~~~~~~~
+		inline void WvkDispatchTable::wvkDestroyInstance(const VkAllocationCallbacks* pAllocator) const noexcept {
+			m_vkDestroyInstance(m_create_info.wvk_instance_ptr->getVkInstance(), pAllocator);
+		}
+
+		// =======================================
 		// [Category]: Physical Device
 		// =======================================
 
@@ -87,70 +98,66 @@ namespace CGDev {
 		// [Version] 1.1 / WVK_KHR_device_group_creation
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkEnumeratePhysicalDeviceGroups(uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			return m_vkEnumeratePhysicalDeviceGroups(m_create_info.vkInstance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
-#elif WVK_KHR_device_group_creation == WVK_ENABLE 
-			return m_vkEnumeratePhysicalDeviceGroupsKHR(m_create_info.wvk_instance_ptr->getVkInstance(), pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+				return m_vkEnumeratePhysicalDeviceGroups(m_create_info.wvk_instance_ptr->getVkInstance(), pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
+			}
+			else if constexpr (build::isExtensionEnabled("VK_KHR_device_group_creation")) {
+				return m_vkEnumeratePhysicalDeviceGroupsKHR(m_create_info.wvk_instance_ptr->getVkInstance(), pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
+			}
+			else {
+				return VK_ERROR_UNKNOWN;
+			}
 		}
 
 		// ~~~~~~~~~~~~~~~~
 		// [Version] 1.1 / VK_KHR_get_physical_device_properties2
 		// ~~~~~~~~~~~~~~~~
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				m_vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
 		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceProperties2(physicalDevice, pProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkGetPhysicalDeviceProperties2(physicalDevice, pProperties);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				m_vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
 		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				m_vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
 		}
 		inline VkResult WvkDispatchTable::wvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			return m_vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			return m_vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				return m_vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				return m_vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+			else return VK_ERROR_UNKNOWN;
 		}
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				m_vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 		}
 
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2"))
+				m_vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
 		}
 
 		inline void WvkDispatchTable::wvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 
-			m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+				m_vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
+			}
+			else if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2")) {
+				m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
+			}
 		}
 
 		// =======================================
@@ -206,11 +213,10 @@ namespace CGDev {
 		// [Version] 1.1 / VK_KHR_maintenance1
 		// ~~~~~~~~~~~~~~~~
 		inline void WvkDispatchTable::wvkTrimCommandPool(VkCommandPool commandPool, VkCommandPoolTrimFlags flags) const noexcept {
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11		
-			m_vkTrimCommandPool(m_create_info.wvk_logical_device_ptr->getVkDevice(), commandPool, flags);
-#elif WVK_KHR_maintenance1 == WVK_ENABLE
-			m_vkTrimCommandPoolKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), commandPool, flags);
-#endif
+			if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11)
+				m_vkTrimCommandPool(m_create_info.wvk_logical_device_ptr->getVkDevice(), commandPool, flags);
+			else if constexpr (build::isExtensionEnabled("VK_KHR_maintenance1"))
+				m_vkTrimCommandPoolKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), commandPool, flags);
 		}
 
 		// =======================================
@@ -254,42 +260,36 @@ namespace CGDev {
 		// [Extension] VK_EXT_shader_object
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			return m_vkCreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				return m_vkCreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
+			else 
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkCreateShaders(uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			return m_vkCreateShadersEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), createInfoCount, pCreateInfos, pAllocator, pShaders);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				return m_vkCreateShadersEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), createInfoCount, pCreateInfos, pAllocator, pShaders);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline void WvkDispatchTable::wvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			m_vkDestroyShaderEXT(device, shader, pAllocator);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				m_vkDestroyShaderEXT(device, shader, pAllocator);
 		}
 		inline void WvkDispatchTable::wvkDestroyShader(VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			m_vkDestroyShaderEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), shader, pAllocator);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				m_vkDestroyShaderEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), shader, pAllocator);
 		}
 		inline VkResult WvkDispatchTable::wvkGetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			return m_vkGetShaderBinaryDataEXT(device, shader, pDataSize, pData);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				return m_vkGetShaderBinaryDataEXT(device, shader, pDataSize, pData);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkGetShaderBinaryDataEXT(VkShaderEXT shader, size_t* pDataSize, void* pData) const noexcept {
-#if WVK_EXT_shader_object == WVK_ENABLE
-			return m_vkGetShaderBinaryDataEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), shader, pDataSize, pData);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object"))
+				return m_vkGetShaderBinaryDataEXT(m_create_info.wvk_logical_device_ptr->getVkDevice(), shader, pDataSize, pData);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 
 		inline VkResult WvkDispatchTable::wvkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView) const noexcept {
@@ -335,63 +335,54 @@ namespace CGDev {
 		// [Extension] VK_KHR_swapchain
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkCreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkCreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkCreateSwapchainKHR(const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkCreateSwapchainKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), pCreateInfo, pAllocator, pSwapchain);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkCreateSwapchainKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), pCreateInfo, pAllocator, pSwapchain);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline void WvkDispatchTable::wvkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkDestroySwapchainKHR(device, swapchain, pAllocator);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				m_vkDestroySwapchainKHR(device, swapchain, pAllocator);
 		}
 		inline void WvkDispatchTable::wvkDestroySwapchainKHR(VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return wvkDestroySwapchainKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, pAllocator);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				m_vkDestroySwapchainKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, pAllocator);
 		}
 		inline VkResult WvkDispatchTable::wvkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkGetSwapchainImagesKHR(VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkGetSwapchainImagesKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, pSwapchainImageCount, pSwapchainImages);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkGetSwapchainImagesKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, pSwapchainImageCount, pSwapchainImages);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkAcquireNextImageKHR(VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkAcquireNextImageKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, timeout, semaphore, fence, pImageIndex);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkAcquireNextImageKHR(m_create_info.wvk_logical_device_ptr->getVkDevice(), swapchain, timeout, semaphore, fence, pImageIndex);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) const noexcept {
-#if WVK_KHR_swapchain == WVK_ENABLE
-			return m_vkQueuePresentKHR(queue, pPresentInfo);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_KHR_swapchain"))
+				return m_vkQueuePresentKHR(queue, pPresentInfo);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 
 		// =======================================
@@ -402,7 +393,10 @@ namespace CGDev {
 		// [Extension] VK_KHR_surface
 		// ~~~~~~~~~~~~~~~~
 		inline VkResult WvkDispatchTable::wvkCreateWin32SurfaceKHR(const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) const noexcept {
-			return m_vkCreateWin32SurfaceKHR(m_create_info.wvk_instance_ptr->getVkInstance(), pCreateInfo, pAllocator, pSurface);
+			if constexpr (build::isExtensionEnabled("VK_KHR_surface"))
+				return m_vkCreateWin32SurfaceKHR(m_create_info.wvk_instance_ptr->getVkInstance(), pCreateInfo, pAllocator, pSurface);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 
 		// =======================================
@@ -413,65 +407,54 @@ namespace CGDev {
 		// [Extension] VK_EXT_debug_utils
 		// ~~~~~~~~~~~~~~~~
 		inline void WvkDispatchTable::wvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 		}
 		inline void WvkDispatchTable::wvkCmdEndDebugUtilsLabel(VkCommandBuffer commandBuffer) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkCmdEndDebugUtilsLabelEXT(commandBuffer);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 		}
 		inline void WvkDispatchTable::wvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 		}
 		inline VkResult WvkDispatchTable::wvkCreateDebugUtilsMessenger(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			return m_vkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				return m_vkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline void WvkDispatchTable::wvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 		}
 		inline void WvkDispatchTable::wvkQueueBeginDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
 		}
 		inline void WvkDispatchTable::wvkQueueEndDebugUtilsLabel(VkQueue queue) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkQueueEndDebugUtilsLabelEXT(queue);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkQueueEndDebugUtilsLabelEXT(queue);
 		}
 		inline void WvkDispatchTable::wvkQueueInsertDebugUtilsLabel(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
 		}
 		inline VkResult WvkDispatchTable::wvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			return m_vkSetDebugUtilsObjectNameEXT(device, pNameInfo);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				return m_vkSetDebugUtilsObjectNameEXT(device, pNameInfo);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline VkResult WvkDispatchTable::wvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			return m_vkSetDebugUtilsObjectTagEXT(device, pTagInfo);
-#else
-			return VK_ERROR_UNKNOWN;
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				return m_vkSetDebugUtilsObjectTagEXT(device, pTagInfo);
+			else
+				return VK_ERROR_UNKNOWN;
 		}
 		inline void WvkDispatchTable::wvkSubmitDebugUtilsMessage(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) const noexcept {
-#if WVK_EXT_debug_utils == WVK_ENABLE
-			m_vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
-#endif
+			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils"))
+				m_vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

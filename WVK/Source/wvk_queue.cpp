@@ -49,11 +49,11 @@ namespace CGDev {
 					// проверяем валидность VknQueueCreateInfo
 					// ~~~~~~~~~~~~~~~~
 
-					if constexpr (Build::s_wvk_debug == true) {
+					//if constexpr (Build::s_wvk_debug == true) {
 
-						if (validationCreateInfo(create_info) == false) return false;
+					//	if (validationCreateInfo(create_info) == false) return false;
 
-					}
+					//}
 
 					// ~~~~~~~~~~~~~~~~
 					// СБОРКА

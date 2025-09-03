@@ -2,8 +2,8 @@
 // Copyright (c) 2025 Metelev Met-CH4-An Andrey
 // Project Lead: Metelev Andrey
 // Main Technical Assistant: StarDev aka ChatGPT
-#ifndef CGDEV_SOURCE_GPU_PRIVATE_VULKAN___VULKAN_H
-#define CGDEV_SOURCE_GPU_PRIVATE_VULKAN___VULKAN_H
+#ifndef CGDEV_WVK_SOURCE___WVK_H
+#define CGDEV_WVK_SOURCE___WVK_H
 ////////////////////////////////////////////////////////////////
 // секция форвард-декларации
 ////////////////////////////////////////////////////////////////
@@ -110,21 +110,18 @@ namespace CGDev {
 
 	namespace wvk {
 
-		namespace Build {
+		namespace build {
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			enum class VulkanVersion {
-
 				UNKNOWN = 0,
-
 				VERSION_10 = VK_MAKE_API_VERSION(0, 1, 0, 0),
 				VERSION_11 = VK_MAKE_API_VERSION(0, 1, 1, 0),
 				VERSION_12 = VK_MAKE_API_VERSION(0, 1, 2, 0),
 				VERSION_13 = VK_MAKE_API_VERSION(0, 1, 3, 0),
-
 			}; // enum class VulkanVersion
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,17 +129,13 @@ namespace CGDev {
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			enum class PlatformType {
-
 				UNKNOWN = 0,
-
 				MSWindows,
 				Linux
 			}; // enum class PlatformType
 
 			enum Features {
-
 				UNKNOWN = 0,
-
 				DEBUG						= 1,
 				DYNAMIC_RENDERING			= 2
 
@@ -152,19 +145,12 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static const VulkanVersion vulkan_version = VulkanVersion::VERSION_13;
+			static const VulkanVersion vulkan_version = VulkanVersion::VERSION_10;
+			constexpr std::string_view application_name = "CGDev Project";
+			constexpr uint32_t application_version = VK_MAKE_API_VERSION(0, 0, 0, 2);
+			constexpr std::string_view engine_name = "Wvk Project: vulkan wrapper";
+			constexpr uint32_t engine_version = VK_MAKE_API_VERSION(0, 0, 0, 2);
 
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			extern const std::array<std::string_view, 1> layer_name_collection;			
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			/*!	\brief
-			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			extern const std::vector<std::string> extension_name_collection;
 
 #define WVK_PLATFORM_MSWINDOWS 1
 #define WVK_PLATFORM_LINUX 2
@@ -172,352 +158,129 @@ namespace CGDev {
 
 #define WVK_PLATFORM WVK_PLATFORM_MSWINDOWS
 
-#define WVK_VULKAN_API_VERSION_10 10
-#define WVK_VULKAN_API_VERSION_11 11
-#define WVK_VULKAN_API_VERSION_12 12
-#define WVK_VULKAN_API_VERSION_13 13
-#define WVK_VULKAN_API_VERSION_14 14
+			struct Support {
+				std::string_view name = {};
+				bool enable = false;
+			};
 
-#define WVK_VULKAN_API_VERSION WVK_VULKAN_API_VERSION_10
-
-#define VK_API_VERSION_FROM_WVK(ver) VK_API_VERSION_FROM_WVK_IMPL(ver)
-#define VK_API_VERSION_FROM_WVK_IMPL(ver) VK_API_VERSION_##ver
-
-#define VK_API_VERSION_10 VK_API_VERSION_1_0
-#define VK_API_VERSION_11 VK_API_VERSION_1_1
-#define VK_API_VERSION_12 VK_API_VERSION_1_2
-#define VK_API_VERSION_13 VK_API_VERSION_1_3
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#define WVK_DISABLE 0
-#define WVK_ENABLE 1
-
-#define WVK_LAYER_KHRONOS_validation WVK_ENABLE
-
-#define WVK_KHR_get_physical_device_properties2 WVK_ENABLE
-#define WVK_KHR_get_surface_capabilities2 WVK_ENABLE
-#define WVK_KHR_device_group_creation WVK_ENABLE
-#define WVK_KHR_surface WVK_ENABLE
-#define WVK_KHR_win32_surface WVK_ENABLE
-
-#define WVK_EXT_shader_object WVK_ENABLE
-#define WVK_KHR_dynamic_rendering_local_read WVK_DISABLE
-#define WVK_KHR_dynamic_rendering WVK_DISABLE
-#define WVK_KHR_create_renderpass2 WVK_DISABLE
-#define WVK_KHR_depth_stencil_resolve WVK_DISABLE
-#define WVK_KHR_maintenance2 WVK_ENABLE
-#define WVK_KHR_maintenance1 WVK_ENABLE
-#define WVK_KHR_multiview WVK_DISABLE
-
-#if WVK_KHR_win32_surface == WVK_ENABLE
-	#undef WVK_KHR_surface
-	#define WVK_KHR_surface WVK_ENABLE
-#endif
-
-#if WVK_EXT_shader_object == WVK_ENABLE
-	#undef WVK_KHR_get_physical_device_properties2
-	#define WVK_KHR_get_physical_device_properties2 WVK_ENABLE
-	#undef WVK_KHR_dynamic_rendering
-	#define WVK_KHR_dynamic_rendering WVK_ENABLE
-#endif
-
-#if WVK_KHR_dynamic_rendering_local_read == WVK_ENABLE
-	#undef WVK_KHR_dynamic_rendering
-	#define WVK_KHR_dynamic_rendering WVK_ENABLE
-#endif
-
-#if WVK_KHR_dynamic_rendering == WVK_ENABLE
-	#undef WVK_KHR_depth_stencil_resolve
-	#define WVK_KHR_depth_stencil_resolve WVK_ENABLE
-#endif
-
-#if WVK_KHR_depth_stencil_resolve == WVK_ENABLE
-	#undef WVK_KHR_create_renderpass2
-	#define WVK_KHR_create_renderpass2 WVK_ENABLE
-#endif
-
-#if WVK_KHR_create_renderpass2 == WVK_ENABLE
-	#undef WVK_KHR_multiview
-	#define WVK_KHR_multiview WVK_ENABLE
-	#undef WVK_KHR_maintenance2
-	#define WVK_KHR_maintenance2 WVK_ENABLE
-#endif
-
-			
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_LAYER_KHRONOS_validation
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_LAYER_KHRONOS_validation == WVK_ENABLE
-#define WVK_LAYER_KHRONOS_validation_name \
-		X("VK_LAYER_KHRONOS_validation")
-#else
-#define WVK_LAYER_KHRONOS_validation_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_surface
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_surface WVK_ENABLE
-#if WVK_KHR_surface == WVK_ENABLE
-#define WVK_KHR_surface_name \
-	X("VK_KHR_surface")
-#else
-#define WVK_KHR_surface_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_win32_surface
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_win32_surface WVK_ENABLE
-#if WVK_KHR_win32_surface == WVK_ENABLE
-#define WVK_KHR_win32_surface_name \
-	X("VK_KHR_win32_surface")
-#else
-#define WVK_KHR_win32_surface_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_EXT_debug_utils
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_EXT_debug_utils WVK_ENABLE
-#if WVK_EXT_debug_utils == WVK_ENABLE
-#define WVK_EXT_debug_utils_name \
-	X("VK_EXT_debug_utils")
-#else
-#define WVK_EXT_debug_utils_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_get_physical_device_properties2
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-#define WVK_KHR_get_physical_device_properties2_name \
-		X("VK_KHR_get_physical_device_properties2")
-#else
-#define WVK_KHR_get_physical_device_properties2_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_get_surface_capabilities2
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_get_surface_capabilities2 == WVK_ENABLE
-#define WVK_KHR_get_surface_capabilities2_name \
-		X("VK_KHR_get_surface_capabilities2")
-#else
-#define WVK_KHR_get_surface_capabilities2_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_device_group_creation
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_device_group_creation == WVK_ENABLE
-#define WVK_KHR_device_group_creation_name \
-		X("VK_KHR_device_group_creation")
-#else
-#define WVK_KHR_device_group_creation_name
-#endif
-
-// logdev
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_EXT_shader_object
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_EXT_shader_object == WVK_ENABLE
-#define WVK_EXT_shader_object_name \
-	X("VK_EXT_shader_object")
-#else
-#define WVK_EXT_shader_object_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_dynamic_rendering_local_read
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_dynamic_rendering_local_read == WVK_ENABLE
-#define WVK_KHR_dynamic_rendering_local_read_name \
-	X("VK_KHR_dynamic_rendering_local_read")
-#else
-#define WVK_KHR_dynamic_rendering_local_read_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_dynamic_rendering
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_dynamic_rendering == WVK_ENABLE
-#define WVK_KHR_dynamic_rendering_name \
-	X("VK_KHR_dynamic_rendering")	
-#else
-#define WVK_KHR_dynamic_rendering_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_depth_stencil_resolve
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_depth_stencil_resolve == WVK_ENABLE
-#define WVK_KHR_depth_stencil_resolve_name \
-	X("VK_KHR_depth_stencil_resolve")
-#else
-#define WVK_KHR_depth_stencil_resolve_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_create_renderpass2
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_create_renderpass2 == WVK_ENABLE
-#define WVK_KHR_create_renderpass2_name \
-	X("VK_KHR_create_renderpass2")
-#else
-#define WVK_KHR_create_renderpass2_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_multiview
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_multiview == WVK_ENABLE
-#define WVK_KHR_multiview_name \
-	X("VK_KHR_multiview")
-#else
-#define WVK_KHR_multiview_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_maintenance1
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_maintenance1 == WVK_ENABLE
-#define WVK_KHR_maintenance1_name \
-	X("VK_KHR_maintenance1")
-#else
-#define WVK_KHR_maintenance1_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_maintenance2
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_KHR_maintenance2 == WVK_ENABLE
-#define WVK_KHR_maintenance2_name \
-	X("VK_KHR_maintenance2")
-#else
-#define WVK_KHR_maintenance2_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_swapchain
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_swapchain WVK_ENABLE
-#if WVK_KHR_swapchain == WVK_ENABLE
-#define WVK_KHR_swapchain_name \
-	X("VK_KHR_swapchain")
-#else
-#define WVK_KHR_swapchain_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// VK_KHR_synchronization2
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_KHR_synchronization2 WVK_ENABLE
-#if WVK_KHR_synchronization2 == WVK_ENABLE
-#define WVK_KHR_synchronization2_name \
-	X("VK_KHR_synchronization2")
-#else
-#define WVK_KHR_synchronization2_name
-#endif
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_COMPILE_TIME_LAYERS \
-	WVK_LAYER_KHRONOS_validation_name
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_COMPILE_TIME_INSTANCE_EXTENSIONS \
-	WVK_EXT_debug_utils_name \
-	WVK_KHR_get_physical_device_properties2_name \
-	WVK_KHR_get_surface_capabilities2_name \
-	/*X("VK_KHR_surface_protected_capabilities")*/\
-	WVK_KHR_surface_name \
-	WVK_KHR_win32_surface_name \
-	WVK_KHR_device_group_creation_name
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define WVK_COMPILE_TIME_LOGICAL_DEVICE_EXTENSIONS \
-	WVK_EXT_shader_object_name\
-	WVK_KHR_dynamic_rendering_local_read_name\
-	WVK_KHR_dynamic_rendering_name\
-	WVK_KHR_create_renderpass2_name\
-	WVK_KHR_depth_stencil_resolve_name\
-	WVK_KHR_multiview_name\
-	WVK_KHR_maintenance1_name\
-	WVK_KHR_maintenance2_name\
-	WVK_KHR_swapchain_name\
-	WVK_KHR_synchronization2_name
-
-
-
-	
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//static const bool s_wvk_debug = []() { if constexpr (Build::type_build == Private::Build::TypeBuild::DEBUG) return true; else return false; }();
-			static const bool s_wvk_debug = true;
-
-			static constexpr bool enable = true;
-			static constexpr uint32_t vulkan_sdk_version = VK_HEADER_VERSION;
-			static constexpr VulkanVersion vulkan_api_version = VulkanVersion::VERSION_10;
-			static constexpr PlatformType platform_type = PlatformType::MSWindows;
-			static constexpr std::array<const char*, 1> vulkan_compile_time_layers = {
-
-				"VK_LAYER_KHRONOS_validation"						
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline constexpr auto instanceLayers(void) {
+				std::array<Support, 1> _layers{};
+				_layers[0] = Support{ .name = "VK_LAYER_KHRONOS_validation", .enable = true, };
+				return _layers;
 			};
-			static constexpr std::array<const char*, 7> vulkan_compile_time_extensions = {
-				"VK_EXT_debug_utils",
-				"VK_KHR_get_physical_device_properties2",
-				"VK_KHR_surface",
-				"VK_KHR_get_surface_capabilities2",
-				"VK_KHR_surface_protected_capabilities",
-				"VK_KHR_win32_surface",
-				"VK_KHR_device_group_creation"
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline constexpr std::array<Support, 4> instanceExtensions(void) {
+				std::array<Support, 4> _exts{};
+				_exts[0] = Support{ .name = "VK_EXT_debug_utils", .enable = true, };
+				_exts[1] = Support{ .name = "VK_KHR_get_physical_device_properties2", .enable = true, };
+				_exts[2] = Support{ .name = "VK_KHR_surface", .enable = true, };
+				_exts[3] = Support{ .name = "VK_KHR_win32_surface", .enable = true, };
+				return _exts;
 			};
-			static constexpr std::span<const char* const> getInstanceExtensions(void) {
-				return vulkan_compile_time_extensions;
-			}
-			static constexpr bool find(std::string_view value) {
-				for (std::string_view item : vulkan_compile_time_extensions) {
-					if (item == value) {
-						return true;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline constexpr std::array<Support, 10> deviceExtensions(void) {
+				std::array<Support, 10> _exts{};
+				_exts[0] = Support{ .name = "VK_KHR_dynamic_rendering_local_read", .enable = true, };
+				_exts[1] = Support{ .name = "VK_EXT_shader_object", .enable = true, };
+				_exts[2] = Support{ .name = "VK_KHR_dynamic_rendering", .enable = true, };
+				_exts[3] = Support{ .name = "VK_KHR_depth_stencil_resolve", .enable = true, };
+				_exts[4] = Support{ .name = "VK_KHR_create_renderpass2", .enable = true, };
+				_exts[5] = Support{ .name = "VK_KHR_maintenance1", .enable = true, };
+				_exts[6] = Support{ .name = "VK_KHR_maintenance2", .enable = true, };
+				_exts[7] = Support{ .name = "VK_KHR_multiview", .enable = true, };
+				_exts[8] = Support{ .name = "VK_KHR_swapchain", .enable = true, };
+				_exts[9] = Support{ .name = "VK_KHR_synchronization2", .enable = true, };
+				return _exts;
+			};
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline static constexpr bool isLayerEnabled(std::string_view name) {
+				for (size_t ct_0 = 0; ct_0 < instanceLayers().size(); ++ct_0) {
+					const auto& _name = instanceLayers()[ct_0].name;
+					if (_name == name) {
+						return instanceLayers()[ct_0].enable;
 					}
 				}
 				return false;
 			}
 
-					
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			struct SurfaceBuildInfo {
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline static constexpr bool isExtensionEnabled(std::string_view name) {		
+				for (size_t ct_0 = 0; ct_0 < instanceExtensions().size(); ++ct_0) {
+					if (instanceExtensions()[ct_0].name == name) {
+						return instanceExtensions()[ct_0].enable;
+					}
+				}
+				
+				for (size_t ct_0 = 0; ct_0 < deviceExtensions().size(); ++ct_0) {
+					if (deviceExtensions()[ct_0].name == name) {
+						return deviceExtensions()[ct_0].enable;
+					}
+				}
+				return false;
+			}
 
-				static constexpr const bool enable = true;
-				static constexpr std::array<std::string_view, 0> layer_name_collection = {};
-				static constexpr std::array<std::string_view, 2> extension_name_collection = { "VK_KHR_surface", "VK_KHR_win32_surface" };
-				static constexpr PlatformType platform_type = platform_type;
-			};
-
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			static const bool s_vk_ext_debug_utils = []() { if constexpr (s_wvk_debug == true) return true; else return false; }();
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline static constexpr auto getInstanceLayerNames(void) {
+				std::array<const char*, instanceLayers().size()> _names{};
 
-		} //namespace Build
+				for (size_t ct_0 = 0; ct_0 < instanceLayers().size(); ++ct_0) {
+					_names[ct_0] = instanceLayers()[ct_0].name.data();
+				}
+
+				return _names;
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline static constexpr auto getInstanceExtensionNames(void) {
+				std::array<const char*, instanceExtensions().size()> _names{};
+
+				for (size_t ct_0 = 0; ct_0 < instanceExtensions().size(); ++ct_0) {
+					_names[ct_0] = instanceExtensions()[ct_0].name.data();
+				}
+
+				return _names;
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*!	\brief
+			*/
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			inline static constexpr auto getDeviceExtensionNames(void) {
+				std::array<const char*, deviceExtensions().size()> _names{};
+
+				for(size_t ct_0 = 0; ct_0 < deviceExtensions().size(); ++ct_0) {
+					_names[ct_0] = deviceExtensions()[ct_0].name.data();
+				}
+				
+				return _names;
+			}	
+
+		} // namespace build
 
 
 
@@ -776,7 +539,7 @@ namespace CGDev {
 		using WvkFenceSptr = std::shared_ptr<WvkFence>;
 		using WvkFenceSptrVec1 = std::vector<WvkFenceSptr>;
 		using WvkFenceUptr = std::unique_ptr<WvkFence>;
-		using WvkFenceUptrVec1 = std::vector<WvkFenceSptr>;
+		using WvkFenceUptrVec1 = std::vector<WvkFenceUptr>;
 		using WvkFenceWptr = std::weak_ptr<WvkFence>;
 		using WvkFenceWptrVec1 = std::vector<WvkFenceWptr>;
 
@@ -792,37 +555,10 @@ namespace CGDev {
 			class WvkDebugUtilsMessenger;
 			class WvkSwapchain;
 			class WvkSurface;
-		}
-
-
-
-
-		// ~~~~~~~~~~~~~~~~
-		// отладочные средства
-		// ~~~~~~~~~~~~~~~~
-					
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		/*!	\brief
-		*/
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-
-		#define VKN_CHECK(vk_command, log)\
-		if(const auto& _vk_result = vk_command; _vk_result != VK_SUCCESS) {\
-			\
-			std::string _cause = "";\
-			\
-			if (_vk_result == VK_ERROR_OUT_OF_HOST_MEMORY) _cause = "VK_ERROR_OUT_OF_HOST_MEMORY";\
-			if (_vk_result == VK_ERROR_OUT_OF_DEVICE_MEMORY) _cause = "VK_ERROR_OUT_OF_DEVICE_MEMORY";\
-			if (_vk_result == VK_ERROR_INITIALIZATION_FAILED) _cause = "VK_ERROR_INITIALIZATION_FAILED";\
-			\
-			Tools::addEntry(log, Tools::LogEntryError(std::move(_cause)));\
-			\
-			return false;\
-			\
-		} // if(vk_result != VK_SUCCESS)
+		}	
 
 	} // namespace wvk
 
 } // namespace CGDev
 
-#endif // CGDEV_SOURCE_GPU_PRIVATE_VULKAN___VULKAN_H
+#endif // CGDEV_WVK_SOURCE___WVK_H

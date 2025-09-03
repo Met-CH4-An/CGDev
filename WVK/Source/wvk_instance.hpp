@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////
 // секция для остального
 ////////////////////////////////////////////////////////////////
+#include "wvk_dispatch_table.h"
 
 namespace CGDev {
 
@@ -24,8 +25,123 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		inline const WvkInstanceCreateInfo& WvkInstance::getCreateInfo(void) const noexcept {
-			return m_create_info;
+		inline WvkStatus WvkInstance::requestLayerProperties(std::vector<VkLayerProperties>& vk_layer_properties) const noexcept {
+			WvkStatus _status;
+
+			vk_layer_properties.clear();
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Получение количества доступных слоёв
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			uint32_t _count = 0;
+			VkResult _vk_result = m_wvk_global_dispatch_table_ptr->wvkEnumerateInstanceLayerProperties(&_count, nullptr);
+
+			if (_vk_result != VK_SUCCESS) {
+				switch (_vk_result) {
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_HOST_MEMORY.";
+					break;
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_DEVICE_MEMORY.";
+					break;
+				default:
+					_status << "vkEnumerateInstanceLayerProperties is Unknown error.";
+					break;
+				}
+				return _status.setFail("vknEnumerateInstanceLayerProperties is fail");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Выделение памяти и получение свойств слоёв
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			vk_layer_properties.resize(_count);
+			_vk_result = m_wvk_global_dispatch_table_ptr->wvkEnumerateInstanceLayerProperties(&_count, vk_layer_properties.data());
+
+			if (_vk_result != VK_SUCCESS) {
+				if (_vk_result == VK_INCOMPLETE) {
+					_status << "vkEnumerateInstanceLayerProperties is VK_INCOMPLETE.";
+				}
+				else {
+					switch (_vk_result) {
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_HOST_MEMORY.";
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_DEVICE_MEMORY.";
+						break;
+					default:
+						_status << "vkEnumerateInstanceLayerProperties is Unknown error.";
+						break;
+					}
+					return _status.setFail("vknEnumerateInstanceLayerProperties is fail");
+				}
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		inline WvkStatus WvkInstance::requestExtensionProperties(std::vector<VkExtensionProperties>& vk_extension_properties) const noexcept {
+			WvkStatus _status;
+
+			vk_extension_properties.clear();
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Получение количества доступных расширений
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			uint32_t _count = 0;
+			VkResult _vk_result = m_wvk_global_dispatch_table_ptr->wvkEnumerateInstanceExtensionProperties(nullptr, &_count, nullptr);
+
+			if (_vk_result != VK_SUCCESS) {
+				switch (_vk_result) {
+				case VK_ERROR_OUT_OF_HOST_MEMORY:
+					_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_HOST_MEMORY.";
+					break;
+				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+					_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_DEVICE_MEMORY.";
+					break;
+				default:
+					_status << "vkEnumerateInstanceLayerProperties is Unknown error.";
+					break;
+				}
+				return _status.setFail("vknEnumerateInstanceExtensionProperties is fail.");
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Выделение памяти и получение свойств расширений
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			vk_extension_properties.resize(_count);
+			_vk_result = m_wvk_global_dispatch_table_ptr->wvkEnumerateInstanceExtensionProperties(nullptr, &_count, vk_extension_properties.data());
+
+			if (_vk_result != VK_SUCCESS) {
+				if (_vk_result == VK_INCOMPLETE) {
+					_status << "vkEnumerateInstanceLayerProperties is VK_INCOMPLETE.";
+				}
+				else {
+					switch (_vk_result) {
+					case VK_ERROR_OUT_OF_HOST_MEMORY:
+						_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_HOST_MEMORY.";
+						break;
+					case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+						_status << "vkEnumerateInstanceLayerProperties is VK_ERROR_OUT_OF_DEVICE_MEMORY.";
+						break;
+					default:
+						_status << "vkEnumerateInstanceLayerProperties is Unknown error.";
+						break;
+					}
+					return _status.setFail("vknEnumerateInstanceExtensionProperties is fail.");
+				}
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,82 +150,6 @@ namespace CGDev {
 		inline const WvkPhysicalDeviceUptrVec2& WvkInstance::getWvkPhysicalDevices(void) const noexcept {
 			return m_wvk_physical_devices;
 		}
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		//template<typename Method, typename Object, typename... Args>
-		//inline std::enable_if_t<
-		//	std::is_invocable_v<Method, Object, VkInstance, Args...>&&
-		//	std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
-		//	void
-		//>
-		//	WvkInstance::invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args) {
-		//	std::invoke(std::forward<Method>(method),
-		//		std::forward<Object>(object),
-		//		m_vk_instance,
-		//		std::forward<Args>(args)...);
-		//}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		//template<typename Method, typename Object, typename... Args>
-		//inline std::enable_if_t<
-		//	std::is_invocable_v<Method, Object, VkInstance, Args...> &&
-		//	!std::is_void_v<std::invoke_result_t<Method, Object, VkInstance, Args...>>,
-		//	std::invoke_result_t<Method, Object, VkInstance, Args...>
-		//>
-		//	WvkInstance::invokeWithVkInstanceMethod(Method&& method, Object&& object, Args&&... args) {
-		//	return std::invoke(std::forward<Method>(method),
-		//		std::forward<Object>(object),
-		//		m_vk_instance,
-		//		std::forward<Args>(args)...);
-		//}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		//template<typename Method, typename Object, typename... Args>
-		//inline std::enable_if_t<
-		//	!std::is_invocable_v<Method, Object, VkInstance, Args...>,
-		//	void
-		//>
-		//	WvkInstance::invokeWithVkInstanceMethod(Method&&, Object&&, Args&&...) {
-		//	static_assert(dependent_false <Method>::value,
-		//		"\n[WVK Error] Метод невозможно вызвать как method(object, VkInstance, ...)\n");
-		//}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		//template<typename Method, typename... Args>
-		//inline std::enable_if_t<
-		//	std::is_invocable_v<Method, VkInstance, Args...>&&
-		//	std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
-		//	void
-		//>
-		//	WvkInstance::invokeWithVkInstanceFunction(Method&& method, Args&&... args) {
-		//	std::invoke(std::forward<Method>(method),
-		//		m_vk_instance,
-		//		std::forward<Args>(args)...);
-			//(*method)(m_vk_instance, std::forward<Args>(args)...);
-		//}
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
-		//template<typename Method, typename... Args>
-		//inline std::enable_if_t<
-		//	std::is_invocable_v<Method, VkInstance, Args...> &&
-		//	!std::is_void_v<std::invoke_result_t<Method, VkInstance, Args...>>,
-		//	std::invoke_result_t<Method, VkInstance, Args...>
-		//>
-		//	WvkInstance::invokeWithVkInstanceFunction(Method&& method, Args&&... args) {
-		//	return std::invoke(std::forward<Method>(method),
-		//		m_vk_instance,
-		//		std::forward<Args>(args)...);
-		//}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -110,6 +110,15 @@ namespace CGDev {
 			m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
 
 			// =======================================
+			// [Category]: Instance
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			m_vkDestroyInstance = VK_NULL_HANDLE;
+
+			// =======================================
 			// [Category]: Physical Device
 			// =======================================
 
@@ -352,6 +361,15 @@ namespace CGDev {
 				_procedures.clear();
 
 				// =======================================
+				// [Category]: Instance
+				// =======================================
+
+				// ~~~~~~~~~~~~~~~~
+				// [Version] 1.0
+				// ~~~~~~~~~~~~~~~~
+				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyInstance", reinterpret_cast<void**>(&m_vkDestroyInstance)));
+
+				// =======================================
 				// [Category]: Physical Device
 				// =======================================
 
@@ -368,45 +386,48 @@ namespace CGDev {
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties)));
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				// [Version] 1.1 / WVK_KHR_device_group_creation
+				// [Version] 1.1 / VK_KHR_device_group_creation
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups)));
-#elif WVK_KHR_device_group_creation == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR)));
-#endif 
+				if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroups", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroups)));
+				if constexpr (build::isExtensionEnabled("VK_KHR_device_group_creation"))
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkEnumeratePhysicalDeviceGroupsKHR", reinterpret_cast<void**>(&m_vkEnumeratePhysicalDeviceGroupsKHR)));
+				}
 				
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// [Version] 1.1 / VK_KHR_get_physical_device_properties2
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFeatures2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceMemoryProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2)));
-#elif WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceMemoryProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceQueueFamilyProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)));
-#endif 
+				if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFeatures2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceMemoryProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceQueueFamilyProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties2", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2)));
+				}
+				if constexpr (build::isExtensionEnabled("VK_KHR_get_physical_device_properties2")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFeatures2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFeatures2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceProperties2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceFormatProperties2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceImageFormatProperties2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceMemoryProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceMemoryProperties2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceQueueFamilyProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceQueueFamilyProperties2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSparseImageFormatProperties2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)));
+				}
 
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// [Version] 1.1 / VK_KHR_get_surface_capabilities2
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
-#elif WVK_KHR_get_surface_capabilities2 == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
-#endif
+				if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
+				}
+				if constexpr (build::isExtensionEnabled("VK_KHR_get_surface_capabilities2")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceCapabilities2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceCapabilities2KHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetPhysicalDeviceSurfaceFormats2KHR", reinterpret_cast<void**>(&m_vkGetPhysicalDeviceSurfaceFormats2KHR)));
+				}
+
 				// =======================================
 				// [Category]: Logical Device
 				// =======================================
@@ -424,13 +445,13 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Extension] VK_KHR_swapchain
 				// ~~~~~~~~~~~~~~~~
-#if WVK_KHR_swapchain == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateSwapchainKHR", reinterpret_cast<void**>(&m_vkCreateSwapchainKHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroySwapchainKHR", reinterpret_cast<void**>(&m_vkDestroySwapchainKHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetSwapchainImagesKHR", reinterpret_cast<void**>(&m_vkGetSwapchainImagesKHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkAcquireNextImageKHR", reinterpret_cast<void**>(&m_vkAcquireNextImageKHR)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueuePresentKHR", reinterpret_cast<void**>(&m_vkQueuePresentKHR)));
-#endif
+				if constexpr (build::isExtensionEnabled("VK_KHR_swapchain")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateSwapchainKHR", reinterpret_cast<void**>(&m_vkCreateSwapchainKHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroySwapchainKHR", reinterpret_cast<void**>(&m_vkDestroySwapchainKHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetSwapchainImagesKHR", reinterpret_cast<void**>(&m_vkGetSwapchainImagesKHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkAcquireNextImageKHR", reinterpret_cast<void**>(&m_vkAcquireNextImageKHR)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueuePresentKHR", reinterpret_cast<void**>(&m_vkQueuePresentKHR)));
+				}
 
 				// =======================================
 				// [Category]: Surface
@@ -439,9 +460,9 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Extension] VK_KHR_surface
 				// ~~~~~~~~~~~~~~~~
-#if WVK_KHR_win32_surface == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateWin32SurfaceKHR", reinterpret_cast<void**>(&m_vkCreateWin32SurfaceKHR)));
-#endif
+				if constexpr (build::isExtensionEnabled("VK_KHR_surface")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateWin32SurfaceKHR", reinterpret_cast<void**>(&m_vkCreateWin32SurfaceKHR)));
+				}
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdBeginRenderingKHR", reinterpret_cast<void**>(&m_vkCmdBeginRenderingKHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdEndRenderingKHR", reinterpret_cast<void**>(&m_vkCmdEndRenderingKHR)));
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdPipelineBarrier", reinterpret_cast<void**>(&m_vkCmdPipelineBarrier)));
@@ -454,19 +475,20 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// [Extension] VK_EXT_debug_utils
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_EXT_debug_utils == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdBeginDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdEndDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdInsertDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkCreateDebugUtilsMessengerEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkDestroyDebugUtilsMessengerEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueBeginDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueEndDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueInsertDebugUtilsLabelEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectNameEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectNameEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectTagEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectTagEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkSubmitDebugUtilsMessageEXT", reinterpret_cast<void**>(&m_vkSubmitDebugUtilsMessageEXT)));
-#endif
+				if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdBeginDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdEndDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCmdInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkCmdInsertDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkCreateDebugUtilsMessengerEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyDebugUtilsMessengerEXT", reinterpret_cast<void**>(&m_vkDestroyDebugUtilsMessengerEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueBeginDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueBeginDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueEndDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueEndDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkQueueInsertDebugUtilsLabelEXT", reinterpret_cast<void**>(&m_vkQueueInsertDebugUtilsLabelEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectNameEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectNameEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkSetDebugUtilsObjectTagEXT", reinterpret_cast<void**>(&m_vkSetDebugUtilsObjectTagEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkSubmitDebugUtilsMessageEXT", reinterpret_cast<void**>(&m_vkSubmitDebugUtilsMessageEXT)));
+				}
+
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// Загрузка
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -498,11 +520,12 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Version] 1.1 / VK_KHR_maintenance1
 				// ~~~~~~~~~~~~~~~~
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPool", reinterpret_cast<void**>(&m_vkTrimCommandPool)));
-#elif WVK_KHR_maintenance1 == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
-#endif
+				if constexpr (build::vulkan_version >= build::VulkanVersion::VERSION_11) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPool", reinterpret_cast<void**>(&m_vkTrimCommandPool)));
+				}
+				if constexpr (build::isExtensionEnabled("VK_KHR_maintenance1")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkTrimCommandPoolKHR", reinterpret_cast<void**>(&m_vkTrimCommandPoolKHR)));
+				}
 
 				// =======================================
 				// [Category]: CommandBuffer
@@ -528,11 +551,11 @@ namespace CGDev {
 				// ~~~~~~~~~~~~~~~~
 				// [Extension] VK_EXT_shader_object
 				// ~~~~~~~~~~~~~~~~
-#if WVK_EXT_shader_object == WVK_ENABLE
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateShadersEXT", reinterpret_cast<void**>(&m_vkCreateShadersEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyShaderEXT", reinterpret_cast<void**>(&m_vkDestroyShaderEXT)));
-				_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetShaderBinaryDataEXT", reinterpret_cast<void**>(&m_vkGetShaderBinaryDataEXT)));
-#endif
+				if constexpr (build::isExtensionEnabled("VK_EXT_shader_object")) {
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateShadersEXT", reinterpret_cast<void**>(&m_vkCreateShadersEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkDestroyShaderEXT", reinterpret_cast<void**>(&m_vkDestroyShaderEXT)));
+					_procedures.emplace_back(WvkVulkanProcedureInfo("vkGetShaderBinaryDataEXT", reinterpret_cast<void**>(&m_vkGetShaderBinaryDataEXT)));
+				}
 				_procedures.emplace_back(WvkVulkanProcedureInfo("vkCreateImageView", reinterpret_cast<void**>(&m_vkCreateImageView)));
 				
 				// =======================================

@@ -92,9 +92,11 @@ namespace CGDev {
 			CGDev::wvk::WvkLogicalDeviceUptr wvk_logical_device_ptr;
 			CGDev::wvk::WvkCommandPoolUptr wvk_command_pool_ptr;
 			CGDev::wvk::WvkCommandBufferPtrVec1 wvk_command_buffers;
-			CGDev::wvk::WvkFenceUptr wvk_fence_ptr;
+			CGDev::wvk::WvkFenceUptrVec1 wvk_fence_ptrs;
 			CGDev::wvk::Extensions::WvkSurfaceUptr wvk_surface_ptr;
 			CGDev::wvk::Extensions::WvkSwapchainUptr wvk_swapchain_ptr;
+			std::vector<VkImage> m_vk_images;
+			std::vector<VkImageView> m_vk_image_views;
 		}; // class Base
 
 	} // namespace samples

@@ -38,7 +38,7 @@ namespace CGDev {
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandPoolTest, trim) {
-			auto _wvk_status = wvk_command_pool_ptr->trim();
+			auto _wvk_status = m_wvk_command_pool_ptr->trim();
 
 #if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_maintenance1 == WVK_ENABLE
 			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::SUCCESSFUL);
@@ -51,7 +51,7 @@ namespace CGDev {
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandPoolTest, reset) {
-			auto _wvk_status = wvk_command_pool_ptr->reset(VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
+			auto _wvk_status = m_wvk_command_pool_ptr->reset(VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
 
 			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::SUCCESSFUL);
 		}
@@ -61,7 +61,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandPoolTest, allocate) {
 			std::vector<CGDev::wvk::WvkCommandBufferPtr> _wvk_cmd_buffers(1, nullptr);
-			auto _wvk_status = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			auto _wvk_status = m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::SUCCESSFUL);
 		}
@@ -71,8 +71,8 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandPoolTest, free) {
 			std::vector<CGDev::wvk::WvkCommandBufferPtr> _wvk_cmd_buffers(1, nullptr);
-			auto _wvk_status = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-			_wvk_status = wvk_command_pool_ptr->freeWvkCommandBuffers(_wvk_cmd_buffers);
+			auto _wvk_status = m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			_wvk_status = m_wvk_command_pool_ptr->freeWvkCommandBuffers(_wvk_cmd_buffers);
 
 			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::SUCCESSFUL);
 		}
@@ -82,7 +82,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandPoolTest, free_nullptr) {
 			std::vector<CGDev::wvk::WvkCommandBufferPtr> _wvk_cmd_buffers(1, nullptr);
-			auto _wvk_status = wvk_command_pool_ptr->freeWvkCommandBuffers(_wvk_cmd_buffers);
+			auto _wvk_status = m_wvk_command_pool_ptr->freeWvkCommandBuffers(_wvk_cmd_buffers);
 
 			EXPECT_EQ(_wvk_status, CGDev::wvk::VknStatusCode::SUCCESSFUL);
 		}

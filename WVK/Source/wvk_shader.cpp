@@ -102,10 +102,7 @@ namespace CGDev {
 			WvkStatus _status(VknStatusCode::SUCCESSFUL);
 
 			if (create_info.wvk_logical_device_ptr == nullptr) {
-				_status.setFail("\nWvkShaderCreateInfo::wvk_logical_device_ptr is nullptr.");
-			}
-			if (create_info.wvk_shader_stage_create_infos.empty()) {
-				_status.setFail("\nWvkShaderCreateInfo::wvk_shader_stage_create_infos is empty.");
+				_status.setFail("WvkShaderCreateInfo::wvk_logical_device_ptr is nullptr.");
 			}
 
 			if (!_status) return _status;
@@ -127,9 +124,12 @@ namespace CGDev {
 #endif
 			uint32_t _stage_count = static_cast<uint32_t>(m_create_info.wvk_shader_stage_create_infos.size());
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Подготовка VkShaderCreateInfoEXT из WvkShaderStageCreateInfo
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<VkShaderCreateInfoEXT> _vk_shader_create_infos;
 			for (size_t ct_0 = 0; ct_0 < _stage_count; ++ct_0) {
-				const auto& _vk_create_info = m_create_info.wvk_shader_stage_create_infos[ct_0];
+				const auto& _wvk_stage_create_info = m_create_info.wvk_shader_stage_create_infos[ct_0];
 				
 				// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				// следующая VkShaderStageFlags
@@ -146,11 +146,11 @@ namespace CGDev {
 					.sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
 					.pNext = nullptr,
 					.flags = 0,
-					.stage = static_cast<VkShaderStageFlagBits>(_vk_create_info.stage),
+					.stage = static_cast<VkShaderStageFlagBits>(_wvk_stage_create_info.stage),
 					.nextStage = 0,
 					.codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
-					.codeSize = _vk_create_info.code.size(),
-					.pCode = reinterpret_cast<const uint32_t*>(_vk_create_info.code.data()),
+					.codeSize = _wvk_stage_create_info.code.size(),
+					.pCode = reinterpret_cast<const uint32_t*>(_wvk_stage_create_info.code.data()),
 					.pName = "main",
 					.setLayoutCount = 0,
 					.pSetLayouts = nullptr,

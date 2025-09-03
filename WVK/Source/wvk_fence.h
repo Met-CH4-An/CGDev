@@ -45,19 +45,19 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkFence(void) noexcept {}
+			inline WvkFence(void) noexcept {}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			~WvkFence(void) noexcept {}
+			inline ~WvkFence(void) noexcept {}
 
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			WvkStatus create(const WvkFenceCreateInfo& create_info) noexcept {
+			inline WvkStatus create(const WvkFenceCreateInfo& create_info) noexcept {
 				WvkStatus _status;
 
 				VkFenceCreateInfo _create_info = {
@@ -75,17 +75,17 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			void destroy(void) noexcept;
+			inline void destroy(void) noexcept {}
 
-			void wait(void) {
-				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkWaitForFences(nullptr, 1, &m_vk_fence, VK_TRUE, UINT64_MAX);
+			inline void wait(void) {
+				auto _vk_result = m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkWaitForFences(nullptr, 1, &m_vk_fence, VK_TRUE, UINT64_MAX);
 			}
 
-			void reset(void) {
-				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkResetFences(nullptr, 1, &m_vk_fence);
+			inline void reset(void) {
+				auto _vk_result = m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkResetFences(nullptr, 1, &m_vk_fence);
 			}
 
-			const VkFence getVkFence(void) { return m_vk_fence; }
+			inline const VkFence getVkFence(void) { return m_vk_fence; }
 		// hpp
 		public:
 

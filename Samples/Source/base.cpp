@@ -16,6 +16,7 @@
 // секция для остального
 ////////////////////////////////////////////////////////////////
 #include "shader_object.h"
+#include "wvk_fence.h"
 
 int main() {
 	auto _sample = std::make_unique<CGDev::samples::ShaderObject>();
@@ -169,7 +170,7 @@ namespace CGDev {
 			}
 
 			{ 
-				wvk_command_buffers.resize(1);
+				wvk_command_buffers.resize(2);
 				wvk_command_pool_ptr->allocateWvkCommandBuffers(wvk_command_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 				CGDev::wvk::WvkCommandBufferCreateInfo _create_info = {
 					.wvk_logical_device_ptr = wvk_logical_device_ptr.get(), 
@@ -181,9 +182,24 @@ namespace CGDev {
 				CGDev::wvk::WvkFenceCreateInfo _create_info = {
 					.wvk_logical_device_ptr = wvk_logical_device_ptr.get(),
 				};
-				wvk_fence_ptr = std::make_unique<CGDev::wvk::WvkFence>();
-				wvk_fence_ptr->create(_create_info);
+				auto _wvk_fence_ptr = std::make_unique<CGDev::wvk::WvkFence>();
+				_wvk_fence_ptr->create(_create_info);
+
+				wvk_fence_ptrs.push_back(std::move(_wvk_fence_ptr));
+
+				_wvk_fence_ptr = std::make_unique<CGDev::wvk::WvkFence>();
+				_wvk_fence_ptr->create(_create_info);
+
+				wvk_fence_ptrs.push_back(std::move(_wvk_fence_ptr));
+
+				_wvk_fence_ptr = std::make_unique<CGDev::wvk::WvkFence>();
+				_wvk_fence_ptr->create(_create_info);
+
+				wvk_fence_ptrs.push_back(std::move(_wvk_fence_ptr));
 			}
+
+			m_vk_images = wvk_swapchain_ptr->getImages1();
+			m_vk_image_views = wvk_swapchain_ptr->getImages();
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

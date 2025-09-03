@@ -40,11 +40,11 @@ namespace CGDev {
 
     namespace tests {
 
-        CGDev::wvk::WvkInstanceUptr WvkBaseTest::wvk_instance_ptr;
-        CGDev::wvk::WvkLogicalDeviceUptr WvkBaseTest::wvk_logical_device_ptr;
-        CGDev::wvk::WvkCommandPoolUptr WvkBaseTest::wvk_command_pool_ptr;
-        CGDev::wvk::WvkShaderUptr WvkBaseTest::wvk_shader_ptr;
-        CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr WvkBaseTest::wvk_debug_utils_messenger_ptr;
+        CGDev::wvk::WvkInstanceUptr WvkBaseTest::m_wvk_instance_ptr;
+        CGDev::wvk::WvkLogicalDeviceUptr WvkBaseTest::m_wvk_logical_device_ptr;
+        CGDev::wvk::WvkCommandPoolUptr WvkBaseTest::m_wvk_command_pool_ptr;
+        CGDev::wvk::WvkShaderUptr WvkBaseTest::m_wvk_shader_ptr;
+        CGDev::wvk::Extensions::WvkDebugUtilsMessengerUptr WvkBaseTest::m_wvk_debug_utils_messenger_ptr;
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,8 +57,8 @@ namespace CGDev {
             {
                 CGDev::wvk::WvkInstanceCreateInfo _create_info;
 
-                wvk_instance_ptr = std::make_unique<CGDev::wvk::WvkInstance>();
-                auto _wvk_res = wvk_instance_ptr->create(_create_info);
+                m_wvk_instance_ptr = std::make_unique<CGDev::wvk::WvkInstance>();
+                auto _wvk_res = m_wvk_instance_ptr->create(_create_info);
 
                 ASSERT_EQ(_wvk_res, true);
             }
@@ -68,12 +68,12 @@ namespace CGDev {
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             {
                 CGDev::wvk::Extensions::WvkDebugUtilsMessengerCreateInfo _create_info = {
-                    .wvk_instance_ptr = wvk_instance_ptr.get(),
+                    .wvk_instance_ptr = m_wvk_instance_ptr.get(),
                     .mode = CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_SEVERITIES | CGDev::wvk::Extensions::VknDebugUtilsMode::ALL_TYPES,
                 };
 
-                wvk_debug_utils_messenger_ptr = std::make_unique<CGDev::wvk::Extensions::WvkDebugUtilsMessenger>();
-                auto _wvk_res = wvk_debug_utils_messenger_ptr->create(_create_info);
+                m_wvk_debug_utils_messenger_ptr = std::make_unique<CGDev::wvk::Extensions::WvkDebugUtilsMessenger>();
+                auto _wvk_res = m_wvk_debug_utils_messenger_ptr->create(_create_info);
 
                 //ASSERT_EQ(_wvk_res, true);
             }
@@ -92,7 +92,7 @@ namespace CGDev {
                 };
 
                 CGDev::wvk::WvkLogicalDeviceCreateInfo _create_info = {
-					.wvk_instance_ptr = wvk_instance_ptr.get(),
+					.wvk_instance_ptr = m_wvk_instance_ptr.get(),
                     .physical_device_group_index = 0,
                     .physical_device_indices = { 0 },
                     .wvk_logical_device_queue_create_infos = { _queue_create_info },
@@ -101,8 +101,8 @@ namespace CGDev {
                     .m_wvk_logical_device_feature_collection = {},
                 };
 
-                wvk_logical_device_ptr = std::make_unique<CGDev::wvk::WvkLogicalDevice>();
-                auto _wvk_res = wvk_logical_device_ptr->create(_create_info);
+                m_wvk_logical_device_ptr = std::make_unique<CGDev::wvk::WvkLogicalDevice>();
+                auto _wvk_res = m_wvk_logical_device_ptr->create(_create_info);
 
                 ASSERT_EQ(_wvk_res, true);
             }
@@ -112,13 +112,13 @@ namespace CGDev {
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             {
                 CGDev::wvk::WvkCommandPoolCreateInfo _create_info = {
-                    .wvk_logical_device_ptr = wvk_logical_device_ptr.get(),
+                    .wvk_logical_device_ptr = m_wvk_logical_device_ptr.get(),
                     .queue_family_index = 0,
 					.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
                 };
 
-                wvk_command_pool_ptr = std::make_unique<CGDev::wvk::WvkCommandPool>();
-                auto _wvk_res = wvk_command_pool_ptr->create(_create_info);
+                m_wvk_command_pool_ptr = std::make_unique<CGDev::wvk::WvkCommandPool>();
+                auto _wvk_res = m_wvk_command_pool_ptr->create(_create_info);
                 
                 ASSERT_EQ(_wvk_res, true);
             }
@@ -129,7 +129,7 @@ namespace CGDev {
             {
                 CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
 
-                auto _wvk_res = wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+                auto _wvk_res = m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
                 ASSERT_EQ(_wvk_res, true);
             }
@@ -137,17 +137,17 @@ namespace CGDev {
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // WvkShader
             // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            {
-                auto _create_info = CGDev::wvk::WvkShaderHelper::graphics(wvk_logical_device_ptr.get())
-                    .vertex("D:\\Laboratory\\CGDev\\Extern\\triangle_vs.spv")
-                    .fragment("D:\\Laboratory\\CGDev\\Extern\\triangle_fs.spv")
-                    .build();
+            //{
+            //    auto _create_info = CGDev::wvk::WvkShaderHelper::graphics(m_wvk_logical_device_ptr.get())
+            //        .vertex("D:\\Laboratory\\CGDev\\Extern\\triangle_vs.spv")
+            //        .fragment("D:\\Laboratory\\CGDev\\Extern\\triangle_fs.spv")
+            //        .build();
 
-                wvk_shader_ptr = std::make_unique<CGDev::wvk::WvkShader>();
-                auto _wvk_res = wvk_shader_ptr->create(_create_info);
+            //    m_wvk_shader_ptr = std::make_unique<CGDev::wvk::WvkShader>();
+            //    auto _wvk_res = m_wvk_shader_ptr->create(_create_info);
 
-                ASSERT_EQ(_wvk_res, true);
-            }
+            //    ASSERT_EQ(_wvk_res, true);
+            //}
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

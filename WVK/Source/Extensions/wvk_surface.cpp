@@ -41,13 +41,13 @@ namespace CGDev {
 				*/
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				WvkStatus create(mswindows::WvkSurfaceMSWindowsCreateInfo& create_info) {
-					if (Build::SurfaceBuildInfo::platform_type == Build::PlatformType::MSWindows) {
+					//if (Build::SurfaceBuildInfo::platform_type == Build::PlatformType::MSWindows) {
 						WvkStatus _status;
 															
 						m_surface_platform.create(create_info);
 
 						return _status.setOk();
-					}
+					//}
 				}
 
 				//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

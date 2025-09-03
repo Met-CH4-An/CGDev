@@ -64,7 +64,7 @@ namespace CGDev {
 			void TearDown() noexcept override {
 			}
 
-			const CGDev::wvk::WvkPhysicalDeviceUptrVec2& m_wvk_phys_dev_groups = wvk_instance_ptr->getWvkPhysicalDevices();
+			const CGDev::wvk::WvkPhysicalDeviceUptrVec2& m_wvk_phys_dev_groups = m_wvk_instance_ptr->getWvkPhysicalDevices();
 			const CGDev::wvk::WvkPhysicalDeviceUptr& wvk_phys_dev = m_wvk_phys_dev_groups[0][0];
 		};
 

@@ -38,19 +38,22 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		void ShaderObject::onRender(void) noexcept {
-			uint32_t _index = 0;
-			wvk_swapchain_ptr->Aqueue(wvk_fence_ptr.get(), _index);
-			wvk_fence_ptr->wait();
-			wvk_fence_ptr->reset();
+			static uint32_t _cur_frame = 0;
+			static uint32_t _index = 0;
+			wvk_swapchain_ptr->Aqueue(wvk_fence_ptrs[2].get(), _index);
+			wvk_fence_ptrs[2]->wait();
+			wvk_fence_ptrs[2]->reset();
 			CGDev::wvk::WvkCommandBufferBeginHelper _begin_helper = {};
 			
+			wvk_command_buffers[_index]->reset();
+			wvk_command_buffers[_index]->begin(_begin_helper);
+			wvk_command_buffers[_index]->Bari(m_vk_images[_index], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+			wvk_command_buffers[_index]->cmdBeginRendering(m_vk_image_views[_index]);
+			wvk_command_buffers[_index]->cmdEndRendering();
+			wvk_command_buffers[_index]->Bari(m_vk_images[_index], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+			wvk_command_buffers[_index]->end(wvk_swapchain_ptr.get(), _index, wvk_fence_ptrs[_cur_frame]->getVkFence());
 
-			wvk_command_buffers[0]->begin(_begin_helper);
-			wvk_command_buffers[0]->Bari(wvk_swapchain_ptr->getImages1()[_index], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-			wvk_command_buffers[0]->cmdBeginRendering(wvk_swapchain_ptr->getImages()[_index]);
-			wvk_command_buffers[0]->cmdEndRendering();
-			wvk_command_buffers[0]->Bari(wvk_swapchain_ptr->getImages1()[0], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-			wvk_command_buffers[0]->end(wvk_swapchain_ptr.get(), _index);
+			_cur_frame = (_cur_frame + 1) % 2;
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

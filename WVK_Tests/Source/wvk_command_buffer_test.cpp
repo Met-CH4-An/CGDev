@@ -27,7 +27,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, reset) {
 			CGDev::wvk::WvkCommandPoolCreateInfo _create_info = {
-					.wvk_logical_device_ptr = wvk_logical_device_ptr.get(),
+					.wvk_logical_device_ptr = m_wvk_logical_device_ptr.get(),
 					.queue_family_index = 0,
 					.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 			};
@@ -48,7 +48,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, resetFail) {
 			CGDev::wvk::WvkCommandPoolCreateInfo _create_info = {
-					.wvk_logical_device_ptr = wvk_logical_device_ptr.get(),
+					.wvk_logical_device_ptr = m_wvk_logical_device_ptr.get(),
 					.queue_family_index = 0,
 			};
 
@@ -59,7 +59,7 @@ namespace CGDev {
 			_wvk_cmd_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->reset();
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 			
 			EXPECT_EQ(_wvk_result, true);
 			EXPECT_EQ(_wvk_validation, false);
@@ -70,7 +70,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, begin_primary_usage) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			VkCommandBufferBeginInfo _begin_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -79,7 +79,7 @@ namespace CGDev {
 				.pInheritanceInfo = nullptr,
 			};
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_begin_info);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -92,7 +92,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, begin_primary_usageAndGroupMask) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			VkDeviceGroupCommandBufferBeginInfo _group_info = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
@@ -107,7 +107,7 @@ namespace CGDev {
 				.pInheritanceInfo = nullptr,
 			};
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_begin_info);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -120,13 +120,13 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_primary_usage) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -139,14 +139,14 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_primary_usageAndGroupMask) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
 				.withGroupMask(1u << 0);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -159,14 +159,14 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_secondary_usageAndOcclusion) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
 				.withOcclusionQuery(VK_TRUE);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -179,7 +179,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_secondary_usageAndOcclusionAndRenderpass) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
@@ -187,7 +187,7 @@ namespace CGDev {
 				.withRenderPass(nullptr, nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -200,7 +200,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_secondary_usageAndOcclusionAndRenderingColor) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
@@ -208,7 +208,7 @@ namespace CGDev {
 				.withRenderingColor({ nullptr, nullptr });
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -221,7 +221,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_secondary_usageAndOcclusionAndRenderingDepth) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
@@ -229,7 +229,7 @@ namespace CGDev {
 				.withRenderingDepth(nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -242,7 +242,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_secondary_usageAndRenderpassAndRenderingColor) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT | VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT)
@@ -250,7 +250,7 @@ namespace CGDev {
 				.withRenderingColor({ nullptr });
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -263,7 +263,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginHelper_primary_usageAndOcclusionAndRenderingDepth) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			CGDev::wvk::WvkCommandBufferBeginHelper _helper;
 			_helper.withUsage(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
@@ -271,7 +271,7 @@ namespace CGDev {
 				.withRenderingDepth(nullptr);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 
@@ -284,7 +284,7 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkCommandBufferTest, beginAndHelper_primary_usageAndGroupAndOcclusionAndRenderingDepthAndLocation) {
 			CGDev::wvk::WvkCommandBufferPtrVec1 _wvk_cmd_buffers(1, nullptr);
-			wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			m_wvk_command_pool_ptr->allocateWvkCommandBuffers(_wvk_cmd_buffers, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 			VkDeviceGroupCommandBufferBeginInfo _group_info = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
@@ -307,7 +307,7 @@ namespace CGDev {
 				.withInheritanceNext(_location_info);
 
 			auto _wvk_result = _wvk_cmd_buffers[0]->begin(_helper);
-			auto _wvk_validation = wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
+			auto _wvk_validation = m_wvk_debug_utils_messenger_ptr->hasErrorsWarnings();
 
 			//_wvk_cmd_buffers[0]->end();
 

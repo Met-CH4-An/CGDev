@@ -43,7 +43,7 @@ namespace CGDev {
 		inline WvkStatus WvkPhysicalDevice::requestProperties(Type& out, Args& ... args) const noexcept {
 			WvkStatus _status;
 
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
+/*#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготавливаем VkPhysicalDeviceProperties2
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,12 +67,12 @@ namespace CGDev {
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
-#else
+#else*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Функционал не доступен
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.set(VknStatusCode::FEATURE_NOT_ENABLED, "Vulkan 1.1 or VK_KHR_get_physical_device_properties2 is not available.");
-#endif
+/*#endif*/
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +109,8 @@ namespace CGDev {
 		inline WvkStatus WvkPhysicalDevice::requestQueueFamilyProperties(std::vector<Type>& out, Args ... args) const noexcept {
 			WvkStatus _status;
 
-#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
+			//if constexpr (Build::vulkan_version == )
+/*#if WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11 || WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Количество VkQueueFamilyProperties2
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,12 +150,12 @@ namespace CGDev {
 			// Успех
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
-#else
+#else*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Функционал не доступен
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.set(VknStatusCode::FEATURE_NOT_ENABLED, "Vulkan 1.1 or VK_KHR_get_physical_device_properties2 is not available.");
-#endif
+/*#endif*/
 		}
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -77,6 +77,15 @@ namespace CGDev {
 			inline VkResult wvkEnumerateInstanceVersion(uint32_t* pApiVersion) const noexcept;
 
 			// =======================================
+			// [Category]: Instance
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			inline void wvkDestroyInstance(const VkAllocationCallbacks* pAllocator) const noexcept;
+
+			// =======================================
 			// [Category]: Physical Device
 			// =======================================
 
@@ -271,6 +280,15 @@ namespace CGDev {
 			// [Version] 1.1
 			// ~~~~~~~~~~~~~~~~
 			PFN_vkEnumerateInstanceVersion m_vkEnumerateInstanceVersion = VK_NULL_HANDLE;
+
+			// =======================================
+			// [Category]: Instance
+			// =======================================
+
+			// ~~~~~~~~~~~~~~~~
+			// [Version] 1.0
+			// ~~~~~~~~~~~~~~~~
+			PFN_vkDestroyInstance m_vkDestroyInstance = VK_NULL_HANDLE;
 
 			// =======================================
 			// [Category]: Physical Device

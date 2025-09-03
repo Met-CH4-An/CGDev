@@ -176,11 +176,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Добавляем в список расширения, которые зависят от сборки
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			extension_names = {
-				#define X(str) str,
-				WVK_COMPILE_TIME_LOGICAL_DEVICE_EXTENSIONS
-				#undef X
-			};
+			std::ranges::copy(build::getDeviceExtensionNames(), std::back_inserter(extension_names));
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Добавляем в список расширения, которые задаются при создании логического устройства
@@ -246,11 +242,24 @@ namespace CGDev {
 			//		return wvk_wvk_logic_dev_feature.vk_base_in;
 			//	}
 			//);
+/*#if WVK_EXT_shader_object == WVK_ENABLE
+			VkPhysicalDeviceShaderObjectFeaturesEXT _shader_object_feature {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
+				.pNext = _pNext,
+				.shaderObject = VK_TRUE,
+			};
+			_pNext = &_shader_object_feature;
+#endif
 
-			VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamicRenderingFeature{};
-			dynamicRenderingFeature.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
-			dynamicRenderingFeature.dynamicRendering = VK_TRUE;
-
+#if WVK_EXT_shader_object == WVK_ENABLE
+			VkPhysicalDeviceDynamicRenderingFeaturesKHR _dynamic_rendering_feature {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
+			.pNext = _pNext,
+			.dynamicRendering = VK_TRUE,
+			};
+			_pNext = &_dynamic_rendering_feature;
+#endif
+			//Build::compileTimeFeatures.getPNext();
 
 #if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_DISABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,7 +275,7 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkPhysicalDeviceFeatures2KHR _features2_khr = {
 				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
-				.pNext = &dynamicRenderingFeature,
+				//.pNext = &dynamicRenderingFeature,
 				.features = m_create_info.m_vk_physical_device_features
 			};
 			_pNext = &_features2_khr;
@@ -284,12 +293,12 @@ namespace CGDev {
 			};
 			_pNext = &_features2;
 			_pEnabledFeatures = nullptr;
-#endif
+#endif*/
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка VkDeviceGroupDeviceCreateInfo
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_DISABLE
+/*#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_device_group_creation == WVK_DISABLE
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Расширение VK_KHR_device_group_creation отключено при Vulkan 1.0.
 			//        Никакой дополнительной логики не требуется.
@@ -351,7 +360,7 @@ namespace CGDev {
 			};
 			_pNext = &_device_group_create_info;
 #endif
-#endif
+#endif*/
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка расширений
@@ -363,7 +372,9 @@ namespace CGDev {
 			if (!_status) {
 				return _status.set(VknStatusCode::FAIL, "\nWvkLogicalDevice::prepareExtensions() is fail.");
 			}
-
+			//Build::compileTimeInstanceExtensions.getDevicePNext(
+			//	Build::compileTimeFeatures.getPNext()
+			//);
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 7. Заполнение структуры VkDeviceCreateInfo
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

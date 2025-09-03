@@ -49,6 +49,7 @@ namespace CGDev {
 		struct WvkShaderStageCreateInfo {
 			WvkShaderStageFlags stage = WvkShaderStageFlags::WVK_SHADER_STAGE_UNKNOWN;
 			std::vector<std::byte> code;
+			std::string entry_point_name = "";
 		}; // struct WvkShaderStageCreateInfo
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

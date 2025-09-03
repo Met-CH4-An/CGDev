@@ -106,7 +106,7 @@ namespace CGDev {
 			/*!	\brief
 			*/
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			inline void end(Extensions::WvkSwapchainPtr swap, uint32_t index) const noexcept {
+			inline void end(Extensions::WvkSwapchainPtr swap, uint32_t index, VkFence vk_fence) const noexcept {
 				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkEndCommandBuffer(m_vk_command_buffer);
 				/*if (_vk_result != VK_SUCCESS) {
 					switch (_vk_result) {
@@ -134,8 +134,10 @@ namespace CGDev {
 					.commandBufferCount = 1,
 					.pCommandBuffers = &m_vk_command_buffer,
 				};
-				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkQueueSubmit(vk_queue, 1, &submitInfo, VK_NULL_HANDLE);
+				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkQueueSubmit(vk_queue, 1, &submitInfo, vk_fence);
 
+				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkWaitForFences(nullptr, 1, &vk_fence, VK_TRUE, UINT64_MAX);
+				m_create_info.wvk_logical_device_ptr->getWvkDispatchTable()->wvkResetFences(nullptr, 1, &vk_fence);
 				VkSwapchainKHR _swapchain = swap->getSwap();
 
 				VkPresentInfoKHR presentInfo{};
