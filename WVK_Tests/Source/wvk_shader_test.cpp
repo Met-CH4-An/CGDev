@@ -52,6 +52,24 @@ namespace CGDev {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Проверка:
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TEST_F(WvkShaderTest, createWithHelper) {
+			auto _create_info = CGDev::wvk::WvkShaderHelper::graphics(m_wvk_logical_device_ptr.get()).
+				vertex("D:\\Laboratory\\CGDev\\Extern\\triangle_vs.spv").
+				fragment("D:\\Laboratory\\CGDev\\Extern\\triangle_fs.spv").
+				build();
+			
+			m_wvk_debug_utils_messenger_ptr->hasIssues(CGDev::wvk::Extensions::VknDebugUtilsMode::ERRORS_ONLY | CGDev::wvk::Extensions::VknDebugUtilsMode::WARNINGS_ONLY);
+			CGDev::wvk::WvkShaderPtr _wvk_shader = new CGDev::wvk::WvkShader();
+			auto _wvk_status = _wvk_shader->create(_create_info);
+			EXPECT_EQ(_wvk_status, true);
+
+			_wvk_status = m_wvk_debug_utils_messenger_ptr->hasIssues(CGDev::wvk::Extensions::VknDebugUtilsMode::ERRORS_ONLY | CGDev::wvk::Extensions::VknDebugUtilsMode::WARNINGS_ONLY);
+			EXPECT_EQ(_wvk_status, true);
+		}
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Проверка:
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		TEST_F(WvkShaderTest, getBinary) {
 			std::vector<CGDev::wvk::WvkShaderStageCreateInfo> _data;
 			auto _wvk_result = m_wvk_shader_ptr->getBinary(_data);

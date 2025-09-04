@@ -38,6 +38,7 @@
 #include "wvk_status.h"
 #include "vulkan/vulkan.h"
 #include <ranges>
+#include <queue>
 
 
 template<typename>

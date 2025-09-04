@@ -145,25 +145,105 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkLogicalDevice::prepareVkQueueCreateInfo(std::vector<VkDeviceQueueCreateInfo>& queue_create_info_collection1) const noexcept {
+		WvkStatus WvkLogicalDevice::prepareFeatures(std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>>& pNext) const noexcept {
 			WvkStatus _status;
 
-			// Перебираем каждую пользовательскую конфигурацию очереди
-			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_infos) {
+			VkBaseInStructure* _pNext_last = pNext.empty() ? nullptr : pNext.back().get();
 
-				// Создаём и заполняем описание очереди
-				VkDeviceQueueCreateInfo vk_queue_create_info{};
-				vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-				vk_queue_create_info.pNext = nullptr;
-				vk_queue_create_info.flags = 0; // зарезервировано, всегда 0
-				//vk_queue_create_info.queueFamilyIndex = it_0.wvk_queue_family_ptr->getIndexFamily();		// индекс семейства очередей
-				vk_queue_create_info.queueCount = it_0.queue_count.value();			// количество создаваемых очередей
-				vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();	// приоритеты очередей (от 0.0f до 1.0f)
+			auto append = [&](auto&& feature) {
+				VkBaseInStructure* newNode = pNext.emplace_back(
+					reinterpret_cast<VkBaseInStructure*>(new std::decay_t<decltype(feature)>(feature)),
+					[](VkBaseInStructure* ptr) { delete ptr; }
+				).get();
 
-				// Добавляем в выходную коллекцию
-				queue_create_info_collection1.emplace_back(std::move(vk_queue_create_info));
+				if (_pNext_last != nullptr) {
+					_pNext_last->pNext = newNode;
+				}
+				_pNext_last = newNode;
+			};
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Добавляем в список фичи, зависящие от сборки
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// VK_KHR_get_physical_device_properties2
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if constexpr (build::vulkan_version == build::VulkanVersion::VERSION_10 && !build::isExtensionEnabled("VK_KHR_get_physical_device_properties2")) {
+			}
+			else if constexpr (build::vulkan_version == build::VulkanVersion::VERSION_10 && build::isExtensionEnabled("VK_KHR_get_physical_device_properties2")) {
+				VkPhysicalDeviceFeatures2KHR _features = {
+					.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
+					.pNext = nullptr,
+					.features = m_create_info.m_vk_physical_device_features
+				};
+				append(_features);
+			}
+			else if constexpr (build::vulkan_version == build::VulkanVersion::VERSION_11 && build::isExtensionEnabled("VK_KHR_get_physical_device_properties2")) {
+				VkPhysicalDeviceFeatures2 _features = {
+					.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+					.pNext = nullptr,
+					.features = m_create_info.m_vk_physical_device_features
+				};
+				append(_features);
+			}
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// VK_EXT_shader_object
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if constexpr (build::isExtensionEnabled("VK_EXT_shader_object")) {
+				VkPhysicalDeviceShaderObjectFeaturesEXT _feature{
+					.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
+					.pNext = nullptr,
+					.shaderObject = VK_TRUE,
+				};
+				append(_feature);
 			}
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// VK_KHR_dynamic_rendering
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if constexpr (build::isExtensionEnabled("VK_KHR_dynamic_rendering")) {
+				VkPhysicalDeviceDynamicRenderingFeaturesKHR _feature{
+					.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
+					.pNext = nullptr,
+					.dynamicRendering = VK_TRUE,
+				};
+				append(_feature);
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			return _status.setOk();
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		WvkStatus WvkLogicalDevice::prepareVkQueueCreateInfo(std::vector<VkDeviceQueueCreateInfo>& queue_create_infos) const noexcept {
+			WvkStatus _status;
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Формирование структур VkDeviceQueueCreateInfo
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_infos) {
+				VkDeviceQueueCreateInfo vk_queue_create_info {
+					.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+					.pNext = nullptr,
+					.flags = 0,
+					.queueFamilyIndex = it_0.index.value(),
+					.queueCount = it_0.queue_count.value(),
+					.pQueuePriorities = it_0.priority_collection.data(),
+				};	
+
+				// Добавляем в выходную коллекцию
+				queue_create_infos.emplace_back(std::move(vk_queue_create_info));
+			}
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Успех
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			return _status.setOk();
 		}
 
@@ -214,87 +294,17 @@ namespace CGDev {
 			const auto& _dispatch_table_ptr = m_create_info.wvk_instance_ptr->getWvkDispatchTable();
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Подготовка feature
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>> _pNext;
+			prepareFeatures(_pNext);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Формирование списка очередей
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			std::vector<VkDeviceQueueCreateInfo> vk_queue_create_infos;
-			for (const auto& it_0 : m_create_info.wvk_logical_device_queue_create_infos) {
-				VkDeviceQueueCreateInfo vk_queue_create_info{};
-				vk_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-				vk_queue_create_info.pNext = nullptr;
-				vk_queue_create_info.flags = 0;
-				vk_queue_create_info.queueFamilyIndex = it_0.index.value();
-				vk_queue_create_info.queueCount = it_0.queue_count.value();
-				vk_queue_create_info.pQueuePriorities = it_0.priority_collection.data();
-				vk_queue_create_infos.push_back(vk_queue_create_info);
-			}
+			prepareVkQueueCreateInfo(vk_queue_create_infos);
 			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Подготовка feature
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VkPhysicalDeviceFeatures* _pEnabledFeatures = nullptr;
-			void* _pNext = nullptr;
-
-			//std::transform(
-			//	m_create_info.m_wvk_logical_device_feature_collection.begin(),
-			//	m_create_info.m_wvk_logical_device_feature_collection.end(),
-			//	std::back_inserter(_vk_base_in_collection),
-			//	[](const auto& wvk_wvk_logic_dev_feature) {
-			//		return wvk_wvk_logic_dev_feature.vk_base_in;
-			//	}
-			//);
-/*#if WVK_EXT_shader_object == WVK_ENABLE
-			VkPhysicalDeviceShaderObjectFeaturesEXT _shader_object_feature {
-				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-				.pNext = _pNext,
-				.shaderObject = VK_TRUE,
-			};
-			_pNext = &_shader_object_feature;
-#endif
-
-#if WVK_EXT_shader_object == WVK_ENABLE
-			VkPhysicalDeviceDynamicRenderingFeaturesKHR _dynamic_rendering_feature {
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
-			.pNext = _pNext,
-			.dynamicRendering = VK_TRUE,
-			};
-			_pNext = &_dynamic_rendering_feature;
-#endif
-			//Build::compileTimeFeatures.getPNext();
-
-#if WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_DISABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Vulkan 1.0 без расширения get_physical_device_properties2
-			//        Используем обычную структуру VkPhysicalDeviceFeatures
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			_pEnabledFeatures = &m_create_info.m_vk_physical_device_features;
-
-#elif WVK_VULKAN_API_VERSION == WVK_VULKAN_API_VERSION_10 && WVK_KHR_get_physical_device_properties2 == WVK_ENABLE
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Vulkan 1.0 с расширением VK_KHR_get_physical_device_properties2
-			//        Используем VkPhysicalDeviceFeatures2KHR и добавляем в цепочку
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VkPhysicalDeviceFeatures2KHR _features2_khr = {
-				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
-				//.pNext = &dynamicRenderingFeature,
-				.features = m_create_info.m_vk_physical_device_features
-			};
-			_pNext = &_features2_khr;
-			_pEnabledFeatures = nullptr;
-
-#elif WVK_VULKAN_API_VERSION >= WVK_VULKAN_API_VERSION_11
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Vulkan 1.1 или выше — используем VkPhysicalDeviceFeatures2
-			//        Добавляем в цепочку расширений
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			VkPhysicalDeviceFeatures2 _features2 = {
-				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-				.pNext = nullptr,
-				.features = m_create_info.m_vk_physical_device_features
-			};
-			_pNext = &_features2;
-			_pEnabledFeatures = nullptr;
-#endif*/
-
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка VkDeviceGroupDeviceCreateInfo
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -365,22 +375,19 @@ namespace CGDev {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка расширений
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 			std::vector<const char*> _ext_names;
 			_status = prepareExtensions(_ext_names);
 
 			if (!_status) {
 				return _status.set(VknStatusCode::FAIL, "\nWvkLogicalDevice::prepareExtensions() is fail.");
 			}
-			//Build::compileTimeInstanceExtensions.getDevicePNext(
-			//	Build::compileTimeFeatures.getPNext()
-			//);
+			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Шаг 7. Заполнение структуры VkDeviceCreateInfo
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			VkDeviceCreateInfo _vk_device_create_info = {};
 			_vk_device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			_vk_device_create_info.pNext = _pNext;
+			_vk_device_create_info.pNext = _pNext.empty() ? nullptr : _pNext.front().get();
 			_vk_device_create_info.flags = 0;
 			_vk_device_create_info.queueCreateInfoCount = static_cast<uint32_t>(vk_queue_create_infos.size());
 			_vk_device_create_info.pQueueCreateInfos = vk_queue_create_infos.data();
@@ -388,7 +395,7 @@ namespace CGDev {
 			_vk_device_create_info.ppEnabledLayerNames = nullptr;
 			_vk_device_create_info.enabledExtensionCount = static_cast<uint32_t>(_ext_names.size());
 			_vk_device_create_info.ppEnabledExtensionNames = _ext_names.data();
-			_vk_device_create_info.pEnabledFeatures = _pEnabledFeatures;
+			//_vk_device_create_info.pEnabledFeatures = _pEnabledFeatures;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Создание vkDevice

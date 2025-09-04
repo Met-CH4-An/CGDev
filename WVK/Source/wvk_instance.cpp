@@ -397,10 +397,22 @@ namespace CGDev {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		WvkStatus WvkInstance::preparePNext(std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>>& pNext) const noexcept {
+		WvkStatus WvkInstance::prepareDebug(std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>>& pNext) const noexcept {
 			WvkStatus _status;
 
-			void* _pNext = pNext.empty() ? nullptr : pNext.back().get();
+			VkBaseInStructure* _pNext_last = pNext.empty() ? nullptr : pNext.back().get();
+
+			auto append = [&](auto&& feature) {
+				VkBaseInStructure* newNode = pNext.emplace_back(
+					reinterpret_cast<VkBaseInStructure*>(new std::decay_t<decltype(feature)>(feature)),
+					[](VkBaseInStructure* ptr) { delete ptr; }
+				).get();
+
+				if (_pNext_last != nullptr) {
+					_pNext_last->pNext = newNode;
+				}
+				_pNext_last = newNode;
+			};
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Добавление расширения VK_EXT_debug_utils, если оно включено
@@ -408,7 +420,7 @@ namespace CGDev {
 			if constexpr (build::isExtensionEnabled("VK_EXT_debug_utils")) {
 				VkDebugUtilsMessengerCreateInfoEXT _info = {
 					.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-					.pNext = _pNext,
+					.pNext = nullptr,
 					.flags = 0,
 					.messageSeverity =
 						VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
@@ -422,17 +434,7 @@ namespace CGDev {
 					.pfnUserCallback = &s_debugCallback,
 					.pUserData = &_status
 				};
-
-				pNext.emplace_back(
-					reinterpret_cast<VkBaseInStructure*>(
-						new VkDebugUtilsMessengerCreateInfoEXT(_info)
-						),
-					[](VkBaseInStructure* p) {
-						delete reinterpret_cast<VkDebugUtilsMessengerCreateInfoEXT*>(p);
-					}
-				);
-
-				_pNext = pNext.back().get();
+				append(_info);
 			} // if constexpr (Build::isExtensionEnabled("VK_EXT_debug_utils")
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -484,10 +486,10 @@ namespace CGDev {
 			WvkStatus _status;
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Подготовка pNext цепочки	
+			// Подготовка Debug
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>> _pNext_chain;
-			preparePNext(_pNext_chain);
+			std::vector<std::unique_ptr<VkBaseInStructure, void(*)(VkBaseInStructure*)>> _pNext;
+			prepareDebug(_pNext);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Подготовка слоёв
@@ -527,7 +529,7 @@ namespace CGDev {
 			VkInstanceCreateInfo _instanceCreateInfo = {};
 			_instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 			_instanceCreateInfo.pNext = VK_NULL_HANDLE;
-			_instanceCreateInfo.pNext = _pNext_chain.empty() ? nullptr : _pNext_chain.front().get();
+			_instanceCreateInfo.pNext = _pNext.empty() ? nullptr : _pNext.front().get();
 			_instanceCreateInfo.flags = 0;
 			_instanceCreateInfo.pApplicationInfo = &_vkApplicationInfo;
 			_instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(_layer_names.size());

@@ -53,7 +53,7 @@ namespace CGDev {
 			_status = validationCreateInfo(create_info);
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkShader::validationCreateInfo() is fail.");
+				return _status.setFail("WvkShader::validationCreateInfo() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,7 +62,7 @@ namespace CGDev {
 			_status = create();
 			if (!_status) {
 				destroy();
-				return _status.set(VknStatusCode::FAIL, "\n\tWvkShader::create() is fail.");
+				return _status.setFail("WvkShader::create() is fail.");
 			}
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
