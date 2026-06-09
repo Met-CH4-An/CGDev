@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[workspace]
+members = [
+    # samples: Not Engine
+    "samples/not_engine/initialize"
+]

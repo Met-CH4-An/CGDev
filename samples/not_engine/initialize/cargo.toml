@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "ne_initialize"
+version = "0.0.0"
+edition = "2021"
+
+[[bin]]
+name = "ne_initialize"
+path = "_mods.rs"
