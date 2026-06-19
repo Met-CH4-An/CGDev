@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "wvk"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+path = "_mods.rs"
+
+[features]
+vulkan_1_0 = []
+vulkan_1_1 = ["vulkan_1_0"]
+vulkan_1_2 = ["vulkan_1_1"]
+vulkan_1_3 = ["vulkan_1_2"]
+vulkan_1_4 = ["vulkan_1_3"]
+
+[dependencies]
+common = {
+    version = "0.0.0",
+    path = "../common",
+}
+
+svk = {
+    version = "0.0.0",
+    path = "../sdk_vulkan",
+}
+
+windows = { 
+    version = "0.62.2",
+    features = [
+        "Win32_System_LibraryLoader"
+    ]
+}

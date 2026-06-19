@@ -3,6 +3,21 @@
 
 [workspace]
 members = [
+    # common
+    "common",
+
     # samples: Not Engine
-    "samples/not_engine/initialize"
+    "samples/not_engine/initialize",
+
+    # samples: Wrapper Vulkan
+    "samples/wrapper_vulkan/query_global_properties",
+
+    #
+    "device_hardware_interface",
+
+    # 
+    "wrapper_vulkan",
+
+    # SDK Vulkan
+    "sdk_vulkan"
 ]

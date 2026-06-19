@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "dhi"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+path = "_mods.rs"
+
+[dependencies]
+wvk = {
+    version = "0.0.0",
+    path = "../wrapper_vulkan",
+}

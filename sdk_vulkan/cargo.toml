@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "svk"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+path = "_mods.rs"
