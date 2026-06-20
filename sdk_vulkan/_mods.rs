@@ -6,6 +6,9 @@
 #![warn(unused)]
 #![allow(dead_code)]
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// модули
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 mod svk_commands;
 pub use svk_commands::*;
 
@@ -14,6 +17,9 @@ pub use svk_constants::*;
 
 mod svk_enums;
 pub use svk_enums::*;
+
+mod svk_macros;
+pub use svk_macros::*;
 
 mod svk_structures;
 pub use svk_structures::*;

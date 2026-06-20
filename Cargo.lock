@@ -10,6 +10,7 @@ version = "0.0.0"
 name = "dhi"
 version = "0.0.0"
 dependencies = [
+ "common",
  "wvk",
 ]
 
@@ -36,7 +37,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "samples_wvk_queryGlobalProperties"
+name = "samples_dhi__dhi_context"
+version = "0.0.0"
+dependencies = [
+ "dhi",
+]
+
+[[package]]
+name = "samples_wvk__wvk_library_and_global_properties"
 version = "0.0.0"
 dependencies = [
  "wvk",

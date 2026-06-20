@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "samples_dhi__dhi_context"
+version = "0.0.0"
+edition = "2021"
+
+[[bin]]
+name = "samples_dhi__dhi_context"
+path = "_mods.rs"
+
+[dependencies]
+dhi = {
+    version = "0.0.0",
+    path = "../../../device_hardware_interface",
+    features = ["wvk"]
+}

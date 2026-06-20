@@ -2,8 +2,6 @@
 // Copyright (c) 2026 None
 
 fn main() {
-    //let _wvk_runtime = wvk_crate::WvkLibrary::new();
-    
     println!("пример: создание WvkLibrary\n");
     
     let _wvk_library = match wvk::WvkLibrary::new() {
@@ -79,7 +77,21 @@ fn main() {
             }
         };
 
-    }     
+    }
+
+    println!("пример: получение версий инстанса вулкана\n");
+    {
+        let version_result = _wvk_library.wvkEnumerateInstanceVersion();
+        
+        if let Err(wvk_error) = &version_result {
+            println!("Не удалось получить версии инстанса вулкана: {}", wvk_error.getMessage());
+        }
+
+        if let Ok(version) = &version_result {
+            wvk::svk::VK_API_VERSION_MAJOR(*version);
+            println!("Версия вулкана поддерживаемая системой: {}.{}.{}", wvk::svk::VK_API_VERSION_MAJOR(*version), wvk::svk::VK_API_VERSION_MINOR(*version), wvk::svk::VK_API_VERSION_PATCH(*version));
+        }
+    }   
 
     let _ = std::io::stdin().read_line(&mut String::new());
 }

@@ -10,14 +10,17 @@ members = [
     "samples/not_engine/initialize",
 
     # samples: Wrapper Vulkan
-    "samples/wrapper_vulkan/query_global_properties",
+    "samples/wvk/wvk_library_and_global_properties",
 
-    #
-    "device_hardware_interface",
-
-    # 
-    "wrapper_vulkan",
+    # samples: Device Hardware Interface
+    "samples/dhi/dhi_context",
 
     # SDK Vulkan
-    "sdk_vulkan"
+    "sdk_vulkan",
+
+    # wrapper Vulkan
+    "wrapper_vulkan",
+
+    # 
+    "device_hardware_interface",
 ]

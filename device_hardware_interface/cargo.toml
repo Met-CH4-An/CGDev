@@ -10,7 +10,21 @@ edition = "2021"
 path = "_mods.rs"
 
 [dependencies]
+common = {
+    version = "0.0.0",
+    path = "../common"
+}
 wvk = {
     version = "0.0.0",
     path = "../wrapper_vulkan",
 }
+
+[features]
+wvk = []
+test = []
+
+wvk_1_0 = ["wvk/vulkan_1_0"]
+wvk_1_1 = ["wvk/vulkan_1_1"]
+wvk_1_2 = ["wvk/vulkan_1_2"]
+wvk_1_3 = ["wvk/vulkan_1_3"]
+wvk_1_4 = ["wvk/vulkan_1_4"]

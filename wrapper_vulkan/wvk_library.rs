@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// зависимости
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 use {
+    crate::wvk_call_with_check,
     crate::WvkError,
     crate::WvkErrorType,
 };
@@ -133,14 +137,10 @@ impl WvkLibrary {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
-        let mut vk_result_ = unsafe {
+        wvk_call_with_check!(
             (self.vkEnumerateInstanceLayerProperties)(&mut count_, std::ptr::null_mut())
-        };
-
-        if !matches!(vk_result_, svk::VkResultCode::VK_SUCCESS | svk::VkResultCode::VK_INCOMPLETE) {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result_), "vkEnumerateInstanceLayerProperties завершилась не удачей."));
-        };
-
+        );
+        
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // получаем свойства
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,13 +151,9 @@ impl WvkLibrary {
             properties_.set_len(count_ as usize);
         };
 
-        vk_result_ = unsafe {
+        wvk_call_with_check!(
             (self.vkEnumerateInstanceLayerProperties)(&mut count_, properties_.as_mut_ptr())
-        };
-
-        if !matches!(vk_result_, svk::VkResultCode::VK_SUCCESS | svk::VkResultCode::VK_INCOMPLETE) {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result_), "vkEnumerateInstanceLayerProperties завершилась не удачей."));
-        };
+        );
 
         return Ok(properties_);
     }
@@ -193,13 +189,10 @@ impl WvkLibrary {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
-        let vk_result = unsafe {
-            (self.vkEnumerateInstanceExtensionProperties)(layer_name_ptr_, &mut count_, std::ptr::null_mut())
-        };
 
-        if !matches!(vk_result, svk::VkResultCode::VK_SUCCESS | svk::VkResultCode::VK_INCOMPLETE) {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result), "vkEnumerateInstanceExtensionProperties завершилась не удачей."));
-        }
+        wvk_call_with_check!(
+            (self.vkEnumerateInstanceExtensionProperties)(layer_name_ptr_, &mut count_, std::ptr::null_mut())
+        );
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // получаем свойства
@@ -210,13 +203,9 @@ impl WvkLibrary {
             properties_.set_len(count_ as usize);
         }
         
-        let vk_result = unsafe {
+        wvk_call_with_check!(
             (self.vkEnumerateInstanceExtensionProperties)(layer_name_ptr_, &mut count_, properties_.as_mut_ptr())
-        };
-
-        if !matches!(vk_result, svk::VkResultCode::VK_SUCCESS | svk::VkResultCode::VK_INCOMPLETE) {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result), "vkEnumerateInstanceExtensionProperties завершилась не удачей."));
-        }
+        );
 
         return Ok(properties_);
     }
@@ -240,31 +229,24 @@ impl WvkLibrary {
         
         let mut vk_instance_ : svk::VkInstance = std::ptr::null_mut();
 
-        let vk_result_ = unsafe {
+        wvk_call_with_check!(
             (self.vkCreateInstance)(create_info, allocator_ptr_, &mut vk_instance_)
-        };
+        );
 
-        if vk_result_ != svk::VkResultCode::VK_SUCCESS {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result_), &format!("vkCreateInstance завершилась не удачей.")));
-        }
-        
         return Ok(vk_instance_);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #[cfg(feature = "vulkan_1_0")]
+    #[cfg(feature = "vulkan_1_1")]
     pub fn wvkEnumerateInstanceVersion(&self) -> Result<u32, WvkError> {
         let mut version_ : u32 = 0;
-        let vk_result_ = unsafe {
+        
+        wvk_call_with_check!(
             (self.vkEnumerateInstanceVersion)(&mut version_)
-        };
-
-        if vk_result_ != svk::VkResultCode::VK_SUCCESS {
-            return Err(WvkError::newWithMessage(WvkErrorType::WVK_VK_RESULT(vk_result_), "vkEnumerateInstanceVersion завершилась не удачей."))
-        }
-
+        );
+        
         return Ok(version_);
     }
 }
