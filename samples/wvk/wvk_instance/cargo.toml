@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "samples_wvk__wvk_instance"
+version = "0.0.0"
+edition = "2021"
+
+[[bin]]
+name = "samples_wvk__wvk_instance"
+path = "_mods.rs"
+
+[dependencies]
+wvk = {
+    version = "0.0.0",
+    path = "../../../wrapper_vulkan/",
+    features = ["vulkan_1_1"]
+}
+

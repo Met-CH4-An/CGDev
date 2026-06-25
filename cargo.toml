@@ -9,8 +9,9 @@ members = [
     # samples: Not Engine
     "samples/not_engine/initialize",
 
-    # samples: Wrapper Vulkan
-    "samples/wvk/wvk_library_and_global_properties",
+    # samples Wrapper Vulkan:
+    "samples/wvk/wvk_library",
+    "samples/wvk/wvk_instance",
 
     # samples: Device Hardware Interface
     "samples/dhi/dhi_context",

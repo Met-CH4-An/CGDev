@@ -10,10 +10,14 @@ use {
     crate::WvkErrorType,
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct WvkLibrary {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // команды вулкана
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     // vulkan 1.0
     vkGetInstanceProcAddr : crate::svk::PFN_vkGetInstanceProcAddr,
     vkEnumerateInstanceLayerProperties : crate::svk::PFN_vkEnumerateInstanceLayerProperties,
@@ -24,17 +28,18 @@ pub struct WvkLibrary {
     vkEnumerateInstanceVersion : crate::svk::PFN_vkEnumerateInstanceVersion,
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// публичные методы
+/// public methods
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl WvkLibrary {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn new() -> Result<Self, crate::WvkError> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn create() -> Result<Self, crate::WvkError> {
         // получаем первичную функцию PFN_vkGetInstanceProcAddr
-        let _vkGetInstanceProcAddr = Self::loadVkGetInstanceProcAddr().map_err(|wvk_err| {
-            wvk_err.addMessage("Не удалось получить библиотеку вулкана.")
+        let _vkGetInstanceProcAddr = Self::loadVkGetInstanceProcAddr().map_err(|wvk_error| {
+            wvk_error.addError(WvkErrorType::WVK_LIBRARY_CREATE_FAILED, "Не удалось выполнить loadVkGetInstanceProcAddr.")
         })?;
 
         return Ok(Self{
@@ -48,81 +53,11 @@ impl WvkLibrary {
             vkEnumerateInstanceVersion : Self::loadCommand::<crate::svk::PFN_vkEnumerateInstanceVersion>(_vkGetInstanceProcAddr, "vkEnumerateInstanceVersion\0")?,
         });
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn loadVkGetInstanceProcAddr() -> Result<crate::svk::PFN_vkGetInstanceProcAddr, crate::WvkError> {
-        // поддержка платформы MSWindows
-        #[cfg(target_os = "windows")]
-        {
-            // пробуем загрузить vulkan-1.dll
-            let _hmodule = unsafe {
-                windows::Win32::System::LibraryLoader::LoadLibraryA(windows::core::PCSTR(b"vulkan-1.dll\0".as_ptr()))
-                    .map_err(|err| {
-                        WvkError::newWithMessage(
-                            WvkErrorType::WVK_RUNTIME_VULKAN_LIBRARY_LOAD_FAILED,
-                            &format!("vulkan-1.dll не найдена. LoadLibraryA вернула {}", &err.message())
-                        )
-                    })?
-            };
-
-            // пробуем получить vkGetInstanceProcAddr
-            let _proc = unsafe {
-                windows::Win32::System::LibraryLoader::GetProcAddress(_hmodule, windows::core::PCSTR(b"vkGetInstanceProcAddr\0".as_ptr()))
-                    .ok_or_else(|| {
-                        WvkError::newWithMessage(
-                            WvkErrorType::WVK_RUNTIME_VULKAN_LIBRARY_LOAD_FAILED,
-                            &format!("vkGetInstanceProcAddr не найдена.")
-                        )
-                    })?
-            };
-
-            let vkGetInstanceProcAddr = unsafe {
-                std::mem::transmute::<
-                    _,
-                    crate::svk::PFN_vkGetInstanceProcAddr
-                >(_proc)
-            };
-
-            return Ok(vkGetInstanceProcAddr);
-        }
-
-        // никакая платформа не поддерживается
-        #[cfg(not(any(target_os = "windows")))]
-        compile_error!("Платформа не поддерживается.");        
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn loadCommand<T>(vkGetInstanceProcAddr : crate::svk::PFN_vkGetInstanceProcAddr, name : &str) -> Result<T, crate::WvkError> {
-        // загружаем команду через vkGetInstanceProcAddr
-        let _command_raw = unsafe {
-            (vkGetInstanceProcAddr)(std::ptr::null_mut(), name.as_ptr() as *const i8)
-        };
-
-        // если не удалось
-        if _command_raw.is_null() {
-            return Err(WvkError::newWithMessage(
-                WvkErrorType::WVK_RUNTIME_VULKAN_COMMAND_LOAD_FAILED, 
-                &format!("Не удалось загрузить команду вулкана: {}", name))
-            );
-        };
-
-        // превращаем в конкретный тип команды
-        let _command = unsafe {
-            std::mem::transmute_copy::<*mut std::ffi::c_void, T>(
-                &_command_raw
-            )            
-        };         
-
-        return Ok(_command);
-    }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
+/// публичные методы
+/// public methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl WvkLibrary {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -134,6 +69,7 @@ impl WvkLibrary {
        
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // получаем количество
+        // get the quantity
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
@@ -142,7 +78,8 @@ impl WvkLibrary {
         );
         
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // получаем свойства
+        // выделяем память под свойства и запрашиваем свойства через vkEnumerateInstanceLayerProperties
+        // allocate memory for properties and request properties via vkEnumerateInstanceLayerProperties
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
         //properties.resize_with(count_ as usize, || unsafe { std::mem::zeroed()});
@@ -163,17 +100,17 @@ impl WvkLibrary {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[cfg(feature = "vulkan_1_0")]
     pub fn wvkEnumerateInstanceExtensionProperties(&self, layer_name : Option<&str>) -> Result<Vec<svk::VkExtensionProperties>, WvkError> {
-        // в вулкане если нужны все расширения, команда PFN_vkEnumerateInstanceExtensionProperties
-        // должна принимать нулевой указатель в качестве имени
-        // если нужны расширения для конкретного слоя, указывается соответственно имя
+        let mut properties_ = Vec::<svk::VkExtensionProperties>::new();
 
-        let mut properties_ : Vec<svk::VkExtensionProperties> = Vec::new();
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // вулкан апи использует си строки. конвертируем str в CString
+        // The Vulcan API uses C strings. Converting str to CString
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        let layer_name_cstring_ = layer_name.map(|v| {
-            std::ffi::CString::new(v)
-                .map_err(|_| {
-                    WvkError::new(WvkErrorType::WVK_INPUT_PARAMETER_FAILED)
-                })
+        let layer_name_cstring_ = layer_name.map(|layer_name_str| {
+            std::ffi::CString::new(layer_name_str).map_err(|std_ffi_nul_error| {
+                WvkError::createWithDescription(WvkErrorType::WVK_INPUT_PARAMETER_INVALID, &format!("Не удалось получить CString: в &str обнаружен нулевой байт {}", std_ffi_nul_error.nul_position()))
+            })
         }).transpose()?;
 
         let layer_name_ptr_ = layer_name_cstring_
@@ -186,6 +123,7 @@ impl WvkLibrary {
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // получаем количество
+        // get the quantity
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
@@ -195,7 +133,8 @@ impl WvkLibrary {
         );
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // получаем свойства
+        // выделяем память под свойства и запрашиваем свойства через vkEnumerateInstanceLayerProperties
+        // allocate memory for properties and request properties via vkEnumerateInstanceLayerProperties
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         properties_.reserve(count_ as usize);
@@ -210,9 +149,9 @@ impl WvkLibrary {
         return Ok(properties_);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[cfg(feature = "vulkan_1_0")]
     pub fn wvkCreateInstance(&self, create_info : &svk::VkInstanceCreateInfo, allocator : Option<&svk::VkAllocationCallbacks>) -> Result<svk::VkInstance, WvkError> {
         /*let allocator_ptr_ = match allocator {
@@ -225,9 +164,21 @@ impl WvkLibrary {
         let allocator_ptr_ = allocator.map_or(std::ptr::null(), |value| {value as *const svk::VkAllocationCallbacks});
         let allocator_ptr_ = allocator.map_or_else(std::ptr::null, |value| {value as *const svk::VkAllocationCallbacks});*/
         
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // если аалокатор задан - превращает в *const svk::VkAllocationCallbacks
+        // если не задан - std::ptr::null
+        // If the allocation callback is specified, it converts to *const svk::VkAllocationCallbacks
+        // If not specified, it converts to std::ptr::null
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         let allocator_ptr_ = allocator.map_or_else(std::ptr::null, |value| {value as *const _});
         
         let mut vk_instance_ : svk::VkInstance = std::ptr::null_mut();
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // создаем svk::VkInstance
+        // create svk::VkInstance
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         wvk_call_with_check!(
             (self.vkCreateInstance)(create_info, allocator_ptr_, &mut vk_instance_)
@@ -236,9 +187,9 @@ impl WvkLibrary {
         return Ok(vk_instance_);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[cfg(feature = "vulkan_1_1")]
     pub fn wvkEnumerateInstanceVersion(&self) -> Result<u32, WvkError> {
         let mut version_ : u32 = 0;
@@ -246,7 +197,112 @@ impl WvkLibrary {
         wvk_call_with_check!(
             (self.vkEnumerateInstanceVersion)(&mut version_)
         );
-        
+
         return Ok(version_);
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// защищённые методы
+/// protected methods
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// приватные методы
+/// private methods
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl WvkLibrary {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn loadVkGetInstanceProcAddr() -> Result<crate::svk::PFN_vkGetInstanceProcAddr, crate::WvkError> {
+        // поддержка платформы MSWindows
+        #[cfg(target_os = "windows")]
+        {
+            // пробуем загрузить vulkan-1.dll
+            let _hmodule = unsafe {
+                windows::Win32::System::LibraryLoader::LoadLibraryA(windows::core::PCSTR(b"vulkan-1.dll\0".as_ptr()))
+                    .map_err(|windows_core_error| {
+                        WvkError::createWithDescription(
+                            WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED, 
+                            &format!("Не удалось загрузить vulkan-1.dll: LoadLibraryA вернула {}.", &windows_core_error.message())
+                        )
+                    }
+                )?
+            };
+
+            // пробуем получить vkGetInstanceProcAddr
+            let _proc = unsafe {
+                windows::Win32::System::LibraryLoader::GetProcAddress(_hmodule, windows::core::PCSTR(b"vkGetInstanceProcAddr\0".as_ptr()))
+                    .ok_or_else(|| {
+                        WvkError::createWithDescription(
+                            WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED,
+                            &format!("Не удалось получить адрес vkGetInstanceProcAddr: не найдена в vulkan-1.dll.")
+                        )
+                    }
+                )?
+            };
+
+            // преобразовываем в памяти в нужный тип
+            let vkGetInstanceProcAddr = unsafe {
+                std::mem::transmute::<
+                    _,
+                    crate::svk::PFN_vkGetInstanceProcAddr
+                >(_proc)
+            };
+
+            return Ok(vkGetInstanceProcAddr);
+        }
+
+        // никакая платформа не поддерживается
+        #[cfg(not(any(target_os = "windows")))]
+        compile_error!("Платформа не поддерживается.");        
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn loadCommand<T>(vkGetInstanceProcAddr : crate::svk::PFN_vkGetInstanceProcAddr, name : &str) -> Result<T, crate::WvkError> {
+        // загружаем команду через vkGetInstanceProcAddr
+        let _command_raw = unsafe {
+            (vkGetInstanceProcAddr)(std::ptr::null_mut(), name.as_ptr() as *const i8)
+        };
+
+        // если не удалось
+        if _command_raw.is_null() {
+            return Err(WvkError::createWithDescription(
+                WvkErrorType::WVK_LIBRARY_VULKAN_COMMAND_LOAD_FAILED, 
+                &format!("Не удалось загрузить команду вулкана: {}", name))
+            );
+        };
+
+        // превращаем в конкретный тип команды
+        let _command = unsafe {
+            std::mem::transmute_copy::<*mut std::ffi::c_void, T>(
+                &_command_raw
+            )            
+        };         
+
+        return Ok(_command);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wvk_library__create__ok() {
+        let wvk_library_ = WvkLibrary::create().ok();
+        assert!(wvk_library_.is_some());
+    }
+
+    #[test]
+    fn wvk_library__wvkEnumerateInstanceExtensionProperties__null_byte_parameter() {
+        let wvk_library_ = WvkLibrary::create().ok().unwrap();
+        
+        let wvk_error_ = wvk_library_.wvkEnumerateInstanceExtensionProperties(Some("layer\0name")).err();
+        println!("{}", wvk_error_.as_ref().unwrap().getMessage());
+        assert!(wvk_error_.is_some(), "message");
     }
 }

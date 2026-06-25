@@ -32,7 +32,7 @@ pub struct VkLayerProperties {
 #[repr(C)]
 pub struct VkInstanceCreateInfo {
     pub sType : crate::svk_enums::VkStructureType,
-    pub void : *const std::ffi::c_void,
+    pub pNext : *const std::ffi::c_void,
     pub flags : crate::svk_types::VkInstanceCreateFlags,
     pub pApplicationInfo : *const VkApplicationInfo,
     pub enabledLayerCount : u32,
