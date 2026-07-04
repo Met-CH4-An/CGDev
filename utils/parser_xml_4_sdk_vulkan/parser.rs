@@ -6,7 +6,9 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 use {
-    crate::MaskPreset,
+    std::arch::x86_64::*,
+    crate::ChunkMask,
+    crate::PresetMask,
     crate::EventType,
     crate::Event,
 };
@@ -71,38 +73,31 @@ enum State {
     L_ATTRIBUTE_VALUE,
     R_ATTRIBUTE_VALUE,
     INVALID,
+    END,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct Parser {
+    /// предустановленные данные для построения масок
+    /// preset data for constructing masks
+    preset_mask : PresetMask,
+    /// данные для парсинга
+    /// data for parsing
     data : Vec<u8>,
+    /// текущее состояние парсера
+    /// current state of the parser
     state : State,    
-    offset : usize,
-    /// текущая маска для '<'
-    /// current mask for '<'
-    l_chevron_mask : u32,
-    /// текущая маска для '>'
-    /// current mask for '>'
-    r_chevron_mask : u32,
-    /// текущая маска для '='
-    /// current mask for '='
-    equal_mask : u32,
-    /// текущая маска для '"'
-    /// current mask for '"'
-    quotes_mask : u32,
-    /// текущая маска для ' ', '\t', '\n'
-    /// current mask for ' ', '\t', '\n'
-    separators_mask : u32,
-    /// текущая маски для 'Aa' ... 'Zz', '0' ... '9'
-    /// current masks for 'Aa' ... 'Zz', '0' ... '9'
-    letters_digitals_mask : u32,
-    /// текущая маска для спецсимволов '/', '?', '!'
-    /// current mask for special characters '/', '?', '!'
-    special_mask : u32,
-
-    mask_preset : MaskPreset,
+    /// текущее смещение для данных
+    /// current offset for data
+    current_chunk_position: usize,
+    /// текущее смещение для чанка с масками
+    /// current offset for the chunk with masks
+    current_mask_position: u32,
+    /// текущий набор масок
+    /// current set of masks
+    current_masks : ChunkMask,    
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,37 +109,34 @@ impl Parser {
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn create() -> Self {
-        const data_0 : &str = "<!data><tag a=\"value\">test</tag>";
+        const data_0 : &str =
+            "\
+            <adata><tag a=\"value\">test</tag>\
+            <?da>as<tag a=\"value\">test</tag>\
+            <?da>as<tag a=\"value\">asd</tag><\
+            asasdasdasdasdassd></asd>asdasdasd";
 
         let mut data_ = Vec::<u8>::with_capacity(data_0.len());
         data_.extend_from_slice(data_0.as_bytes());
 
-        let [
-            l_chevron_mask_,
-            r_chevron_mask_,
-            equal_mask_,
-            quotes_mask_,
-            separator_mask_,
-            special_mask_,
-        ] = Self::nextChunk(data_.as_ptr() as *const i8);
-        
+        let preset_ = PresetMask::create();
+        let mut chunk_ = ChunkMask::create();
+
+        Self::buildChunk(&mut chunk_, data_.as_ptr(), &preset_);
+
         return Self{
-            state : State::L_CHEVRON,
-            data : data_,
-            offset : 0,
-
-            // первичная инициализация масок
-            l_chevron_mask : l_chevron_mask_,
-            r_chevron_mask : r_chevron_mask_,
-            equal_mask : equal_mask_,
-            quotes_mask : quotes_mask_,
-            separators_mask : separator_mask_,
-            letters_digitals_mask : 0,
-            special_mask : special_mask_,
-
             // первичная инициализация пресетов для масок
             // initial initialization of presets for masks
-            mask_preset : MaskPreset::create(),
+            preset_mask : preset_,
+
+            data : data_,
+
+            // первичная инициализация состояния парсера
+            // initial initialization of the parser state
+            state : State::L_CHEVRON,
+            current_chunk_position: 0,
+            current_mask_position: 0,
+            current_masks : chunk_,
         };
     }
 
@@ -154,96 +146,111 @@ impl Parser {
     pub fn nextEvent(&mut self) -> Event {
         let mut event_type_ = EventType::END;
         let mut data_begin_ : usize = 0;
-        let mut data_end_ : usize = 10;
+        let mut data_end_ : usize = 0;
 
-        'chunks: loop {            
-            let mut proceed_position_ : u32 = 0;
-        
-            'analize: loop {
+        'chunks: loop {                    
+            'analize: loop {                
                 match self.state {
                     State::L_CHEVRON => {
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analize;
+                        }
+
                         // очищаем маску л-шеврона до найденной позиции
-                        self.l_chevron_mask = self.l_chevron_mask & !((1u32 << proceed_position_) - 1u32);
+                        self.current_masks.l_chevron_mask = self.current_masks.l_chevron_mask & !((1u32 << self.current_mask_position) - 1u32);
 
                         // если маска пустая, останавливаем анализ, чтобы получить новые маски
-                        if self.l_chevron_mask == 0 {
+                        if self.current_masks.l_chevron_mask == 0 {
                             break 'analize;
                         }                       
 
                         // ищем бит. найденный бит = найденный л-шефрон
                         // количество 0 до первой 1 = позиция 1
-                        let l_chevron_tz_ : u32 = self.l_chevron_mask.trailing_zeros();
+                        let l_chevron_tz_ : u32 = self.current_masks.l_chevron_mask.trailing_zeros();
                         
-                        // сохраняем обработанную позицию
-                        proceed_position_ = l_chevron_tz_ + 1;
+                        // сохраняем позицию
+                        self.current_mask_position = l_chevron_tz_ + 1;
                         
                         // следующее состояние, анализ допустимого символа после л-шеврона
-                        self.state = State::L_CHEVRON_NEXT;  
-
-                        // если позиция была последней, прекращаем анализ и получаем новые чанки
-                        if proceed_position_ == u32::BITS {
-                            break 'analize;
-                        }                     
+                        self.state = State::L_CHEVRON_NEXT;
                     }
 
                     State::L_CHEVRON_NEXT => {
-                        let valid_mask_ : u32 = self.letters_digitals_mask | self.special_mask;
-                        //let invalid_mask_ : u32 = r_chevron_mask_ | equal_mask_ | quotes_mask_ | tab_space_mask_;
-
-                        // если на текущей позиции не допустимый символ
-                        if valid_mask_ & (1u32 << proceed_position_) == 0 {
-                            self.state = State::INVALID;
-                            break 'chunks;
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analize;
                         }
 
-                        proceed_position_ += 1;
+                        // устанавливаем бит на позицию, которую нужно найти
+                        let bit_ = 1u32 << self.current_mask_position;
 
-                        // следующая стадия, поиск начальной границы имени тега
-                        self.state = State::L_TAG_NAME;
+                        // если на искомой позиции находятся символы-цифры, переключаемся на новое состояние
+                        if bit_ & self.current_masks.letters_digitals_mask != 0 {
+                            self.state = State::L_TAG_NAME;
 
-                        event_type_ = EventType::TAG_NAME;
+                            continue 'analize;
+                        }
 
-                        // если позиция была последней, прекращаем анализ и получаем новые чанки
-                        if proceed_position_ == i32::BITS {
-                            break 'analize;
-                        }                   
+                        // 
+                        else {
+                            // если на искомой позиции находятся спецсимволы,
+                            if bit_ & self.current_masks.special_mask != 0 {
+                                // смещаем обрабатываемую позицию
+                                self.current_mask_position += 1;
+
+                                self.state = State::L_TAG_NAME;
+
+                                continue 'analize;
+                            }
+
+                            // 
+                            else {
+                                self.state = State::INVALID;
+                                break 'chunks;
+                            }
+                        }                                        
                     }
 
                     State::L_TAG_NAME => {
-                        let mut invalid_mask_ = self.r_chevron_mask | self.l_chevron_mask | self.equal_mask | self.quotes_mask | self.special_mask; 
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analize;
+                        }
+
+                        let mut invalid_mask_ = self.current_masks.r_chevron_mask | self.current_masks.l_chevron_mask | self.current_masks.equal_mask | self.current_masks.quote_mask | self.current_masks.special_mask; 
 
                         // очищаем маски, которые будут использоваться, до найденной позиции
-                        invalid_mask_ = invalid_mask_ & !((1u32 << proceed_position_) - 1u32);
-                        self.letters_digitals_mask = self.letters_digitals_mask & !((1u32 << proceed_position_) - 1u32);
+                        invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        self.current_masks.letters_digitals_mask = self.current_masks.letters_digitals_mask & !((1u32 << self.current_mask_position) - 1u32);
 
                         let invalid_tz = invalid_mask_.trailing_zeros();
-                        let letters_tz = self.letters_digitals_mask.trailing_zeros();
+                        let letters_tz = self.current_masks.letters_digitals_mask.trailing_zeros();
 
                         // если недопустимый бит встретился раньше, ошибка парсинга
                         if invalid_tz < letters_tz {
                             self.state = State::INVALID;
                         }
 
-                        proceed_position_ = letters_tz + 1;
+                        self.current_mask_position = letters_tz + 1;
+                        data_begin_ = self.current_chunk_position + letters_tz as usize;
 
                         // следующая стадия, поиск конечной границы имени тега
                         self.state = State::R_TAG_NAME;
-
-                        data_begin_ = letters_tz as usize;
-
-                        // если позиция была последней, прекращаем анализ и получаем новые чанки
-                        if proceed_position_ == i32::BITS {
-                            break 'analize;
-                        }                         
                     }
 
                     State::R_TAG_NAME => {
-                        let mut valid_mask_ = self.r_chevron_mask | self.separators_mask;
-                        let mut invalid_mask_ = self.l_chevron_mask | self.equal_mask | self.quotes_mask | self.special_mask;                        
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analize;
+                        }
+
+                        let mut valid_mask_ = self.current_masks.r_chevron_mask | self.current_masks.separators_mask;
+                        let mut invalid_mask_ = self.current_masks.l_chevron_mask | self.current_masks.equal_mask | self.current_masks.quote_mask | self.current_masks.special_mask;                        
 
                         // очищаем маски, которые будут использоваться, до найденной позиции
-                        valid_mask_ = valid_mask_ & !((1u32 << proceed_position_) - 1u32);
-                        invalid_mask_ = invalid_mask_ & !((1u32 << proceed_position_) - 1u32);                        
+                        valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
 
                         let valid_tz_ = valid_mask_.trailing_zeros();
                         let invalid_tz = invalid_mask_.trailing_zeros();                       
@@ -254,21 +261,17 @@ impl Parser {
                             break 'chunks;
                         }
 
-                        proceed_position_ = valid_tz_ + 1;
+                        self.current_mask_position = valid_tz_ + 1;
+                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
+                        event_type_ = EventType::TAG_NAME;
 
-                        if self.r_chevron_mask & (1 << valid_tz_) != 0 {
+                        if self.current_masks.r_chevron_mask & (1 << valid_tz_) != 0 {
                             self.state = State::L_CHEVRON;
+                            break 'chunks;
                         }
                         else {
                             self.state = State::L_CHEVRON;
                         }
-                        
-                        data_end_ = valid_tz_ as usize;
-
-                        // если позиция была последней, прекращаем анализ и получаем новые чанки
-                        if proceed_position_ == i32::BITS {
-                            break 'analize;
-                        }  
 
                         break 'chunks;
                     }
@@ -289,8 +292,26 @@ impl Parser {
                         break 'chunks;
                     }
 
+                    State::END => {
+                        event_type_ = EventType::END;
+                        break 'chunks;
+                    }
+
                 }; // match self.state              
-            } // 'analize: loop          
+            } // 'analize: loop
+
+            self.nextChunk();
+
+            self.current_mask_position = 0;
+
+            /*println!("{:32b} '<'", self.current_masks.l_chevron_mask);
+            println!("{:32b} '>'", self.current_masks.r_chevron_mask);
+            println!("{:32b} '='", self.current_masks.equal_mask);
+            println!("{:32b} '\"'", self.current_masks.quote_mask);
+            println!("{:32b} ' '", self.current_masks.separators_mask);
+            println!("{:32b} 'AaZz'", self.current_masks.letters_digitals_mask);
+            println!("{:32b} /?!", self.current_masks.special_mask);*/
+
         }; // 'chunks: loop
 
         return Event::create(event_type_, unsafe {std::str::from_utf8_unchecked(&self.data[data_begin_ .. data_end_]) })
@@ -312,40 +333,39 @@ impl Parser {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn nextChunk() {
-        
+    fn nextChunk(&mut self) {
+        let pos_ = self.current_chunk_position + 32;
+
+        if self.current_chunk_position + 64 <= self.data.len() {
+            self.current_chunk_position += 32;
+
+            let data_ptr_ = unsafe { self.data.as_ptr().add(self.current_chunk_position) };
+
+            Self::buildChunk(&mut self.current_masks, data_ptr_, &self.preset_mask);
+
+            return;
+        }
+
+        self.state = State::END;
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn buildChunk(data_ptr : *const i8, presets : &MaskPreset) -> [u32; 6] {
-        // указатель на текущий участок данных для построения масок
-        //let data_ptr_ = unsafe {
-        //    self.data.as_ptr().add(self.offset) as *const i8
-        //};
-
+    fn buildChunk(chunk : &mut ChunkMask, data_ptr : *const u8, presets : &PresetMask) {
         let chunk_ = unsafe {
             // регистр 256, 32 байта по 8 бит, загружаем данные
             // register 256, 32 bytes of 8 bits, load data
-            std::arch::x86_64::_mm256_loadu_epi8(data_ptr)
+            std::arch::x86_64::_mm256_loadu_epi8(data_ptr as *const i8)
         };
 
-        let l_chevron_mask_ = Self::buildMask(chunk_, presets.chevron_l);
-        let r_chevron_mask_ = Self::buildMask(chunk_, presets.chevron_r);
-        let equal_mask_ = Self::buildMask(chunk_, presets.equal);
-        let quotes_mask_ = Self::buildMask(chunk_, presets.quote);
-        let separators_mask_ = Self::buildMask4(chunk_, presets.sp, presets.tab, presets.lf, presets.cr);
-        let special_mask_ = Self::buildMask3(chunk_, presets.slash, presets.qm, presets.em);
-
-        return [
-            l_chevron_mask_,
-            r_chevron_mask_,
-            equal_mask_,
-            quotes_mask_,
-            separators_mask_,
-            special_mask_
-        ];
+        chunk.l_chevron_mask = Self::buildMask(chunk_, presets.chevron_l);
+        chunk.r_chevron_mask = Self::buildMask(chunk_, presets.chevron_r);
+        chunk.equal_mask = Self::buildMask(chunk_, presets.equal);
+        chunk.quote_mask = Self::buildMask(chunk_, presets.quote);
+        chunk.separators_mask = Self::buildMask4(chunk_, presets.sp, presets.tab, presets.lf, presets.cr);
+        chunk.letters_digitals_mask = Self::buildMaskRng(chunk_, presets.ascii_lowercase, presets.letter_a, presets.letter_z);
+        chunk.special_mask = Self::buildMask3(chunk_, presets.slash, presets.qm, presets.em);
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -423,6 +443,21 @@ impl Parser {
             std::arch::x86_64::_mm256_movemask_epi8(found_)
         };   
 
+        return mask_ as u32;
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn buildMaskRng(data : __m256i, ascii_lowercase : __m256i, a : __m256i, z : __m256i) -> u32 {
+        let mask_ = unsafe {
+            let or_ = _mm256_or_si256(data, ascii_lowercase);
+            let cmp_1_ = _mm256_cmpgt_epi8(or_, a);
+            let cmp_2_ = _mm256_cmpgt_epi8(z, or_);
+            let and_ = _mm256_and_si256(cmp_1_, cmp_2_);
+            _mm256_movemask_epi8(and_)
+        };
+        
         return mask_ as u32;
     }
 }

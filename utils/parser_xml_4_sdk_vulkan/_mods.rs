@@ -15,8 +15,11 @@ pub use event::*;
 mod parser;
 pub use parser::*;
 
-mod mask_preset;
-pub(crate) use mask_preset::*;
+mod preset_mask;
+pub(crate) use preset_mask::*;
+
+mod chunk_mask;
+pub(crate) use chunk_mask::*;
 
 fn main() {
     // создаем парсер
@@ -27,10 +30,12 @@ fn main() {
         let state_ = parser_.nextEvent();
 
         println!("{}", state_.toStr());
-        //match state_ {
-        //    ParseState::END => {
-        //        break;
-        //    }
-        //}
+
+        match state_.toType() {
+            crate::EventType::END => {
+                break;
+            }
+            (_) => {}
+        }
     }    
 }
