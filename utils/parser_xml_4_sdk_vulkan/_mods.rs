@@ -9,8 +9,8 @@
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mod event;
-pub use event::*;
+mod token;
+pub use token::*;
 
 mod parser;
 pub use parser::*;
@@ -23,16 +23,16 @@ pub(crate) use chunk_mask::*;
 
 fn main() {
     // создаем парсер
-    let mut parser_ = Parser::create();
+    let mut parser_ = Parser::create().ok().unwrap();
 
     loop {
         // новое состояние
-        let state_ = parser_.nextEvent();
+        let state_ = parser_.nextToken();
 
-        println!("{}", state_.toStr());
+        //println!("{}", state_.asStr());
 
-        match state_.toType() {
-            crate::EventType::END => {
+        match state_.asType() {
+            crate::TokenType::END => {
                 break;
             }
             (_) => {}
