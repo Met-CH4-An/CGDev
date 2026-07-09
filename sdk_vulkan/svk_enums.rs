@@ -197,6 +197,70 @@ pub mod VkInstanceCreateFlagBitsValue {
     pub const VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : VkInstanceCreateFlagBits = 0x00000001;
 }
 
+// Provided by VK_EXT_debug_marker, VK_EXT_debug_report
+pub type VkDebugReportObjectTypeEXT = crate::svk_types::r#enum;
+pub mod VkDebugReportObjectTypeEXTValue {
+    use crate::VkDebugReportObjectTypeEXT;
+
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT : VkDebugReportObjectTypeEXT = 0;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT : VkDebugReportObjectTypeEXT = 1;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT : VkDebugReportObjectTypeEXT = 2;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT : VkDebugReportObjectTypeEXT = 3;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT : VkDebugReportObjectTypeEXT = 4;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT : VkDebugReportObjectTypeEXT = 5;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT : VkDebugReportObjectTypeEXT = 6;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT : VkDebugReportObjectTypeEXT = 7;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT : VkDebugReportObjectTypeEXT = 8;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT : VkDebugReportObjectTypeEXT = 9;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT : VkDebugReportObjectTypeEXT = 10;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT : VkDebugReportObjectTypeEXT = 11;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT : VkDebugReportObjectTypeEXT = 12;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT : VkDebugReportObjectTypeEXT = 13;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT : VkDebugReportObjectTypeEXT = 14;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT : VkDebugReportObjectTypeEXT = 15;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT : VkDebugReportObjectTypeEXT = 16;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT : VkDebugReportObjectTypeEXT = 17;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT : VkDebugReportObjectTypeEXT = 18;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT : VkDebugReportObjectTypeEXT = 19;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT : VkDebugReportObjectTypeEXT = 20;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT : VkDebugReportObjectTypeEXT = 21;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT : VkDebugReportObjectTypeEXT = 22;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT : VkDebugReportObjectTypeEXT = 23;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT : VkDebugReportObjectTypeEXT = 24;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT : VkDebugReportObjectTypeEXT = 25;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT : VkDebugReportObjectTypeEXT = 26;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT : VkDebugReportObjectTypeEXT = 27;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT : VkDebugReportObjectTypeEXT = 28;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_KHR_EXT : VkDebugReportObjectTypeEXT = 29;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_MODE_KHR_EXT : VkDebugReportObjectTypeEXT = 30;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT : VkDebugReportObjectTypeEXT = 33;
+    // Provided by VK_VERSION_1_1 with VK_EXT_debug_report, VK_KHR_sampler_ycbcr_conversion with VK_EXT_debug_report
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT : VkDebugReportObjectTypeEXT = 1000156000;
+    // Provided by VK_VERSION_1_1 with VK_EXT_debug_report
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT : VkDebugReportObjectTypeEXT = 1000085000;
+    // Provided by VK_EXT_debug_report with VK_NVX_binary_import
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CU_MODULE_NVX_EXT : VkDebugReportObjectTypeEXT = 1000029000;
+    // Provided by VK_EXT_debug_report with VK_NVX_binary_import
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CU_FUNCTION_NVX_EXT : VkDebugReportObjectTypeEXT = 1000029001;
+    // Provided by VK_KHR_acceleration_structure with VK_EXT_debug_report
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR_EXT : VkDebugReportObjectTypeEXT = 1000150000;
+    // Provided by VK_EXT_debug_report with VK_NV_ray_tracing
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV_EXT : VkDebugReportObjectTypeEXT = 1000165000;
+    // Provided by VK_EXT_debug_report with VK_NV_cuda_kernel_launch
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CUDA_MODULE_NV_EXT : VkDebugReportObjectTypeEXT = 1000307000;
+    // Provided by VK_EXT_debug_report with VK_NV_cuda_kernel_launch
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CUDA_FUNCTION_NV_EXT : VkDebugReportObjectTypeEXT = 1000307001,
+    // Provided by VK_EXT_debug_report with VK_FUCHSIA_buffer_collection
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA_EXT : VkDebugReportObjectTypeEXT = 1000366000,
+    // VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT is a legacy alias
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT,
+    // VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT is a legacy alias
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT,
+    // Provided by VK_KHR_descriptor_update_template with VK_EXT_debug_report
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT,
+    // Provided by VK_KHR_sampler_ycbcr_conversion with VK_EXT_debug_report
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT,
+} VkDebugReportObjectTypeEXT;
 
 
 

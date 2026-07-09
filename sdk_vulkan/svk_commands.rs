@@ -71,3 +71,14 @@ pub type PFN_vkCreateInstance = unsafe extern "system" fn (
 pub type PFN_vkEnumerateInstanceVersion = unsafe extern "system" fn (
     pApiVersion : *mut u32) 
     -> crate::svk_enums::VkResult;
+
+// Provided by VK_EXT_debug_report
+pub type PFN_vkDebugReportCallbackEXT = unsafe extern "system" fn (
+    flags : crate::svk_types::VkDebugReportFlagsEXT,
+    objectType : VkDebugReportObjectTypeEXT,
+    object : u64,
+    location : usize,
+    messageCode : i32,
+    pLayerPrefix : *const std::ffi::c_char,
+    pMessage : *const std::ffi::c_char,
+    pUserData : *const std::ffi::c_void) -> bool;
