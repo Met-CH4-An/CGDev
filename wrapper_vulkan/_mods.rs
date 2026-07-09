@@ -15,6 +15,9 @@ pub use svk;
 // модули
 // modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mod wvk;
+pub use wvk::*;
+
 mod wvk_error;
 pub use wvk_error::*;
 

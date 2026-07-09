@@ -3,6 +3,19 @@
 
 fn main() {
     let wvk_library_ = wvk::WvkLibrary::create().ok().unwrap();
-    
-    wvk::WvkInstance::builder(&wvk_library_);
+
+    let name_cstring_ = std::ffi::CString::from(c"Application name");
+    let name_cstr_ = c"Application name";
+    let name_string_ = String::from("Application name");
+
+    // Метаданные, которые вулканом не используются. Но могут храниться
+    // Metadata that is not used by the volcano. But can be stored
+    let wvk_instance= wvk::WvkInstanceBuilder::s_create(&wvk_library_)
+        .applicationNameFromCStr(name_cstring_)
+        .applicationNameFromCStr(name_cstr_)
+        .applicationName(name_string_)
+        .applicationVersion(1)
+        .engineNameFromCStr(c"Engine name")
+        .engineVersion(1)
+        .build();
 }

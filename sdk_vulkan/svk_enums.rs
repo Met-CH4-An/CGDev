@@ -18,166 +18,194 @@ pub enum VkInternalAllocationType {
 }
 
 // Provided by VK_VERSION_1_0
-pub type VkStructureType = i32;
+pub type VkStructureType = crate::svk_types::r#enum;
 pub mod VkStructureTypeValue {
-    pub const VK_STRUCTURE_TYPE_APPLICATION_INFO : i32 = 0; 
-    pub const VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO : i32 = 1; 
-    pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO : i32 = 2; 
-    pub const VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO : i32 = 3; 
-    pub const VK_STRUCTURE_TYPE_SUBMIT_INFO : i32 = 4; 
-    pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO : i32 = 5; 
-    pub const VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE : i32 = 6; 
-    pub const VK_STRUCTURE_TYPE_BIND_SPARSE_INFO : i32 = 7; 
-    pub const VK_STRUCTURE_TYPE_FENCE_CREATE_INFO : i32 = 8; 
-    pub const VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO : i32 = 9; 
-    pub const VK_STRUCTURE_TYPE_EVENT_CREATE_INFO : i32 = 10; 
-    pub const VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO : i32 = 11; 
-    pub const VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO : i32 = 12; 
-    pub const VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO : i32 = 13; 
-    pub const VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO : i32 = 14; 
-    pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO : i32 = 15; 
-    pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO : i32 = 16; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO : i32 = 17; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO : i32 = 18; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO : i32 = 19; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO : i32 = 20; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO : i32 = 21; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO : i32 = 22; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO : i32 = 23; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO : i32 = 24; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO : i32 = 25; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO : i32 = 26; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO : i32 = 27; 
-    pub const VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO : i32 = 28; 
-    pub const VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO : i32 = 29; 
-    pub const VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO : i32 = 30; 
-    pub const VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO : i32 = 31; 
-    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO : i32 = 32; 
-    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO : i32 = 33; 
-    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO : i32 = 34; 
-    pub const VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET : i32 = 35; 
-    pub const VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET : i32 = 36; 
-    pub const VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO : i32 = 37; 
-    pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO : i32 = 38; 
-    pub const VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO : i32 = 39; 
-    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO : i32 = 40; 
-    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO : i32 = 41; 
-    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO : i32 = 42; 
-    pub const VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO : i32 = 43; 
-    pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER : i32 = 44; 
-    pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER : i32 = 45; 
-    pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER : i32 = 46; 
-    pub const VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO : i32 = 47;      // comment="Reserved for internal use by the loader;  layers;  and ICDs
-    pub const VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO : i32 = 48;        // comment="Reserved for internal use by the loader;  layers;  and ICDs
+    use crate::VkStructureType;
+
+    pub const VK_STRUCTURE_TYPE_APPLICATION_INFO : VkStructureType = 0;
+    pub const VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO : VkStructureType = 1;
+    pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO : VkStructureType = 2;
+    pub const VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO : VkStructureType = 3;
+    pub const VK_STRUCTURE_TYPE_SUBMIT_INFO : VkStructureType = 4;
+    pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO : VkStructureType = 5;
+    pub const VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE : VkStructureType = 6;
+    pub const VK_STRUCTURE_TYPE_BIND_SPARSE_INFO : VkStructureType = 7;
+    pub const VK_STRUCTURE_TYPE_FENCE_CREATE_INFO : VkStructureType = 8;
+    pub const VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO : VkStructureType = 9;
+    pub const VK_STRUCTURE_TYPE_EVENT_CREATE_INFO : VkStructureType = 10;
+    pub const VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO : VkStructureType = 11;
+    pub const VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO : VkStructureType = 12;
+    pub const VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO : VkStructureType = 13;
+    pub const VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO : VkStructureType = 14;
+    pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO : VkStructureType = 15;
+    pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO : VkStructureType = 16;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO : VkStructureType = 17;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO : VkStructureType = 18;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO : VkStructureType = 19;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO : VkStructureType = 20;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO : VkStructureType = 21;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO : VkStructureType = 22;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO : VkStructureType = 23;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO : VkStructureType = 24;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO : VkStructureType = 25;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO : VkStructureType = 26;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO : VkStructureType = 27;
+    pub const VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO : VkStructureType = 28;
+    pub const VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO : VkStructureType = 29;
+    pub const VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO : VkStructureType = 30;
+    pub const VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO : VkStructureType = 31;
+    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO : VkStructureType = 32;
+    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO : VkStructureType = 33;
+    pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO : VkStructureType = 34;
+    pub const VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET : VkStructureType = 35;
+    pub const VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET : VkStructureType = 36;
+    pub const VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO : VkStructureType = 37;
+    pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO : VkStructureType = 38;
+    pub const VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO : VkStructureType = 39;
+    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO : VkStructureType = 40;
+    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO : VkStructureType = 41;
+    pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO : VkStructureType = 42;
+    pub const VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO : VkStructureType = 43;
+    pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER : VkStructureType = 44;
+    pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER : VkStructureType = 45;
+    pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER : VkStructureType = 46;
+    pub const VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO : VkStructureType = 47;      // comment="Reserved for internal use by the loader;  layers;  and ICDs
+    pub const VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO : VkStructureType = 48;        // comment="Reserved for internal use by the loader;  layers;  and ICDs
 }
 
+// Provided by VK_VERSION_1_0
 pub type VkResult = i32;
+
+// Provided by VK_VERSION_1_0
 pub mod VkResultValue {
-    pub const VK_SUCCESS : i32 = 0;
-    pub const VK_NOT_READY : i32 = 1;
-    pub const VK_TIMEOUT : i32 = 2;
-    pub const VK_EVENT_SET : i32 = 3;
-    pub const VK_EVENT_RESET : i32 = 4;
-    pub const VK_INCOMPLETE : i32 = 5;
-    pub const VK_ERROR_OUT_OF_HOST_MEMORY : i32 = -1;
-    pub const VK_ERROR_OUT_OF_DEVICE_MEMORY : i32 = -2;
-    pub const VK_ERROR_INITIALIZATION_FAILED : i32 = -3;
-    pub const VK_ERROR_DEVICE_LOST : i32 = -4;
-    pub const VK_ERROR_MEMORY_MAP_FAILED : i32 = -5;
-    pub const VK_ERROR_LAYER_NOT_PRESENT : i32 = -6;
-    pub const VK_ERROR_EXTENSION_NOT_PRESENT : i32 = -7;
-    pub const VK_ERROR_FEATURE_NOT_PRESENT : i32 = -8;
-    pub const VK_ERROR_INCOMPATIBLE_DRIVER : i32 = -9;
-    pub const VK_ERROR_TOO_MANY_OBJECTS : i32 = -10;
-    pub const VK_ERROR_FORMAT_NOT_SUPPORTED : i32 = -11;
-    pub const VK_ERROR_FRAGMENTED_POOL : i32 = -12;
-    pub const VK_ERROR_UNKNOWN : i32 = -13;
+    use crate::VkResult;
+
+    pub const VK_SUCCESS : VkResult = 0;
+    pub const VK_NOT_READY : VkResult = 1;
+    pub const VK_TIMEOUT : VkResult = 2;
+    pub const VK_EVENT_SET : VkResult = 3;
+    pub const VK_EVENT_RESET : VkResult = 4;
+    pub const VK_INCOMPLETE : VkResult = 5;
+    pub const VK_ERROR_OUT_OF_HOST_MEMORY : VkResult = -1;
+    pub const VK_ERROR_OUT_OF_DEVICE_MEMORY : VkResult = -2;
+    pub const VK_ERROR_INITIALIZATION_FAILED : VkResult = -3;
+    pub const VK_ERROR_DEVICE_LOST : VkResult = -4;
+    pub const VK_ERROR_MEMORY_MAP_FAILED : VkResult = -5;
+    pub const VK_ERROR_LAYER_NOT_PRESENT : VkResult = -6;
+    pub const VK_ERROR_EXTENSION_NOT_PRESENT : VkResult = -7;
+    pub const VK_ERROR_FEATURE_NOT_PRESENT : VkResult = -8;
+    pub const VK_ERROR_INCOMPATIBLE_DRIVER : VkResult = -9;
+    pub const VK_ERROR_TOO_MANY_OBJECTS : VkResult = -10;
+    pub const VK_ERROR_FORMAT_NOT_SUPPORTED : VkResult = -11;
+    pub const VK_ERROR_FRAGMENTED_POOL : VkResult = -12;
+    pub const VK_ERROR_UNKNOWN : VkResult = -13;
     // Provided by VK_VERSION_1_0
-    pub const VK_ERROR_VALIDATION_FAILED : i32 = -1000011001;
+    pub const VK_ERROR_VALIDATION_FAILED : VkResult = -1000011001;
     // Provided by VK_VERSION_1_1
-    pub const VK_ERROR_OUT_OF_POOL_MEMORY : i32 = -1000069000;
+    pub const VK_ERROR_OUT_OF_POOL_MEMORY : VkResult = -1000069000;
     // Provided by VK_VERSION_1_1
-    pub const VK_ERROR_INVALID_EXTERNAL_HANDLE : i32 = -1000072003;
+    pub const VK_ERROR_INVALID_EXTERNAL_HANDLE : VkResult = -1000072003;
     // Provided by VK_VERSION_1_2
-    pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS : i32 = -1000257000;
+    pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS : VkResult = -1000257000;
     // Provided by VK_VERSION_1_2
-    pub const VK_ERROR_FRAGMENTATION : i32 = -1000161000;
+    pub const VK_ERROR_FRAGMENTATION : VkResult = -1000161000;
     // Provided by VK_VERSION_1_3
-    pub const VK_PIPELINE_COMPILE_REQUIRED : i32 = 1000297000;
+    pub const VK_PIPELINE_COMPILE_REQUIRED : VkResult = 1000297000;
     // Provided by VK_VERSION_1_4
-    pub const VK_ERROR_NOT_PERMITTED : i32 = -1000174001;
+    pub const VK_ERROR_NOT_PERMITTED : VkResult = -1000174001;
     // Provided by VK_KHR_surface
-    pub const VK_ERROR_SURFACE_LOST_KHR : i32 = -1000000000;
+    pub const VK_ERROR_SURFACE_LOST_KHR : VkResult = -1000000000;
     // Provided by VK_KHR_surface
-    pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR : i32 = -1000000001;
+    pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR : VkResult = -1000000001;
     // Provided by VK_KHR_swapchain
-    pub const VK_SUBOPTIMAL_KHR : i32 = 1000001003;
+    pub const VK_SUBOPTIMAL_KHR : VkResult = 1000001003;
     // Provided by VK_KHR_swapchain
-    pub const VK_ERROR_OUT_OF_DATE_KHR : i32 = -1000001004;
+    pub const VK_ERROR_OUT_OF_DATE_KHR : VkResult = -1000001004;
     // Provided by VK_KHR_display_swapchain
-    pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR : i32 = -1000003001;
+    pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR : VkResult = -1000003001;
     // Provided by VK_NV_glsl_shader
-    pub const VK_ERROR_INVALID_SHADER_NV : i32 = -1000012000;
+    pub const VK_ERROR_INVALID_SHADER_NV : VkResult = -1000012000;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR : i32 = -1000023000;
+    pub const VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR : VkResult = -1000023000;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR : i32 = -1000023001;
+    pub const VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR : VkResult = -1000023001;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR : i32 = -1000023002;
+    pub const VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR : VkResult = -1000023002;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR : i32 = -1000023003;
+    pub const VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR : VkResult = -1000023003;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR : i32 = -1000023004;
+    pub const VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR : VkResult = -1000023004;
     // Provided by VK_KHR_video_queue
-    pub const VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR : i32 = -1000023005;
+    pub const VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR : VkResult = -1000023005;
     // Provided by VK_EXT_image_drm_format_modifier
-    pub const VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT : i32 = -1000158000;
+    pub const VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT : VkResult = -1000158000;
     // Provided by VK_EXT_present_timing
-    pub const VK_ERROR_PRESENT_TIMING_QUEUE_FULL_EXT : i32 = -1000208000;
+    pub const VK_ERROR_PRESENT_TIMING_QUEUE_FULL_EXT : VkResult = -1000208000;
     // Provided by VK_EXT_full_screen_exclusive
-    pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT : i32 = -1000255000;
+    pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT : VkResult = -1000255000;
     // Provided by VK_KHR_deferred_host_operations
-    pub const VK_THREAD_IDLE_KHR : i32 = 1000268000;
+    pub const VK_THREAD_IDLE_KHR : VkResult = 1000268000;
     // Provided by VK_KHR_deferred_host_operations
-    pub const VK_THREAD_DONE_KHR : i32 = 1000268001;
+    pub const VK_THREAD_DONE_KHR : VkResult = 1000268001;
     // Provided by VK_KHR_deferred_host_operations
-    pub const VK_OPERATION_DEFERRED_KHR : i32 = 1000268002;
+    pub const VK_OPERATION_DEFERRED_KHR : VkResult = 1000268002;
     // Provided by VK_KHR_deferred_host_operations
-    pub const VK_OPERATION_NOT_DEFERRED_KHR : i32 = 1000268003;
+    pub const VK_OPERATION_NOT_DEFERRED_KHR : VkResult = 1000268003;
     // Provided by VK_KHR_video_encode_queue
-    pub const VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR : i32 = -1000299000;
+    pub const VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR : VkResult = -1000299000;
     // Provided by VK_EXT_image_compression_control
-    pub const VK_ERROR_COMPRESSION_EXHAUSTED_EXT : i32 = -1000338000;
+    pub const VK_ERROR_COMPRESSION_EXHAUSTED_EXT : VkResult = -1000338000;
     // Provided by VK_EXT_shader_object
-    pub const VK_INCOMPATIBLE_SHADER_BINARY_EXT : i32 = 1000482000;
+    pub const VK_INCOMPATIBLE_SHADER_BINARY_EXT : VkResult = 1000482000;
     // Provided by VK_KHR_pipeline_binary
-    pub const VK_PIPELINE_BINARY_MISSING_KHR : i32 = 1000483000;
+    pub const VK_PIPELINE_BINARY_MISSING_KHR : VkResult = 1000483000;
     // Provided by VK_KHR_pipeline_binary
-    pub const VK_ERROR_NOT_ENOUGH_SPACE_KHR : i32 = -1000483000;
+    pub const VK_ERROR_NOT_ENOUGH_SPACE_KHR : VkResult = -1000483000;
     // Provided by VK_EXT_debug_report
-    pub const VK_ERROR_VALIDATION_FAILED_EXT : i32 = VK_ERROR_VALIDATION_FAILED;
+    pub const VK_ERROR_VALIDATION_FAILED_EXT : VkResult = VK_ERROR_VALIDATION_FAILED;
     // Provided by VK_KHR_maintenance1
-    pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR : i32 = VK_ERROR_OUT_OF_POOL_MEMORY;
+    pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR : VkResult = VK_ERROR_OUT_OF_POOL_MEMORY;
     // Provided by VK_KHR_external_memory
-    pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR : i32 = VK_ERROR_INVALID_EXTERNAL_HANDLE;
+    pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR : VkResult = VK_ERROR_INVALID_EXTERNAL_HANDLE;
     // Provided by VK_EXT_descriptor_indexing
-    pub const VK_ERROR_FRAGMENTATION_EXT : i32 = VK_ERROR_FRAGMENTATION;
+    pub const VK_ERROR_FRAGMENTATION_EXT : VkResult = VK_ERROR_FRAGMENTATION;
     // Provided by VK_EXT_global_priority
-    pub const VK_ERROR_NOT_PERMITTED_EXT : i32 = VK_ERROR_NOT_PERMITTED;
+    pub const VK_ERROR_NOT_PERMITTED_EXT : VkResult = VK_ERROR_NOT_PERMITTED;
     // Provided by VK_KHR_global_priority
-    pub const VK_ERROR_NOT_PERMITTED_KHR : i32 = VK_ERROR_NOT_PERMITTED;
+    pub const VK_ERROR_NOT_PERMITTED_KHR : VkResult = VK_ERROR_NOT_PERMITTED;
     // Provided by VK_EXT_buffer_device_address
-    pub const VK_ERROR_INVALID_DEVICE_ADDRESS_EXT : i32 = VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS;
+    pub const VK_ERROR_INVALID_DEVICE_ADDRESS_EXT : VkResult = VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS;
     // Provided by VK_KHR_buffer_device_address
-    pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR : i32 = VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS;
+    pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR : VkResult = VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS;
     // Provided by VK_EXT_pipeline_creation_cache_control
-    pub const VK_PIPELINE_COMPILE_REQUIRED_EXT : i32 = VK_PIPELINE_COMPILE_REQUIRED;
+    pub const VK_PIPELINE_COMPILE_REQUIRED_EXT : VkResult = VK_PIPELINE_COMPILE_REQUIRED;
     // Provided by VK_EXT_pipeline_creation_cache_control
-    pub const VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT : i32 = VK_PIPELINE_COMPILE_REQUIRED;
+    pub const VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT : VkResult = VK_PIPELINE_COMPILE_REQUIRED;
     // Provided by VK_EXT_shader_object
     // VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT is a legacy alias
-    pub const VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT : i32 = VK_INCOMPATIBLE_SHADER_BINARY_EXT;
+    pub const VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT : VkResult = VK_INCOMPATIBLE_SHADER_BINARY_EXT;
 }
+
+// Provided by VK_VERSION_1_0
+pub type VkInstanceCreateFlagBits = crate::svk_types::bitmask;
+
+// Provided by VK_VERSION_1_0
+pub mod VkInstanceCreateFlagBitsValue {
+    use crate::VkInstanceCreateFlagBits;
+
+    // Provided by VK_KHR_portability_enumeration
+    pub const VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : VkInstanceCreateFlagBits = 0x00000001;
+}
+
+
+
+
+
+
+
+
+
+
 
 // Provided by VK_VERSION_1_0
 /*#[repr(i32)]
@@ -287,10 +315,3 @@ pub enum VkResult {
     // VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT is a legacy alias
     //VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT = VK_INCOMPATIBLE_SHADER_BINARY_EXT,
 }*/
-
-// Provided by VK_VERSION_1_0
-#[repr(C)]
-pub enum VkInstanceCreateFlagBits {
-    // Provided by VK_KHR_portability_enumeration
-    VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = 0x00000001,
-}

@@ -52,3 +52,13 @@ pub struct VkApplicationInfo {
     pub engineVersion : u32,
     pub apiVersion : u32,
 }
+
+// Provided by VK_EXT_debug_report
+#[repr(C)]
+pub struct VkDebugReportCallbackCreateInfoEXT {
+    sType : crate::svk_enums::VkStructureType,
+    pNext : *const std::ffi::c_void,
+    flags : crate::svk_types::VkDebugReportFlagsEXT,
+    pfnCallback : PFN_vkDebugReportCallbackEXT,
+    pUserData : *const std::ffi::c_void,
+}
