@@ -259,27 +259,235 @@ impl Parser {
                         data_end_ = self.current_chunk_position + valid_tz_ as usize;
                         event_type_ = TokenType::TAG_NAME;
 
+                        // если валидный бит оказался п-шевроном
+                        // if the valid bit turned out to be a r-chevron
                         if self.current_masks.r_chevron_mask & (1 << valid_tz_) != 0 {
+                            // значит тег закрылся, ищем новый тег
+                            // this means the tag is closed, we're looking for a new tag
+
+                            // сохраняем состояние парсера
+                            // save the parser state
                             self.state = State::L_CHEVRON;
+
+                            // токен сформирован, прерываемся
+                            // the token is generated, we are interrupting
                             break 'chunks;
                         }
-                        else {
-                            self.state = State::L_CHEVRON;
-                        }
 
-                        break 'chunks;
+                        // если валидный бит оказался разделителем
+                        // if the valid bit turned out to be a separator
+                        else {
+                            // сохраняем состояние парсера
+                            // save the parser state
+                            self.state = State::L_ATTRIBUTE_NAME;
+
+                            // токен сформирован, прерываемся
+                            // the token is generated, we are interrupting
+                            break 'chunks;
+                        }
                     }
 
                     State::L_ATTRIBUTE_NAME => {
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        // if the current position being processed goes beyond the limits, stop the analysis and get new chunks
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analyze;
+                        }
+
+                        let mut valid_mask_ = self.current_masks.r_chevron_mask | self.current_masks.letters_digitals_mask | self.current_masks.special_mask;
+                        let mut invalid_mask_ = self.current_masks.l_chevron_mask | self.current_masks.equal_mask | self.current_masks.quote_mask;
+
+                        // очищаем маски, которые будут использоваться, до найденной позиции
+                        // clear the masks that will be used until the found position
+                        valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+
+                        // если маски пустые
+                        // if masks are empty
+                        if valid_mask_ | invalid_mask_ == 0 {
+                            break 'analyze;
+                        }
+
+                        let valid_tz_ = valid_mask_.trailing_zeros();
+                        let invalid_tz = invalid_mask_.trailing_zeros();
+
+                        // если недопустимый бит встретился раньше, ошибка парсинга
+                        // if an invalid bit occurs earlier, a parse error occurs
+                        if invalid_tz < valid_tz_ {
+                            self.state = State::END;
+                            continue 'analyze;
+                        }
+
+                        self.current_mask_position = valid_tz_ + 1;
+
+                        // если валидный бит оказался п-шевроном
+                        // if the valid bit turned out to be a r-chevron
+                        if self.current_masks.r_chevron_mask & (1 << valid_tz_) != 0 {
+                            // значит тег закрылся, ищем новый тег
+                            // this means the tag is closed, we're looking for a new tag
+
+                            // сохраняем состояние парсера
+                            // save the parser state
+                            self.state = State::L_CHEVRON;
+
+                            continue 'analyze;
+                        }
+
+                        else if self.current_masks.special_mask & (1 << valid_tz_) != 0 {
+                            // значит тег закрылся, ищем новый тег
+                            // this means the tag is closed, we're looking for a new tag
+
+                            // сохраняем состояние парсера
+                            // save the parser state
+                            self.state = State::L_CHEVRON;
+
+                            continue 'analyze;
+                        }
+
+                        // если валидный бит оказался символом
+                        // if the valid bit turned out to be a symbol
+                        else {
+                            event_type_ = TokenType::ATTRIBUTE_NAME;
+                            data_begin_ = self.current_chunk_position + valid_tz_ as usize;
+
+                            // сохраняем состояние парсера
+                            // save the parser state
+                            self.state = State::R_ATTRIBUTE_NAME;
+
+                            continue 'analyze;
+                        }
                     }
 
                     State::R_ATTRIBUTE_NAME => {
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        // if the current position being processed goes beyond the limits, stop the analysis and get new chunks
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analyze;
+                        }
+
+                        let mut valid_mask_ = self.current_masks.separators_mask | self.current_masks.equal_mask;
+                        let mut invalid_mask_ = self.current_masks.l_chevron_mask | self.current_masks.r_chevron_mask | self.current_masks.quote_mask | self.current_masks.special_mask;
+
+                        // очищаем маски, которые будут использоваться, до найденной позиции
+                        // clear the masks that will be used until the found position
+                        valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+
+                        // если маски пустые
+                        // if masks are empty
+                        if valid_mask_ | invalid_mask_ == 0 {
+                            break 'analyze;
+                        }
+
+                        let valid_tz_ = valid_mask_.trailing_zeros();
+                        let invalid_tz = invalid_mask_.trailing_zeros();
+
+                        // если недопустимый бит встретился раньше, ошибка парсинга
+                        // if an invalid bit occurs earlier, a parse error occurs
+                        if invalid_tz < valid_tz_ {
+                            self.state = State::END;
+                            continue 'analyze;
+                        }
+
+                        self.current_mask_position = valid_tz_ + 1;
+
+                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
+
+                        // !!! НЕТУ ОБРАБОТКИ РАВЕНСТВА !!!
+                        // сохраняем состояние парсера
+                        // save the parser state
+                        self.state = State::L_ATTRIBUTE_VALUE;
+
+                        // токен сформирован, прерываемся
+                        // the token is generated, we are interrupting
+                        break 'chunks;
                     }
 
                     State::L_ATTRIBUTE_VALUE => {
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        // if the current position being processed goes beyond the limits, stop the analysis and get new chunks
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analyze;
+                        }
+
+                        let mut valid_mask_ = self.current_masks.quote_mask;
+                        let mut invalid_mask_ = self.current_masks.l_chevron_mask | self.current_masks.r_chevron_mask | self.current_masks.equal_mask | self.current_masks.special_mask;
+
+                        // очищаем маски, которые будут использоваться, до найденной позиции
+                        // clear the masks that will be used until the found position
+                        valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+
+                        // если маски пустые
+                        // if masks are empty
+                        if valid_mask_ | invalid_mask_ == 0 {
+                            break 'analyze;
+                        }
+
+                        let valid_tz_ = valid_mask_.trailing_zeros();
+                        let invalid_tz = invalid_mask_.trailing_zeros();
+
+                        // если недопустимый бит встретился раньше, ошибка парсинга
+                        // if an invalid bit occurs earlier, a parse error occurs
+                        if invalid_tz < valid_tz_ {
+                            self.state = State::END;
+                            continue 'analyze;
+                        }
+
+                        self.current_mask_position = valid_tz_ + 1;
+
+                        event_type_ = TokenType::ATTRIBUTE_VALUE;
+                        data_begin_ = self.current_chunk_position + valid_tz_ as usize;
+
+                        // сохраняем состояние парсера
+                        // save the parser state
+                        self.state = State::R_ATTRIBUTE_VALUE;
+
+                        continue 'analyze;
                     }
 
                     State::R_ATTRIBUTE_VALUE => {
+                        // если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        // if the current position being processed goes beyond the limits, stop the analysis and get new chunks
+                        if self.current_mask_position >= u32::BITS {
+                            break 'analyze;
+                        }
+
+                        let mut valid_mask_ = self.current_masks.quote_mask;
+                        //let mut invalid_mask_ = self.current_masks.l_chevron_mask | self.current_masks.r_chevron_mask | self.current_masks.equal_mask | self.current_masks.special_mask;
+
+                        // очищаем маски, которые будут использоваться, до найденной позиции
+                        // clear the masks that will be used until the found position
+                        valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+                        //invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
+
+                        // если маски пустые
+                        // if masks are empty
+                        if valid_mask_ /*| invalid_mask_*/ == 0 {
+                            break 'analyze;
+                        }
+
+                        let valid_tz_ = valid_mask_.trailing_zeros();
+                        //let invalid_tz = invalid_mask_.trailing_zeros();
+
+                        // если недопустимый бит встретился раньше, ошибка парсинга
+                        // if an invalid bit occurs earlier, a parse error occurs
+                        //if invalid_tz < valid_tz_ {
+                        //    self.state = State::END;
+                        //    continue 'analyze;
+                        //}
+
+                        self.current_mask_position = valid_tz_ + 1;
+
+                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
+
+                        // сохраняем состояние парсера
+                        // save the parser state
+                        self.state = State::L_ATTRIBUTE_NAME;
+
+                        // токен сформирован, прерываемся
+                        // the token is generated, we are interrupting
+                        break 'chunks;
                     }
 
                     State::INVALID => {
@@ -287,6 +495,10 @@ impl Parser {
                     }
 
                     State::END => {
+                        //let begin_ = self.current_chunk_position - 64;
+                        //let end_ = self.current_chunk_position + 64;
+                        //println!("{}", String::from_utf8_lossy(&self.data[begin_ .. end_]));
+
                         event_type_ = TokenType::END;
                         data_end_ = self.data.len();
                         break 'chunks;

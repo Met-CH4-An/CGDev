@@ -13,6 +13,12 @@ pub enum TokenType {
     /// наименование тега
     /// tag name
     TAG_NAME,
+    /// наименование атрибута
+    /// attribute name
+    ATTRIBUTE_NAME,
+    /// значение атрибута
+    /// attribute value
+    ATTRIBUTE_VALUE,
     /// токен завершения
     /// completion token
     END,

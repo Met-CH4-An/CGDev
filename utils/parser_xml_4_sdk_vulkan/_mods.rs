@@ -29,7 +29,7 @@ fn main() {
         // новое состояние
         let state_ = parser_.nextToken();
 
-        //println!("{}", state_.asStr());
+        println!("{}", state_.asStr());
 
         match state_.asType() {
             crate::TokenType::END => {
