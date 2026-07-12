@@ -16,12 +16,15 @@ members = [
     # samples: Device Hardware Interface
     "samples/dhi/dhi_context",
 
-    # SDK Vulkan
+    # SDK Vulkan - SVK
     "sdk_vulkan",
 
-    # wrapper Vulkan
+    # Wrapper Vulkan - WVK
     "wrapper_vulkan",
 
-    # 
+    # Device Hardware Interface - DHI
     "device_hardware_interface",
+
+    # utils
+    "utils/parser_xml_4_sdk_vulkan"
 ]
