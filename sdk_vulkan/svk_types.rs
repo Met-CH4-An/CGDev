@@ -25,3 +25,15 @@ pub type VkInstance = *mut VkInstance_T;
 
 // Provided by VK_EXT_debug_report
 pub type VkDebugReportFlagsEXT = VkFlags;
+
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessageSeverityFlagsEXT = VkFlags;
+
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessageTypeFlagsEXT = VkFlags;
+
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessengerCreateFlagsEXT = VkFlags;
+
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessengerCallbackDataFlagsEXT = VkFlags;

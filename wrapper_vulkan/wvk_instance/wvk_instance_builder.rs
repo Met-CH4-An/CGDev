@@ -2,6 +2,7 @@
 // Copyright (c) 2026 None
 
 use std::borrow::Cow;
+use std::marker::PhantomData;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // зависимости
 // dependencies
@@ -10,17 +11,27 @@ use {
     crate::WvkError,
     crate::WvkErrorType,
     crate::WvkLibrary,
-    crate::WvkInstance,
+    crate::wvk_instance::wvk_instance::WvkInstance,
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkInstanceBuilder<'a> {
+pub struct WvkInstanceBuilder<'a, TWvkVersion> {
+    phantom_data: PhantomData<TWvkVersion>,
+    /// Ссылка на библиотеку врапера, с глобальными функциями
+    ///
     pub(crate) wvk_library : &'a WvkLibrary,
+    /// Опционально. Название приложения. Метаданные, которые используются только информативно
+    ///
     pub(crate) application_name__opt: Option<Cow<'a, std::ffi::CStr>>,
+    /// Опционально. Версия приложения. Метаданные, которые используются только информативно
+    ///
     pub(crate) application_version : u32,
+    /// Опционально. Название движка. Метаданные, которые используются только информативно
+    ///
     pub(crate) engine_name__opt: Option<Cow<'a, std::ffi::CStr>>,
+    /// Опционально. Версия движка. Метаданные, которые используются только информативно.
     pub(crate) engine_version : u32,
 }
 
@@ -28,12 +39,13 @@ pub struct WvkInstanceBuilder<'a> {
 /// публичные функции
 /// public functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a> WvkInstanceBuilder<'a> {
+impl<'a, TWvkVersion> WvkInstanceBuilder<'a, TWvkVersion> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn s_create(wvk_library : &'a WvkLibrary) -> Self {
         return Self {
+            phantom_data : PhantomData,
             wvk_library: wvk_library,
             application_name__opt: None,
             application_version : 0,
@@ -47,23 +59,23 @@ impl<'a> WvkInstanceBuilder<'a> {
 /// защищённые функции
 /// protected functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a> WvkInstanceBuilder<'a> {}
+impl<'a, TWvkVersion> WvkInstanceBuilder<'a, TWvkVersion> {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// приватные функции
 /// private functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a> WvkInstanceBuilder<'a> {}
+impl<'a, TWvkVersion> WvkInstanceBuilder<'a, TWvkVersion> {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// публичные методы
 /// public methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a> WvkInstanceBuilder<'a> {
+impl<'a, TWvkVersion : crate::WvkFeature_0_1_0_0> WvkInstanceBuilder<'a, TWvkVersion> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkInstance, WvkError> {
+    pub fn build(self) -> Result<WvkInstance<TWvkVersion>, WvkError> {
         let wvk_instance_ = WvkInstance::s_create(&self)?;
 
         return Ok(wvk_instance_);

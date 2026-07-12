@@ -10,7 +10,7 @@ fn main() {
 
     // Метаданные, которые вулканом не используются. Но могут храниться
     // Metadata that is not used by the volcano. But can be stored
-    let wvk_instance= wvk::WvkInstanceBuilder::s_create(&wvk_library_)
+    let wvk_instance= wvk::wvk_instance::WvkInstanceBuilder::<wvk::Wvk_0_1_4_0>::s_create(&wvk_library_)
         .applicationNameFromCStr(name_cstring_)
         .applicationNameFromCStr(name_cstr_)
         .applicationName(name_string_)

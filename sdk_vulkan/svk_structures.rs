@@ -59,6 +59,54 @@ pub struct VkDebugReportCallbackCreateInfoEXT {
     sType : crate::svk_enums::VkStructureType,
     pNext : *const std::ffi::c_void,
     flags : crate::svk_types::VkDebugReportFlagsEXT,
-    pfnCallback : PFN_vkDebugReportCallbackEXT,
-    pUserData : *const std::ffi::c_void,
+    pfnCallback : crate::svk_commands::PFN_vkDebugReportCallbackEXT,
+    pUserData : *mut std::ffi::c_void,
+}
+
+// Provided by VK_EXT_debug_utils
+#[repr(C)]
+pub struct VkDebugUtilsMessengerCreateInfoEXT {
+    sType : crate::svk_enums::VkStructureType,
+    pNext : *const std::ffi::c_void,
+    flags : crate::svk_types::VkDebugUtilsMessengerCreateFlagsEXT,
+    messageSeverity : crate::svk_types::VkDebugUtilsMessageSeverityFlagsEXT,
+    messageType : crate::svk_types::VkDebugUtilsMessageTypeFlagsEXT,
+    pfnUserCallback : crate::svk_commands::PFN_vkDebugUtilsMessengerCallbackEXT,
+    pUserData : *mut std::ffi::c_void,
+}
+
+// Provided by VK_EXT_debug_utils
+#[repr(C)]
+pub struct VkDebugUtilsMessengerCallbackDataEXT {
+    sType : crate::svk_enums::VkStructureType,
+    pNext : *const std::ffi::c_void,
+    flags : crate::svk_types::VkDebugUtilsMessengerCallbackDataFlagsEXT,
+    pMessageIdName : *const std::ffi::c_char,
+    messageIdNumber : u32,
+    pMessage : *const std::ffi::c_char,
+    queueLabelCount : u32,
+    pQueueLabels : *const VkDebugUtilsLabelEXT,
+    cmdBufLabelCount : u32,
+    pCmdBufLabels : *const VkDebugUtilsLabelEXT,
+    objectCount : u32,
+    pObjects : *const VkDebugUtilsObjectNameInfoEXT,
+}
+
+// Provided by VK_EXT_debug_utils
+#[repr(C)]
+pub struct VkDebugUtilsLabelEXT {
+    sType : crate::svk_enums::VkStructureType,
+    pNext : *const std::ffi::c_void,
+    pLabelName  : *const std::ffi::c_char,
+    color : [f32; 4],
+}
+
+// Provided by VK_EXT_debug_utils
+#[repr(C)]
+pub struct VkDebugUtilsObjectNameInfoEXT {
+    sType : crate::svk_enums::VkStructureType,
+    pNext : *const std::ffi::c_void,
+    objectType : crate::svk_enums::VkObjectType,
+    objectHandle : u64,
+    pObjectName : *const std::ffi::c_char,
 }

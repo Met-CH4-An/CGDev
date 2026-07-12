@@ -24,11 +24,26 @@ pub use wvk_error::*;
 mod wvk_library;
 pub use wvk_library::*;
 
-mod wvk_instance;
-pub use wvk_instance::*;
+pub mod wvk_instance {
+    mod wvk_instance;
+    pub use wvk_instance::*;
 
-mod wvk_instance_builder;
-pub use wvk_instance_builder::*;
+    mod wvk_instance_100;
+    pub use wvk_instance_100::*;
+
+    mod wvk_instance_builder;
+    pub use wvk_instance_builder::*;
+}
+
+pub(crate) mod extensions {
+    pub(crate) mod VK_EXT_debug_utils;
+    pub use VK_EXT_debug_utils::*;
+}
+
+pub(crate) mod traits {
+    pub(crate) mod wvk_debug;
+    pub use wvk_debug::*;
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //

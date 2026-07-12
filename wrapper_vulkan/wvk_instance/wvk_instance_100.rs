@@ -6,45 +6,33 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 use {
-    crate::wvk_call_with_check,
-    crate::WvkError,
-    crate::WvkErrorType,
-    crate::WvkLibrary,
-    crate::WvkInstanceBuilder,
-    std::rc::Rc,
+    std::marker::PhantomData,
+    crate::wvk_instance::{
+        WvkInstance,
+        WvkInstanceBuilder
+    },
+    crate::wvk::WvkFeature_0_1_0_0,
+    crate::wvk_error::{
+        WvkError,
+        WvkErrorType
+    },
 };
-use crate::wvk::GET_VULKAN_VERSION;
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkInstance {
-    // инстанс вулкана
-    // volcano instance
-    vk_instance : svk::VkInstance,
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // команды вулкана
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // vulkan 1.0
-    
-    // vulkan 1.1
-}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// публичные функции
 /// public functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkInstance {
+impl<TWvkVersion> WvkInstance<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(wvk_instance_builder : & WvkInstanceBuilder) -> Result<Self, WvkError> {
+    pub fn s_create(wvk_instance_builder : & WvkInstanceBuilder<TWvkVersion>) -> Result<Self, WvkError> {
         let vk_instance_ = Self::s_createVkInstance(&wvk_instance_builder)?;
 
         return Ok(
             Self {
+                phantom_data : PhantomData,
                 vk_instance : vk_instance_,
             }
         );
@@ -55,17 +43,19 @@ impl WvkInstance {
 /// защищённые функции
 /// protected functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkInstance {}
+impl<TWvkVersion> WvkInstance<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// приватные функции
 /// private functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkInstance {
+impl<TWvkVersion> WvkInstance<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn s_createVkInstance(builder : &WvkInstanceBuilder) -> Result<svk::VkInstance, WvkError> {
+    fn s_createVkInstance(builder : &WvkInstanceBuilder<TWvkVersion>) -> Result<svk::VkInstance, WvkError> {
         let mut vk_instance_ : svk::VkInstance = std::ptr::null_mut();
 
         let application_name_cchar_ptr_ = builder.application_name__opt
@@ -111,5 +101,14 @@ impl WvkInstance {
             .map_err(|wvk_error| wvk_error.addError(WvkErrorType::WVK_INSTANCE_CREATE_FAILED, "Не удалось выполнить wvkCreateInstance"))?;
 
         return Ok(vk_instance_);
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn s_createDebugUtilsMessengerCreateInfo() {
+        //svk::VkDebugUtilsMessengerCreateInfoEXT {
+        //    sType : svk::VkStructureTypeValue::Vk_structure_typeme
+        //};
     }
 }

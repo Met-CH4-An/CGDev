@@ -188,13 +188,23 @@ pub mod VkResultValue {
 
 // Provided by VK_VERSION_1_0
 pub type VkInstanceCreateFlagBits = crate::svk_types::bitmask;
-
-// Provided by VK_VERSION_1_0
 pub mod VkInstanceCreateFlagBitsValue {
     use crate::VkInstanceCreateFlagBits;
 
     // Provided by VK_KHR_portability_enumeration
     pub const VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : VkInstanceCreateFlagBits = 0x00000001;
+}
+
+// Provided by VK_EXT_debug_report
+pub type VkDebugReportFlagBitsEXT = crate::svk_types::bitmask;
+pub mod VkDebugReportFlagBitsEXTValue {
+    use crate::VkDebugReportFlagBitsEXT;
+
+    pub const VK_DEBUG_REPORT_INFORMATION_BIT_EXT : VkDebugReportFlagBitsEXT = 0x00000001;
+    pub const VK_DEBUG_REPORT_WARNING_BIT_EXT : VkDebugReportFlagBitsEXT = 0x00000002;
+    pub const VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT : VkDebugReportFlagBitsEXT = 0x00000004;
+    pub const VK_DEBUG_REPORT_ERROR_BIT_EXT : VkDebugReportFlagBitsEXT = 0x00000008;
+    pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT : VkDebugReportFlagBitsEXT = 0x00000010;
 }
 
 // Provided by VK_EXT_debug_marker, VK_EXT_debug_report
@@ -249,21 +259,152 @@ pub mod VkDebugReportObjectTypeEXTValue {
     // Provided by VK_EXT_debug_report with VK_NV_cuda_kernel_launch
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_CUDA_MODULE_NV_EXT : VkDebugReportObjectTypeEXT = 1000307000;
     // Provided by VK_EXT_debug_report with VK_NV_cuda_kernel_launch
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CUDA_FUNCTION_NV_EXT : VkDebugReportObjectTypeEXT = 1000307001,
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_CUDA_FUNCTION_NV_EXT : VkDebugReportObjectTypeEXT = 1000307001;
     // Provided by VK_EXT_debug_report with VK_FUCHSIA_buffer_collection
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA_EXT : VkDebugReportObjectTypeEXT = 1000366000,
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA_EXT : VkDebugReportObjectTypeEXT = 1000366000;
     // VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT is a legacy alias
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT,
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT;
     // VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT is a legacy alias
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT,
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
     // Provided by VK_KHR_descriptor_update_template with VK_EXT_debug_report
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT,
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT;
     // Provided by VK_KHR_sampler_ycbcr_conversion with VK_EXT_debug_report
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT,
-} VkDebugReportObjectTypeEXT;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT : VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT;
+}
 
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessageSeverityFlagBitsEXT = crate::svk_types::bitmask;
+pub mod VkDebugUtilsMessageSeverityFlagBitsEXTValue {
+    use crate::VkDebugUtilsMessageSeverityFlagBitsEXT;
 
+    pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT : VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000001;
+    pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT : VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000010;
+    pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT : VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000100;
+    pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT : VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00001000;
+}
 
+// Provided by VK_EXT_debug_utils
+pub type VkDebugUtilsMessageTypeFlagBitsEXT = crate::svk_types::bitmask;
+pub mod VkDebugUtilsMessageTypeFlagBitsEXTValue {
+    use crate::VkDebugUtilsMessageTypeFlagBitsEXT;
+    
+    pub const VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT : VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000001;
+    pub const VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT : VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000002;
+    pub const VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT : VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000004;
+    // Provided by VK_EXT_device_address_binding_report
+    pub const VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT : VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000008;
+}
+
+// Provided by VK_VERSION_1_0
+pub type VkObjectType = crate::svk_types::r#enum;
+pub mod VkObjectTypeValue {
+    use crate::VkObjectType;
+
+    pub const VK_OBJECT_TYPE_UNKNOWN : VkObjectType = 0;
+    pub const VK_OBJECT_TYPE_INSTANCE : VkObjectType = 1;
+    pub const VK_OBJECT_TYPE_PHYSICAL_DEVICE : VkObjectType = 2;
+    pub const VK_OBJECT_TYPE_DEVICE : VkObjectType = 3;
+    pub const VK_OBJECT_TYPE_QUEUE : VkObjectType = 4;
+    pub const VK_OBJECT_TYPE_SEMAPHORE : VkObjectType = 5;
+    pub const VK_OBJECT_TYPE_COMMAND_BUFFER : VkObjectType = 6;
+    pub const VK_OBJECT_TYPE_FENCE : VkObjectType = 7;
+    pub const VK_OBJECT_TYPE_DEVICE_MEMORY : VkObjectType = 8;
+    pub const VK_OBJECT_TYPE_BUFFER : VkObjectType = 9;
+    pub const VK_OBJECT_TYPE_IMAGE : VkObjectType = 10;
+    pub const VK_OBJECT_TYPE_EVENT : VkObjectType = 11;
+    pub const VK_OBJECT_TYPE_QUERY_POOL : VkObjectType = 12;
+    pub const VK_OBJECT_TYPE_BUFFER_VIEW : VkObjectType = 13;
+    pub const VK_OBJECT_TYPE_IMAGE_VIEW : VkObjectType = 14;
+    pub const VK_OBJECT_TYPE_SHADER_MODULE : VkObjectType = 15;
+    pub const VK_OBJECT_TYPE_PIPELINE_CACHE : VkObjectType = 16;
+    pub const VK_OBJECT_TYPE_PIPELINE_LAYOUT : VkObjectType = 17;
+    pub const VK_OBJECT_TYPE_RENDER_PASS : VkObjectType = 18;
+    pub const VK_OBJECT_TYPE_PIPELINE : VkObjectType = 19;
+    pub const VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT : VkObjectType = 20;
+    pub const VK_OBJECT_TYPE_SAMPLER : VkObjectType = 21;
+    pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL : VkObjectType = 22;
+    pub const VK_OBJECT_TYPE_DESCRIPTOR_SET : VkObjectType = 23;
+    pub const VK_OBJECT_TYPE_FRAMEBUFFER : VkObjectType = 24;
+    pub const VK_OBJECT_TYPE_COMMAND_POOL : VkObjectType = 25;
+    // Provided by VK_VERSION_1_1
+    pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE : VkObjectType = 1000085000;
+    // Provided by VK_VERSION_1_1
+    pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION : VkObjectType = 1000156000;
+    // Provided by VK_VERSION_1_3
+    pub const VK_OBJECT_TYPE_PRIVATE_DATA_SLOT : VkObjectType = 1000295000;
+    // Provided by VK_KHR_surface
+    pub const VK_OBJECT_TYPE_SURFACE_KHR : VkObjectType = 1000000000;
+    // Provided by VK_KHR_swapchain
+    pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR : VkObjectType = 1000001000;
+    // Provided by VK_KHR_display
+    pub const VK_OBJECT_TYPE_DISPLAY_KHR : VkObjectType = 1000002000;
+    // Provided by VK_KHR_display
+    pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR : VkObjectType = 1000002001;
+    // Provided by VK_EXT_debug_report
+    pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT : VkObjectType = 1000011000;
+    // Provided by VK_KHR_video_queue
+    pub const VK_OBJECT_TYPE_VIDEO_SESSION_KHR : VkObjectType = 1000023000;
+    // Provided by VK_KHR_video_queue
+    pub const VK_OBJECT_TYPE_VIDEO_SESSION_PARAMETERS_KHR : VkObjectType = 1000023001;
+    // Provided by VK_NVX_binary_import
+    pub const VK_OBJECT_TYPE_CU_MODULE_NVX : VkObjectType = 1000029000;
+    // Provided by VK_NVX_binary_import
+    pub const VK_OBJECT_TYPE_CU_FUNCTION_NVX : VkObjectType = 1000029001;
+    // Provided by VK_EXT_debug_utils
+    pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT : VkObjectType = 1000128000;
+    // Provided by VK_AMD_gpa_interface
+    pub const VK_OBJECT_TYPE_GPA_SESSION_AMD : VkObjectType = 1000133000;
+    // Provided by VK_KHR_acceleration_structure
+    pub const VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR : VkObjectType = 1000150000;
+    // Provided by VK_EXT_validation_cache
+    pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT : VkObjectType = 1000160000;
+    // Provided by VK_NV_ray_tracing
+    pub const VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV : VkObjectType = 1000165000;
+    // Provided by VK_INTEL_performance_query
+    pub const VK_OBJECT_TYPE_PERFORMANCE_CONFIGURATION_INTEL : VkObjectType = 1000210000;
+    // Provided by VK_KHR_deferred_host_operations
+    pub const VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR : VkObjectType = 1000268000;
+    // Provided by VK_NV_device_generated_commands
+    pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV : VkObjectType = 1000277000;
+/*#ifdef VK_ENABLE_BETA_EXTENSIONS
+// Provided by VK_NV_cuda_kernel_launch
+VK_OBJECT_TYPE_CUDA_MODULE_NV = 1000307000;
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+// Provided by VK_NV_cuda_kernel_launch
+VK_OBJECT_TYPE_CUDA_FUNCTION_NV = 1000307001;
+#endif*/
+    // Provided by VK_FUCHSIA_buffer_collection
+    pub const VK_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA : VkObjectType = 1000366000;
+    // Provided by VK_EXT_opacity_micromap
+    pub const VK_OBJECT_TYPE_MICROMAP_EXT : VkObjectType = 1000396000;
+    // Provided by VK_ARM_tensors
+    pub const VK_OBJECT_TYPE_TENSOR_ARM : VkObjectType = 1000460000;
+    // Provided by VK_ARM_tensors
+    pub const VK_OBJECT_TYPE_TENSOR_VIEW_ARM : VkObjectType = 1000460001;
+    // Provided by VK_NV_optical_flow
+    pub const VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV : VkObjectType = 1000464000;
+    // Provided by VK_EXT_shader_object
+    pub const VK_OBJECT_TYPE_SHADER_EXT : VkObjectType = 1000482000;
+    // Provided by VK_KHR_pipeline_binary
+    pub const VK_OBJECT_TYPE_PIPELINE_BINARY_KHR : VkObjectType = 1000483000;
+    // Provided by VK_ARM_data_graph
+    pub const VK_OBJECT_TYPE_DATA_GRAPH_PIPELINE_SESSION_ARM : VkObjectType = 1000507000;
+    // Provided by VK_NV_external_compute_queue
+    pub const VK_OBJECT_TYPE_EXTERNAL_COMPUTE_QUEUE_NV : VkObjectType = 1000556000;
+    // Provided by VK_EXT_device_generated_commands
+    pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_EXT : VkObjectType = 1000572000;
+    // Provided by VK_EXT_device_generated_commands
+    pub const VK_OBJECT_TYPE_INDIRECT_EXECUTION_SET_EXT : VkObjectType = 1000572001;
+    // Provided by VK_ARM_shader_instrumentation
+    pub const VK_OBJECT_TYPE_SHADER_INSTRUMENTATION_ARM : VkObjectType = 1000607000;
+    // Provided by VK_KHR_descriptor_update_template
+    pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR : VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE;
+    // Provided by VK_KHR_sampler_ycbcr_conversion
+    pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR : VkObjectType = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION;
+    // Provided by VK_EXT_private_data
+    pub const VK_OBJECT_TYPE_PRIVATE_DATA_SLOT_EXT : VkObjectType = VK_OBJECT_TYPE_PRIVATE_DATA_SLOT;
+}
 
 
 
