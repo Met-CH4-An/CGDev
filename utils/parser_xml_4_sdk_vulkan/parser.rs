@@ -1,18 +1,20 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use std::error::Error;
-use std::io::Read;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 use {
     std::arch::x86_64::*,
-    crate::ChunkMask,
+    std::ops::Range,
+    crate::chunk_mask::ChunkMask,
     crate::PresetMask,
     crate::TokenType,
     crate::Token,
+    crate::tag::Tag,
+    crate::tag_attribute::TagAttribute,
+
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,9 +68,6 @@ pub struct Parser {
     /// предустановленные данные для построения масок
     /// preset data for constructing masks
     preset_mask : PresetMask,
-    /// данные для парсинга
-    /// data for parsing
-    data : Vec<u8>,
     /// текущее состояние парсера
     /// current state of the parser
     state : State,    
@@ -84,29 +83,24 @@ pub struct Parser {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// публичные методы
-/// public methods
+/// функции
+/// functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl Parser {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn create() -> Result<Self, ()> {
-        // загружаем данные
-        let data_ = Self::loadDataFromFile("1.4.356.xml")?;
-
+    pub fn new() -> Result<Self, ()> {
         let preset_ = PresetMask::create();
 
         // строим первую маску
-        let mut chunk_ = ChunkMask::create();
-        unsafe { Self::buildChunk(&mut chunk_, data_.as_ptr(), &preset_); }
+        let chunk_ = ChunkMask::create();
+        //unsafe { Self::buildChunk(&mut chunk_, data.as_ptr(), &preset_); }
 
         return Ok(Self {
             // первичная инициализация пресетов для масок
             // initial initialization of presets for masks
             preset_mask: preset_,
-
-            data: data_,
 
             // первичная инициализация состояния парсера
             // initial initialization of the parser state
@@ -114,22 +108,35 @@ impl Parser {
             current_chunk_position: 0,
             current_mask_position: 0,
             current_masks: chunk_,
-            }
+        }
         );
     }
+}
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// методы
+/// methods
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl Parser {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn nextToken(&mut self, data : &[u8]) -> (Tag, bool) {
+        //let mut event_type_ = TokenType::END;
+        //let mut data_begin_ : usize = 0;
+        //let mut data_end_ : usize = 0;
 
+        let mut end_ = false;
+        let mut tag_name_rng_ : Range<usize> = (0 .. 0);
+        let mut attribute_name_rng_ : Range<usize> = (0 .. 0);
+        let mut attribute_value_rng_ : Range<usize> = (0 .. 0);
+        let mut attributes_vec_ = Vec::<TagAttribute>::with_capacity(10);
+        let mut closed_bool_ = false;
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn nextToken(&mut self) -> Token {
-        let mut event_type_ = TokenType::END;
-        let mut data_begin_ : usize = 0;
-        let mut data_end_ : usize = 0;
+        //3275086
+        if self.current_chunk_position > 3275032 {
+            println!("stop");
+        }
 
         'chunks: loop {                    
             'analyze: loop {
@@ -184,6 +191,8 @@ impl Parser {
 
                                 self.state = State::L_TAG_NAME;
 
+                                closed_bool_ = true;
+
                                 continue 'analyze;
                             }
 
@@ -222,7 +231,7 @@ impl Parser {
                         }
 
                         self.current_mask_position = letters_tz + 1;
-                        data_begin_ = self.current_chunk_position + letters_tz as usize;
+                        tag_name_rng_.start = self.current_chunk_position + letters_tz as usize;
 
                         // следующая стадия, поиск конечной границы имени тега
                         self.state = State::R_TAG_NAME;
@@ -256,8 +265,7 @@ impl Parser {
                         }
 
                         self.current_mask_position = valid_tz_ + 1;
-                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
-                        event_type_ = TokenType::TAG_NAME;
+                        tag_name_rng_.end = self.current_chunk_position + valid_tz_ as usize;
 
                         // если валидный бит оказался п-шевроном
                         // if the valid bit turned out to be a r-chevron
@@ -276,15 +284,15 @@ impl Parser {
 
                         // если валидный бит оказался разделителем
                         // if the valid bit turned out to be a separator
-                        else {
+                        //else {
                             // сохраняем состояние парсера
                             // save the parser state
                             self.state = State::L_ATTRIBUTE_NAME;
 
                             // токен сформирован, прерываемся
                             // the token is generated, we are interrupting
-                            break 'chunks;
-                        }
+                        //    break 'chunks;
+                        //}
                     }
 
                     State::L_ATTRIBUTE_NAME => {
@@ -330,7 +338,7 @@ impl Parser {
                             // save the parser state
                             self.state = State::L_CHEVRON;
 
-                            continue 'analyze;
+                            break 'chunks;
                         }
 
                         else if self.current_masks.special_mask & (1 << valid_tz_) != 0 {
@@ -341,14 +349,16 @@ impl Parser {
                             // save the parser state
                             self.state = State::L_CHEVRON;
 
-                            continue 'analyze;
+                            break 'chunks;
                         }
 
                         // если валидный бит оказался символом
                         // if the valid bit turned out to be a symbol
                         else {
-                            event_type_ = TokenType::ATTRIBUTE_NAME;
-                            data_begin_ = self.current_chunk_position + valid_tz_ as usize;
+                            //event_type_ = TokenType::ATTRIBUTE_NAME;
+                            let pos_founded_ = self.current_chunk_position + valid_tz_ as usize;
+                            attribute_name_rng_.start = pos_founded_;
+                            //data_begin_ = pos_founded_;
 
                             // сохраняем состояние парсера
                             // save the parser state
@@ -391,7 +401,8 @@ impl Parser {
 
                         self.current_mask_position = valid_tz_ + 1;
 
-                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
+                        let pos_founded_ = self.current_chunk_position + valid_tz_ as usize;
+                        attribute_name_rng_.end = pos_founded_;
 
                         // !!! НЕТУ ОБРАБОТКИ РАВЕНСТВА !!!
                         // сохраняем состояние парсера
@@ -400,7 +411,7 @@ impl Parser {
 
                         // токен сформирован, прерываемся
                         // the token is generated, we are interrupting
-                        break 'chunks;
+                        //break 'chunks;
                     }
 
                     State::L_ATTRIBUTE_VALUE => {
@@ -436,8 +447,8 @@ impl Parser {
 
                         self.current_mask_position = valid_tz_ + 1;
 
-                        event_type_ = TokenType::ATTRIBUTE_VALUE;
-                        data_begin_ = self.current_chunk_position + valid_tz_ as usize;
+                        let pos_founded_ = 1 + self.current_chunk_position + valid_tz_ as usize;
+                        attribute_value_rng_.start = pos_founded_;
 
                         // сохраняем состояние парсера
                         // save the parser state
@@ -479,7 +490,9 @@ impl Parser {
 
                         self.current_mask_position = valid_tz_ + 1;
 
-                        data_end_ = self.current_chunk_position + valid_tz_ as usize;
+                        let pos_founded_ = self.current_chunk_position + valid_tz_ as usize;
+                        attribute_value_rng_.end = pos_founded_;
+                        attributes_vec_.push(TagAttribute::new(attribute_name_rng_.clone(), attribute_value_rng_.clone()));
 
                         // сохраняем состояние парсера
                         // save the parser state
@@ -487,7 +500,7 @@ impl Parser {
 
                         // токен сформирован, прерываемся
                         // the token is generated, we are interrupting
-                        break 'chunks;
+                        //break 'chunks;
                     }
 
                     State::INVALID => {
@@ -499,46 +512,49 @@ impl Parser {
                         //let end_ = self.current_chunk_position + 64;
                         //println!("{}", String::from_utf8_lossy(&self.data[begin_ .. end_]));
 
-                        event_type_ = TokenType::END;
-                        data_end_ = self.data.len();
+                        tag_name_rng_.end = data.len();
+                        attribute_name_rng_.end = data.len();
+                        attribute_value_rng_.end = data.len();
+
+                        end_ = true;
+
                         break 'chunks;
                     }
 
                 }; // match self.state              
             } // 'analize: loop
 
-            self.nextChunk();
+            self.nextChunk(&data);
 
             self.current_mask_position = 0;
 
         }; // 'chunks: loop
 
-        return Token::create(event_type_, unsafe {std::str::from_utf8_unchecked(&self.data[data_begin_ .. data_end_]) })
+        return (Tag::new(tag_name_rng_, attributes_vec_, closed_bool_), end_);
     }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// защищённые методы
-/// protected methods
+// приватная область
+//
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl Parser {
-}
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// приватные методы
-/// private methods
+/// методы
+/// methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl Parser {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn nextChunk(&mut self) {
+    fn nextChunk(&mut self, data : &[u8]) {
         let pos_ = self.current_chunk_position + 32;
 
-        if self.current_chunk_position + 64 <= self.data.len() {
+        if self.current_chunk_position + 64 <= data.len() {
             self.current_chunk_position += 32;
 
-            let data_ptr_ = unsafe { self.data.as_ptr().add(self.current_chunk_position) };
+            let data_ptr_ = unsafe { data.as_ptr().add(self.current_chunk_position) };
 
             unsafe { Self::buildChunk(&mut self.current_masks, data_ptr_, &self.preset_mask); }
 
@@ -550,33 +566,10 @@ impl Parser {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// приватные функции
-/// private functions
+/// функции
+/// functions
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl Parser {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn loadDataFromFile(name : &str) -> Result<Vec<u8>, ()> {
-        // путь до файла с спецификацией вулкана - ../../external/vulkan/cargo.toml/
-        // path to the file with the volcano specification - ../../external/vulkan/cargo.toml/
-        let path_ = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent().unwrap()
-            .parent().unwrap()
-            .join("external")
-            .join("vulkan")
-            .join(name);
-
-        let data_ = std::fs::read(path_)
-            .map_err(|std_error| {
-                println!("{}", std_error);
-                ()
-            }
-        )?;
-
-        return Ok(data_);
-    }
-
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -5,15 +5,20 @@
 /// зависимости
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 use {
+    std::marker::PhantomData,
+
     crate::wvk_call_with_check,
     crate::WvkError,
     crate::WvkErrorType,
 };
+use crate::WvkFeature_0_1_0_0;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkLibrary {
+pub struct WvkLibrary<TWvkVersion> {
+    phantom : PhantomData<TWvkVersion>,
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // команды вулкана
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,7 +37,8 @@ pub struct WvkLibrary {
 /// публичные методы
 /// public methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkLibrary {
+impl<TWvkVersion> WvkLibrary<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,6 +49,7 @@ impl WvkLibrary {
         })?;
 
         return Ok(Self{
+            phantom : PhantomData,
             // vulkan 1.0
             vkGetInstanceProcAddr : _vkGetInstanceProcAddr,            
             vkEnumerateInstanceLayerProperties : Self::loadCommand::<crate::svk::PFN_vkEnumerateInstanceLayerProperties>(_vkGetInstanceProcAddr, "vkEnumerateInstanceLayerProperties\0")?,
@@ -59,7 +66,8 @@ impl WvkLibrary {
 /// публичные методы
 /// public methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkLibrary {
+impl<TWvkVersion> WvkLibrary<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,7 +219,8 @@ impl WvkLibrary {
 /// приватные методы
 /// private methods
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl WvkLibrary {
+impl<TWvkVersion> WvkLibrary<TWvkVersion>
+where TWvkVersion : WvkFeature_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -289,17 +298,18 @@ impl WvkLibrary {
 
 #[cfg(test)]
 mod tests {
+    use crate::WVK_0_1_4_0;
     use super::*;
 
     #[test]
     fn wvk_library__create__ok() {
-        let wvk_library_ = WvkLibrary::create().ok();
+        let wvk_library_ = WvkLibrary::<WVK_0_1_4_0>::create().ok();
         assert!(wvk_library_.is_some());
     }
 
     #[test]
     fn wvk_library__wvkEnumerateInstanceExtensionProperties__null_byte_parameter() {
-        let wvk_library_ = WvkLibrary::create().ok().unwrap();
+        let wvk_library_ = WvkLibrary::<WVK_0_1_4_0>::create().ok().unwrap();
         
         let wvk_error_ = wvk_library_.wvkEnumerateInstanceExtensionProperties(Some("layer\0name")).err();
         println!("{}", wvk_error_.as_ref().unwrap().getMessage());

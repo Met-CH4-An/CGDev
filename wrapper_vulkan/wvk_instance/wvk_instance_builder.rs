@@ -21,7 +21,7 @@ pub struct WvkInstanceBuilder<'a, TWvkVersion> {
     phantom_data: PhantomData<TWvkVersion>,
     /// Ссылка на библиотеку врапера, с глобальными функциями
     ///
-    pub(crate) wvk_library : &'a WvkLibrary,
+    pub(crate) wvk_library : &'a WvkLibrary<TWvkVersion>,
     /// Опционально. Название приложения. Метаданные, которые используются только информативно
     ///
     pub(crate) application_name__opt: Option<Cow<'a, std::ffi::CStr>>,
@@ -43,7 +43,7 @@ impl<'a, TWvkVersion> WvkInstanceBuilder<'a, TWvkVersion> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(wvk_library : &'a WvkLibrary) -> Self {
+    pub fn s_create(wvk_library : &'a WvkLibrary<TWvkVersion>) -> Self {
         return Self {
             phantom_data : PhantomData,
             wvk_library: wvk_library,

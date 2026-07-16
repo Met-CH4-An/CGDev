@@ -20,11 +20,4 @@ wvk = {
 }
 
 [features]
-wvk = []
-test = []
 
-wvk_1_0 = ["wvk/vulkan_1_0"]
-wvk_1_1 = ["wvk/vulkan_1_1"]
-wvk_1_2 = ["wvk/vulkan_1_2"]
-wvk_1_3 = ["wvk/vulkan_1_3"]
-wvk_1_4 = ["wvk/vulkan_1_4"]

@@ -4,7 +4,7 @@
 fn main() {
     println!("пример: создание WvkLibrary\n");
     
-    let _wvk_library = match wvk::WvkLibrary::create() {
+    let _wvk_library = match wvk::WvkLibrary::<wvk::WVK_0_1_4_0>::create() {
         Ok(wvk_library) => wvk_library,
         Err(wvk_error) => {
             println!("{}", wvk_error.getMessage());

@@ -13,6 +13,8 @@ pub use wvk;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // подключение модулей
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub mod dhi;
+
 pub(crate) mod dhi_error;
 pub use dhi_error::*;
 

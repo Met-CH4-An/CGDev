@@ -6,11 +6,6 @@ use std::marker::PhantomData;
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-use {
-    crate::wvk_error::WvkError,
-    crate::wvk_error::WvkErrorType,
-    crate::wvk_instance::wvk_instance_builder::WvkInstanceBuilder,
-};
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///

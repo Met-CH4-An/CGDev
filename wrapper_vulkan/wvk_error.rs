@@ -20,6 +20,7 @@ pub enum WvkErrorType {
     WVK_LIBRARY_VULKAN_COMMAND_LOAD_FAILED,
     /// Не удалось создать WvkInstance. Failed to create WvkInstance.
     WVK_INSTANCE_CREATE_FAILED,
+    WVK_INSTANCE_EXTENSION_NOT_FOUND,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,6 +35,7 @@ impl common::ErrorTypeToStr for WvkErrorType {
             WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED => "Не удалось загрузить библиотеку вулкана. Failed to load volcano library.",
             WvkErrorType::WVK_LIBRARY_VULKAN_COMMAND_LOAD_FAILED => "Не удалось загрузить команду вулкана. Failed to load volcano command.",
             WvkErrorType::WVK_INSTANCE_CREATE_FAILED => "Не удалось создать WvkInstance. Failed to create WvkInstance.",
+            (_) => {""}
         };
     }
 }

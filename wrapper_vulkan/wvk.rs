@@ -8,11 +8,11 @@ use std::borrow::Cow;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // маркеры версий
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct Wvk_0_1_0_0;
-pub struct Wvk_0_1_1_0;
-pub struct Wvk_0_1_2_0;
-pub struct Wvk_0_1_3_0;
-pub struct Wvk_0_1_4_0;
+pub struct WVK_0_1_0_0;
+pub struct WVK_0_1_1_0;
+pub struct WVK_0_1_2_0;
+pub struct WVK_0_1_3_0;
+pub struct WVK_0_1_4_0;
 
 pub trait WvkFeature_0_1_0_0 {}
 pub trait WvkFeature_0_1_1_0 : WvkFeature_0_1_0_0 {}
@@ -20,25 +20,25 @@ pub trait WvkFeature_0_1_2_0 : WvkFeature_0_1_1_0 {}
 pub trait WvkFeature_0_1_3_0 : WvkFeature_0_1_2_0 {}
 pub trait WvkFeature_0_1_4_0 : WvkFeature_0_1_3_0 {}
 
-impl WvkFeature_0_1_0_0 for Wvk_0_1_0_0 {}
+impl WvkFeature_0_1_0_0 for WVK_0_1_0_0 {}
 
-impl WvkFeature_0_1_0_0 for Wvk_0_1_1_0 {}
-impl WvkFeature_0_1_1_0 for Wvk_0_1_1_0 {}
+impl WvkFeature_0_1_0_0 for WVK_0_1_1_0 {}
+impl WvkFeature_0_1_1_0 for WVK_0_1_1_0 {}
 
-impl WvkFeature_0_1_0_0 for Wvk_0_1_2_0 {}
-impl WvkFeature_0_1_1_0 for Wvk_0_1_2_0 {}
-impl WvkFeature_0_1_2_0 for Wvk_0_1_2_0 {}
+impl WvkFeature_0_1_0_0 for WVK_0_1_2_0 {}
+impl WvkFeature_0_1_1_0 for WVK_0_1_2_0 {}
+impl WvkFeature_0_1_2_0 for WVK_0_1_2_0 {}
 
-impl WvkFeature_0_1_0_0 for Wvk_0_1_3_0 {}
-impl WvkFeature_0_1_1_0 for Wvk_0_1_3_0 {}
-impl WvkFeature_0_1_2_0 for Wvk_0_1_3_0 {}
-impl WvkFeature_0_1_3_0 for Wvk_0_1_3_0 {}
+impl WvkFeature_0_1_0_0 for WVK_0_1_3_0 {}
+impl WvkFeature_0_1_1_0 for WVK_0_1_3_0 {}
+impl WvkFeature_0_1_2_0 for WVK_0_1_3_0 {}
+impl WvkFeature_0_1_3_0 for WVK_0_1_3_0 {}
 
-impl WvkFeature_0_1_0_0 for Wvk_0_1_4_0 {}
-impl WvkFeature_0_1_1_0 for Wvk_0_1_4_0 {}
-impl WvkFeature_0_1_2_0 for Wvk_0_1_4_0 {}
-impl WvkFeature_0_1_3_0 for Wvk_0_1_4_0 {}
-impl WvkFeature_0_1_4_0 for Wvk_0_1_4_0 {}
+impl WvkFeature_0_1_0_0 for WVK_0_1_4_0 {}
+impl WvkFeature_0_1_1_0 for WVK_0_1_4_0 {}
+impl WvkFeature_0_1_2_0 for WVK_0_1_4_0 {}
+impl WvkFeature_0_1_3_0 for WVK_0_1_4_0 {}
+impl WvkFeature_0_1_4_0 for WVK_0_1_4_0 {}
 
 
 pub(crate) const WRAPPER_VULKAN_NAME : &'static CStr = c"Wrapper Vulkan: WVK";

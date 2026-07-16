@@ -9,20 +9,20 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // модули
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mod svk_commands;
+pub mod svk_commands;
 pub use svk_commands::*;
 
-mod svk_constants;
+pub mod svk_constants;
 pub use svk_constants::*;
 
-mod svk_enums;
+pub mod svk_enums;
 pub use svk_enums::*;
 
-mod svk_macros;
+pub mod svk_macros;
 pub use svk_macros::*;
 
-mod svk_structures;
+pub mod svk_structures;
 pub use svk_structures::*;
 
-mod svk_types;
+pub mod svk_types;
 pub use svk_types::*;
