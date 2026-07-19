@@ -5,5 +5,6 @@
 // подключение модулей
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#[path = "dhi_wvk/_mods.rs"]
-pub(crate) mod dhi_wvk;
+pub(crate) mod dhi_wvk_context;
+
+pub(crate) mod dhi_wvk_context_0_1_0_0;

@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use std::marker::PhantomData;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+use std::marker::PhantomData;
+use crate::wvk::{ WvkEnvironment, WvkEnvironment_0_1_0_0 } ;
+use crate::wvk_error::{ WvkError, WvkErrorType };
+use crate::wvk_instance::WvkInstanceBuilder;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkInstance<TWvkVersion> {
-    pub(crate) phantom_data: PhantomData<TWvkVersion>,
+pub struct WvkInstance<TWvkEnvironment>
+where TWvkEnvironment : WvkEnvironment {
+    pub(crate) phantom_data: PhantomData<TWvkEnvironment>,
 
     // инстанс вулкана
     // volcano instance
@@ -25,4 +30,9 @@ pub struct WvkInstance<TWvkVersion> {
     
     // vulkan 1.1
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// приватная область
+// private area
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

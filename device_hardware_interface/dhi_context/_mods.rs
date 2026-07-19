@@ -1,27 +1,17 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-#![allow(non_snake_case)]
-#![allow(non_camel_case_types)]
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // зависимости крейта
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub use common;
-pub use wvk;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // подключение модулей
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub mod dhi;
 
-pub mod dhi_error;
+pub(crate) mod dhi_context;
+pub use dhi_context::DHIContext;
 
-// папка с DhiContext
-// folder with DhiContext
-#[path = "dhi_context/_mods.rs"]
-pub mod dhi_context;
-
-#[path ="backend/_mods.rs"]
-pub(crate) mod backend;
+pub(crate) mod dhi_context_builder;
+pub use dhi_context_builder::DHIContextBuilder;

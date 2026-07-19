@@ -3,6 +3,11 @@
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // подключение модулей
+// connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) mod dhi_wvk;
+
+// папка с DhiWvkContext
+// folder with DhiWvkContext
+#[path = "dhi_wvk_context/_mods.rs"]
 pub(crate) mod dhi_wvk_context;
-pub use dhi_wvk_context::*;

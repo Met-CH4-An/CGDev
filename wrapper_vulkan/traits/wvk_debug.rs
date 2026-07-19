@@ -11,7 +11,7 @@ pub(crate) trait WvkDebug : 'static {
     fn buildWvkInstanceDebugCreateInfo(wvk_library : &WvkLibrary) -> *const std::ffi::c_void;
 }
 
-impl WvkDebug for VK_EXT_debug_utils {
+implementation WvkDebug for VK_EXT_debug_utils {
     fn buildWvkInstanceDebugCreateInfo(wvk_library: &WvkLibrary) -> *const c_void {
         todo!()
     }

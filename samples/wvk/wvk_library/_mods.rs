@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
+use wvk::wvk::{ WVK_0_1_0_0, WVK_0_1_4_0 };
+use wvk::wvk_library::{ WvkLibrary, WvkLibraryBuilder };
+
 fn main() {
     println!("пример: создание WvkLibrary\n");
     
-    let _wvk_library = match wvk::WvkLibrary::<wvk::WVK_0_1_4_0>::create() {
+    let _wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::s_create().build() {
         Ok(wvk_library) => wvk_library,
         Err(wvk_error) => {
             println!("{}", wvk_error.getMessage());
@@ -87,10 +90,10 @@ fn main() {
             println!("Не удалось получить версии инстанса вулкана: {}", wvk_error.getMessage());
         }
 
-        if let Ok(version) = &version_result {
-            wvk::svk::VK_API_VERSION_MAJOR(*version);
-            println!("Версия вулкана поддерживаемая системой: {}.{}.{}", wvk::svk::VK_API_VERSION_MAJOR(*version), wvk::svk::VK_API_VERSION_MINOR(*version), wvk::svk::VK_API_VERSION_PATCH(*version));
-        }
+        //if let Ok(version) = &version_result {
+        //    wvk::svk::VK_API_VERSION_MAJOR(*version);
+        //    println!("Версия вулкана поддерживаемая системой: {}.{}.{}", wvk::svk::VK_API_VERSION_MAJOR(*version), wvk::svk::VK_API_VERSION_MINOR(*version), wvk::svk::VK_API_VERSION_PATCH(*version));
+        //}
     }   
 
     let _ = std::io::stdin().read_line(&mut String::new());

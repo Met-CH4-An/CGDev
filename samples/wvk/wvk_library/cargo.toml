@@ -14,6 +14,5 @@ path = "_mods.rs"
 wvk = {
     version = "0.0.0",
     path = "../../../wrapper_vulkan/",
-    features = ["vulkan_1_1"]
 }
 

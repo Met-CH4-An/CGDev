@@ -13,6 +13,6 @@ path = "_mods.rs"
 [dependencies]
 dhi = {
     version = "0.0.0",
-    path = "../../../device_hardware_interface",
-    features = ["wvk"]
+    path = "../../../device_hardware_interface"
+    #features = ["wvk"]
 }

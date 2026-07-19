@@ -6,7 +6,10 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mod wvk_instance_builder;
+pub(crate) mod wvk_instance_builder;
 pub use wvk_instance_builder::WvkInstanceBuilder;
-mod wvk_instance;
-mod wvk_instance_100;
+
+pub(crate) mod wvk_instance;
+pub use wvk_instance::WvkInstance;
+
+pub(crate) mod wvk_instance_0_1_0_0; 
