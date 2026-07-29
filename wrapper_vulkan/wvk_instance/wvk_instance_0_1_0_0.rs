@@ -5,37 +5,115 @@
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 use std::marker::PhantomData;
+use std::sync::Arc;
+use crate::wvk_call_with_check;
 use crate::wvk:: { WvkEnvironment_0_1_0_0 };
 use crate::wvk_error::{ WvkError, WvkErrorType };
+use crate::dispatch_table::{ WvkDispatchTableBuilder, WVK_DISPATCH_TABLE_INSTANCE };
 use crate::wvk_instance::wvk_instance_builder::WvkInstanceBuilder;
 use crate::wvk_instance::wvk_instance::WvkInstance;
+use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
+use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
+/// Публичные ассоциированные функции.
+/// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkEnvironment> WvkInstance<TWvkEnvironment>
-where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
+impl<TWvkBackend> WvkInstance<TWvkBackend>
+where TWvkBackend : WvkEnvironment_0_1_0_0 {
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Публичные методы.
+/// Public methods.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl<TWvkBackend> WvkInstance<TWvkBackend>
+where TWvkBackend : WvkEnvironment_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_instance) fn s_create(wvk_instance_builder : & WvkInstanceBuilder<TWvkEnvironment>) -> Result<Self, WvkError> {
+    pub fn wvkEnumeratePhysicalDevices(self: &Arc<Self>) -> Result<Vec<WvkPhysicalDevice<TWvkBackend>>, WvkError> {
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Получаем количество физических устройств VkPhysicalDevice.
+        // Get the number of physical devices VkPhysicalDevice.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        let mut count_ : u32 = 0;
+        wvk_call_with_check!(
+            self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, std::ptr::null_mut())
+        );
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Выделить место для данных, исходя из полученного количества.
+        // Allocate space for data based on the received quantity.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        let mut vk_physical_devices_ = Vec::<svk::svk_types::VkPhysicalDevice>::with_capacity(count_ as usize);
+        unsafe { vk_physical_devices_.set_len(count_ as usize) }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Получаем список физических устройств VkPhysicalDevice.
+        // We get a list of physical devices VkPhysicalDevice.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        wvk_call_with_check!(
+            self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, vk_physical_devices_.as_mut_ptr())
+        );
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Перебираем полученный список физических устройств VkPhysicalDevice и формируем обертки WvkPhysicalDevice.
+        // We iterate over the received list of physical devices VkPhysicalDevice and form WvkPhysicalDevice wrappers.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        let mut wvk_physical_devices_ = Vec::<WvkPhysicalDevice<TWvkBackend>>::with_capacity(count_ as usize);
+        for vk_physical_device_ in &vk_physical_devices_ {
+            let wvk_physical_device_ = WvkPhysicalDeviceBuilder::<TWvkBackend>::s_create(*vk_physical_device_, self.clone()).build()?;
+
+            wvk_physical_devices_.push(wvk_physical_device_);
+        }
+
+        Ok(wvk_physical_devices_)
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// приватная область
+// private area
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Приватные ассоциированные функции.
+/// Private associated functions.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl<TWvkBackend> WvkInstance<TWvkBackend>
+where TWvkBackend : WvkEnvironment_0_1_0_0 {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(in crate::wvk_instance) fn s_create(wvk_instance_builder : & WvkInstanceBuilder<TWvkBackend>) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError> {
+        // Создаем непосредственно VkInstance.
+        // Create VkInstance directly.
         let vk_instance_ = Self::s_createVkInstance(&wvk_instance_builder)?;
 
-        return Ok(
-            Self {
-                phantom_data : PhantomData,
-                vk_instance : vk_instance_,
-            }
-        );
+        let wvk_dispatch_table_instance_ = WvkDispatchTableBuilder::<TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>::s_create(vk_instance_).build()?;
+
+        let self_ = Self {
+            phantom_data : PhantomData,
+            wvk_dispatch_table_instance : wvk_dispatch_table_instance_,
+            vk_instance : vk_instance_,
+        };
+
+        let self_arc = Arc::new(self_);
+
+        Ok(self_arc)
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn s_createVkInstance(builder : &WvkInstanceBuilder<TWvkEnvironment>) -> Result<svk::VkInstance, WvkError> {
-        let mut vk_instance_ : svk::VkInstance = std::ptr::null_mut();
-
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn s_createVkInstance(builder : &WvkInstanceBuilder<TWvkBackend>) -> Result<svk::VkInstance, WvkError> {
         let application_name_cchar_ptr_ = builder.application_name__opt
             .as_ref()
             .map(|r| r
@@ -75,7 +153,7 @@ where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
             applicationVersion : builder.application_version,
             pEngineName : engine_name_cchar_ptr_,
             engineVersion : builder.engine_version,
-            apiVersion : TWvkEnvironment::WVK_ENCODED_VULKAN_VERSION,
+            apiVersion : TWvkBackend::WVK_ENCODED_VULKAN_VERSION,
         };
 
         // для создания VkInstance описываем его через VkInstanceCreateInfo
@@ -92,10 +170,10 @@ where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
             ppEnabledExtensionNames : std::ptr::null(),
         };
 
-        vk_instance_ = builder.wvk_library.wvkCreateInstance(&vk_create_info_, None)
+        let vk_instance_ = builder.wvk_library.wvkCreateInstance(&vk_create_info_, None)
             .map_err(|wvk_error| wvk_error.addError(WvkErrorType::WVK_INSTANCE_CREATE_FAILED, "Не удалось выполнить wvkCreateInstance"))?;
 
-        return Ok(vk_instance_);
+        Ok(vk_instance_)
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,7 +184,7 @@ where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
     /// В случаен успеха возвращается структура VkDebugUtilsMessengerCreateInfoEXT.
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[cfg(debug_assertions)]
-    fn s_createDebugUtilsMessengerCreateInfoForVkInstance(builder : &WvkInstanceBuilder<TWvkEnvironment>) -> Result<Option<svk::VkDebugUtilsMessengerCreateInfoEXT>, WvkError> {
+    fn s_createDebugUtilsMessengerCreateInfoForVkInstance(builder : &WvkInstanceBuilder<TWvkBackend>) -> Result<Option<svk::VkDebugUtilsMessengerCreateInfoEXT>, WvkError> {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // ищем расширение VK_EXT_debug_utils
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,7 +233,7 @@ where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
         messageSeverity : svk::svk_types::VkDebugUtilsMessageSeverityFlagsEXT,
         messageTypes : svk::svk_types::VkDebugUtilsMessageTypeFlagsEXT,
         pCallbackData : *const svk::svk_structures::VkDebugUtilsMessengerCallbackDataEXT,
-        pUserData : *mut std::ffi::c_void)
+        _pUserData : *mut std::ffi::c_void)
         -> bool {
 
         let mut message_print_ = String::new();

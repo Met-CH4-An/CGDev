@@ -15,16 +15,18 @@ use crate::wvk_library::wvk_library::WvkLibrary;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkLibraryBuilder<TWvkEnvironment>
-where TWvkEnvironment : WvkEnvironment {
-    phantom_data: PhantomData<TWvkEnvironment>,
+pub struct WvkLibraryBuilder<TWvkBackend>
+where TWvkBackend : WvkEnvironment {
+    phantom_data: PhantomData<TWvkBackend>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
+/// Публичные ассоциированные функции.
+/// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkEnvironment> WvkLibraryBuilder<TWvkEnvironment>
-where TWvkEnvironment : WvkEnvironment {
+impl<TWvkBackend> WvkLibraryBuilder<TWvkBackend>
+where
+TWvkBackend : WvkEnvironment {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,12 +35,21 @@ where TWvkEnvironment : WvkEnvironment {
             phantom_data : PhantomData,
         }
     }
+}
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Публичные методы.
+/// Public methods.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl<TWvkBackend> WvkLibraryBuilder<TWvkBackend>
+where 
+TWvkBackend : WvkEnvironment {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkLibrary<TWvkEnvironment>, WvkError>
-    where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
-        WvkLibrary::<TWvkEnvironment>::s_create()
+    pub fn build(self) -> Result<WvkLibrary<TWvkBackend>, WvkError>
+    where
+    TWvkBackend : WvkEnvironment_0_1_0_0 {
+        WvkLibrary::<TWvkBackend>::s_create()
     }
 }

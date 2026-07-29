@@ -7,22 +7,20 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::borrow::Cow;
-use std::marker::PhantomData;
-
-use crate::wvk_error::{ WvkError } ;
+use std::sync::Arc;
+use crate::wvk::{WvkEnvironment, WvkEnvironment_0_1_0_0 };
+use crate::wvk_error::WvkError;
 use crate::wvk_library::wvk_library::WvkLibrary;
-use crate::wvk::{WvkEnvironment, WvkEnvironment_0_1_0_0};
 use crate::wvk_instance::wvk_instance::WvkInstance;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkInstanceBuilder<'a, TWvkEnvironment>
-where TWvkEnvironment : WvkEnvironment {
-    phantom_data: PhantomData<TWvkEnvironment>,
+pub struct WvkInstanceBuilder<'a, TWvkBackend>
+where TWvkBackend : WvkEnvironment {
     /// Ссылка на библиотеку врапера, с глобальными функциями.
     /// Link to the wrapper library with global functions.
-    pub(in crate::wvk_instance) wvk_library : &'a WvkLibrary<TWvkEnvironment>,
+    pub(in crate::wvk_instance) wvk_library : &'a WvkLibrary<TWvkBackend>,
     /// Опционально. Название приложения. Метаданные, которые используются только информативно.
     /// Optional. Application name. Metadata used for informational purposes only.
     pub(in crate::wvk_instance) application_name__opt: Option<Cow<'a, std::ffi::CStr>>,
@@ -38,16 +36,16 @@ where TWvkEnvironment : WvkEnvironment {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
+/// Публичные ассоциированные функции.
+/// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TWvkEnvironment> WvkInstanceBuilder<'a, TWvkEnvironment>
-where TWvkEnvironment : WvkEnvironment {
+impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
+where TWvkBackend : WvkEnvironment {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(wvk_library : &'a WvkLibrary<TWvkEnvironment>) -> Self {
+    pub fn s_create(wvk_library : &'a WvkLibrary<TWvkBackend>) -> Self {
         Self {
-            phantom_data : PhantomData,
             wvk_library: wvk_library,
             application_name__opt: None,
             application_version : 0,
@@ -55,12 +53,20 @@ where TWvkEnvironment : WvkEnvironment {
             engine_version : 0,
         }
     }
+}
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Публичные методы.
+/// Public methods.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
+where TWvkBackend : WvkEnvironment {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkInstance<TWvkEnvironment>, WvkError>
-    where TWvkEnvironment : WvkEnvironment_0_1_0_0 {
+    pub fn build(self) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError>
+    where 
+    TWvkBackend : WvkEnvironment_0_1_0_0 {
         WvkInstance::s_create(&self)
     }
 

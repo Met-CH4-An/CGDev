@@ -138,7 +138,6 @@ pub mod VkPipelineCacheHeaderVersionValue {
 
 pub type VkPipelineCacheCreateFlagBits = u32;
 pub mod VkPipelineCacheCreateFlagBitsValue {
-    use crate::VkPipelineCacheCreateFlagBits;
 
 }
 

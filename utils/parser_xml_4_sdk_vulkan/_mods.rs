@@ -32,7 +32,10 @@ fn main() {
     let mut svk_enums_data = String::new();
     svk_enums_data.push_str("// SPDX-License-Identifier: None\n// Copyright (c) 2026 None\n");
 
-    let data_ = loadDataFromFile("1.4.356.xml").ok().unwrap();
+    let mut svk_structures_data = String::new();
+    svk_structures_data.push_str("// SPDX-License-Identifier: None\n// Copyright (c) 2026 None\n");
+
+    let data_ = loadDataFromFile("1.4.357.xml").ok().unwrap();
 
     let mut parser_ = Parser::new().ok().unwrap();
 
@@ -42,6 +45,9 @@ fn main() {
     let mut parse_enums_as_constant_ = false;
     let mut type_ = String::new();
     let mut asd : u32 = 0;
+
+    let mut parse_struct_ = false;
+
     'tag: loop {
         asd += 1;
 
@@ -50,6 +56,12 @@ fn main() {
         //println!("{}", tag_.name(&data_));
 
 
+        if tag_.name(&data_) == "type" {
+            parse_struct_ = true;
+        }
+        if tag_.name(&data_) == "type" && tag_.isClosed() {
+            parse_struct_ = false;
+        }
 
         if tag_.name(&data_) == "enums" && !tag_.isClosed() {
             for attribute in tag_.iter() {
@@ -143,6 +155,13 @@ fn main() {
             if name_.is_empty() || value_.is_empty() || type_.is_empty() {continue;}
             svk_enums_data.push_str(&format!("\tpub const {} : {} = {};\n", name_, type_, value_));
         }
+
+        //if parse_struct_ == true {
+        //    if tag_.name(&data_) == "name" {
+        //       svk_structures_data.push_str(&format!("\tpub {}", ));
+        //    }
+        //}
+
 
         if end_ {
             break;

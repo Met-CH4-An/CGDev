@@ -12,6 +12,7 @@ members = [
     # samples Wrapper Vulkan:
     "samples/wvk/wvk_library",
     "samples/wvk/wvk_instance",
+    "samples/wvk/wvk_physical_device",
 
     # samples: Device Hardware Interface
     "samples/dhi/dhi_context",

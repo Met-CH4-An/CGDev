@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-pub type WvkError = common::Error::<WvkErrorType>;
+pub type WvkError = common::Error<WvkErrorType>;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum WvkErrorType {
-    /// ф ыв
+    /// 
     WVK_VK_RESULT(svk::VkResult),
     /// Неправильные входные параметры. Incorrect input parameters.
     WVK_INPUT_PARAMETER_INVALID,
@@ -20,6 +20,7 @@ pub enum WvkErrorType {
     WVK_LIBRARY_VULKAN_COMMAND_LOAD_FAILED,
     /// Не удалось создать WvkInstance. Failed to create WvkInstance.
     WVK_INSTANCE_CREATE_FAILED,
+    /// Не удалось найти расширение для WvkInstance. Unable to find extension for WvkInstance.
     WVK_INSTANCE_EXTENSION_NOT_FOUND,
 }
 
@@ -28,14 +29,14 @@ pub enum WvkErrorType {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl common::ErrorTypeToStr for WvkErrorType {
     fn toStr(&self) -> &str {
-        return match self {
+        match self {
             WvkErrorType::WVK_VK_RESULT(_) => "",
             WvkErrorType::WVK_INPUT_PARAMETER_INVALID => "Неправильные входные параметры. Incorrect input parameters.",
             WvkErrorType::WVK_LIBRARY_CREATE_FAILED => "Не удалось создать WvkLibrary. Failed to create WvkLibrary.",
             WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED => "Не удалось загрузить библиотеку вулкана. Failed to load volcano library.",
             WvkErrorType::WVK_LIBRARY_VULKAN_COMMAND_LOAD_FAILED => "Не удалось загрузить команду вулкана. Failed to load volcano command.",
             WvkErrorType::WVK_INSTANCE_CREATE_FAILED => "Не удалось создать WvkInstance. Failed to create WvkInstance.",
-            (_) => {""}
-        };
+            WvkErrorType::WVK_INSTANCE_EXTENSION_NOT_FOUND => "Не удалось создать WvkInstance. Failed to create WvkInstance.",
+        }
     }
 }

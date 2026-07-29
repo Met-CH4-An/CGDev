@@ -23,6 +23,13 @@ pub struct VkInstance_T {
 }
 pub type VkInstance = *mut VkInstance_T;
 
+// Provided by VK_VERSION_1_0
+#[repr(C)]
+pub struct VkPhysicalDevice_T {
+    _private: [u8; 0],
+}
+pub type VkPhysicalDevice = *mut VkPhysicalDevice_T;
+
 // Provided by VK_EXT_debug_report
 pub type VkDebugReportFlagsEXT = VkFlags;
 
@@ -37,3 +44,7 @@ pub type VkDebugUtilsMessengerCreateFlagsEXT = VkFlags;
 
 // Provided by VK_EXT_debug_utils
 pub type VkDebugUtilsMessengerCallbackDataFlagsEXT = VkFlags;
+
+pub type VkDeviceSize = u64;
+
+pub type VkSampleCountFlags = VkFlags ;

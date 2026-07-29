@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use wvk::wvk::{ WVK_0_1_0_0, WVK_0_1_4_0 };
-use wvk::wvk_library::{ WvkLibrary, WvkLibraryBuilder };
+use wvk::wvk::{ WVK_0_1_4_0 };
+use wvk::wvk_library::{ WvkLibraryBuilder };
 
 fn main() {
     println!("пример: создание WvkLibrary\n");
     
-    let _wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::s_create().build() {
+    let wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::s_create().build() {
         Ok(wvk_library) => wvk_library,
         Err(wvk_error) => {
             println!("{}", wvk_error.getMessage());
@@ -17,7 +17,7 @@ fn main() {
 
     println!("пример: получение свойств слоёв\n");
     {
-        let properties_ = match _wvk_library.wvkEnumerateInstanceLayerProperties() {
+        let properties_ = match wvk_library.wvkEnumerateInstanceLayerProperties() {
             Ok(v) => v,
             Err(v) => {
                 println!("{}", v.getMessage());
@@ -48,7 +48,7 @@ fn main() {
 
     println!("пример: получение свойств расширений\n");
     {
-        let properties_ = match _wvk_library.wvkEnumerateInstanceExtensionProperties(None) {
+        let properties_ = match wvk_library.wvkEnumerateInstanceExtensionProperties(None) {
             Ok(v) => v,
             Err(v) => {
                 println!("{}", v.getMessage());
@@ -70,21 +70,9 @@ fn main() {
 
     }
 
-    println!("пример: ошибка при получении свойств расширений\n");
-    {
-        match _wvk_library.wvkEnumerateInstanceExtensionProperties(Some("Не существующий слой")) {
-            Ok(_) => (),
-            Err(v) => {
-                println!("{}", v.getMessage());
-                ()
-            }
-        };
-
-    }
-
     println!("пример: получение версий инстанса вулкана\n");
     {
-        let version_result = _wvk_library.wvkEnumerateInstanceVersion();
+        let version_result = wvk_library.wvkEnumerateInstanceVersion();
         
         if let Err(wvk_error) = &version_result {
             println!("Не удалось получить версии инстанса вулкана: {}", wvk_error.getMessage());

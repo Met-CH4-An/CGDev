@@ -89,3 +89,20 @@ pub type PFN_vkDebugUtilsMessengerCallbackEXT = unsafe extern "system" fn (
     messageTypes : crate::svk_types::VkDebugUtilsMessageTypeFlagsEXT,
     pCallbackData : *const crate::svk_structures::VkDebugUtilsMessengerCallbackDataEXT,
     pUserData : *mut std::ffi::c_void) -> bool;
+
+// Provided by VK_VERSION_1_0
+pub type PFN_vkEnumeratePhysicalDevices = unsafe extern "system" fn (
+    instance : crate::svk_types::VkInstance,
+    pPhysicalDeviceCount : *mut u32,
+    pPhysicalDevices : *mut crate::svk_types::VkPhysicalDevice)
+    -> crate::svk_enums::VkResult;
+
+// Provided by VK_VERSION_1_0
+pub type PFN_vkGetPhysicalDeviceProperties = unsafe extern "system" fn (
+    physicalDevice: crate::svk_types::VkPhysicalDevice,
+    pProperties: *mut crate::svk_structures::VkPhysicalDeviceProperties);
+
+// Provided by VK_VERSION_1_1
+pub type PFN_vkGetPhysicalDeviceProperties2 = unsafe extern "system" fn (
+    physicalDevice: crate::svk_types::VkPhysicalDevice,
+    pProperties: *mut crate::svk_structures::VkPhysicalDeviceProperties2);

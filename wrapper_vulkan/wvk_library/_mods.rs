@@ -6,11 +6,23 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// файл wvk_library.rs
+// file wvk_library.rs
 pub(crate) mod wvk_library;
 pub use wvk_library::WvkLibrary;
 
+// файл wvk_library_builder.rs
+// file wvk_library_builder.rs
 pub(crate) mod wvk_library_builder;
 pub use wvk_library_builder::WvkLibraryBuilder;
 
-pub(in crate::wvk_library) mod wvk_library_0_1_0_0;
-pub(in crate::wvk_library) mod wvk_library_0_1_1_0;
+// файл wvk_library_0_1_0_0.rs
+// file wvk_library_0_1_0_0.rs
+pub(crate) mod wvk_library_0_1_0_0;
+
+// файл wvk_library_0_1_1_0.rs
+// file wvk_library_0_1_1_0.rs
+pub(crate) mod wvk_library_0_1_1_0;
+
+#[cfg(test)]
+mod _tests;

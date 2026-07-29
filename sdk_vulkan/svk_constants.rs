@@ -9,3 +9,5 @@
 // Vulkan hardcoded constants - not an enumerated type, part of the header boilerplate
 pub const VK_MAX_EXTENSION_NAME_SIZE : u32 = 256;
 pub const VK_MAX_DESCRIPTION_SIZE : u32 = 256;
+pub const VK_MAX_PHYSICAL_DEVICE_NAME_SIZE : u32 = 256;
+pub const VK_UUID_SIZE : u32 = 16;

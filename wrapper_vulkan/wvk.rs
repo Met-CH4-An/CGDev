@@ -109,9 +109,7 @@ pub(crate) const WRAPPER_VULKAN_NAME_COW : Cow<'static, CStr> = Cow::Borrowed(c"
 #[macro_export]
 macro_rules! wvk_call_with_check {
     ($vk_command : expr) => {{
-        let vk_result_ = unsafe {
-            $vk_command
-        };
+        let vk_result_ = $vk_command;
 
         if vk_result_ != svk::VkResultValue::VK_SUCCESS {
             return Err(WvkError::createWithDescription(WvkErrorType::WVK_VK_RESULT(vk_result_), &format!("Не удалось выполнить {}: {}.", stringify!($vk_command).replace("\n", " "), vk_result_)))

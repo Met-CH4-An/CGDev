@@ -58,6 +58,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "samples_wvk__wvk_physical_device"
+version = "0.0.0"
+dependencies = [
+ "wvk",
+]
+
+[[package]]
 name = "svk"
 version = "0.0.0"
 

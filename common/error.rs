@@ -35,6 +35,7 @@ pub trait ErrorTypeToStr {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#[derive(Debug)]
 pub struct Error<TErrorType> {
     // шаблонный тип ошибки. pattern error type
     error_type : TErrorType,
@@ -86,8 +87,8 @@ where TErrorType: Clone + std::fmt::Debug + ErrorTypeToStr {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn getCode(&self) -> &TErrorType {
-        return &self.error_type;
+    pub fn getCode(&self) -> TErrorType {
+        return self.error_type.clone();
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
