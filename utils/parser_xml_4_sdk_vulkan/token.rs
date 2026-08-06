@@ -5,26 +5,35 @@
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-use {
-    std::ops::Range,
-};
+
+use std::ops::Range;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #[derive(Clone, PartialEq)]
 pub enum TokenType {
-    /// наименование тега
-    /// tag name
+    TAG_OPEN,
+    TAG_OPEN_CLOSE,
+    TAG_OPEN_INSTRUCTION,
+    TAG_END,
+    TAG_END_CLOSE,
+    TAG_END_INSTRUCTION,
+
+    /// Токен закрытия тега.
+    /// Tag closing token.
+    CLOSE,
+    /// Наименование тега
+    /// Tag name
     TAG_NAME,
-    /// наименование атрибута
-    /// attribute name
+    /// Наименование атрибута
+    /// Attribute name
     ATTRIBUTE_NAME,
-    /// значение атрибута
-    /// attribute value
+    /// Значение атрибута
+    /// Attribute value
     ATTRIBUTE_VALUE,
-    /// токен завершения
-    /// completion token
+    /// Токен завершения работы парсера.
+    /// Parser completion token.
     END,
 }
 
@@ -39,45 +48,47 @@ pub enum TokenType {
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct Token {
-    /// тип токена
-    /// token type
+    /// Тип токена
+    /// Token type
     r#type : TokenType,
-    /// данные токена
-    /// token data
-    data : Range<usize>,
+    /// Данные токена
+    /// Token data
+    data_rng : Range<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// публичная область
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// функции
-/// functions
+/// Публичные ассоциированные функции.
+/// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn new(r#type: TokenType, data: Range<usize>) -> Token {
-        return Token {
+    pub fn s_create(r#type: TokenType, data_rng: Range<usize>) -> Self {
+        Self {
             r#type,
-            data: data,
-        };
+            data_rng: data_rng,
+        }
     }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// методы
-/// methods
+/// Публичные методы.
+/// Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn asType(&self) -> TokenType {
-        return self.r#type.clone();
+        self.r#type.clone()
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn asRange(&self) -> Range<usize> {
+        self.data_rng.clone()
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,16 +96,9 @@ impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn asStr<'a>(&self, data: &'a [u8]) -> &'a str {
         let str_ = unsafe {
-            std::str::from_utf8_unchecked(&data[self.data.start..self.data.end])
+            std::str::from_utf8_unchecked(&data[self.data_rng.start..self.data_rng.end])
         };
-        return str_;
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn asRange(&self) -> Range<usize> {
-        return self.data.clone();
+        str_
     }
 }
 

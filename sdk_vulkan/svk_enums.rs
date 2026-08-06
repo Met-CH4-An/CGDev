@@ -586,6 +586,8 @@ pub mod VkStructureTypeValue {
     pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER : VkStructureType = 46;
     pub const VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO : VkStructureType = 47;
     pub const VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO : VkStructureType = 48;
+    // Provided by VK_VERSION_1_1
+    pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2 : VkStructureType = 1000059001;
 }
 
 pub type VkSubpassContents = i32;

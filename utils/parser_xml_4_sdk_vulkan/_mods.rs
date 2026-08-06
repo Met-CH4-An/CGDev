@@ -11,16 +11,11 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 mod token;
 
-use std::fmt::format;
-pub use token::*;
 
-mod preset_mask;
-pub(crate) use preset_mask::*;
-
-mod chunk_mask;
-mod parser;
-pub use parser::*;
-//mod parse_item;
+#[path = "tokenizer/_mods.rs"]
+pub(crate) mod tokenizer;
+pub use tokenizer::Tokenizer;
+pub use tokenizer::AVX2;
 
 #[path = "parse_items/_mods.rs"]
 pub mod parse_items;
@@ -28,7 +23,25 @@ pub mod parse_items;
 mod tag_attribute;
 mod tag;
 
+fn tokenizationBenchmark(parser: &mut Tokenizer<AVX2>, data: &[u8]) {
+    let instant_ = std::time::Instant::now();
+    loop {
+        let (token_, end_) = parser.nextToken1(&data);
+
+        let value_str_ = unsafe { std::str::from_utf8_unchecked(&data[token_.asRange().start ..= token_.asRange().end]) };
+
+        println!("{}", value_str_);
+
+        if let true = end_ {
+            break;
+        }
+    }
+    let duration_ = instant_.elapsed();
+    println!("{:?}", duration_);
+}
+
 fn main() {
+
     let mut svk_enums_data = String::new();
     svk_enums_data.push_str("// SPDX-License-Identifier: None\n// Copyright (c) 2026 None\n");
 
@@ -37,7 +50,9 @@ fn main() {
 
     let data_ = loadDataFromFile("1.4.357.xml").ok().unwrap();
 
-    let mut parser_ = Parser::new().ok().unwrap();
+    let mut parser_ = Tokenizer::s_create(&data_).ok().unwrap();
+
+    tokenizationBenchmark(&mut parser_, &data_);
 
     let mut parse_enums_as_enum_ = false;
     let mut parse_enums_as_bitmask_ = false;
@@ -51,12 +66,12 @@ fn main() {
     'tag: loop {
         asd += 1;
 
-        let (tag_, end_ ) = parser_.nextToken(&data_);
+        let (tag_, end_ ) = parser_.nextToken1(&data_);
 
         //println!("{}", tag_.name(&data_));
 
 
-        if tag_.name(&data_) == "type" {
+        /*if tag_.name(&data_) == "type" {
             parse_struct_ = true;
         }
         if tag_.name(&data_) == "type" && tag_.isClosed() {
@@ -165,7 +180,7 @@ fn main() {
 
         if end_ {
             break;
-        }
+        }*/
 
     }
 
