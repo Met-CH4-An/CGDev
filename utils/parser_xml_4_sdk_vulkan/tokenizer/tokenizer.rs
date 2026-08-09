@@ -6,8 +6,8 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::marker::PhantomData;
-use std::ops::Range;
+use std::ops::{Deref, Range};
+use std::rc::Rc;
 use crate::token::{Token, TokenType};
 use crate::tokenizer::tokenizer_chunk_mask::TokenizerChunkMask;
 
@@ -46,8 +46,8 @@ pub trait TokenizerBackend: private::TokenizerBackendPrivate {
         Self: Sized;
     fn trailingZeros(mask: Self::CHUNK_TYPE1) -> u32;
 }
-pub(crate) trait TokenizerBackendAVX2: TokenizerBackend<CHUNK_TYPE1 = u32> {}
-pub(crate) trait TokenizerBackendAVX512: TokenizerBackend<CHUNK_TYPE1 = u64> {}
+pub trait TokenizerBackendAVX2: TokenizerBackend<CHUNK_TYPE1 = u32> {}
+pub trait TokenizerBackendAVX512: TokenizerBackend<CHUNK_TYPE1 = u64> {}
 
 impl private::TokenizerBackendPrivate for AVX2 {}
 impl TokenizerBackend for AVX2 {
@@ -72,7 +72,7 @@ impl TokenizerBackend for AVX512 {
     const ZERO: u64 = 0;
     const ONE: u64 = 1u64;
     unsafe fn buildChunk(chunk: &mut TokenizerChunkMask<Self>, ptr: *const u8) {
-        chunk.build(ptr);
+        chunk.buildAVX512(ptr);
     }
     fn trailingZeros(mask: u64) -> u32 {
         mask.trailing_zeros()
@@ -80,41 +80,19 @@ impl TokenizerBackend for AVX512 {
 }
 impl TokenizerBackendAVX512 for AVX512 {}
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#[repr(u32)]
-enum MaskType {
-    L_CHEVRON = 0,
-    R_CHEVRON = 1,
-    EQUAL,
-    QUOTES,
-    TAB_SPACE,
-    LETTERS,
-    SPECIAL,
-}
 
-impl<T> std::ops::Index<MaskType> for [T] {
-    type Output = T;
-
-    fn index(&self, index: MaskType) -> &Self::Output {
-        return &self[index as usize];
-    }
-}
-
-impl<T> std::ops::IndexMut<MaskType> for [T] {
-    fn index_mut(&mut self, index: MaskType) -> &mut Self::Output {
-        return &mut self[index as usize];
-    }
-}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct Tokenizer<'a, TBackend>
+pub struct Tokenizer<TBackend>
 where
 TBackend: TokenizerBackend {
-    data_ref: &'a [u8],
+    /// Данные для обработки.
+    /// Data to be processed.
+    data_ptr: *const u8,
+    data_length: usize,
+    data_rc: Rc<Vec<u8>>,
     /// Текущее состояние токенайзера.
     /// Current state of the tokenizer.
     state : TokenizerState,
@@ -127,33 +105,36 @@ TBackend: TokenizerBackend {
     /// Текущий чанк масок.
     /// Current chunk of masks.
     current_chunk_mask: TokenizerChunkMask<TBackend>,
-
-    current_data_rng_: Range<usize>,
+    /// Ожидающий токен. Токен, который был найден при поиске другого.
+    /// Pending token. A token that was found while searching for another.
+    pending_token: Token,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// Публичные ассоциированные функции.
 /// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TBackend> Tokenizer<'a, TBackend>
+impl<TBackend> Tokenizer<TBackend>
 where
 TBackend: TokenizerBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(data_ref: &'a [u8]) -> Result<Self, ()> {
+    pub fn s_create(data_rc: Rc<Vec<u8>>) -> Result<Self, String> {
         // Строим первый чанк.
         // Building the first chunk.
         let mut chunk_ = TokenizerChunkMask::<TBackend>::s_create();
-        unsafe { TBackend::buildChunk(&mut chunk_, data_ref.as_ptr()); }
+        unsafe { TBackend::buildChunk(&mut chunk_, data_rc.as_ptr()); }
 
         Ok(Self {
-            data_ref: data_ref,
+            data_ptr: data_rc.as_ptr(),
+            data_length: data_rc.deref().len(),
+            data_rc: data_rc,
             state: TokenizerState::TAG_FIND,
             current_in_data_position: 0,
             current_in_chunk_position: 0,
             current_chunk_mask: chunk_,
-            current_data_rng_: (0 .. 0),
+            pending_token: Token::s_createEmpty(),
         })
     }
 }
@@ -162,15 +143,15 @@ TBackend: TokenizerBackend {
 /// Публичные методы.
 /// Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TBackend> Tokenizer<'a, TBackend>
+impl<TBackend> Tokenizer<TBackend>
 where
 TBackend: TokenizerBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Установка новых данных. Установка приводит к полному сбросу состояния токенайзера.
     /// Installing new data. This causes a complete reset of the tokenizer state.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn setData(&mut self, data_ref: &'a [u8]) {
-        self.data_ref = data_ref;
+    pub fn setData(&mut self, data_rc: Rc<Vec<u8>>) {
+        self.data_rc = data_rc;
 
         self.reset();
     }
@@ -183,7 +164,7 @@ TBackend: TokenizerBackend {
         // Строим первый чанк.
         // Building the first chunk.
         let mut chunk_ = TokenizerChunkMask::<TBackend>::s_create();
-        unsafe { TBackend::buildChunk(&mut chunk_, self.data_ref.as_ptr()); }
+        unsafe { TBackend::buildChunk(&mut chunk_, self.data_ptr); }
 
         self.state = TokenizerState::TAG_FIND;
         self.current_in_data_position = 0;
@@ -194,10 +175,10 @@ TBackend: TokenizerBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn nextToken1(&mut self, data : &[u8]) -> (Token, bool) {
-        let token_ = self.processState(data);
+    pub fn nextToken1(&mut self) -> Token {
+        let token_ = self.processState();
 
-        (token_, false)
+        token_
 
         /*let mut token_type_ = TokenType::END;
         let mut token_data_rng_: Range<usize> = (0 .. 0);
@@ -231,7 +212,7 @@ TBackend: TokenizerBackend {
                             break 'analyze;
                         }                       
 
-                        // ищем бит. найденый бит = найденный л-шефрон
+                        // ищем бит. найденный бит = найденный л-шефрон
                         // количество 0 до первой 1 = позиция 1
                         let l_chevron_tz_ : u32 = self.current_masks.l_chevron_mask.trailing_zeros();
                         
@@ -390,7 +371,7 @@ TBackend: TokenizerBackend {
                     }
 
                     TokenizerState::L_ATTRIBUTE_NAME => {
-                        // Eсли текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
+                        // Если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новые чанки
                         // If the current position being processed goes beyond the limits, stop the analysis and get new chunks
                         if self.current_mask_position >= u32::BITS {
                             break 'analyze;
@@ -404,7 +385,7 @@ TBackend: TokenizerBackend {
                         valid_mask_ = valid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
                         invalid_mask_ = invalid_mask_ & !((1u32 << self.current_mask_position) - 1u32);
 
-                        // Eсли маски пустые
+                        // Если маски пустые
                         // If masks are empty
                         if valid_mask_ | invalid_mask_ == 0 {
                             break 'analyze;
@@ -413,7 +394,7 @@ TBackend: TokenizerBackend {
                         let valid_tz_ = valid_mask_.trailing_zeros();
                         let invalid_tz = invalid_mask_.trailing_zeros();
 
-                        // Eсли недопустимый бит встретился раньше, ошибка парсинга
+                        // Если недопустимый бит встретился раньше, ошибка парсинга
                         // If an invalid bit occurs earlier, a parse error occurs
                         if invalid_tz < valid_tz_ {
                             self.state = TokenizerState::END;
@@ -621,7 +602,7 @@ TBackend: TokenizerBackend {
                     (_) => {}
 
                 }; // match self.state              
-            } // 'analize: loop
+            } // 'analyze: loop
 
             self.nextChunk(&data);
 
@@ -646,18 +627,12 @@ enum TokenizerState {
     TAG_READING,
     TAG_NAME_FIND,
     TAG_NAME_READING,
-    TAG_CLOSE_FIND,
     TAG_CLOSE_READING,
-
-    L_CHEVRON,
-    L_CHEVRON_NEXT,
-    L_TAG_NAME,
-    R_TAG_NAME,
-    L_ATTRIBUTE_NAME,
-    R_ATTRIBUTE_NAME,
-    L_ATTRIBUTE_VALUE,
-    R_ATTRIBUTE_VALUE,
-    INVALID,
+    TAG_ATTRIBUTE_NAME_FINE,
+    TAG_ATTRIBUTE_NAME_READING,
+    TAG_ATTRIBUTE_VALUE_FINE,
+    TAG_ATTRIBUTE_VALUE_READING,
+    
     END,
 }
 
@@ -684,7 +659,7 @@ macro_rules! GET_VALID_TZ {
 
         // Сохраняем позицию.
         // Save the position.
-        $self.current_in_chunk_position = valid_tz_ as usize;
+        $self.current_in_chunk_position = valid_tz_ as usize + 1;
 
         valid_tz_
     }};
@@ -713,6 +688,8 @@ macro_rules! GET_VALID_INVALID_TZ {
         let valid_tz_ = TBackend::trailingZeros($valid_mask);
         let invalid_tz_ = TBackend::trailingZeros($invalid_mask);
 
+        //println!("{} {}", valid_tz_, invalid_tz_);
+
         // Если недопустимый бит встретился раньше, ошибка токенайзера.
         // If an invalid bit was encountered earlier, a tokenizer error occurs.
         if invalid_tz_ <= valid_tz_ {
@@ -722,9 +699,9 @@ macro_rules! GET_VALID_INVALID_TZ {
 
         // Сохраняем позицию.
         // Save the position.
-        $self.current_in_chunk_position = valid_tz_ as usize;
+        $self.current_in_chunk_position = valid_tz_ as usize + 1;
 
-        (valid_tz_, invalid_tz_)
+        valid_tz_
     }};
 }
 
@@ -737,17 +714,17 @@ macro_rules! GET_VALID_INVALID_TZ {
 /// Приватные методы.
 /// Private methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TBackend> Tokenizer<'a, TBackend>
+impl<TBackend> Tokenizer<TBackend>
 where
 TBackend: TokenizerBackend
 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn processState(&mut self, data: &[u8]) -> Token {
+    fn processState(&mut self) -> Token {
         let mut token_type_ = TokenType::END;
-        let mut token_data_rng_: Range<usize> = (0..0);
-        let mut token_data_next_rng_: Range<usize> = (0..0);
+        let mut token_data_rng_: Range<usize> = 0..0;
+        let mut token_data_next_rng_: Range<usize> = 0..0;
 
         'chunk: loop {
             'analyze: loop {
@@ -755,7 +732,7 @@ TBackend: TokenizerBackend
                     TokenizerState::TAG_FIND => {
                         let l_chevron_tz_ = GET_VALID_TZ!(self, self.current_chunk_mask.l_chevron_mask, 'analyze);
 
-                        token_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
+                        token_data_rng_.start = self.current_in_data_position + l_chevron_tz_ as usize;
 
                         // Следующее состояние, понять, какой именно тег - простой, самозакрывающийся или с инструкциями обработки.
                         // The next state is to understand what kind of tag it is - simple, self-closing, or with processing instructions.
@@ -765,8 +742,6 @@ TBackend: TokenizerBackend
                     } // TokenizerState::TAG_FIND
 
                     TokenizerState::TAG_READING => {
-                        self.current_in_chunk_position += 1;
-
                         // Если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новый чанк.
                         // If the current position being processed goes out of bounds, stop analyzing and get a new chunk.
                         if self.current_in_chunk_position >= TBackend::CHUNK_SIZE {
@@ -779,11 +754,11 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится '/'.
                         // If the current position is '/'.
                         if bit_ & self.current_chunk_mask.forward_slash != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_OPEN_CLOSE;
+                            token_type_ = TokenType::TAG_BEGIN_CLOSE;
                             token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position;
 
                             // сохраняем позицию
-                            self.current_in_chunk_position += 1;
+                            //self.current_in_chunk_position += 1;
 
                             // Следующей состояние - поиск имени тега.
                             // The next state is to search for the tag name.
@@ -795,11 +770,11 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится '?'.
                         // If the current position is '?'.
                         else if bit_ & self.current_chunk_mask.question_mark != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_OPEN_INSTRUCTION;
+                            token_type_ = TokenType::TAG_BEGIN_INSTRUCTION;
                             token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position;
 
                             // сохраняем позицию
-                            self.current_in_chunk_position += 1;
+                            //self.current_in_chunk_position += 1;
 
                             // Следующей состояние - поиск имени тега.
                             // The next state is to search for the tag name.
@@ -811,7 +786,7 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится символы.
                         // If there are characters at the current position.
                         else if bit_ & self.current_chunk_mask.letters_digitals_mask != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_OPEN;
+                            token_type_ = TokenType::TAG_BEGIN;
                             token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position - 1;
 
                             // Следующей состояние - поиск имени тега.
@@ -823,25 +798,22 @@ TBackend: TokenizerBackend
                     } // TokenizerState::TAG_READING
 
                     TokenizerState::TAG_NAME_FIND => {
-                        let mut valid_mask_ = self.current_chunk_mask.letters_digitals_mask;
+                        let mut valid_mask_ = self.current_chunk_mask.letters_digitals_mask
+                            | self.current_chunk_mask.forward_slash
+                            | self.current_chunk_mask.question_mark;
 
                         let mut invalid_mask_ = self.current_chunk_mask.l_chevron_mask
                             | self.current_chunk_mask.r_chevron_mask
-                            | self.current_chunk_mask.forward_slash
-                            | self.current_chunk_mask.question_mark
                             | self.current_chunk_mask.equal_mask
                             | self.current_chunk_mask.quote_mask;
 
-                        let (valid_tz_, invalid_tz_) = GET_VALID_INVALID_TZ!(
+                        let valid_tz_ = GET_VALID_INVALID_TZ!(
                             self,
                             valid_mask_,
                             invalid_mask_,
                             'analyze);
 
-                        token_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
-
-                        // сохраняем позицию
-                        self.current_in_chunk_position += 1;
+                        token_data_rng_.start = self.current_in_data_position + valid_tz_ as usize;
 
                         // Следующее состояние.
                         // Next state.
@@ -849,20 +821,29 @@ TBackend: TokenizerBackend
                     } // TokenizerState::TAG_NAME_FIND
 
                     TokenizerState::TAG_NAME_READING => {
+                        // Маска для валидных значений.
+                        // Mask for valid values.
                         let mut valid_mask_ = self.current_chunk_mask.r_chevron_mask
                             | self.current_chunk_mask.forward_slash
                             | self.current_chunk_mask.question_mark
                             | self.current_chunk_mask.separators_mask;
 
+                        // Маска для невалидных значений.
+                        // Mask for invalid values.
                         let mut invalid_mask_ = self.current_chunk_mask.l_chevron_mask
                             | self.current_chunk_mask.equal_mask
                             | self.current_chunk_mask.quote_mask;
 
-                        let (valid_tz_, invalid_tz_) = GET_VALID_INVALID_TZ!(
+                        let valid_tz_ = GET_VALID_INVALID_TZ!(
                             self,
                             valid_mask_,
                             invalid_mask_,
                             'analyze);
+
+                        // Формируем токен для отправки.
+                        // We are generating a token for sending.
+                        token_type_ = TokenType::TAG_NAME;
+                        token_data_rng_.end = self.current_in_data_position + valid_tz_ as usize - 1;
 
                         // устанавливаем бит на позицию, которую нужно найти
                         let bit_ = TBackend::ONE << valid_tz_ as usize;
@@ -870,10 +851,12 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится '>'.
                         // If the current position is '>'.
                         if bit_ & self.current_chunk_mask.r_chevron_mask != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_NAME;
-                            token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position - 1;
+                            // Т.к. при чтении имени тега был найден следующий токен. Записываем в ожидание.
+                            // Because the next token was found while reading the tag name, we write it to the waiting state.
+                            self.pending_token.r#type = TokenType::TAG_END;
+                            self.pending_token.data_rng.start = self.current_in_data_position + valid_tz_ as usize;
 
-                            self.current_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
+                            self.current_in_chunk_position -= 1;
 
                             // Следующее состояние.
                             // Next state.
@@ -885,13 +868,10 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится '/'.
                         // If the current position is '/'.
                         else if bit_ & self.current_chunk_mask.forward_slash != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_NAME;
-                            token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position - 1;
-
-                            self.current_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
-
-                            // сохраняем позицию
-                            self.current_in_chunk_position += 1;
+                            // Т.к. при чтении имени тега был найден следующий токен. Записываем в ожидание.
+                            // Because the next token was found while reading the tag name, we write it to the waiting state.
+                            self.pending_token.r#type = TokenType::TAG_END_CLOSE;
+                            self.pending_token.data_rng.start = self.current_in_data_position + valid_tz_ as usize;
 
                             // Следующее состояние.
                             // Next state.
@@ -903,13 +883,10 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится '?'.
                         // If the current position is '?'.
                         else if bit_ & self.current_chunk_mask.question_mark != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_NAME;
-                            token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position - 1;
-
-                            self.current_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
-
-                            // сохраняем позицию
-                            self.current_in_chunk_position += 1;
+                            // Т.к. при чтении имени тега был найден следующий токен. Записываем в ожидание.
+                            // Because the next token was found while reading the tag name, we write it to the waiting state.
+                            self.pending_token.r#type = TokenType::TAG_END_INSTRUCTION;
+                            self.pending_token.data_rng.start = self.current_in_data_position + valid_tz_ as usize;
 
                             // Следующее состояние.
                             // Next state.
@@ -921,33 +898,22 @@ TBackend: TokenizerBackend
                         // Если на текущей позиции находится ' '.
                         // If the current position is ' '.
                         else if bit_ & self.current_chunk_mask.separators_mask != TBackend::ZERO {
-                            token_type_ = TokenType::TAG_NAME;
-                            token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position - 1;
-
-                            self.current_data_rng_.start = self.current_in_data_position + self.current_in_chunk_position;
-
-                            // сохраняем позицию
-                            self.current_in_chunk_position += 1;
-
                             // Следующее состояние.
                             // Next state.
-                            self.state = TokenizerState::TAG_CLOSE_READING;
+                            self.state = TokenizerState::TAG_ATTRIBUTE_NAME_FINE;
 
                             break 'chunk;
                         }
                     } // TokenizerState::TAG_NAME_READING
 
-                    TokenizerState::TAG_CLOSE_FIND => {}
-
                     TokenizerState::TAG_CLOSE_READING => {
                         let valid_tz_ = GET_VALID_TZ!(self, self.current_chunk_mask.r_chevron_mask, 'analyze);
 
-                        token_type_ = TokenType::TAG_END;
-                        token_data_rng_.start = self.current_data_rng_.start;
-                        token_data_rng_.end = self.current_in_data_position + self.current_in_chunk_position;
-
-                        // сохраняем позицию
-                        self.current_in_chunk_position += 1;
+                        // Формируем токен для отправки.
+                        // We are generating a token for sending.
+                        token_type_ = self.pending_token.r#type.clone();
+                        token_data_rng_.start = self.pending_token.data_rng.start;
+                        token_data_rng_.end = self.current_in_data_position + valid_tz_ as usize;
 
                         // Следующее состояние.
                         // Next state.
@@ -956,11 +922,181 @@ TBackend: TokenizerBackend
                         break 'chunk;
                     }
 
-                    (_) => {}
+                    TokenizerState::TAG_ATTRIBUTE_NAME_FINE => {
+                        // Маска для валидных значений.
+                        // Mask for valid values.
+                        let mut valid_mask_ = self.current_chunk_mask.letters_digitals_mask
+                            | self.current_chunk_mask.r_chevron_mask
+                            | self.current_chunk_mask.forward_slash
+                            | self.current_chunk_mask.question_mark;
+
+                        // Маска для невалидных значений.
+                        // Mask for invalid values.
+                        let mut invalid_mask_ = self.current_chunk_mask.l_chevron_mask
+                            | self.current_chunk_mask.equal_mask
+                            | self.current_chunk_mask.quote_mask;
+
+                        let valid_tz_ = GET_VALID_INVALID_TZ!(
+                            self,
+                            valid_mask_,
+                            invalid_mask_,
+                            'analyze);
+
+                        token_data_rng_.start = self.current_in_data_position + valid_tz_ as usize;
+
+                        // устанавливаем бит на позицию, которую нужно найти
+                        let bit_ = TBackend::ONE << valid_tz_ as usize;
+
+                        // Если на текущей позиции находится символ.
+                        // If there is a character at the current position.
+                        if bit_ & self.current_chunk_mask.letters_digitals_mask != TBackend::ZERO {
+                            // Следующее состояние.
+                            // Next state.
+                            self.state = TokenizerState::TAG_ATTRIBUTE_NAME_READING;
+
+                            continue 'analyze;
+                        }
+
+                        // Если на текущей позиции находится '>'.
+                        // If the current position is '>'.
+                        else if bit_ & self.current_chunk_mask.r_chevron_mask != TBackend::ZERO {
+                            // Формируем токен для отправки.
+                            // We are generating a token for sending.
+                            token_type_ = TokenType::TAG_END;
+                            token_data_rng_.end = self.current_in_data_position + valid_tz_ as usize;
+
+                            // Следующее состояние.
+                            // Next state.
+                            self.state = TokenizerState::TAG_FIND;
+
+                            break 'chunk;
+                        }
+
+                        // Если на текущей позиции находится '/'.
+                        // If the current position is '/'.
+                        else if bit_ & self.current_chunk_mask.forward_slash != TBackend::ZERO {
+                            // Формируем токен для отправки.
+                            // We are generating a token for sending.
+                            token_type_ = TokenType::TAG_END_CLOSE;
+                            self.pending_token.data_rng.start = self.current_in_data_position + valid_tz_ as usize;
+
+                            // Следующее состояние.
+                            // Next state.
+                            self.state = TokenizerState::TAG_CLOSE_READING;
+
+                            continue 'analyze;
+                        }
+
+                        // Если на текущей позиции находится '?'.
+                        // If the current position is '?'.
+                        else if bit_ & self.current_chunk_mask.question_mark != TBackend::ZERO {
+                            // Формируем токен для отправки.
+                            // We are generating a token for sending.
+                            token_type_ = TokenType::TAG_END_INSTRUCTION;
+                            self.pending_token.data_rng.start = self.current_in_data_position + valid_tz_ as usize;
+
+                            // Следующее состояние.
+                            // Next state.
+                            self.state = TokenizerState::TAG_CLOSE_READING;
+
+                            continue 'analyze;
+                        }
+                    }
+
+                    TokenizerState::TAG_ATTRIBUTE_NAME_READING => {
+                        // Маска для валидных значений.
+                        // Mask for valid values.
+                        let mut valid_mask_ = self.current_chunk_mask.separators_mask
+                            | self.current_chunk_mask.equal_mask;
+
+                        // Маска для невалидных значений.
+                        // Mask for invalid values.
+                        let mut invalid_mask_ = self.current_chunk_mask.l_chevron_mask
+                            | self.current_chunk_mask.r_chevron_mask
+                            | self.current_chunk_mask.question_mark
+                            | self.current_chunk_mask.exclamation_mark
+                            | self.current_chunk_mask.quote_mask;
+
+                        let valid_tz_ = GET_VALID_INVALID_TZ!(
+                            self,
+                            valid_mask_,
+                            invalid_mask_,
+                            'analyze);
+
+                        // Формируем токен для отправки.
+                        // We are generating a token for sending.
+                        token_type_ = TokenType::ATTRIBUTE_NAME;
+                        token_data_rng_.end = self.current_in_data_position + valid_tz_ as usize - 1;
+
+                        // Следующее состояние.
+                        // Next state.
+                        self.state = TokenizerState::TAG_ATTRIBUTE_VALUE_FINE;
+
+                        break 'chunk;
+                    }
+
+                    TokenizerState::TAG_ATTRIBUTE_VALUE_FINE => {
+                        // Маска для валидных значений.
+                        // Mask for valid values.
+                        let mut valid_mask_ = self.current_chunk_mask.quote_mask;
+
+                        // Маска для невалидных значений.
+                        // Mask for invalid values.
+                        let mut invalid_mask_ = self.current_chunk_mask.l_chevron_mask
+                            | self.current_chunk_mask.r_chevron_mask
+                            | self.current_chunk_mask.question_mark
+                            | self.current_chunk_mask.exclamation_mark
+                            | self.current_chunk_mask.letters_digitals_mask
+                            | self.current_chunk_mask.forward_slash;
+
+                        let valid_tz_ = GET_VALID_INVALID_TZ!(
+                            self,
+                            valid_mask_,
+                            invalid_mask_,
+                            'analyze);
+
+                        token_data_rng_.start = self.current_in_data_position + valid_tz_ as usize;
+
+                        // Следующее состояние.
+                        // Next state.
+                        self.state = TokenizerState::TAG_ATTRIBUTE_VALUE_READING;
+
+                        continue 'analyze;
+                    }
+
+                    TokenizerState::TAG_ATTRIBUTE_VALUE_READING => {
+                        // Маска для валидных значений.
+                        // Mask for valid values.
+                        let mut valid_mask_ = self.current_chunk_mask.quote_mask;
+
+                        let valid_tz_ = GET_VALID_TZ!(
+                            self,
+                            valid_mask_,
+                            'analyze);
+
+                        // Формируем токен для отправки.
+                        // We are generating a token for sending.
+                        token_type_ = TokenType::ATTRIBUTE_VALUE;
+                        token_data_rng_.end = self.current_in_data_position + valid_tz_ as usize;
+
+                        // Следующее состояние.
+                        // Next state.
+                        self.state = TokenizerState::TAG_ATTRIBUTE_NAME_FINE;
+
+                        break 'chunk;
+                    }
+
+                    TokenizerState::END => {
+                        token_type_ = TokenType::END;
+                        
+                        break 'chunk;
+                    }
+
+                    _ => {}
                 }
             } // 'analyze: loop
 
-            self.nextChunk(data);
+            self.nextChunk();
         } // 'chunk: loop
 
         let token_ = Token::s_create(token_type_, token_data_rng_);
@@ -971,14 +1107,14 @@ TBackend: TokenizerBackend
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn nextChunk(&mut self, data: &[u8]) {
+    fn nextChunk(&mut self) {
         self.current_in_data_position += TBackend::CHUNK_SIZE;
         self.current_in_chunk_position = 0;
 
         // Проверка, что работаем в диапазоне с данными.
         // Check that we are working in a range with data.
-        if self.current_in_data_position <= data.len() {
-            let data_cptr_ = unsafe { data.as_ptr().add(self.current_in_data_position) };
+        if self.current_in_data_position <= self.data_length {
+            let data_cptr_ = unsafe { self.data_ptr.add(self.current_in_data_position) };
 
             // Строим чанк через бэкенд. Бэкенд определяется трейтами и реализуется
             unsafe { TBackend::buildChunk(&mut self.current_chunk_mask, data_cptr_) };
@@ -987,6 +1123,34 @@ TBackend: TokenizerBackend
         }
     }
 }
+
+/*// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#[repr(u32)]
+enum MaskType {
+    L_CHEVRON = 0,
+    R_CHEVRON = 1,
+    EQUAL,
+    QUOTES,
+    TAB_SPACE,
+    LETTERS,
+    SPECIAL,
+}
+
+impl<T> std::ops::Index<MaskType> for [T] {
+    type Output = T;
+
+    fn index(&self, index: MaskType) -> &Self::Output {
+        return &self[index as usize];
+    }
+}
+
+impl<T> std::ops::IndexMut<MaskType> for [T] {
+    fn index_mut(&mut self, index: MaskType) -> &mut Self::Output {
+        return &mut self[index as usize];
+    }
+}*/
 
 /*// Если текущая обрабатываемая позиция выходит за пределы, прекращаем анализ и получаем новый чанк.
                         // If the current position being processed goes out of bounds, stop analyzing and get a new chunk.

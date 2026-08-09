@@ -13,19 +13,20 @@ use std::ops::Range;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #[derive(Clone, PartialEq)]
 pub enum TokenType {
-    TAG_OPEN,
-    TAG_OPEN_CLOSE,
-    TAG_OPEN_INSTRUCTION,
+    TAG_BEGIN,
+    TAG_BEGIN_CLOSE,
+    TAG_BEGIN_INSTRUCTION,
     TAG_END,
     TAG_END_CLOSE,
     TAG_END_INSTRUCTION,
-
-    /// Токен закрытия тега.
-    /// Tag closing token.
-    CLOSE,
     /// Наименование тега
     /// Tag name
     TAG_NAME,
+
+    /// Токен закрытия тега.
+    /// Tag closing token.
+    //CLOSE,
+
     /// Наименование атрибута
     /// Attribute name
     ATTRIBUTE_NAME,
@@ -50,10 +51,10 @@ pub enum TokenType {
 pub struct Token {
     /// Тип токена
     /// Token type
-    r#type : TokenType,
+    pub(crate) r#type : TokenType,
     /// Данные токена
     /// Token data
-    data_rng : Range<usize>,
+    pub(crate) data_rng : Range<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,6 +69,16 @@ impl Token {
         Self {
             r#type,
             data_rng: data_rng,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn s_createEmpty() -> Self {
+        Self {
+            r#type: TokenType::TAG_END,
+            data_rng: (0 .. 0),
         }
     }
 }
@@ -94,10 +105,8 @@ impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn asStr<'a>(&self, data: &'a [u8]) -> &'a str {
-        let str_ = unsafe {
-            std::str::from_utf8_unchecked(&data[self.data_rng.start..self.data_rng.end])
-        };
+    pub unsafe fn asStr<'a>(&self, data: &'a [u8]) -> &'a str {
+        let str_ = std::str::from_utf8_unchecked(&data[self.data_rng.start..self.data_rng.end]);
         str_
     }
 }

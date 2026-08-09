@@ -14,25 +14,32 @@ mod token;
 
 #[path = "tokenizer/_mods.rs"]
 pub(crate) mod tokenizer;
-pub use tokenizer::Tokenizer;
-pub use tokenizer::AVX2;
 
-#[path = "parse_items/_mods.rs"]
-pub mod parse_items;
+use std::ops::Deref;
+use std::rc::Rc;
+pub use tokenizer::{Tokenizer, AVX2};
+use crate::token::{Token, TokenType};
 
-mod tag_attribute;
-mod tag;
+#[path = "parser/_mods.rs"]
+pub(crate) mod parser;
+use parser::Parser;
 
-fn tokenizationBenchmark(parser: &mut Tokenizer<AVX2>, data: &[u8]) {
+fn tokenizationBenchmark() {
+    let data_ = loadDataFromFile("current.xml").ok().unwrap();
+
+    let data_ = Rc::new(data_);
+
+    let mut tokenizer_ = Tokenizer::<AVX2>::s_create(data_.clone()).ok().unwrap();
+
     let instant_ = std::time::Instant::now();
     loop {
-        let (token_, end_) = parser.nextToken1(&data);
+        let token_ = tokenizer_.nextToken1();
 
-        let value_str_ = unsafe { std::str::from_utf8_unchecked(&data[token_.asRange().start ..= token_.asRange().end]) };
+        //let value_str_ = unsafe { std::str::from_utf8_unchecked(&data_.as_slice()[token_.asRange().start ..= token_.asRange().end]) };
 
-        println!("{}", value_str_);
+        //println!("{}", value_str_);
 
-        if let true = end_ {
+        if let TokenType::END = token_.r#type {
             break;
         }
     }
@@ -40,151 +47,14 @@ fn tokenizationBenchmark(parser: &mut Tokenizer<AVX2>, data: &[u8]) {
     println!("{:?}", duration_);
 }
 
+pub struct FileData {
+
+}
+
 fn main() {
+    tokenizationBenchmark();
 
-    let mut svk_enums_data = String::new();
-    svk_enums_data.push_str("// SPDX-License-Identifier: None\n// Copyright (c) 2026 None\n");
-
-    let mut svk_structures_data = String::new();
-    svk_structures_data.push_str("// SPDX-License-Identifier: None\n// Copyright (c) 2026 None\n");
-
-    let data_ = loadDataFromFile("1.4.357.xml").ok().unwrap();
-
-    let mut parser_ = Tokenizer::s_create(&data_).ok().unwrap();
-
-    tokenizationBenchmark(&mut parser_, &data_);
-
-    let mut parse_enums_as_enum_ = false;
-    let mut parse_enums_as_bitmask_ = false;
-    let mut parse_enums_as_bitmask_64_ = false;
-    let mut parse_enums_as_constant_ = false;
-    let mut type_ = String::new();
-    let mut asd : u32 = 0;
-
-    let mut parse_struct_ = false;
-
-    'tag: loop {
-        asd += 1;
-
-        let (tag_, end_ ) = parser_.nextToken1(&data_);
-
-        //println!("{}", tag_.name(&data_));
-
-
-        /*if tag_.name(&data_) == "type" {
-            parse_struct_ = true;
-        }
-        if tag_.name(&data_) == "type" && tag_.isClosed() {
-            parse_struct_ = false;
-        }
-
-        if tag_.name(&data_) == "enums" && !tag_.isClosed() {
-            for attribute in tag_.iter() {
-                if attribute.name(&data_) == "type" && attribute.value(&data_) == "enum" {
-                    parse_enums_as_enum_ = true;
-                }
-
-                if attribute.name(&data_) == "type" && attribute.value(&data_) == "bitmask" {
-                    parse_enums_as_bitmask_ = true;
-                }
-
-                if attribute.name(&data_) == "bitwidth" && attribute.value(&data_) == "64" {
-                    parse_enums_as_bitmask_ = false;
-                    parse_enums_as_bitmask_64_ = true;
-                }
-
-                if attribute.name(&data_) == "type" && attribute.value(&data_) == "constants" {
-                    continue 'tag;
-                    parse_enums_as_constant_ = true;
-                }
-            }
-
-            //if parse_enums_as_enum_ {
-
-                for attribute in tag_.iter() {
-                    if attribute.name(&data_) == "name" {
-                        if parse_enums_as_enum_ {
-                            svk_enums_data.push_str(&format!("pub type {} = i32;\n", attribute.value(&data_)));
-                        }
-
-                        if parse_enums_as_bitmask_ {
-                            svk_enums_data.push_str(&format!("pub type {} = u32;\n", attribute.value(&data_)));
-                        }
-
-                        if parse_enums_as_bitmask_64_ {
-                            svk_enums_data.push_str(&format!("pub type {} = u64;\n", attribute.value(&data_)));
-                        }
-
-                        svk_enums_data.push_str(&format!("pub mod {}Value {{\n", attribute.value(&data_)));
-                        svk_enums_data.push_str(&format!("\tuse crate::{};\n\n", attribute.value(&data_)));
-                        type_ = format!("{}", attribute.value(&data_));
-                    }
-                }
-
-                continue 'tag;
-            //}
-        }
-
-        if tag_.name(&data_) == "enums" && tag_.isClosed() && ( parse_enums_as_enum_ || parse_enums_as_bitmask_ || parse_enums_as_bitmask_64_) {
-            svk_enums_data.push_str(&format!("}}\n\n"));
-
-            parse_enums_as_enum_ = false;
-            parse_enums_as_bitmask_ = false;
-            parse_enums_as_bitmask_64_ = false;
-            parse_enums_as_constant_ = false;
-        }
-
-        if parse_enums_as_enum_ || parse_enums_as_bitmask_ {
-            let mut name_ = String::new();
-            let mut value_ = String::new();
-
-            for attribute in tag_.iter() {
-                if attribute.name(&data_) == "name" {
-                    name_ = format!("{}", attribute.value(&data_));
-                }
-
-                if attribute.name(&data_) == "value" {
-                    value_ = format!("{}", attribute.value(&data_));
-                }
-
-                if attribute.name(&data_) == "bitpos" && parse_enums_as_bitmask_64_ {
-                    let a = format!("{}", attribute.value(&data_));
-                    let b : u64 = a.parse().unwrap();
-                    let c : u64 = 1u64 << b;
-                    let d = format!("{}", c);
-
-                    value_ = format!("{}", d);
-                }
-
-                if attribute.name(&data_) == "bitpos" && parse_enums_as_bitmask_{
-                    let a = format!("{}", attribute.value(&data_));
-                    let b : u32 = a.parse().unwrap();
-                    let c : u32 = 1u32 << b;
-                    let d = format!("{}", c);
-
-                    value_ = format!("{}", d);
-                }
-
-            }
-
-            if name_.is_empty() || value_.is_empty() || type_.is_empty() {continue;}
-            svk_enums_data.push_str(&format!("\tpub const {} : {} = {};\n", name_, type_, value_));
-        }
-
-        //if parse_struct_ == true {
-        //    if tag_.name(&data_) == "name" {
-        //       svk_structures_data.push_str(&format!("\tpub {}", ));
-        //    }
-        //}
-
-
-        if end_ {
-            break;
-        }*/
-
-    }
-
-    println!("end");
+    let parser_ = Parser::s_create().unwrap();
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,3 +79,23 @@ fn loadDataFromFile(name : &str) -> Result<Vec<u8>, ()> {
 
     return Ok(data_);
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Публичные ассоциированные функции.
+// Public associated functions.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Публичные методы.
+// Public methods.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Приватные ассоциированные функции.
+// Private associated functions.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Приватные методы.
+// Private methods.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
