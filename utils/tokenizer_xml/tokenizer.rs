@@ -6,79 +6,11 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::{Deref, RangeInclusive};
 use std::rc::Rc;
+use crate::backend::backend::Backend;
 use crate::token::{Token, TokenType};
-use crate::chunk_mask::TokenizerChunkMask;
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// маркеры версий
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-pub struct AVX2 {}
-pub struct AVX512 {}
-
-mod private {
-    pub trait TokenizerBackendPrivate {}
-}
-
-pub trait TokenizerBackend: private::TokenizerBackendPrivate {
-    type CHUNK_TYPE1: Default + Copy
-    + Into<u64>
-    + From<u32>
-    + PartialEq
-    + std::ops::BitAnd<Output = Self::CHUNK_TYPE1>
-    + std::ops::BitAndAssign
-    + std::ops::BitOr<Output = Self::CHUNK_TYPE1>
-    + std::ops::BitOrAssign
-    + std::ops::BitXor<Output = Self::CHUNK_TYPE1>
-    + std::ops::Not<Output = Self::CHUNK_TYPE1>
-    + std::ops::Shl<usize, Output = Self::CHUNK_TYPE1>
-    + std::ops::Shr<usize, Output = Self::CHUNK_TYPE1>
-    + std::ops::Sub<Output = Self::CHUNK_TYPE1>
-    + std::ops::SubAssign;
-
-    const CHUNK_SIZE: usize;
-    const ZERO: Self::CHUNK_TYPE1;
-    const ONE: Self::CHUNK_TYPE1;
-    unsafe fn buildChunk(chunk: &mut TokenizerChunkMask<Self>, ptr: *const u8)
-    where
-        Self: Sized;
-    fn trailingZeros(mask: Self::CHUNK_TYPE1) -> u32;
-}
-pub trait TokenizerBackendAVX2: TokenizerBackend<CHUNK_TYPE1 = u32> {}
-pub trait TokenizerBackendAVX512: TokenizerBackend<CHUNK_TYPE1 = u64> {}
-
-impl private::TokenizerBackendPrivate for AVX2 {}
-impl TokenizerBackend for AVX2 {
-    type CHUNK_TYPE1 = u32;
-    const CHUNK_SIZE: usize = u32::BITS as usize;
-
-    const ZERO: u32 = 0;
-    const ONE: u32 = 1u32;
-    unsafe fn buildChunk(chunk: &mut TokenizerChunkMask<Self>, ptr: *const u8) {
-        chunk.buildAVX2(ptr);
-    }
-    fn trailingZeros(mask: u32) -> u32 {
-        mask.trailing_zeros()
-    }
-}
-impl TokenizerBackendAVX2 for AVX2 {}
-
-impl private::TokenizerBackendPrivate for AVX512 {}
-impl TokenizerBackend for AVX512 {
-    type CHUNK_TYPE1 = u64;
-    const CHUNK_SIZE: usize = u64::BITS as usize;
-    const ZERO: u64 = 0;
-    const ONE: u64 = 1u64;
-    unsafe fn buildChunk(chunk: &mut TokenizerChunkMask<Self>, ptr: *const u8) {
-        chunk.buildAVX512(ptr);
-    }
-    fn trailingZeros(mask: u64) -> u32 {
-        mask.trailing_zeros()
-    }
-}
-impl TokenizerBackendAVX512 for AVX512 {}
+use crate::chunk_mask::ChunkMask;
+use crate::chunk_mask_register::ChunkMaskRegister;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
@@ -103,7 +35,10 @@ enum TokenizerState {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct Tokenizer<TBackend>
 where
-TBackend: TokenizerBackend {
+TBackend: Backend {
+    /// Регистры для построения масок.
+    /// Registers for constructing masks.
+    register_preset: ChunkMaskRegister<TBackend>,
     /// Данные для обработки.
     /// Data to be processed.
     data_ptr: *const u8,
@@ -120,7 +55,7 @@ TBackend: TokenizerBackend {
     current_in_chunk_position: usize,
     /// Текущий чанк масок.
     /// Current chunk of masks.
-    current_chunk_mask: TokenizerChunkMask<TBackend>,
+    current_chunk_mask: ChunkMask<TBackend>,
     /// Ожидающий токен. Токен, который был найден при поиске другого.
     /// Pending token. A token that was found while searching for another.
     pending_token: Token,
@@ -133,19 +68,20 @@ TBackend: TokenizerBackend {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TBackend> Tokenizer<TBackend>
 where
-TBackend: TokenizerBackend {
+TBackend: Backend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn s_create() -> Self {
         Self {
+            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
             data_ptr: std::ptr::null(),
             data_length: 0,
             data_rc: Rc::<Vec<u8>>::new(Vec::<u8>::new()),
             state: TokenizerState::TAG_BEGIN_FIND,
             current_in_data_position: 0,
             current_in_chunk_position: 0,
-            current_chunk_mask: TokenizerChunkMask::<TBackend>::s_create(),
+            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
             pending_token: Token::s_createEmpty(),
             pending: 0,
         }
@@ -158,7 +94,7 @@ TBackend: TokenizerBackend {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TBackend> Tokenizer<TBackend>
 where
-TBackend: TokenizerBackend {
+TBackend: Backend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Установка новых данных. Установка приводит к полному сбросу состояния токенайзера.
     /// Installing new data. This causes a complete reset of the tokenizer state.
@@ -184,7 +120,7 @@ TBackend: TokenizerBackend {
         self.state = TokenizerState::TAG_BEGIN_FIND;
         self.current_in_data_position = 0;
         self.current_in_chunk_position = 0;
-        self.current_chunk_mask = TokenizerChunkMask::<TBackend>::s_create();
+        self.current_chunk_mask = ChunkMask::<TBackend>::s_create();
         self.pending_token = Token::s_createEmpty();
     }
 
@@ -288,7 +224,7 @@ macro_rules! FIND_VALID_TZ_WITH {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TBackend> Tokenizer<TBackend>
 where
-TBackend: TokenizerBackend {
+TBackend: Backend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -384,12 +320,12 @@ TBackend: TokenizerBackend {
                             // Next state.
                             self.state = TokenizerState::END;
 
-                            self.data_ptr[..2].iter();
+                            //self.data_ptr[..2].iter();
 
-                            let line = self.data_ptr[..2]
-                                .iter()
-                                .filter(|&&byte| byte == b'\n')
-                                .count() + 1;
+                            //let line = self.data_ptr[..2]
+                            //    .iter()
+                            //    .filter(|&&byte| byte == b'\n')
+                            //    .count() + 1;
 
                             // Формируем токен для отправки.
                             // We are generating a token for sending.
@@ -765,7 +701,7 @@ TBackend: TokenizerBackend {
             let data_cptr_ = unsafe { self.data_ptr.add(self.current_in_data_position) };
 
             // Строим чанк через бэкенд. Бэкенд определяется трейтами и реализуется
-            unsafe { TBackend::buildChunk(&mut self.current_chunk_mask, data_cptr_) };
+            unsafe { TBackend::buildChunk(&mut self.register_preset, &mut self.current_chunk_mask, data_cptr_) };
         } else {
             self.state = TokenizerState::END
         }

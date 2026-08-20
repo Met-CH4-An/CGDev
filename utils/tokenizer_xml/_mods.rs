@@ -5,22 +5,35 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 
+// файл token.rs
+// file token.rs
 mod token;
+
+// файл tokenizer.rs
+// file tokenizer.rs
 mod tokenizer;
 
-#[path = "chunk_mask/_mods.rs"]
-mod chunk_mask;
 // файл chunk_mask.rs
 // file chunk_mask.rs
-mod tokenizer_chunk_mask;
+mod chunk_mask;
+
+// файл chunk_mask_register.rs
+// file chunk_mask_register.rs
+mod chunk_mask_register;
+
+#[path = "backend/_mods.rs"]
+mod backend;
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // зависимости
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::rc::Rc;
+use std::time::Duration;
 use crate::token::TokenType;
-use crate::tokenizer::{Tokenizer, AVX2};
+use crate::tokenizer::{Tokenizer};
+use crate::backend::backend::AVX2;
 
 fn main() {
     let data_ = loadDataFromFile("current.xml").ok().unwrap();
@@ -31,23 +44,26 @@ fn main() {
 
     tokenizer_.setData(data_.clone());
 
-    let instant_ = std::time::Instant::now();
-    loop {
-        let token_ = tokenizer_.nextToken1();
+    let mut duration_ = Duration::new(0,0);
+    for try_ in 0 ..= 9 {
+        tokenizer_.reset();
 
-        //let value_str_ = unsafe { std::str::from_utf8_unchecked(&data_.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()]) };
+        let instant_ = std::time::Instant::now();
+        loop {
+            let token_ = tokenizer_.nextToken1();
 
-        //println!("{}", value_str_);
+            //let value_str_ = unsafe { std::str::from_utf8_unchecked(&data_.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()]) };
 
-        //if value_str_ == "\"Slawek Grajewski @sgrajewski" {
-        //    println!("Стопе нахуй");
-        //}
+            //println!("{}", value_str_);
 
-        if let TokenType::INVALID = token_.r#type {
-            break;
+            if let TokenType::INVALID = token_.r#type {
+                break;
+            }
         }
+        duration_ += instant_.elapsed();
     }
-    let duration_ = instant_.elapsed();
+
+    duration_ /= 10;
     println!("tokenizer: {:?}", duration_);
 }
 
