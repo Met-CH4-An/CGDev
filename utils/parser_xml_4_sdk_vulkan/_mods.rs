@@ -15,6 +15,7 @@ mod token;
 #[path = "tokenizer/_mods.rs"]
 pub(crate) mod tokenizer;
 
+use std::hash::{Hash, Hasher};
 use std::ops::Deref;
 use std::rc::Rc;
 pub use tokenizer::{Tokenizer, AVX2};
@@ -29,22 +30,28 @@ fn tokenizationBenchmark() {
 
     let data_ = Rc::new(data_);
 
-    let mut tokenizer_ = Tokenizer::<AVX2>::s_create(data_.clone()).ok().unwrap();
+    let mut tokenizer_ = Tokenizer::<AVX2>::s_create();
+
+    tokenizer_.setData(data_.clone());
 
     let instant_ = std::time::Instant::now();
     loop {
         let token_ = tokenizer_.nextToken1();
 
-        //let value_str_ = unsafe { std::str::from_utf8_unchecked(&data_.as_slice()[token_.asRange().start ..= token_.asRange().end]) };
+        //let value_str_ = unsafe { std::str::from_utf8_unchecked(&data_.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()]) };
 
         //println!("{}", value_str_);
+
+        //if value_str_ == "\"Slawek Grajewski @sgrajewski" {
+        //    println!("Стопе нахуй");
+        //}
 
         if let TokenType::END = token_.r#type {
             break;
         }
     }
     let duration_ = instant_.elapsed();
-    println!("{:?}", duration_);
+    println!("tokenizer: {:?}", duration_);
 }
 
 pub struct FileData {
@@ -54,7 +61,101 @@ pub struct FileData {
 fn main() {
     tokenizationBenchmark();
 
-    let parser_ = Parser::s_create().unwrap();
+    let mut parser_ = Parser::s_create();
+
+    let instant_ = std::time::Instant::now();
+    let vulkan_registry_ = parser_.buildRegistry("current.xml").unwrap();
+    let duration_ = instant_.elapsed();
+    println!("parser: {:?}", duration_);
+
+    let mut hasher_ = std::hash::DefaultHasher::new();
+    //"VkGpaDeviceClockModeAMD".hash(&mut hasher_);
+    "VkImageLayout".hash(&mut hasher_);
+    let hash_ = hasher_.finish();
+
+    //let vulkan_enums_ = vulkan_registry_.vulkan_enums_hmap.get("API Constants").unwrap();
+
+    let vulkan_enums_ = vulkan_registry_
+        .vulkan_enums_hmap
+        .get(&hash_)
+        .unwrap();
+
+    let data_ = parser_.data_rc.as_slice();
+
+    println!("========================================");
+    println!("VULKAN ENUM");
+    println!("========================================");
+
+    println!(
+        "Name: {}",
+        unsafe {
+            std::str::from_utf8_unchecked(
+                &data_[vulkan_enums_.nameAsRange().clone()]
+            )
+        }
+    );
+
+    println!(
+        "Type: {}",
+        unsafe {
+            std::str::from_utf8_unchecked(
+                &data_[vulkan_enums_.typeAsRange().clone()]
+            )
+        }
+    );
+
+    println!(
+        "Comment: {}",
+        unsafe {
+            std::str::from_utf8_unchecked(
+                &data_[vulkan_enums_.commentAsRange().clone()]
+            )
+        }
+    );
+
+    println!();
+    println!("Enumerators:");
+    println!("----------------------------------------");
+
+    for enum_ in vulkan_enums_.enumAsVec() {
+        println!(
+            "Name: {}",
+            unsafe {
+                std::str::from_utf8_unchecked(
+                    &data_[enum_.nameAsRange().clone()]
+                )
+            }
+        );
+
+        println!(
+            "Type: {}",
+            unsafe {
+                std::str::from_utf8_unchecked(
+                    &data_[enum_.typeAsRange().clone()]
+                )
+            }
+        );
+
+        println!(
+            "Value: {}",
+            unsafe {
+                std::str::from_utf8_unchecked(
+                    &data_[enum_.valueAsRange().clone()]
+                )
+            }
+        );
+
+        println!(
+            "Comment: {}",
+            unsafe {
+                std::str::from_utf8_unchecked(
+                    &data_[enum_.commentAsRange().clone()]
+                )
+            }
+        );
+
+        println!("----------------------------------------");
+    }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -27,5 +27,5 @@ members = [
     "device_hardware_interface",
 
     # utils
-    "utils/parser_xml_4_sdk_vulkan"
+    "utils/tokenizer_xml",
 ]

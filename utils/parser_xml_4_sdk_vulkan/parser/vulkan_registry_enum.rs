@@ -6,30 +6,23 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::Range;
-use crate::parser::vulkan_enum_description::VulkanEnumDescription;
+use std::ops::RangeInclusive;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(in crate::parser) struct VulkanEnumsDescription {
-    /// Имя перечисления.
-    /// Enumeration name.
-    name: Range<usize>,
-    /// Тип перечисления.
-    /// Enumeration type.
-    r#type: Range<usize>,
-    /// Комментарий.
-    /// Comment.
-    comment:  Range<usize>,
-    /// Перечислители.
-    /// Enumerators.
-    enums: Vec<VulkanEnumDescription>,
+pub struct VulkanRegistryEnum {
+    /// name="name_rng"
+    pub(in crate::parser) name_rng: RangeInclusive<usize>,
+    /// value="value_rng"
+    pub(in crate::parser) value_rng: RangeInclusive<usize>,
+    /// comment="comment_rng"
+    pub(in crate::parser) comment_rng:  RangeInclusive<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl VulkanEnumsDescription {
+impl VulkanRegistryEnumsEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Публичные ассоциированные функции.
     // Public associated functions.
@@ -41,6 +34,28 @@ impl VulkanEnumsDescription {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn nameAsRange(&self) -> &RangeInclusive<usize> { &self.name_rng }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn valueAsRange(&self) -> &RangeInclusive<usize> {
+        &self.value_rng
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commentAsRange(&self) -> &RangeInclusive<usize> {
+        &self.comment_rng
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Приватные ассоциированные функции.
     // Private associated functions.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,12 +64,11 @@ impl VulkanEnumsDescription {
     ///
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::parser) fn s_create(name: Range<usize>, r#type: Range<usize>, comment: Range<usize>, enums: Vec<VulkanEnumDescription>) -> Self {
+    pub(in crate::parser) fn s_create() -> Self {
         Self{
-            name: name,
-            r#type: r#type,
-            comment: comment,
-            enums: enums,
+            name_rng: 0 ..= 0,
+            value_rng: 0 ..= 0,
+            comment_rng: 0 ..= 0,
         }
     }
 

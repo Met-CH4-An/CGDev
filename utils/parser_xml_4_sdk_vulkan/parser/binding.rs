@@ -6,33 +6,38 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::Range;
+use std::collections::HashMap;
+use std::rc::Rc;
+use crate::parser::binding_constants::BindingConstants;
+use crate::parser::binding_enums::BindingEnums;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
+/// example:
+/// pub const NAME: type = value;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(in crate::parser) struct VulkanEnumDescription {
-    /// Имя перечислителя.
-    /// Name of the enumerator.
-    name: Range<usize>,
-    /// Тип перечислителя.
-    /// Enumerator type.
-    r#type: Range<usize>,
-    /// Значение перечислителя.
-    /// Enumerator value.
-    value: Range<usize>,
-    /// Комментарий.
-    /// Comment.
-    comment: Range<usize>,
+pub struct Binding {
+    pub(in crate::parser) types_hmap: HashMap<u64, BindingTypes>,
+    pub(in crate::parser) constants_hmap: HashMap<u64, BindingConstants>,
+    pub(in crate::parser) enums_hmap: HashMap<u64, BindingEnums>
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl VulkanEnumDescription {
+impl Binding {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Публичные ассоциированные функции.
     // Public associated functions.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(in crate::parser) fn s_create() -> Self {
+        Self {
+            constants_hmap: HashMap::new(),
+            enums_hmap: HashMap::new(),
+        }
+    }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Публичные методы.
@@ -40,22 +45,22 @@ impl VulkanEnumDescription {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub unsafe fn appendsString(&self, data: &[u8], output: &mut String) {
+        for constant_ in self.constants_hmap.values() {
+            constant_.appendsString(data, output);
+        }
+
+        for enum_ in self.enums_hmap.values() {
+            enum_.appendsString(data, output);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Приватные ассоциированные функции.
     // Private associated functions.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::parser) fn s_create(name: Range<usize>, r#type: Range<usize>, value: Range<usize>, comment: Range<usize>) -> Self {
-        Self{
-            name: name,
-            r#type: r#type,
-            value: value,
-            comment: comment,
-        }
-    }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Приватные методы.

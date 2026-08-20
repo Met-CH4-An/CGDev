@@ -6,36 +6,35 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #[derive(Clone, PartialEq)]
 pub enum TokenType {
+    /// '<'
     TAG_BEGIN,
+    /// '</'
     TAG_BEGIN_CLOSE,
+    /// '<?'
     TAG_BEGIN_INSTRUCTION,
+    /// '>'
     TAG_END,
+    /// '/>'
     TAG_END_CLOSE,
+    /// '?>'
     TAG_END_INSTRUCTION,
-    /// Наименование тега
-    /// Tag name
+    /// <name
     TAG_NAME,
-
-    /// Токен закрытия тега.
-    /// Tag closing token.
-    //CLOSE,
-
-    /// Наименование атрибута
-    /// Attribute name
+    /// attribute_name=
     ATTRIBUTE_NAME,
-    /// Значение атрибута
-    /// Attribute value
+    /// ="attribute_value"
     ATTRIBUTE_VALUE,
-    /// Токен завершения работы парсера.
-    /// Parser completion token.
-    END,
+    /// <tag>text<tag>
+    TEXT,
+    ///
+    INVALID,    
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,7 +53,7 @@ pub struct Token {
     pub(crate) r#type : TokenType,
     /// Данные токена
     /// Token data
-    pub(crate) data_rng : Range<usize>,
+    pub(crate) data_rng : RangeInclusive<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +64,7 @@ impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(r#type: TokenType, data_rng: Range<usize>) -> Self {
+    pub fn s_create(r#type: TokenType, data_rng: RangeInclusive<usize>) -> Self {
         Self {
             r#type,
             data_rng: data_rng,
@@ -78,7 +77,7 @@ impl Token {
     pub fn s_createEmpty() -> Self {
         Self {
             r#type: TokenType::TAG_END,
-            data_rng: (0 .. 0),
+            data_rng: 0 ..= 0,
         }
     }
 }
@@ -98,20 +97,22 @@ impl Token {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn asRange(&self) -> Range<usize> {
+    pub fn asRange(&self) -> RangeInclusive<usize> {
         self.data_rng.clone()
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub unsafe fn asStr<'a>(&self, data: &'a [u8]) -> &'a str {
-        let str_ = std::str::from_utf8_unchecked(&data[self.data_rng.start..self.data_rng.end]);
-        str_
+    pub unsafe fn asStr(&self, data_ptr: *const u8) -> &str {
+        /*let str_ = std::str::from_utf8_unchecked(&data[self.data_rng.start..self.data_rng.end]);
+        str_;*/
+
+        let data_ = std::slice::from_raw_parts(
+            data_ptr.add(*self.data_rng.start()),
+            self.data_rng.end() - self.data_rng.start() + 1,
+        );
+
+        std::str::from_utf8_unchecked(data_)
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

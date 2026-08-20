@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-// файл tokenizer_chunk_mask.rs
-// file tokenizer_chunk_mask.rs
-mod tokenizer_chunk_mask;
-pub(in crate::tokenizer) use tokenizer_chunk_mask::TokenizerChunkMask; 
+pub(in crate::tokenizer) use crate::tokenizer_chunk_mask::TokenizerChunkMask;
 
 // файл tokenizer_chunk_mask_register.rs
 // file tokenizer_chunk_mask_register.rs
