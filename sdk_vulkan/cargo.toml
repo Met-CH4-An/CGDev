@@ -8,3 +8,7 @@ edition = "2021"
 
 [lib]
 path = "_mods.rs"
+
+#[[bin]]
+#name = "svk_parserutils__tokenizer_xml"
+#path = "parser/_mods.rs"

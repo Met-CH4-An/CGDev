@@ -2,7 +2,7 @@
 // Copyright (c) 2026 None
 
 // file backend.rs
-pub(crate) mod backend;
+pub mod backend;
 
 #[path = "avx2/_mods.rs"]
-mod avx2;
+pub mod avx2;

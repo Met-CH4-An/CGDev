@@ -104,6 +104,7 @@ unsafe fn buildMaskAVX2(src: __m256i, dst: __m256i) -> u32 {
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #[inline(always)]
+#[warn(dead_code)]
 unsafe fn buildMask3AVX2(src: __m256i, dst_1: __m256i, dst_2: __m256i, dst_3: __m256i) -> u32 {
     // Сравниваем src (входные данные) с 3 символами.
     // Compare src (input data) with 3 characters.

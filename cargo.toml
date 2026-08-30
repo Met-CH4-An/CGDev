@@ -28,4 +28,6 @@ members = [
 
     # utils
     "utils/tokenizer_xml",
+    "utils/parser_svk",
+    "utils/generator_svk",
 ]

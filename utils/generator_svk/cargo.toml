@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: None
+# Copyright (c) 2026 None
+
+[package]
+name = "utils__generator_svk"
+version = "0.0.0"
+edition = "2021"
+
+[lib]
+name = "utils__generator_svk__lib"
+path = "_mods.rs"
+
+[[bin]]
+name = "utils__generator_svk__bin"
+path = "main.rs"
+
+[dependencies]
+utils__tokenizer_xml = {
+    version = "0.0.0",
+    path = "../tokenizer_xml",
+}

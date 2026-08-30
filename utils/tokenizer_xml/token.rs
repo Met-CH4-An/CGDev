@@ -34,7 +34,9 @@ pub enum TokenType {
     /// <tag>text<tag>
     TEXT,
     ///
-    INVALID,    
+    INVALID,
+    ///
+    END,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

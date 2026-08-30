@@ -7,23 +7,11 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// модули
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub mod svk_commands;
-pub use svk_commands::*;
+// файл svk.rs
+// file svk.rs
+mod svk;
 
-pub mod svk_constants;
-pub use svk_constants::*;
-
-pub mod svk_enums;
-pub use svk_enums::*;
-
-pub mod svk_macros;
-pub use svk_macros::*;
-
-pub mod svk_structures;
-pub use svk_structures::*;
-
-pub mod svk_types;
-pub use svk_types::*;
+// файл p.rs
+// file svk.rs
+//#[path = "parser/_mods.rs"]
+//mod parser;

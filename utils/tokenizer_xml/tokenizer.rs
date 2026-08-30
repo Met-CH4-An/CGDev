@@ -21,12 +21,10 @@ enum TokenizerState {
     TAG_END_READING,
     TAG_NAME_FIND,
     TAG_NAME_READING,
-    TAG_ATTRIBUTE_NAME_FIRST_FINE,
     TAG_ATTRIBUTE_NAME_FINE,
     TAG_ATTRIBUTE_NAME_READING,
     TAG_ATTRIBUTE_VALUE_FINE,
     TAG_ATTRIBUTE_VALUE_READING,
-    TOKEN_PENDING_SEND,
     END,
 }
 
@@ -59,7 +57,7 @@ TBackend: Backend {
     /// Ожидающий токен. Токен, который был найден при поиске другого.
     /// Pending token. A token that was found while searching for another.
     pending_token: Token,
-    pending: usize,
+    last_r_chevron: usize,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,7 +81,25 @@ TBackend: Backend {
             current_in_chunk_position: 0,
             current_chunk_mask: ChunkMask::<TBackend>::s_create(),
             pending_token: Token::s_createEmpty(),
-            pending: 0,
+            last_r_chevron: 0,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn s_createWithData(data_rc: Rc<Vec<u8>>) -> Self {
+        Self {
+            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
+            data_ptr: data_rc.as_ptr(),
+            data_length: 0,
+            data_rc: data_rc,
+            state: TokenizerState::TAG_BEGIN_FIND,
+            current_in_data_position: 0,
+            current_in_chunk_position: 0,
+            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
+            pending_token: Token::s_createEmpty(),
+            last_r_chevron: 0,
         }
     }
 }
@@ -237,8 +253,6 @@ TBackend: Backend {
                     // Поиск <.
                     // Search <.
                     TokenizerState::TAG_BEGIN_FIND => {
-                        let current_in_data_position_ = self.current_in_data_position;
-
                         // Позиция: <'тут'.
                         // Position: <'here'.
                         let valid_tz_ = FIND_VALID_TZ!(self, self.current_chunk_mask.l_chevron_mask, 'analyze);
@@ -249,9 +263,9 @@ TBackend: Backend {
 
                         // Если между новой позицией в данных и старой больше одного, формируем новый токен как TokenType::TEXT.
                         // If there is more than one between the new data position and the old one, create a new token as TokenType::TEXT.
-                        if self.current_in_data_position - current_in_data_position_ > 1 {
-                            let begin_ = current_in_data_position_;
-                            let end_ = self.current_in_data_position - 1;
+                        if self.current_in_data_position + valid_tz_ as usize - self.last_r_chevron > 2 {
+                            let begin_ = self.last_r_chevron;
+                            let end_ = self.current_in_data_position + valid_tz_ as usize - 1;
                             
                             let token_= Token::s_create(TokenType::TEXT, begin_ ..= end_);
                             
@@ -424,7 +438,7 @@ TBackend: Backend {
                         let end_ = global_position_;
 
                         // устанавливаем бит на позицию, которую нужно найти
-                        let mut bit_ = TBackend::ONE << self.current_in_chunk_position;
+                        let bit_ = TBackend::ONE << self.current_in_chunk_position;
 
                         let token_ = if bit_ & self.current_chunk_mask.r_chevron_mask != TBackend::ZERO {
                             let token_ = Token::s_create(TokenType::TAG_END, begin_ ..= end_);
@@ -501,6 +515,8 @@ TBackend: Backend {
 
                             token_
                         };
+
+                        self.last_r_chevron = token_.data_rng.end() + 1;
 
                         // Следующее состояние.
                         // Next state.
@@ -676,7 +692,7 @@ TBackend: Backend {
                         break 'chunk token_;
                     }
 
-                    _ => {}
+                    //_ => {}
                 }
             } // 'analyze: loop
 

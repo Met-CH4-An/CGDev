@@ -101,7 +101,7 @@ impl Backend for AVX512 {
             em: _mm256_set1_epi8(b'!' as i8),
         }
     }
-    unsafe fn buildChunk(chunk_mask_register: &mut ChunkMaskRegister<Self>, chunk: &mut ChunkMask<Self>, ptr: *const u8) {
+    unsafe fn buildChunk(_chunk_mask_register: &mut ChunkMaskRegister<Self>, _chunk: &mut ChunkMask<Self>, _ptr: *const u8) {
         //chunk.buildAVX512(ptr);
     }
     fn trailingZeros(mask: u64) -> u32 {

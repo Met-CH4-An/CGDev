@@ -6,8 +6,12 @@ name = "utils__tokenizer_xml"
 version = "0.0.0"
 edition = "2021"
 
-[[bin]]
+[lib]
 name = "utils__tokenizer_xml"
 path = "_mods.rs"
+
+[[bin]]
+name = "utils__tokenizer_xml__benchmark"
+path = "main.rs"
 
 [dependencies]
