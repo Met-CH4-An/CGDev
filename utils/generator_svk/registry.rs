@@ -6,18 +6,21 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::makeHash;
-use crate::registry_type::RegistryType;
-use crate::registry_enum::RegistryEnum;
-use crate::registry_type_section::RegistryTypeSection;
-use crate::registry_enum_section::RegistryEnumSection;
+use std::collections::HashMap;
+use std::hash::{Hash, Hasher};
+use std::ops::RangeInclusive;
+use crate::registry_types::RegistryTypes;
+use crate::registry_enums::RegistryEnums;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct Registry {
-    pub(crate) type_section: Vec<RegistryTypeSection>,
-    pub(crate) enum_section: Vec<RegistryEnumSection>,
+    pub(crate) registry_types_vec: Vec<RegistryTypes>,
+    //pub(crate) registry_type_as_bitmask_vec: Vec<(RangeInclusive<usize>, Vec<RegistryTypeAsBitmask>)>,
+    pub(crate) registry_enums_as_enum_vec: Vec<RegistryEnums>,
+    pub(crate) registry_enums_as_bitmask_vec: Vec<RegistryEnums>,
+    pub(crate) requires_cash: HashMap<u64, (usize, usize)>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,8 +33,11 @@ impl Registry {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn s_create() -> Self {
         Self {
-            type_section: Vec::new(),
-            enum_section: Vec::new(),
+            registry_types_vec: Vec::new(),
+            //registry_type_as_bitmask_vec: Vec::new(),
+            registry_enums_as_enum_vec: Vec::new(),
+            registry_enums_as_bitmask_vec: Vec::new(),
+            requires_cash: HashMap::new(),
         }
     }
 }
@@ -56,60 +62,40 @@ impl Registry {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(crate) fn addRequire(&mut self, requires: &str, x: usize, y: usize) {
+        let mut hasher_ = std::hash::DefaultHasher::new();
+
+        requires.hash(&mut hasher_);
+
+        let hash_ = hasher_.finish();
+        
+        self.requires_cash.insert(hash_, (x, y));
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ////
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /*pub(crate) fn findTypeAsBitmask(&mut self, requires: &str) -> Option<&RegistryTypeAsBitmask> {
+        let mut hasher_ = std::hash::DefaultHasher::new();
+
+        requires.hash(&mut hasher_);
+
+        let hash_ = hasher_.finish();
+        
+        let (x, y)= self.requires_cash.get(&hash_)?;
+        
+        Some(&self.registry_type_as_bitmask_vec[*x].1[*y])
+    }
+    
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[inline(always)]
     pub(crate) fn findType(&self, name_str: &str) -> Option<&RegistryType> {
-        self.type_section
+        self.registry_types_vec
             .iter()
-            .find_map(|section_| {
-                section_.findType(name_str)
+            .find_map(|types_| {
+                types_.findType(name_str)
             })
-    }
-    
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #[inline(always)]
-    pub(crate) fn findEnum(&self, name_str: &str) -> Option<&RegistryEnum> {
-        self.enum_section
-            .iter()
-            .find_map(|section_| {
-                section_.findEnum(name_str)
-            })
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #[inline(always)]
-    pub(crate) fn findEnumMut(&mut self, name_str: &str) -> Option<&mut RegistryEnum> {
-        self.enum_section
-            .iter_mut()
-            .find_map(|section_| {
-                section_.findEnumMut(name_str)
-            })        
-    }
-    
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /////
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //#[inline(always)]
-    //pub(crate) fn iterTypeSection(&self) -> impl Iterator<Item = &RegistryTypeSection> {
-    //    self.type_section.iter()
-    //}
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /////
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //#[inline(always)]
-    //pub(crate) fn iterTypeSectionMut(&mut self) -> impl Iterator<Item = &mut RegistryTypeSection>{
-    //    self.type_section.iter_mut()
-    //}
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /////
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //#[inline(always)]
-    //pub(crate) fn pushTypeSection(&mut self, section: RegistryTypeSection) {
-    //    self.type_section.push(section);
-    //}
+    }*/
 }

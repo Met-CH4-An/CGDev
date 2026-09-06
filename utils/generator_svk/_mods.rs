@@ -22,33 +22,65 @@ pub use generator::Generator;
 // file registry.rs
 mod registry;
 
-// файл registry_type_section.rs
-// file registry_type_section.rs
-mod registry_type_section;
-
-// файл registry_type_subsection.rs
-// file registry_type_subsection.rs
-mod registry_type_subsection;
+// файл registry_types.rs
+// file registry_types.rs
+mod registry_types;
 
 // файл registry_type.rs
 // file registry_type.rs
 mod registry_type;
 
-// файл registry_enum_section.rs
-// file registry_enum_section.rs
-mod registry_enum_section;
+// файл registry_common_type_attributes.rs
+// file registry_common_type_attributes.rs
+mod registry_common_type_attributes;
+
+// файл registry_type_body.rs
+// file registry_type_body.rs
+mod registry_type_body;
+
+// файл registry_type_base_type.rs
+// file registry_type_base_type.rs
+mod registry_type_base_type;
+
+// файл registry_type_bitmask.rs
+// file registry_type_bitmask.rs
+mod registry_type_bitmask;
+
+// файл registry_type_define.rs
+// file registry_type_define.rs
+mod registry_type_define;
+
+// файл registry_type_enum.rs
+// file registry_type_enum.rs
+mod registry_type_enum;
+
+// файл registry_type_funcpointer.rs
+// file registry_type_funcpointer.rs
+mod registry_type_funcpointer;
+
+// файл registry_type_handle.rs
+// file registry_type_handle.rs
+mod registry_type_handle;
+
+// файл registry_type_include.rs
+// file registry_type_include.rs
+mod registry_type_include;
+
+// файл registry_type_requires.rs
+// file registry_type_requires.rs
+mod registry_type_requires;
+
+// файл registry_type_struct.rs
+// file registry_type_struct.rs
+mod registry_type_struct;
+
+// файл registry_enums
+// file registry_enums
+mod registry_enums;
 
 // файл registry_enum.rs
 // file registry_enum.rs
 mod registry_enum;
-
-// файл registry_enum_enumerator.rs
-// file registry_enum_enumerator.rs
-mod registry_enum_enumerator;
-
-// файл registry_enum_enumerator_extended.rs
-// file registry_enum_enumerator_extended.rs
-mod registry_enum_enumerator_extended;
 
 pub(crate) fn makeHash(data: &str) -> u64 {
     let mut hasher_ = std::hash::DefaultHasher::new();

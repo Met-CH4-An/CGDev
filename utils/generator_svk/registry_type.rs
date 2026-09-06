@@ -6,24 +6,59 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::RangeInclusive;
+use crate::registry_type_base_type::RegistryTypeBaseType;
+use crate::registry_type_bitmask::RegistryTypeBitmask;
+use crate::registry_type_define::RegistryTypeDefine;
+use crate::registry_type_enum::RegistryTypeEnum;
+use crate::registry_type_funcpointer::RegistryTypeFuncpointer;
+use crate::registry_type_handle::RegistryTypeHandle;
+use crate::registry_type_include::RegistryTypeInclude;
+use crate::registry_type_requires::RegistryTypeRequires;
+use crate::registry_type_struct::RegistryTypeStruct;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// <type category="category">typedef <type>type</type> <name>name</name>;</type>
-/// <type requires="requires" name="name" />
-/// <type requires="requires" category="category">typedef <type>type</type> <name>name</name>;</type>
+/// Type =
+///     element type {
+///         TypeBasetype
+///       | TypeBitmask
+///       | TypeDefine
+///       | TypeEnum
+///       | TypeFuncpointer
+///       | TypeHandle
+///       | TypeInclude
+///       | TypeRequires
+///       | TypeStruct
+///     }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum RegistryTypeType{
+    UNKNOWN,
+    TYPE_BASE_TYPE(RegistryTypeBaseType),
+    TYPE_BITMASK(RegistryTypeBitmask),
+    TYPE_DEFINE(RegistryTypeDefine),
+    TYPE_ENUM(RegistryTypeEnum),
+    TYPE_FUNCPOINTER(RegistryTypeFuncpointer),
+    TYPE_HANDLE(RegistryTypeHandle),
+    TYPE_INCLUDE(RegistryTypeInclude),
+    TYPE_REQUIRES(RegistryTypeRequires),
+    TYPE_STRUCT(RegistryTypeStruct),
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Type =
+///     element type {
+///         TypeBasetype
+///       | TypeBitmask
+///       | TypeDefine
+///       | TypeEnum
+///       | TypeFuncpointer
+///       | TypeHandle
+///       | TypeInclude
+///       | TypeRequires
+///       | TypeStruct
+///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryType {
-    /// requires
-    pub(crate) requires_rng: RangeInclusive<usize>,
-    /// category
-    pub(crate) category_rng: RangeInclusive<usize>,
-    /// type
-    pub(crate) type_rng: RangeInclusive<usize>,
-    /// name
-    pub(crate) name_rng: RangeInclusive<usize>,
-    /// comment
-    pub(crate) comment_rng: RangeInclusive<usize>,
+    pub(crate) r#type: RegistryTypeType,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,24 +83,7 @@ impl RegistryType {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn s_create() -> Self {
         Self {
-            requires_rng: 1 ..= 0,
-            category_rng: 1 ..= 0,
-            type_rng: 1 ..= 0,
-            name_rng: 1 ..= 0,
-            comment_rng: 1 ..= 0,
-        }
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Конструктор.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_createWithData(requires_rng: RangeInclusive<usize>, category_rng: RangeInclusive<usize>, type_rng: RangeInclusive<usize>, name_rng: RangeInclusive<usize>, comment_rng: RangeInclusive<usize>) -> Self {
-        Self {
-            requires_rng: requires_rng,
-            category_rng: category_rng,
-            type_rng: type_rng,
-            name_rng: name_rng,
-            comment_rng: comment_rng,
+            r#type: RegistryTypeType::UNKNOWN,
         }
     }
 }
