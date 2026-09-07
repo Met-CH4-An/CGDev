@@ -11,6 +11,7 @@ use std::rc::Rc;
 use utils__tokenizer_xml::{AVX2, Tokenizer};
 use utils__tokenizer_xml::token::TokenType;
 use crate::registry::Registry;
+use crate::registry_common_type_attributes::RegistryCommonTypeAttributes;
 use crate::registry_types::RegistryTypes;
 use crate::registry_type_base_type::{RegistryTypeBaseType};
 use crate::registry_enums::{RegistryEnums};
@@ -102,7 +103,7 @@ impl Generator {
             if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "enums" {
                 let registry_enums_ = self.parseEnums().unwrap();
 
-                registry_.registry_enums_as_enum_vec.push(registry_enums_);
+                registry_.registry_enums_vec.push(registry_enums_);
             }
 
             // Ищем <extensions>
@@ -140,9 +141,12 @@ impl Generator {
     /// <types ...> ... </types>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseTypes(&mut self) -> Option<RegistryTypes> {
+        let mut registry_types_ = RegistryTypes::s_create();
+
         // Анализируем непосредственно тег.
         // We analyze the tag directly.
-        let (mut registry_types_, is_body_) = self.parseTypesTag()?;
+        let is_body_;
+        (registry_types_, is_body_) = self.parseTypesTag(registry_types_)?;
 
         // Лупаем пока не встретим закрывающий тег.
         // Loop until we reach the closing tag.
@@ -163,6 +167,12 @@ impl Generator {
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/types"} {
                     break;
                 }
+
+                // Если встретился не валидный токен или конечный токен.
+                // If an invalid token or final token is encountered.
+                else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                    return None;
+                }
             } // loop {
         } // if !is_close_ {
 
@@ -172,9 +182,7 @@ impl Generator {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// <types ...>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parseTypesTag(&mut self) -> Option<(RegistryTypes, bool)> {
-        let mut registry_types_ = RegistryTypes::s_create();
-
+    fn parseTypesTag(&mut self, mut registry_types: RegistryTypes) -> Option<(RegistryTypes, bool)> {
         let is_body_ = loop {
             let token_ = self.tokenizer.nextToken1();
 
@@ -183,7 +191,7 @@ impl Generator {
             if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "comment" {
                 let token_ = self.tokenizer.nextToken1();
 
-                registry_types_.comment_rng = token_.asRange();
+                registry_types.comment_rng = token_.asRange();
             }
 
             // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
@@ -205,40 +213,69 @@ impl Generator {
             }
         }; // let is_close_ = loop {
 
-        Some((registry_types_, is_body_))
+        Some((registry_types, is_body_))
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// <type ...> ... </type>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseType(&mut self) -> Option<RegistryType> {
+        let mut registry_type_ = RegistryType::s_create();
+
         // Анализируем непосредственно тег.
         // We analyze the tag directly.
-        let (mut registry_type_, is_body_) = self.parseTypeTag()?;
-
-        let mut dummy_ = 1;
+        let is_body_;
+        (registry_type_, is_body_) = self.parseTypeTag(registry_type_)?;
 
         // Лупаем пока не встретим закрывающий тег.
         // Loop until we reach the closing tag.
         if is_body_ {
-            loop {
-                let token_ = self.tokenizer.nextToken1();
+            match &mut registry_type_.r#type {
+                RegistryTypeType::TYPE_BASE_TYPE(type_) => {
+                    let registry_type_body_ = self.parseTypeInnerAsTypeBody()?;
 
-                //
-                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "type"} {
-                    let registry_type_body_ = self.parseTypeBody()?;
-
-                    continue;
+                    type_.type_body = registry_type_body_;
                 }
 
-                // Конец <types>.
-                // End of <types>.
-                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/type"} {
-                    break;
+                RegistryTypeType::TYPE_BITMASK(type_) => {
+                    let registry_type_body_ = self.parseTypeInnerAsTypeBody()?;
+
+                    type_.type_body = registry_type_body_;
                 }
 
-                //if dummy_ == 0 {break;}
-            } // loop {
+                RegistryTypeType::TYPE_DEFINE(type_) => {
+                    let registry_type_body_ = self.parseTypeInnerAsTypeBody()?;
+
+                    type_.type_body = registry_type_body_;
+                }
+
+                RegistryTypeType::TYPE_ENUM(type_) => {
+                    self.parseTypeInnerAsTypeBody()?;
+                }
+
+                RegistryTypeType::TYPE_FUNCPOINTER(type_) => {
+                    self.parseTypeInnerAsTypeBody()?;
+                }
+
+                RegistryTypeType::TYPE_HANDLE(type_) => {
+                    let registry_type_body_ = self.parseTypeInnerAsTypeBody()?;
+
+                    type_.type_body = registry_type_body_;
+                }
+
+                RegistryTypeType::TYPE_INCLUDE(type_) => {
+                    self.parseTypeInnerAsTypeBody()?;
+                }
+
+                RegistryTypeType::TYPE_REQUIRES(type_) => {
+                    self.parseTypeInnerAsTypeBody()?;
+                }
+
+                RegistryTypeType::TYPE_STRUCT(type_) => {
+                    self.parseTypeInnerAsTypeBody()?;
+                }
+                _ => {}
+            }
         } // if !is_body_ {
 
         Some(registry_type_)
@@ -247,40 +284,70 @@ impl Generator {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// <type ...>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parseTypeTag(&mut self) -> Option<(RegistryType, bool)> {
-        let mut registry_type_ = RegistryType::s_create();
+    fn parseTypeTag(&mut self, mut registry_type: RegistryType) -> Option<(RegistryType, bool)> {
+        let mut api_rng_ = 1 ..= 0;
+        let mut comment_rng_ = 1 ..= 0;
+        let mut requires_rng_ = 1 ..= 0;
+        let mut deprecated_rng_ = 1 ..= 0;
 
         let is_body_ = loop {
             let token_ = self.tokenizer.nextToken1();
 
-            // Ищем атрибут 'requires'.
-            // Search for the 'requires' attribute.
-            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "requires" {
+            // Ищем атрибут 'api'.
+            // Search for the 'api' attribute.
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "api" {
                 let token_ = self.tokenizer.nextToken1();
 
-                //let (mut registry_type_requires_, is_body_) = self.parseTypeTagAsRequire()?;
+                api_rng_ = token_.asRange();
+            }
 
-                //registry_type_requires_.requires_rng = token_.asRange();
+            // Ищем атрибут 'comment'.
+            // Search for the 'comment' attribute.
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "comment" {
+                let token_ = self.tokenizer.nextToken1();
 
-                //registry_type_.r#type = RegistryTypeType::TYPE_REQUIRES(registry_type_requires_);
+                comment_rng_ = token_.asRange();
+            }
 
-                //break is_body_;
+            // Ищем атрибут 'requires'.
+            // Search for the 'requires' attribute.
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "requires" {
+                let token_ = self.tokenizer.nextToken1();
+
+                requires_rng_ = token_.asRange();
+            }
+
+            // Ищем атрибут 'deprecated'.
+            // Search for the 'deprecated' attribute.
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "deprecated" {
+                let token_ = self.tokenizer.nextToken1();
+
+                deprecated_rng_ = token_.asRange();
             }
 
             // Ищем атрибут 'category'.
             // Search for the 'category' attribute.
             else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "category" {
+                // Все что до category - RegistryCommonTypeAttributes.
+                // Everything before category is RegistryCommonTypeAttributes.
+                let registry_common_type_attributes_ = RegistryCommonTypeAttributes {
+                    api_rng: api_rng_.clone(),
+                    comment_rng: comment_rng_.clone(),
+                    requires_rng: requires_rng_.clone(),
+                    deprecated_rng: deprecated_rng_.clone(),
+                };
+
                 let token_ = self.tokenizer.nextToken1();
 
                 let category_str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-                println!("{}", category_str_);
 
                 if category_str_ == "basetype" {
                     let (mut registry_type_basetype_, is_body_) = self.parseTypeTagAsBaseType()?;
 
+                    registry_type_basetype_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_basetype_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_BASE_TYPE(registry_type_basetype_);
+                    registry_type.r#type = RegistryTypeType::TYPE_BASE_TYPE(registry_type_basetype_);
 
                     break is_body_;
                 }
@@ -288,9 +355,10 @@ impl Generator {
                 else if category_str_ == "bitmask" {
                     let (mut registry_type_bitmask_, is_body_) = self.parseTypeTagAsBitmask()?;
 
+                    registry_type_bitmask_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_bitmask_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_BITMASK(registry_type_bitmask_);
+                    registry_type.r#type = RegistryTypeType::TYPE_BITMASK(registry_type_bitmask_);
 
                     break is_body_;
                 }
@@ -298,9 +366,10 @@ impl Generator {
                 else if category_str_ == "define" {
                     let (mut registry_type_define_, is_body_) = self.parseTypeTagAsDefine()?;
 
+                    registry_type_define_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_define_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_DEFINE(registry_type_define_);
+                    registry_type.r#type = RegistryTypeType::TYPE_DEFINE(registry_type_define_);
 
                     break is_body_;
                 }
@@ -308,9 +377,10 @@ impl Generator {
                 else if category_str_ == "enum" {
                     let (mut registry_type_enum_, is_body_) = self.parseTypeTagAsEnum()?;
 
+                    registry_type_enum_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_enum_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_ENUM(registry_type_enum_);
+                    registry_type.r#type = RegistryTypeType::TYPE_ENUM(registry_type_enum_);
 
                     break is_body_;
                 }
@@ -318,9 +388,10 @@ impl Generator {
                 else if category_str_ == "funcpointer" {
                     let (mut registry_type_funcpointer_, is_body_) = self.parseTypeTagAsFuncpointer()?;
 
+                    registry_type_funcpointer_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_funcpointer_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_FUNCPOINTER(registry_type_funcpointer_);
+                    registry_type.r#type = RegistryTypeType::TYPE_FUNCPOINTER(registry_type_funcpointer_);
 
                     break is_body_;
                 }
@@ -328,9 +399,10 @@ impl Generator {
                 else if category_str_ == "handle" {
                     let (mut registry_type_handle_, is_body_) = self.parseTypeTagAsHandle()?;
 
+                    registry_type_handle_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_handle_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_HANDLE(registry_type_handle_);
+                    registry_type.r#type = RegistryTypeType::TYPE_HANDLE(registry_type_handle_);
 
                     break is_body_;
                 }
@@ -338,9 +410,10 @@ impl Generator {
                 else if category_str_ == "include" {
                     let (mut registry_type_include_, is_body_) = self.parseTypeTagAsInclude()?;
 
+                    registry_type_include_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_include_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_INCLUDE(registry_type_include_);
+                    registry_type.r#type = RegistryTypeType::TYPE_INCLUDE(registry_type_include_);
 
                     break is_body_;
                 }
@@ -348,9 +421,10 @@ impl Generator {
                 else if category_str_ == "struct" {
                     let (mut registry_type_struct_, is_body_) = self.parseTypeTagAsStruct()?;
 
+                    registry_type_struct_.common_type_attributes = registry_common_type_attributes_;
                     registry_type_struct_.category_rng = token_.asRange();
 
-                    registry_type_.r#type = RegistryTypeType::TYPE_STRUCT(registry_type_struct_);
+                    registry_type.r#type = RegistryTypeType::TYPE_STRUCT(registry_type_struct_);
 
                     break is_body_;
                 }
@@ -373,9 +447,9 @@ impl Generator {
             else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
                 return None;
             }
-        }; // let is_close_ = loop {
+        }; // let is_body_ = loop {
 
-        Some((registry_type_, is_body_))
+        Some((registry_type, is_body_))
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -417,6 +491,30 @@ impl Generator {
 
         let is_body_ = loop {
             let token_ = self.tokenizer.nextToken1();
+
+            // Ищем атрибут 'name'.
+            // Search for the 'name' attribute.
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "name" {
+                let token_ = self.tokenizer.nextToken1();
+
+                registry_type_bitmask_.name_rng = token_.asRange();
+            }
+
+            // Ищем атрибут 'alias'.
+            // Search for the 'alias' attribute.
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "alias" {
+                let token_ = self.tokenizer.nextToken1();
+
+                registry_type_bitmask_.alias_rng = token_.asRange();
+            }
+
+            // Ищем атрибут 'bitvalues'.
+            // Search for the 'bitvalues' attribute.
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "bitvalues" {
+                let token_ = self.tokenizer.nextToken1();
+
+                registry_type_bitmask_.bitvalues_rng = token_.asRange();
+            }
 
             // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
             // If we encounter a simple closing end tag ('>'), we report that there is a body.
@@ -748,62 +846,61 @@ impl Generator {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// <type>type</type> <name>name</name>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parseTypeBody(&mut self) -> Option<RegistryTypeBody> {
+    fn parseTypeInnerAsTypeBody(&mut self) -> Option<RegistryTypeBody> {
         let mut registry_type_body_ = RegistryTypeBody::s_create();
 
-        self.tokenizer.nextToken1(); // >
-        let token_ = self.tokenizer.nextToken1();
-
-        let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-        println!("{}", str_);
-
-        if token_.asType() != TokenType::TEXT {
-            return None;
-        }
-
-        registry_type_body_.type_rng = token_.asRange();
-
-        let token_ = self.tokenizer.nextToken1(); // </
-        let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-        println!("{}", str_);
-        let token_ = self.tokenizer.nextToken1();
-        let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-        println!("{}", str_);
-
-        if !(token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/type" }) {
-            return None;
-        }
-
+        // Лупаем пока не встретим закрывающий тег.
+        // Loop until we reach the closing tag.
         loop {
             let token_ = self.tokenizer.nextToken1();
+
             let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-            println!("{}", str_);
+            //println!("{}", str_);
+            
+            // Начинаем парсинг <name>.
+            // Start parsing <name>.
+            if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "type"} {
+                loop {
+                    let token_ = self.tokenizer.nextToken1();
 
-            //
-            if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "name" } {
-                let token_ = self.tokenizer.nextToken1(); // >
-                let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-                println!("{}", str_);
-                let token_ = self.tokenizer.nextToken1();
-                let str_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*token_.asRange().start() ..= *token_.asRange().end()])};
-                println!("{}", str_);
+                    if token_.asType() == TokenType::TEXT {
+                        registry_type_body_.type_rng = token_.asRange();
+                    }
 
-                if token_.asType() != TokenType::TEXT {
-                    return None;
+                    else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/type"}{
+                        break;
+                    }
                 }
+            }
 
-                registry_type_body_.name_rng = token_.asRange();
+            // Начинаем парсинг <name>.
+            // Start parsing <name>.
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "name"} {
+                loop {
+                    let token_ = self.tokenizer.nextToken1();
 
-                self.tokenizer.nextToken1(); // </
-                let token_ = self.tokenizer.nextToken1();
+                    if token_.asType() == TokenType::TEXT {
+                        registry_type_body_.name_rng = token_.asRange();
+                    }
 
-                if !(token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/name" }) {
-                    return None;
+                    else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/name"}{
+                        break;
+                    }
                 }
+            }
 
+            // Конец <types>.
+            // End of <types>.
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/type"} {
                 break;
             }
-        }
+
+            // Если встретился не валидный токен или конечный токен.
+            // If an invalid token or final token is encountered.
+            else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                return None;
+            }
+        } // loop {
 
         Some(registry_type_body_)
     }
@@ -820,29 +917,7 @@ impl Generator {
         (registry_enums_, is_body_) = self.parseEnumsTag(registry_enums_)?;
 
         if is_body_ {
-            loop {
-                let token_ = self.tokenizer.nextToken1();
-
-                // Ищем атрибут 'enum'.
-                // Search for the 'enum' attribute.
-                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "enum" {
-                    let registry_enum_ = self.parseEnum()?;
-
-                    registry_enums_.registry_enum_vec.push(registry_enum_);
-                }
-                
-                // Конец.
-                // End of.
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "/enums" {
-                    break;
-                }
-
-                // Если встретился не валидный токен или конечный токен.
-                // If an invalid token or final token is encountered.
-                else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
-                    return None;
-                }
-            }
+            registry_enums_ = self.parseEnumsInner(registry_enums_)?;
         }
 
         Some(registry_enums_)
@@ -906,9 +981,43 @@ impl Generator {
             else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
                 return None;
             }
-        }; // let is_close_ = loop {
+        }; // let is_body_ = loop {
 
         Some((registry_enums, is_body_))
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// <enums> ... </enums>
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn parseEnumsInner(&mut self, mut registry_enums: RegistryEnums) -> Option<RegistryEnums> {
+        // Лупаем пока не встретим закрывающий тег.
+        // Loop until we reach the closing tag.
+        loop {
+            let token_ = self.tokenizer.nextToken1();
+
+            // Начинаем парсинг <enum>.
+            // Start parsing <enum>.
+            if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "enum"} {
+                let registry_enum_ = self.parseEnum()?;
+
+                registry_enums.registry_enum_vec.push(registry_enum_);
+            }
+
+            // Конец.
+            // End of.
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) == "/enums"} {
+                break;
+            }
+
+            // Если встретился не валидный токен или конечный токен.
+            // If an invalid token or final token is encountered.
+            else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                return None;
+            }
+
+        } // if !is_body_ {
+
+        Some(registry_enums)
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -943,8 +1052,8 @@ impl Generator {
             if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "value" {
                 let token_ = self.tokenizer.nextToken1();
 
-                registry_enum.name_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "value" {
+                registry_enum.value_rng = token_.asRange();
+            }
 
             // Ищем атрибут 'bitpos'.
             // Search for the 'bitpos' attribute.
@@ -952,7 +1061,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.bitpos_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "bitpos" {
+            }
 
             // Ищем атрибут 'offset'.
             // Search for the 'offset' attribute.
@@ -960,7 +1069,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.offset_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "offset" {
+            }
 
             // Ищем атрибут 'dir'.
             // Search for the 'dir' attribute.
@@ -968,7 +1077,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.dir_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "dir" {
+            }
 
             // Ищем атрибут 'alias'.
             // Search for the 'alias' attribute.
@@ -976,7 +1085,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.alias_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "alias" {
+            }
 
             // Ищем атрибут 'extends'.
             // Search for the 'extends' attribute.
@@ -984,7 +1093,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.extends_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "extends" {
+            }
 
             // Ищем атрибут 'protect'.
             // Search for the 'protect' attribute.
@@ -992,7 +1101,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.protect_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "protect" {
+            }
 
             // Ищем атрибут 'api'.
             // Search for the 'api' attribute.
@@ -1000,7 +1109,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.api_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "api" {
+            }
 
             // Ищем атрибут 'type'.
             // Search for the 'type' attribute.
@@ -1008,7 +1117,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.type_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "type" {
+            }
 
             // Ищем атрибут 'name'.
             // Search for the 'name' attribute.
@@ -1016,7 +1125,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.name_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "name" {
+            }
 
             // Ищем атрибут 'deprecated'.
             // Search for the 'deprecated' attribute.
@@ -1024,7 +1133,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.deprecated_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "deprecated" {
+            }
 
             // Ищем атрибут 'comment'.
             // Search for the 'comment' attribute.
@@ -1032,7 +1141,7 @@ impl Generator {
                 let token_ = self.tokenizer.nextToken1();
 
                 registry_enum.comment_rng = token_.asRange();
-            } // if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(self.data_rc.as_ptr()) } == "comment" {
+            }
             
 
             // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
@@ -1052,7 +1161,7 @@ impl Generator {
             else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
                 return None;
             }
-        }; // let is_close_ = loop {
+        }; // let is_body_ = loop {
 
         Some((registry_enum, is_body_))
     }
@@ -1515,56 +1624,34 @@ impl Generator {
                         match &type_.r#type {
                             RegistryTypeType::TYPE_BASE_TYPE(type_) => {
                                 let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.name_rng.start() ..= *type_.type_body.name_rng.end()])};
+                                let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.type_rng.start() ..= *type_.type_body.type_rng.end()])};
                                 let comment_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.comment_rng.start() ..= *type_.type_body.comment_rng.end()])};
 
-                                output_wvk_.push_str(&format!("a{}\n", name_str_));
+                                let type_str_ = if type_str_ == "uint32_t" {
+                                    "u32"
+                                }
+
+                                else if type_str_ == "uint64_t" {
+                                    "u64"
+                                }
+
+                                else {
+                                    "ERROR"
+                                };
+
+                                output_wvk_.push_str(&format!("pub type {} = {}; // {}\n", name_str_, type_str_, comment_str_));
+                            }
+
+                            RegistryTypeType::TYPE_BITMASK(type_) => {
+                                let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.name_rng.start() ..= *type_.type_body.name_rng.end()])};
+                                let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.type_rng.start() ..= *type_.type_body.type_rng.end()])};
+                                let comment_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.comment_rng.start() ..= *type_.type_body.comment_rng.end()])};
+
+                                output_wvk_.push_str(&format!("pub struct {}({}); // {}\n\n", name_str_, type_str_, comment_str_));
                             }
                             _ => {}
                         }
                     })
-                //let comment_str_ = unsafe {std::str::from_utf8_unchecked(&data[*comment_rng_.start() ..= *comment_rng_.end()])};
-
-                //output_wvk_.push_str(&format!("// {}\n\n", comment_str_));
-
-                //
-                //type_vec_
-                //    .iter()
-                //    .for_each(|type_|{
-                //        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.body.name_rng.start() ..= *type_.body.name_rng.end()])};
-                //        let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.body.type_rng.start() ..= *type_.body.type_rng.end()])};
-
-                //        output_wvk_.push_str(&format!("pub struct {}({});\n", name_str_, type_str_));
-                //    });
-
-                //output_wvk_.push_str("\n");
-            });
-
-        /*registry.registry_types_vec
-            .iter()
-            .for_each(|types_ | {
-               types_.type_section_vec
-                   .iter()
-                   .for_each(|type_section_| {
-                       //let comment_str = unsafe {std::str::from_utf8_unchecked(&data[*type_section_.comment_rng.start() ..= *type_section_.comment_rng.end()])};
-                       //output_wvk_.push_str(&format!("//{}\n", comment_str));
-
-                       type_section_
-                           .iterTypes()
-                           .for_each(|type_| {
-                               //let name_str = unsafe {std::str::from_utf8_unchecked(&data[*type_.name_rng.start() ..= *type_.name_rng.end()])};
-                               let category_str = unsafe {std::str::from_utf8_unchecked(&data[*type_.category_rng.start() ..= *type_.category_rng.end()])};
-                               //let type_str = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_rng.start() ..= *type_.type_rng.end()])};
-                               //let comment_str = unsafe {std::str::from_utf8_unchecked(&data[*type_.comment_rng.start() ..= *type_.comment_rng.end()])};
-
-                               if category_str == "enum" {
-                                   //output_wvk_.push_str(&format!("pub struct {}(i32); //{}\n\n", name_str, comment_str));
-                               }
-
-                               else if category_str == "bitmask" {
-                                   //output_wvk_.push_str(&format!("pub struct {}({}); //{}\n\n", name_str, type_str, comment_str));
-                               }
-                           })
-                   })
             });
 
         registry.registry_enums_vec
@@ -1589,13 +1676,15 @@ impl Generator {
                             //let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*enum_.type_rng.start() ..= *enum_.type_rng.end()])};
                             //let comment_str_ = unsafe {std::str::from_utf8_unchecked(&data[*enum_.comment_rng.start() ..= *enum_.comment_rng.end()])};
 
-                            output_wvk_.push_str(&format!("\tpub const {} = {};\n", name_str_, value_str_));
+                            output_wvk_.push_str(&format!("\tpub const {}: i32 = {};\n", name_str_, value_str_));
                         });
 
                     output_wvk_.push_str(&format!("}}\n\n"));
                 }
                 if type_str == "bitmask" {
-                    output_wvk_.push_str(&format!("pub type {} = ...; //{}\n", name_str, comment_str));
+                    let name_str__ = name_str.replace("FlagBits", "Flags");
+
+                    output_wvk_.push_str(&format!("pub type {} = {}; //{}\n", name_str, name_str__, comment_str));
                     output_wvk_.push_str(&format!("impl {} {{\n", name_str));
 
                     let bitwidth_str_ = unsafe {std::str::from_utf8_unchecked(&data[*enums_.bitwidth_rng.start() ..= *enums_.bitwidth_rng.end()])};
@@ -1623,7 +1712,7 @@ impl Generator {
                                     1u32 << bitpos_
                                 };
 
-                                output_wvk_.push_str(&format!("\tpub const {} = {};\n", name_str_, bitpos_));
+                                output_wvk_.push_str(&format!("\tpub const {}: {} = {}({});\n", name_str_, name_str__, name_str__, bitpos_));
 
                                 Ok(())
                             })?;
@@ -1652,7 +1741,7 @@ impl Generator {
                                     1u64 << bitpos_
                                 };
 
-                                output_wvk_.push_str(&format!("\tpub const {} = {};\n", name_str_, bitpos_));
+                                output_wvk_.push_str(&format!("\tpub const {}: {} = {}({});\n", name_str_, name_str__, name_str__, bitpos_));
 
                                 Ok(())
                             })?;
@@ -1662,7 +1751,7 @@ impl Generator {
                 }
 
                 Ok(())
-            })?;*/
+            })?;
 
         println!("asd");
 

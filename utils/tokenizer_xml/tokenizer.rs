@@ -263,7 +263,7 @@ TBackend: Backend {
 
                         // Если между новой позицией в данных и старой больше одного, формируем новый токен как TokenType::TEXT.
                         // If there is more than one between the new data position and the old one, create a new token as TokenType::TEXT.
-                        if self.current_in_data_position + valid_tz_ as usize - self.last_r_chevron > 2 {
+                        if self.current_in_data_position + valid_tz_ as usize - self.last_r_chevron >= 1 {
                             let begin_ = self.last_r_chevron;
                             let end_ = self.current_in_data_position + valid_tz_ as usize - 1;
                             

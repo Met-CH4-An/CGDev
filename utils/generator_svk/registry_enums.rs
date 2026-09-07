@@ -29,7 +29,6 @@ pub(crate) enum RegistryEnumsType {
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryEnums {
-    pub(crate) registry_enums_type: RegistryEnumsType,
     /// attribute name { text }?,
     pub(crate) name_rng: RangeInclusive<usize>,
     /// attribute type { text },
@@ -64,7 +63,6 @@ impl RegistryEnums {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn s_create() -> Self {
         Self {
-            registry_enums_type: RegistryEnumsType::UNKNOWN,
             name_rng: 1 ..= 0,
             type_rng: 1 ..= 0,
             bitwidth_rng: 1 ..= 0,

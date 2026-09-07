@@ -47,14 +47,16 @@ pub(crate) struct RegistryEnum {
     pub(crate) value_rng: RangeInclusive<usize>,
     /// attribute bitpos { xsd:long }
     pub(crate) bitpos_rng: RangeInclusive<usize>,
+    /// attribute extnumber { xsd:long }?
+    pub(crate) extnumber_rng: RangeInclusive<usize>,
     /// attribute offset { xsd:long }
     pub(crate) offset_rng: RangeInclusive<usize>,
     /// attribute dir { "-" }?
     pub(crate) dir_rng: RangeInclusive<usize>,
-    /// attribute alias { VkTypeNameRef_t | VkDefineOrEnumName_t }
-    pub(crate) alias_rng: RangeInclusive<usize>,
     /// attribute extends { TypeName_t }?
     pub(crate) extends_rng: RangeInclusive<usize>,
+    /// attribute alias { VkTypeNameRef_t | VkDefineOrEnumName_t }
+    pub(crate) alias_rng: RangeInclusive<usize>,
     /// ProtectAttr?
     pub(crate) protect_rng: RangeInclusive<usize>,
     /// ApiAttr?
@@ -93,10 +95,11 @@ impl RegistryEnum {
         Self {
             value_rng: 1 ..= 0,
             bitpos_rng: 1 ..= 0,
+            extnumber_rng: 1 ..= 0,
             offset_rng: 1 ..= 0,
             dir_rng: 1 ..= 0,
-            alias_rng: 1 ..= 0,
             extends_rng: 1 ..= 0,
+            alias_rng: 1 ..= 0,
             protect_rng: 1 ..= 0,
             api_rng: 1 ..= 0,
             type_rng: 1 ..= 0,

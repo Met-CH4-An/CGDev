@@ -17,9 +17,7 @@ use crate::registry_enums::RegistryEnums;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct Registry {
     pub(crate) registry_types_vec: Vec<RegistryTypes>,
-    //pub(crate) registry_type_as_bitmask_vec: Vec<(RangeInclusive<usize>, Vec<RegistryTypeAsBitmask>)>,
-    pub(crate) registry_enums_as_enum_vec: Vec<RegistryEnums>,
-    pub(crate) registry_enums_as_bitmask_vec: Vec<RegistryEnums>,
+    pub(crate) registry_enums_vec: Vec<RegistryEnums>,
     pub(crate) requires_cash: HashMap<u64, (usize, usize)>,
 }
 
@@ -34,9 +32,7 @@ impl Registry {
     pub fn s_create() -> Self {
         Self {
             registry_types_vec: Vec::new(),
-            //registry_type_as_bitmask_vec: Vec::new(),
-            registry_enums_as_enum_vec: Vec::new(),
-            registry_enums_as_bitmask_vec: Vec::new(),
+            registry_enums_vec: Vec::new(),
             requires_cash: HashMap::new(),
         }
     }
