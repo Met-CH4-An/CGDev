@@ -22,6 +22,22 @@ pub use generator::Generator;
 // file registry.rs
 mod registry;
 
+// файл registry_comment_elt.rs
+// file registry_comment_elt.rs
+mod registry_comment_elt;
+
+// файл registry_element_type.rs
+// file registry_element_type.rs
+mod registry_element_type;
+
+// файл registry_element_name.rs
+// file registry_element_name.rs
+mod registry_element_name;
+
+// файл registry_element_enum.rs
+// file registry_element_enum.rs
+mod registry_element_enum;
+
 // файл registry_types.rs
 // file registry_types.rs
 mod registry_types;
@@ -37,6 +53,14 @@ mod registry_common_type_attributes;
 // файл registry_type_body.rs
 // file registry_type_body.rs
 mod registry_type_body;
+
+// файл registry_type_body_with_enum.rs
+// file registry_type_body_with_enum.rs
+mod registry_type_body_with_enum;
+
+// файл registry_type_body_with_enum_element.rs
+// file registry_type_body_with_enum_element.rs
+mod registry_type_body_with_enum_element;
 
 // файл registry_type_base_type.rs
 // file registry_type_base_type.rs
@@ -73,6 +97,10 @@ mod registry_type_requires;
 // файл registry_type_struct.rs
 // file registry_type_struct.rs
 mod registry_type_struct;
+
+// файл registry_type_struct_member.rs
+// file registry_type_struct_member.rs
+mod registry_type_struct_member;
 
 // файл registry_enums
 // file registry_enums

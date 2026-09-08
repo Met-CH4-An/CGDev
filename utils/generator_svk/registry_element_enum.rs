@@ -7,48 +7,38 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_comment_elt::RegistryCommentElt;
-use crate::registry_type::RegistryType;
-
-pub(crate) enum RegistryTypesElement {
-    TYPE(RegistryType),
-    COMMENT_ELT(RegistryCommentElt),
-}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Types = element types { CommentAttr?, (Type | CommentElt)* }
+/// <enum>enum</enum>
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryTypes {
-    /// CommentAttr?,
-    pub(crate) comment_rng: RangeInclusive<usize>,
-    ///
-    pub(crate) element_vec: Vec<RegistryTypesElement>,
+pub(crate) struct RegistryElementEnum {
+    /// enum
+    pub(crate) enum_rng: RangeInclusive<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Публичные ассоциированные функции.
 // Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryElementEnum {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Публичные методы.
 // Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryElementEnum {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Приватные ассоциированные функции.
 // Private associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {
+impl RegistryElementEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn s_create() -> Self {
         Self {
-            comment_rng: 1 ..= 0,
-            element_vec: Vec::new(),
+            enum_rng: 1 ..= 0,
         }
     }
 }
@@ -57,4 +47,4 @@ impl RegistryTypes {
 // Приватные методы.
 // Private methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryElementEnum {}

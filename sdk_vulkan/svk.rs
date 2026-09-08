@@ -1,21 +1,9 @@
-pub type ANativeWindow = ERROR; //
-pub type AHardwareBuffer = ERROR; //
-pub type CAMetalLayer = ERROR; //
-pub type MTLDevice_id = ERROR; //
-pub type MTLCommandQueue_id = ERROR; //
-pub type MTLBuffer_id = ERROR; //
-pub type MTLTexture_id = ERROR; //
-pub type MTLSharedEvent_id = ERROR; //
-pub type IOSurfaceRef = ERROR; //
 pub type VkSampleMask = u32; //
 pub type VkBool32 = u32; //
 pub type VkFlags = u32; //
 pub type VkFlags64 = u64; //
 pub type VkDeviceSize = u64; //
 pub type VkDeviceAddress = u64; //
-pub type OHNativeWindow = ERROR; //
-pub type OHBufferHandle = ERROR; //
-pub type OH_NativeBuffer = ERROR; //
 pub struct VkFramebufferCreateFlags(VkFlags); //
 
 pub struct VkQueryPoolCreateFlags(VkFlags); //
@@ -114,7 +102,7 @@ pub struct VkMemoryMapFlags(VkFlags); //
 
 pub struct VkMemoryUnmapFlags(VkFlags); //
 
-pub struct (); //
+pub type VkMemoryUnmapFlagsKHR = VkMemoryUnmapFlags; //
 
 pub struct VkImageAspectFlags(VkFlags); //
 
@@ -148,11 +136,11 @@ pub struct VkIndirectStateFlagsNV(VkFlags); //
 
 pub struct VkGeometryFlagsKHR(VkFlags); //
 
-pub struct (); //
+pub type VkGeometryFlagsNV = VkGeometryFlagsKHR; //
 
 pub struct VkGeometryInstanceFlagsKHR(VkFlags); //
 
-pub struct (); //
+pub type VkGeometryInstanceFlagsNV = VkGeometryInstanceFlagsKHR; //
 
 pub struct VkClusterAccelerationStructureGeometryFlagsNV(VkFlags); //
 
@@ -162,21 +150,21 @@ pub struct VkClusterAccelerationStructureAddressResolutionFlagsNV(VkFlags); //
 
 pub struct VkBuildAccelerationStructureFlagsKHR(VkFlags); //
 
-pub struct (); //
+pub type VkBuildAccelerationStructureFlagsNV = VkBuildAccelerationStructureFlagsKHR; //
 
 pub struct VkPrivateDataSlotCreateFlags(VkFlags); //
 
-pub struct (); //
+pub type VkPrivateDataSlotCreateFlagsEXT = VkPrivateDataSlotCreateFlags; //
 
 pub struct VkAccelerationStructureCreateFlagsKHR(VkFlags); //
 
 pub struct VkDescriptorUpdateTemplateCreateFlags(VkFlags); //
 
-pub struct (); //
+pub type VkDescriptorUpdateTemplateCreateFlagsKHR = VkDescriptorUpdateTemplateCreateFlags; //
 
 pub struct VkPipelineCreationFeedbackFlags(VkFlags); //
 
-pub struct (); //
+pub type VkPipelineCreationFeedbackFlagsEXT = VkPipelineCreationFeedbackFlags; //
 
 pub struct VkPerformanceCounterDescriptionFlagsKHR(VkFlags); //
 
@@ -184,7 +172,7 @@ pub struct VkAcquireProfilingLockFlagsKHR(VkFlags); //
 
 pub struct VkSemaphoreWaitFlags(VkFlags); //
 
-pub struct (); //
+pub type VkSemaphoreWaitFlagsKHR = VkSemaphoreWaitFlags; //
 
 pub struct VkPipelineCompilerControlFlagsAMD(VkFlags); //
 
@@ -196,11 +184,11 @@ pub struct VkRefreshObjectFlagsKHR(VkFlags); //
 
 pub struct VkAccessFlags2(VkFlags64); //
 
-pub struct (); //
+pub type VkAccessFlags2KHR = VkAccessFlags2; //
 
 pub struct VkPipelineStageFlags2(VkFlags64); //
 
-pub struct (); //
+pub type VkPipelineStageFlags2KHR = VkPipelineStageFlags2; //
 
 pub struct VkAccelerationStructureMotionInfoFlagsNV(VkFlags); //
 
@@ -208,7 +196,7 @@ pub struct VkAccelerationStructureMotionInstanceFlagsNV(VkFlags); //
 
 pub struct VkFormatFeatureFlags2(VkFlags64); //
 
-pub struct (); //
+pub type VkFormatFeatureFlags2KHR = VkFormatFeatureFlags2; //
 
 pub struct VkFormatFeatureFlags4KHR(VkFlags64); //
 
@@ -216,9 +204,9 @@ pub struct VkRenderingFlags(VkFlags); //
 
 pub struct VkMemoryDecompressionMethodFlagsEXT(VkFlags64); //
 
-pub struct (); //
+pub type VkMemoryDecompressionMethodFlagsNV = VkMemoryDecompressionMethodFlagsEXT; //
 
-pub struct (); //
+pub type VkRenderingFlagsKHR = VkRenderingFlags; //
 
 pub struct VkDeviceFaultFlagsKHR(VkFlags); //
 
@@ -234,11 +222,11 @@ pub struct VkDirectDriverLoadingFlagsLUNARG(VkFlags); //
 
 pub struct VkPipelineCreateFlags2(VkFlags64); //
 
-pub struct (); //
+pub type VkPipelineCreateFlags2KHR = VkPipelineCreateFlags2; //
 
 pub struct VkBufferUsageFlags2(VkFlags64); //
 
-pub struct (); //
+pub type VkBufferUsageFlags2KHR = VkBufferUsageFlags2; //
 
 pub struct VkImageUsageFlags2KHR(VkFlags64); //
 
@@ -316,11 +304,11 @@ pub struct VkScreenSurfaceCreateFlagsQNX(VkFlags); //
 
 pub struct VkPeerMemoryFeatureFlags(VkFlags); //
 
-pub struct (); //
+pub type VkPeerMemoryFeatureFlagsKHR = VkPeerMemoryFeatureFlags; //
 
 pub struct VkMemoryAllocateFlags(VkFlags); //
 
-pub struct (); //
+pub type VkMemoryAllocateFlagsKHR = VkMemoryAllocateFlags; //
 
 pub struct VkDeviceGroupPresentModeFlagsKHR(VkFlags); //
 
@@ -328,7 +316,7 @@ pub struct VkDebugReportFlagsEXT(VkFlags); //
 
 pub struct VkCommandPoolTrimFlags(VkFlags); //
 
-pub struct (); //
+pub type VkCommandPoolTrimFlagsKHR = VkCommandPoolTrimFlags; //
 
 pub struct VkExternalMemoryHandleTypeFlagsNV(VkFlags); //
 
@@ -338,35 +326,35 @@ pub struct VkExternalMemoryFeatureFlagsNV(VkFlags); //
 
 pub struct VkExternalMemoryHandleTypeFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalMemoryHandleTypeFlagsKHR = VkExternalMemoryHandleTypeFlags; //
 
 pub struct VkExternalMemoryFeatureFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalMemoryFeatureFlagsKHR = VkExternalMemoryFeatureFlags; //
 
 pub struct VkExternalSemaphoreHandleTypeFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalSemaphoreHandleTypeFlagsKHR = VkExternalSemaphoreHandleTypeFlags; //
 
 pub struct VkExternalSemaphoreFeatureFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalSemaphoreFeatureFlagsKHR = VkExternalSemaphoreFeatureFlags; //
 
 pub struct VkSemaphoreImportFlags(VkFlags); //
 
-pub struct (); //
+pub type VkSemaphoreImportFlagsKHR = VkSemaphoreImportFlags; //
 
 pub struct VkExternalFenceHandleTypeFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalFenceHandleTypeFlagsKHR = VkExternalFenceHandleTypeFlags; //
 
 pub struct VkExternalFenceFeatureFlags(VkFlags); //
 
-pub struct (); //
+pub type VkExternalFenceFeatureFlagsKHR = VkExternalFenceFeatureFlags; //
 
 pub struct VkFenceImportFlags(VkFlags); //
 
-pub struct (); //
+pub type VkFenceImportFlagsKHR = VkFenceImportFlags; //
 
 pub struct VkSurfaceCounterFlagsEXT(VkFlags); //
 
@@ -396,13 +384,13 @@ pub struct VkPipelineRasterizationConservativeStateCreateFlagsEXT(VkFlags); //
 
 pub struct VkDescriptorBindingFlags(VkFlags); //
 
-pub struct (); //
+pub type VkDescriptorBindingFlagsEXT = VkDescriptorBindingFlags; //
 
 pub struct VkConditionalRenderingFlagsEXT(VkFlags); //
 
 pub struct VkResolveModeFlags(VkFlags); //
 
-pub struct (); //
+pub type VkResolveModeFlagsKHR = VkResolveModeFlags; //
 
 pub struct VkPipelineRasterizationStateStreamCreateFlagsEXT(VkFlags); //
 
@@ -412,17 +400,17 @@ pub struct VkSwapchainImageUsageFlagsANDROID(VkFlags); //
 
 pub struct VkToolPurposeFlags(VkFlags); //
 
-pub struct (); //
+pub type VkToolPurposeFlagsEXT = VkToolPurposeFlags; //
 
 pub struct VkSubmitFlags(VkFlags); //
 
-pub struct (); //
+pub type VkSubmitFlagsKHR = VkSubmitFlags; //
 
 pub struct VkImageFormatConstraintsFlagsFUCHSIA(VkFlags); //
 
 pub struct VkHostImageCopyFlags(VkFlags); //
 
-pub struct (); //
+pub type VkHostImageCopyFlagsEXT = VkHostImageCopyFlags; //
 
 pub struct VkPartitionedAccelerationStructureInstanceFlagsNV(VkFlags); //
 
@@ -454,11 +442,11 @@ pub struct VkFrameBoundaryFlagsEXT(VkFlags); //
 
 pub struct VkPresentScalingFlagsKHR(VkFlags); //
 
-pub struct (); //
+pub type VkPresentScalingFlagsEXT = VkPresentScalingFlagsKHR; //
 
 pub struct VkPresentGravityFlagsKHR(VkFlags); //
 
-pub struct (); //
+pub type VkPresentGravityFlagsEXT = VkPresentGravityFlagsKHR; //
 
 pub struct VkShaderCreateFlagsEXT(VkFlags); //
 
@@ -562,7 +550,6 @@ pub struct VkAccessFlags3KHR(VkFlags64); //
 
 pub struct VkCooperativeMatrixFlagsEXT(VkFlags); //
 
-pub type VkRemoteAddressNV = ERROR; //
 pub struct VkImageLayout(i32); //
 impl VkImageLayout {
     pub const VK_IMAGE_LAYOUT_UNDEFINED: i32 = 0;
@@ -1527,7 +1514,7 @@ impl VkStencilFaceFlagBits {
     pub const VK_STENCIL_FACE_FRONT_BIT: VkStencilFaceFlags = VkStencilFaceFlags(1);
     pub const VK_STENCIL_FACE_BACK_BIT: VkStencilFaceFlags = VkStencilFaceFlags(2);
     pub const VK_STENCIL_FACE_FRONT_AND_BACK: VkStencilFaceFlags = VkStencilFaceFlags(0);
-    pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = VkStencilFaceFlags(0);
+    pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = Self::VK_STENCIL_FACE_FRONT_AND_BACK;
 }
 
 pub type VkDescriptorPoolCreateFlagBits = VkDescriptorPoolCreateFlags; //
@@ -1562,7 +1549,7 @@ impl VkPresentModeKHR {
 pub struct VkColorSpaceKHR(i32); //
 impl VkColorSpaceKHR {
     pub const VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: i32 = 0;
-    pub const VK_COLORSPACE_SRGB_NONLINEAR_KHR: i32 = ;
+    pub const VK_COLORSPACE_SRGB_NONLINEAR_KHR: i32 = Self::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 }
 
 pub type VkDisplayPlaneAlphaFlagBitsKHR = VkDisplayPlaneAlphaFlagsKHR; //
@@ -1655,11 +1642,11 @@ impl VkDebugReportObjectTypeEXT {
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT: i32 = 26;
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT: i32 = 27;
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT: i32 = 28;
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT: i32 = ;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT: i32 = Self::VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT;
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_KHR_EXT: i32 = 29;
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_MODE_KHR_EXT: i32 = 30;
     pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT: i32 = 33;
-    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: i32 = ;
+    pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: i32 = Self::VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
 }
 
 pub struct VkDeviceMemoryReportEventTypeEXT(i32); //
@@ -1853,7 +1840,7 @@ impl VkExternalSemaphoreHandleTypeFlagBits {
     pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlags(2);
     pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlags(4);
     pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT: VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlags(8);
-    pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT: VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlags(0);
+    pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT: VkExternalSemaphoreHandleTypeFlags = Self::VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT;
     pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT: VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlags(16);
 }
 
@@ -1890,7 +1877,7 @@ impl VkFenceImportFlagBits {
 pub type VkSurfaceCounterFlagBitsEXT = VkSurfaceCounterFlagsEXT; //
 impl VkSurfaceCounterFlagBitsEXT {
     pub const VK_SURFACE_COUNTER_VBLANK_BIT_EXT: VkSurfaceCounterFlagsEXT = VkSurfaceCounterFlagsEXT(1);
-    pub const VK_SURFACE_COUNTER_VBLANK_EXT: VkSurfaceCounterFlagsEXT = VkSurfaceCounterFlagsEXT(0);
+    pub const VK_SURFACE_COUNTER_VBLANK_EXT: VkSurfaceCounterFlagsEXT = Self::VK_SURFACE_COUNTER_VBLANK_BIT_EXT;
 }
 
 pub struct VkDisplayPowerStateEXT(i32); //
@@ -2160,7 +2147,7 @@ impl VkGeometryInstanceFlagBitsKHR {
     pub const VK_GEOMETRY_INSTANCE_TRIANGLE_FLIP_FACING_BIT_KHR: VkGeometryInstanceFlagsKHR = VkGeometryInstanceFlagsKHR(2);
     pub const VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR: VkGeometryInstanceFlagsKHR = VkGeometryInstanceFlagsKHR(4);
     pub const VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_KHR: VkGeometryInstanceFlagsKHR = VkGeometryInstanceFlagsKHR(8);
-    pub const VK_GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR: VkGeometryInstanceFlagsKHR = VkGeometryInstanceFlagsKHR(0);
+    pub const VK_GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR: VkGeometryInstanceFlagsKHR = Self::VK_GEOMETRY_INSTANCE_TRIANGLE_FLIP_FACING_BIT_KHR;
 }
 
 pub type VkGeometryFlagBitsKHR = VkGeometryFlagsKHR; //
@@ -2287,15 +2274,15 @@ impl VkPerformanceCounterScopeKHR {
     pub const VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR: i32 = 0;
     pub const VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR: i32 = 1;
     pub const VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR: i32 = 2;
-    pub const VK_QUERY_SCOPE_COMMAND_BUFFER_KHR: i32 = ;
-    pub const VK_QUERY_SCOPE_RENDER_PASS_KHR: i32 = ;
-    pub const VK_QUERY_SCOPE_COMMAND_KHR: i32 = ;
+    pub const VK_QUERY_SCOPE_COMMAND_BUFFER_KHR: i32 = Self::VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR;
+    pub const VK_QUERY_SCOPE_RENDER_PASS_KHR: i32 = Self::VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR;
+    pub const VK_QUERY_SCOPE_COMMAND_KHR: i32 = Self::VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR;
 }
 
 pub type VkMemoryDecompressionMethodFlagBitsEXT = VkMemoryDecompressionMethodFlagsEXT; //
 impl VkMemoryDecompressionMethodFlagBitsEXT {
     pub const VK_MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_EXT: VkMemoryDecompressionMethodFlagsEXT = VkMemoryDecompressionMethodFlagsEXT(1);
-    pub const VK_MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_NV: VkMemoryDecompressionMethodFlagsEXT = VkMemoryDecompressionMethodFlagsEXT(0);
+    pub const VK_MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_NV: VkMemoryDecompressionMethodFlagsEXT = Self::VK_MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_EXT;
 }
 
 pub struct VkPerformanceCounterUnitKHR(i32); //
@@ -2326,9 +2313,9 @@ impl VkPerformanceCounterStorageKHR {
 pub type VkPerformanceCounterDescriptionFlagBitsKHR = VkPerformanceCounterDescriptionFlagsKHR; //
 impl VkPerformanceCounterDescriptionFlagBitsKHR {
     pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR: VkPerformanceCounterDescriptionFlagsKHR = VkPerformanceCounterDescriptionFlagsKHR(1);
-    pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR: VkPerformanceCounterDescriptionFlagsKHR = VkPerformanceCounterDescriptionFlagsKHR(0);
+    pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR: VkPerformanceCounterDescriptionFlagsKHR = Self::VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR;
     pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR: VkPerformanceCounterDescriptionFlagsKHR = VkPerformanceCounterDescriptionFlagsKHR(2);
-    pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR: VkPerformanceCounterDescriptionFlagsKHR = VkPerformanceCounterDescriptionFlagsKHR(0);
+    pub const VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR: VkPerformanceCounterDescriptionFlagsKHR = Self::VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR;
 }
 
 pub type VkAcquireProfilingLockFlagBitsKHR = VkAcquireProfilingLockFlagsKHR; //
@@ -2533,7 +2520,7 @@ impl VkPipelineStageFlagBits2 {
     pub const VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(1024);
     pub const VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(2048);
     pub const VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(4096);
-    pub const VK_PIPELINE_STAGE_2_TRANSFER_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(0);
+    pub const VK_PIPELINE_STAGE_2_TRANSFER_BIT: VkPipelineStageFlags2 = Self::VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT;
     pub const VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(8192);
     pub const VK_PIPELINE_STAGE_2_HOST_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(16384);
     pub const VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT: VkPipelineStageFlags2 = VkPipelineStageFlags2(32768);
@@ -2634,21 +2621,21 @@ impl VkFrameBoundaryFlagBitsEXT {
 pub type VkPresentScalingFlagBitsKHR = VkPresentScalingFlagsKHR; //
 impl VkPresentScalingFlagBitsKHR {
     pub const VK_PRESENT_SCALING_ONE_TO_ONE_BIT_KHR: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(1);
-    pub const VK_PRESENT_SCALING_ONE_TO_ONE_BIT_EXT: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(0);
+    pub const VK_PRESENT_SCALING_ONE_TO_ONE_BIT_EXT: VkPresentScalingFlagsKHR = Self::VK_PRESENT_SCALING_ONE_TO_ONE_BIT_KHR;
     pub const VK_PRESENT_SCALING_ASPECT_RATIO_STRETCH_BIT_KHR: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(2);
-    pub const VK_PRESENT_SCALING_ASPECT_RATIO_STRETCH_BIT_EXT: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(0);
+    pub const VK_PRESENT_SCALING_ASPECT_RATIO_STRETCH_BIT_EXT: VkPresentScalingFlagsKHR = Self::VK_PRESENT_SCALING_ASPECT_RATIO_STRETCH_BIT_KHR;
     pub const VK_PRESENT_SCALING_STRETCH_BIT_KHR: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(4);
-    pub const VK_PRESENT_SCALING_STRETCH_BIT_EXT: VkPresentScalingFlagsKHR = VkPresentScalingFlagsKHR(0);
+    pub const VK_PRESENT_SCALING_STRETCH_BIT_EXT: VkPresentScalingFlagsKHR = Self::VK_PRESENT_SCALING_STRETCH_BIT_KHR;
 }
 
 pub type VkPresentGravityFlagBitsKHR = VkPresentGravityFlagsKHR; //
 impl VkPresentGravityFlagBitsKHR {
     pub const VK_PRESENT_GRAVITY_MIN_BIT_KHR: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(1);
-    pub const VK_PRESENT_GRAVITY_MIN_BIT_EXT: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(0);
+    pub const VK_PRESENT_GRAVITY_MIN_BIT_EXT: VkPresentGravityFlagsKHR = Self::VK_PRESENT_GRAVITY_MIN_BIT_KHR;
     pub const VK_PRESENT_GRAVITY_MAX_BIT_KHR: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(2);
-    pub const VK_PRESENT_GRAVITY_MAX_BIT_EXT: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(0);
+    pub const VK_PRESENT_GRAVITY_MAX_BIT_EXT: VkPresentGravityFlagsKHR = Self::VK_PRESENT_GRAVITY_MAX_BIT_KHR;
     pub const VK_PRESENT_GRAVITY_CENTERED_BIT_KHR: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(4);
-    pub const VK_PRESENT_GRAVITY_CENTERED_BIT_EXT: VkPresentGravityFlagsKHR = VkPresentGravityFlagsKHR(0);
+    pub const VK_PRESENT_GRAVITY_CENTERED_BIT_EXT: VkPresentGravityFlagsKHR = Self::VK_PRESENT_GRAVITY_CENTERED_BIT_KHR;
 }
 
 pub type VkPhysicalDeviceSchedulingControlsFlagBitsARM = VkPhysicalDeviceSchedulingControlsFlagsARM; //
@@ -2867,7 +2854,7 @@ impl VkVideoEncodeH264RateControlFlagBitsKHR {
 pub type VkHostImageCopyFlagBits = VkHostImageCopyFlags; //
 impl VkHostImageCopyFlagBits {
     pub const VK_HOST_IMAGE_COPY_MEMCPY_BIT: VkHostImageCopyFlags = VkHostImageCopyFlags(1);
-    pub const VK_HOST_IMAGE_COPY_MEMCPY: VkHostImageCopyFlags = VkHostImageCopyFlags(0);
+    pub const VK_HOST_IMAGE_COPY_MEMCPY: VkHostImageCopyFlags = Self::VK_HOST_IMAGE_COPY_MEMCPY_BIT;
 }
 
 pub struct VkPartitionedAccelerationStructureOpTypeNV(i32); //
@@ -3250,7 +3237,7 @@ impl VkDeviceFaultAddressTypeKHR {
 pub struct VkDeviceFaultVendorBinaryHeaderVersionKHR(i32); //
 impl VkDeviceFaultVendorBinaryHeaderVersionKHR {
     pub const VK_DEVICE_FAULT_VENDOR_BINARY_HEADER_VERSION_ONE_KHR: i32 = 1;
-    pub const VK_DEVICE_FAULT_VENDOR_BINARY_HEADER_VERSION_ONE_EXT: i32 = ;
+    pub const VK_DEVICE_FAULT_VENDOR_BINARY_HEADER_VERSION_ONE_EXT: i32 = Self::VK_DEVICE_FAULT_VENDOR_BINARY_HEADER_VERSION_ONE_KHR;
 }
 
 pub type VkIndirectCommandsLayoutUsageFlagBitsEXT = VkIndirectCommandsLayoutUsageFlagsEXT; //
@@ -3617,7 +3604,7 @@ impl VkGpaPerfBlockAMD {
     pub const VK_GPA_PERF_BLOCK_GCR_AMD: i32 = 43;
     pub const VK_GPA_PERF_BLOCK_PH_AMD: i32 = 44;
     pub const VK_GPA_PERF_BLOCK_UTCL1_AMD: i32 = 45;
-    pub const VK_GPA_PERF_BLOCK_GE1_AMD: i32 = ;
+    pub const VK_GPA_PERF_BLOCK_GE1_AMD: i32 = Self::VK_GPA_PERF_BLOCK_GE_AMD;
     pub const VK_GPA_PERF_BLOCK_GE_DIST_AMD: i32 = 46;
     pub const VK_GPA_PERF_BLOCK_GE_SE_AMD: i32 = 47;
     pub const VK_GPA_PERF_BLOCK_DF_MALL_AMD: i32 = 48;
@@ -3629,7 +3616,7 @@ impl VkGpaPerfBlockAMD {
     pub const VK_GPA_PERF_BLOCK_EACPWD_AMD: i32 = 54;
     pub const VK_GPA_PERF_BLOCK_EASE_AMD: i32 = 55;
     pub const VK_GPA_PERF_BLOCK_RLCUSER_AMD: i32 = 56;
-    pub const VK_GPA_PERF_BLOCK_RLCLOCAL_AMD: i32 = ;
+    pub const VK_GPA_PERF_BLOCK_RLCLOCAL_AMD: i32 = Self::VK_GPA_PERF_BLOCK_RLCUSER_AMD;
 }
 
 pub struct VkGpaSampleTypeAMD(i32); //

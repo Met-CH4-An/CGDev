@@ -6,48 +6,65 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::RangeInclusive;
 use crate::registry_comment_elt::RegistryCommentElt;
-use crate::registry_type::RegistryType;
+use crate::registry_element_enum::RegistryElementEnum;
+use crate::registry_element_name::RegistryElementName;
+use crate::registry_element_type::RegistryElementType;
 
-pub(crate) enum RegistryTypesElement {
-    TYPE(RegistryType),
+pub(crate) enum RegistryTypeBodyWithEnumElement  {
+    TYPE(RegistryElementType),
+    ENUM(RegistryElementEnum),
     COMMENT_ELT(RegistryCommentElt),
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Types = element types { CommentAttr?, (Type | CommentElt)* }
+/// TypeBodyWithEnum =
+///         mixed {
+///           element type { TypeName_t }
+///         }*,
+///         mixed {
+///           element name { attribute alias { text }?, TypeName_t }?
+///         }?,
+///         mixed {
+///           ( element type { TypeName_t }
+///             | element enum { VkDefineOrEnumName_t }
+///             | CommentElt
+///           )
+///         }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryTypes {
-    /// CommentAttr?,
-    pub(crate) comment_rng: RangeInclusive<usize>,
+pub(crate) struct RegistryTypeBodyWithEnum {
+    /// element type { TypeName_t }
+    pub(crate) element_type_vec: Vec<RegistryElementType>,
+    /// element name { attribute alias { text }?, TypeName_t }?
+    pub(crate) element_name: RegistryElementName,
     ///
-    pub(crate) element_vec: Vec<RegistryTypesElement>,
+    pub(crate) element_vec: Vec<RegistryTypeBodyWithEnumElement>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Публичные ассоциированные функции.
 // Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryTypeBodyWithEnum {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Публичные методы.
 // Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryTypeBodyWithEnum {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Приватные ассоциированные функции.
 // Private associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {
+impl RegistryTypeBodyWithEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn s_create() -> Self {
         Self {
-            comment_rng: 1 ..= 0,
+            element_type_vec: Vec::new(),
+            element_name: RegistryElementName::s_create(),
             element_vec: Vec::new(),
         }
     }
@@ -57,4 +74,4 @@ impl RegistryTypes {
 // Приватные методы.
 // Private methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypes {}
+impl RegistryTypeBodyWithEnum {}
