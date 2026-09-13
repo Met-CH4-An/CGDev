@@ -9,7 +9,7 @@
 use std::marker::PhantomData;
 use std::sync::Arc;
 use crate::wvk_call_with_check;
-use crate::wvk:: { WvkEnvironment_0_1_0_0 };
+use crate::wvk:: { WvkBackend_0_1_0_0 };
 use crate::wvk_error::{ WvkError, WvkErrorType };
 use crate::dispatch_table::{ WvkDispatchTableBuilder, WVK_DISPATCH_TABLE_INSTANCE };
 use crate::wvk_instance::wvk_instance_builder::WvkInstanceBuilder;
@@ -22,7 +22,7 @@ use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 /// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkInstance<TWvkBackend>
-where TWvkBackend : WvkEnvironment_0_1_0_0 {
+where TWvkBackend : WvkBackend_0_1_0_0 {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
 /// Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkInstance<TWvkBackend>
-where TWvkBackend : WvkEnvironment_0_1_0_0 {
+where TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,16 +41,16 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
-        wvk_call_with_check!(
-            self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, std::ptr::null_mut())
-        );
+        //wvk_call_with_check!(
+        //    self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, std::ptr::null_mut())
+        //);
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Выделить место для данных, исходя из полученного количества.
         // Allocate space for data based on the received quantity.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        let mut vk_physical_devices_ = Vec::<svk::svk_types::VkPhysicalDevice>::with_capacity(count_ as usize);
+        let mut vk_physical_devices_ = Vec::<svk::VkPhysicalDevice>::with_capacity(count_ as usize);
         unsafe { vk_physical_devices_.set_len(count_ as usize) }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,9 +58,9 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
         // We get a list of physical devices VkPhysicalDevice.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        wvk_call_with_check!(
-            self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, vk_physical_devices_.as_mut_ptr())
-        );
+        //wvk_call_with_check!(
+        //    self.wvk_dispatch_table_instance.vkEnumeratePhysicalDevices(self.vk_instance, &mut count_, vk_physical_devices_.as_mut_ptr())
+        //);
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Перебираем полученный список физических устройств VkPhysicalDevice и формируем обертки WvkPhysicalDevice.
@@ -88,20 +88,20 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
 /// Private associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkInstance<TWvkBackend>
-where TWvkBackend : WvkEnvironment_0_1_0_0 {
+where TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_instance) fn s_create(wvk_instance_builder : & WvkInstanceBuilder<TWvkBackend>) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError> {
+    pub(in crate::wvk_instance) fn s_create(wvk_instance_builder: & WvkInstanceBuilder<TWvkBackend>) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError> {
         // Создаем непосредственно VkInstance.
         // Create VkInstance directly.
         let vk_instance_ = Self::s_createVkInstance(&wvk_instance_builder)?;
 
-        let wvk_dispatch_table_instance_ = WvkDispatchTableBuilder::<TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>::s_create(vk_instance_).build()?;
+        //let wvk_dispatch_table_instance_ = WvkDispatchTableBuilder::<TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>::s_create(vk_instance_, &wvk_instance_builder.wvk_library.wvk_dispatch_table_global).build()?;
 
         let self_ = Self {
             phantom_data : PhantomData,
-            wvk_dispatch_table_instance : wvk_dispatch_table_instance_,
+            //wvk_dispatch_table_instance : wvk_dispatch_table_instance_,
             vk_instance : vk_instance_,
         };
 
@@ -147,8 +147,8 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
         // в вулкане можно описать своё приложение через VkApplicationInfo
         // In Vulkan, you can describe your application using VkApplicationInfo
         let vk_application_info_ = svk::VkApplicationInfo {
-            sType : svk::VkStructureTypeValue::VK_STRUCTURE_TYPE_APPLICATION_INFO,
-            pNext : std::ptr::null(),
+            sType : svk::VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO,
+            pNext : std::ptr::null_mut(),
             pApplicationName : application_name_cchar_ptr_,
             applicationVersion : builder.application_version,
             pEngineName : engine_name_cchar_ptr_,
@@ -159,10 +159,10 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
         // для создания VkInstance описываем его через VkInstanceCreateInfo
         // to create a VkInstance, we describe it using VkInstanceCreateInfo
         let vk_create_info_ = svk::VkInstanceCreateInfo {
-            sType : svk::VkStructureTypeValue::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+            sType : svk::VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
             //sType : svk::VkStructureTypeValue::VK_STRUCTURE_TYPE_APPLICATION_INFO,
             pNext : p_next_,
-            flags : 0,
+            flags : svk::VkInstanceCreateFlags(0),
             pApplicationInfo : &vk_application_info_,
             enabledLayerCount : 0,
             ppEnabledLayerNames : std::ptr::null(),
@@ -199,11 +199,11 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
                 // описываем структуру VkDebugUtilsMessengerCreateInfoEXT
                 // describe the VkDebugUtilsMessengerCreateInfoEXT structure
                 let vk_create_info_ = svk::VkDebugUtilsMessengerCreateInfoEXT {
-                    sType: svk::VkStructureTypeValue::VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-                    pNext: std::ptr::null(),
-                    flags: 0,
-                    messageSeverity: svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-                    messageType: svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
+                    sType: svk::VkStructureType::VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+                    pNext: std::ptr::null_mut(),
+                    flags: svk::VkDebugUtilsMessengerCreateFlagsEXT(0),
+                    messageSeverity: svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                    messageType: svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
                     pfnUserCallback: Self::s_wvkDebugUtilsMessengerCallbackEXT,
                     pUserData: std::ptr::null_mut(),
                 };
@@ -230,34 +230,34 @@ where TWvkBackend : WvkEnvironment_0_1_0_0 {
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     unsafe extern "system" fn s_wvkDebugUtilsMessengerCallbackEXT(
-        messageSeverity : svk::svk_types::VkDebugUtilsMessageSeverityFlagsEXT,
-        messageTypes : svk::svk_types::VkDebugUtilsMessageTypeFlagsEXT,
-        pCallbackData : *const svk::svk_structures::VkDebugUtilsMessengerCallbackDataEXT,
+        messageSeverity : svk::VkDebugUtilsMessageSeverityFlagsEXT,
+        messageTypes : svk::VkDebugUtilsMessageTypeFlagsEXT,
+        pCallbackData : *const svk::VkDebugUtilsMessengerCallbackDataEXT,
         _pUserData : *mut std::ffi::c_void)
         -> bool {
 
         let mut message_print_ = String::new();
 
-        if (messageSeverity & svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT {
+        if (messageSeverity & svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) == svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT {
             message_print_.push_str("[INFO] ");
         }
-        if (messageSeverity & svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT {
+        else if (messageSeverity & svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) == svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT {
             message_print_.push_str("[VERBOSE] ");
         }
-        if (messageSeverity & svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT {
+        else if (messageSeverity & svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) == svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT {
             message_print_.push_str("[WARNING] ");
         }
-        if (messageSeverity & svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageSeverityFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT {
+        else if (messageSeverity & svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) == svk::VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT {
             message_print_.push_str("[ERROR] ");
         }
 
-        if (messageTypes & svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT {
+        if (messageTypes & svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) == svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT {
             message_print_.push_str("[GENERAL] ");
         }
-        if (messageTypes & svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT {
+        if (messageTypes & svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) == svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT {
             message_print_.push_str("[PERFORMANCE] ");
         }
-        if (messageTypes & svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) == svk::svk_enums::VkDebugUtilsMessageTypeFlagBitsEXTValue::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT {
+        if (messageTypes & svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) == svk::VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT {
             message_print_.push_str("[VALIDATION] ");
         }
 

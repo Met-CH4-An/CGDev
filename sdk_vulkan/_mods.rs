@@ -10,7 +10,10 @@
 // файл svk.rs
 // file svk.rs
 mod svk;
+pub use svk::*;
 
+mod svk_commands;
+pub use svk_commands::*;
 // файл p.rs
 // file svk.rs
 //#[path = "parser/_mods.rs"]

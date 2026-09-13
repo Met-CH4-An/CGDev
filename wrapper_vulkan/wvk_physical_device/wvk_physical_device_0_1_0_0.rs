@@ -8,7 +8,7 @@
 
 use std::marker::PhantomData;
 use std::mem::MaybeUninit;
-use crate::wvk::{ WvkEnvironment_0_1_0_0 };
+use crate::wvk::{ WvkBackend_0_1_0_0 };
 use crate::wvk_error::WvkError;
 use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
@@ -19,7 +19,7 @@ use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBu
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment_0_1_0_0 {
+TWvkBackend : WvkBackend_0_1_0_0 {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,14 +28,14 @@ TWvkBackend : WvkEnvironment_0_1_0_0 {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment_0_1_0_0 {
+TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkGetPhysicalDeviceProperties(&self) -> svk::svk_structures::VkPhysicalDeviceProperties {
-        let mut vk_props_ = MaybeUninit::<svk::svk_structures::VkPhysicalDeviceProperties>::uninit();
+    pub fn wvkGetPhysicalDeviceProperties(&self) -> svk::VkPhysicalDeviceProperties {
+        let mut vk_props_ = MaybeUninit::<svk::VkPhysicalDeviceProperties>::uninit();
 
-        self.wvk_instance_arc.getDispatchTable().vkGetPhysicalDeviceProperties(self.vk_physical_device, vk_props_.as_mut_ptr());
+        //self.wvk_instance_arc.getDispatchTable().vkGetPhysicalDeviceProperties(self.vk_physical_device, vk_props_.as_mut_ptr());
 
         unsafe { vk_props_.assume_init() }
     }
@@ -52,7 +52,7 @@ TWvkBackend : WvkEnvironment_0_1_0_0 {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment_0_1_0_0 {
+TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

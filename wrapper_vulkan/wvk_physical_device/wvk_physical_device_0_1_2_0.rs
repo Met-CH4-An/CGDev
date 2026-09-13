@@ -6,7 +6,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::wvk::WvkEnvironment_0_1_2_0;
+use crate::wvk::WvkBackend_0_1_2_0;
 use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,5 +20,5 @@ use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment_0_1_2_0 {
+TWvkBackend : WvkBackend_0_1_2_0 {
 }

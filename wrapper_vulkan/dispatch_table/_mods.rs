@@ -16,8 +16,8 @@ pub(crate) mod global;
 #[path = "instance/_mods.rs"]
 pub(crate) mod instance;
 
-// файл wvk_dispatch_table.rs
-// file wvk_dispatch_table.rs
+// файл dispatch_table
+// file dispatch_table
 pub(crate) mod wvk_dispatch_table;
 pub use wvk_dispatch_table::WvkDispatchTable;
 
@@ -42,22 +42,12 @@ pub struct WVK_DISPATCH_TABLE_DEVICE;
 // private area
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mod sealed {
-    pub trait Sealed {}
+mod private {
+    pub trait WvkDispatchTableLevelPrivate {}
 }
 
-pub trait WvkDispatchTableLevel : sealed::Sealed {}
+pub trait WvkDispatchTableLevel : private::WvkDispatchTableLevelPrivate {}
 
-/*pub trait WvkDispatchTableGlobal : WvkDispatchTableLevel {}
-pub trait WvkDispatchTableInstance : WvkDispatchTableGlobal {}
-pub trait WvkDispatchTableDevice : WvkDispatchTableInstance {}*/
-
-pub trait WvkDispatchTableGlobal : WvkDispatchTableLevel {
-    fn a(){}
-}
-pub trait WvkDispatchTableInstance : WvkDispatchTableLevel {
-    fn a(){}
-}
-pub trait WvkDispatchTableDevice : WvkDispatchTableLevel {
-    fn a(){}
-}
+pub trait WvkDispatchTableGlobal : WvkDispatchTableLevel {}
+pub trait WvkDispatchTableInstance : WvkDispatchTableLevel {}
+pub trait WvkDispatchTableDevice : WvkDispatchTableLevel {}

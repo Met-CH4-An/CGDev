@@ -6,11 +6,7 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::dispatch_table::{sealed, WvkDispatchTableLevel, WvkDispatchTableGlobal, WVK_DISPATCH_TABLE_GLOBAL};
-
-// файл wvk_dispatch_table_global.rs
-// file wvk_dispatch_table_global.rs
-pub(crate) mod wvk_dispatch_table_global;
+use crate::dispatch_table::{private, WvkDispatchTableLevel, WvkDispatchTableGlobal, WVK_DISPATCH_TABLE_GLOBAL};
 
 // файл wvk_dispatch_table_global_0_1_0_0.rs
 // file wvk_dispatch_table_global_0_1_0_0.rs
@@ -25,6 +21,6 @@ pub(crate) mod wvk_dispatch_table_global_0_1_1_0;
 // private area
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_DISPATCH_TABLE_GLOBAL {}
+impl private::WvkDispatchTableLevelPrivate for WVK_DISPATCH_TABLE_GLOBAL {}
 impl WvkDispatchTableLevel for WVK_DISPATCH_TABLE_GLOBAL {}
 impl WvkDispatchTableGlobal for WVK_DISPATCH_TABLE_GLOBAL {}

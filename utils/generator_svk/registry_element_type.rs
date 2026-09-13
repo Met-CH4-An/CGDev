@@ -9,11 +9,15 @@
 use std::ops::RangeInclusive;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// <type>type</type>
+/// prefix<type>type</type>postfix
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryElementType {
+    /// const
+    pub(crate) prefix_rng: RangeInclusive<usize>,
     /// type
     pub(crate) type_rng: RangeInclusive<usize>,
+    /// *
+    pub(crate) postfix_rng: RangeInclusive<usize>,
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +42,9 @@ impl RegistryElementType {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn s_create() -> Self {
         Self {
+            prefix_rng: 1 ..= 0,
             type_rng: 1 ..= 0,
+            postfix_rng: 1 ..= 0,
         }
     }
 }

@@ -6,7 +6,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::wvk::{WvkEnvironment_0_1_1_0};
+use crate::wvk::{WvkBackend_0_1_1_0};
 use crate::dispatch_table::{WvkDispatchTableGlobal};
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 
@@ -21,12 +21,12 @@ use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
-    TWvkBackend : WvkEnvironment_0_1_1_0,
-    TLevel : WvkDispatchTableGlobal, {
+    TWvkBackend: WvkBackend_0_1_1_0,
+    TLevel: WvkDispatchTableGlobal, {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn vkEnumerateInstanceVersion(&self, pApiVersion: *mut u32) -> svk::svk_enums::VkResult {
+    pub(crate) fn vkEnumerateInstanceVersion(&self, pApiVersion: *mut u32) -> svk::VkResult {
         unsafe { self.vk_enumerate_instance_version.assume_init()(pApiVersion) }
     }
 }
@@ -42,6 +42,6 @@ where
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where 
-TWvkBackend : WvkEnvironment_0_1_1_0,
-TLevel : WvkDispatchTableGlobal, {}
+TWvkBackend: WvkBackend_0_1_1_0,
+TLevel: WvkDispatchTableGlobal, {}
 

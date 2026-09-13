@@ -8,7 +8,7 @@
 
 use std::marker::PhantomData;
 use std::sync::Arc;
-use crate::wvk::WvkEnvironment;
+use crate::wvk::WvkBackend;
 use crate::wvk_instance::WvkInstance;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,7 +16,7 @@ use crate::wvk_instance::WvkInstance;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct WvkPhysicalDevice<TWvkBackend>
 where
-TWvkBackend: WvkEnvironment {
+TWvkBackend: WvkBackend {
     pub(in crate::wvk_physical_device) phantom_data: PhantomData<TWvkBackend>,
 
     /// Обёртка моего враппера WvkInstance для управления VkInstance. Нужна, т.к. хранит таблицу диспетчеризации инстанс команд вулкана.
@@ -24,5 +24,5 @@ TWvkBackend: WvkEnvironment {
     pub(in crate::wvk_physical_device) wvk_instance_arc: Arc<WvkInstance<TWvkBackend>>,
     /// Полученный через vkEnumeratePhysicalDevices тип физического устройства. VkPhysicalDevice
     /// Physical device type obtained via vkEnumeratePhysicalDevices. VkPhysicalDevice
-    pub(in crate::wvk_physical_device) vk_physical_device : svk::svk_types::VkPhysicalDevice,
+    pub(in crate::wvk_physical_device) vk_physical_device : svk::VkPhysicalDevice,
 }

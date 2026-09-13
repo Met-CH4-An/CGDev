@@ -6,7 +6,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::wvk::{WvkEnvironment_0_1_0_0};
+use crate::wvk::{WvkBackend_0_1_0_0};
 use crate::dispatch_table::{WvkDispatchTableGlobal};
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 
@@ -21,13 +21,13 @@ use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
-    TWvkBackend : WvkEnvironment_0_1_0_0,
-    TLevel : WvkDispatchTableGlobal, {
+    TWvkBackend: WvkBackend_0_1_0_0,
+    TLevel: WvkDispatchTableGlobal, {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[inline(always)]
-    pub(crate) fn vkGetInstanceProcAddr(&self, instance: svk::svk_types::VkInstance, pName: *const std::ffi::c_char) -> *mut std::ffi::c_void {
+    pub(crate) fn vkGetInstanceProcAddr(&self, instance: svk::VkInstance, pName: *const std::ffi::c_char) -> *mut std::ffi::c_void {
         unsafe { self.vk_get_instance_proc_addr.assume_init()(instance, pName) }
     }
 
@@ -35,7 +35,7 @@ where
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[inline(always)]
-    pub(crate) fn vkEnumerateInstanceLayerProperties(&self, pPropertyCount: *mut u32, pProperties: *mut svk::svk_structures::VkLayerProperties) -> svk::svk_enums::VkResult {
+    pub(crate) fn vkEnumerateInstanceLayerProperties(&self, pPropertyCount: *mut u32, pProperties: *mut svk::VkLayerProperties) -> svk::VkResult {
         unsafe { self.vk_enumerate_instance_layer_properties.assume_init()(pPropertyCount, pProperties) }
     }
 
@@ -43,7 +43,7 @@ where
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[inline(always)]
-    pub(crate) fn vkEnumerateInstanceExtensionProperties(&self, pLayerName: *const std::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut svk::svk_structures::VkExtensionProperties) -> svk::svk_enums::VkResult {
+    pub(crate) fn vkEnumerateInstanceExtensionProperties(&self, pLayerName: *const std::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut svk::VkExtensionProperties) -> svk::VkResult {
         unsafe { self.vk_enumerate_instance_extension_properties.assume_init()(pLayerName, pPropertyCount, pProperties) }
     }
 
@@ -51,7 +51,7 @@ where
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #[inline(always)]
-    pub(crate) fn vkCreateInstance(&self, pCreateInfo: *const svk::svk_structures::VkInstanceCreateInfo, pAllocator: *const svk::svk_structures::VkAllocationCallbacks, pInstance: *mut svk::svk_types::VkInstance) -> svk::svk_enums::VkResult {
+    pub(crate) fn vkCreateInstance(&self, pCreateInfo: *const svk::VkInstanceCreateInfo, pAllocator: *const svk::VkAllocationCallbacks, pInstance: *mut svk::VkInstance) -> svk::VkResult {
         unsafe { self.vk_create_instance.assume_init()(pCreateInfo, pAllocator, pInstance) }
     }
 
@@ -68,5 +68,5 @@ where
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
-TWvkBackend : WvkEnvironment_0_1_0_0,
-TLevel : WvkDispatchTableGlobal, {}
+TWvkBackend: WvkBackend_0_1_0_0,
+TLevel: WvkDispatchTableGlobal, {}

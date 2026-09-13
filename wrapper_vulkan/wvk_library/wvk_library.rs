@@ -7,51 +7,34 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::marker::PhantomData;
-use crate::wvk::{ WvkEnvironment };
+use crate::wvk::{WvkBackend};
 use crate::wvk_error::{ WvkError };
-use crate::dispatch_table::{WvkDispatchTable, WVK_DISPATCH_TABLE_GLOBAL};
-use crate::dispatch_table::wvk_dispatch_table_builder::WvkDispatchTableBuilder;
+use crate::wvk_library::dispatch_table::{WvkDispatchTable};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct WvkLibrary<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment {
+TWvkBackend : WvkBackend {
     pub(in crate::wvk_library) phantom : PhantomData<TWvkBackend>,
     /// Таблица функций вулкана, которые создаются без инстанса и без логического устройства. Глобальные функции.
     /// Table of Vulcan functions that are created without an instance and without a logical device. Global functions.
-    pub(in crate::wvk_library) wvk_dispatch_table_global : WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>,
+    pub(crate) wvk_dispatch_table : WvkDispatchTable<TWvkBackend>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkLibrary<TWvkBackend>
 where
-TWvkBackend : WvkEnvironment {
-}
+    TWvkBackend : WvkBackend {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(in crate::wvk_library) fn create() -> Result<Self, WvkError> {
+        let wvk_dispatch_table_ = WvkDispatchTable::<TWvkBackend>::create()?;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-TWvkBackend : WvkEnvironment {
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-// private area
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные ассоциированные функции.
-/// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-TWvkBackend : WvkEnvironment {
+        Ok(Self{
+            phantom : PhantomData,
+            wvk_dispatch_table : wvk_dispatch_table_,
+        })
+    }
 }

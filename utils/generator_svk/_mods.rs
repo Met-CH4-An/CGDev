@@ -58,10 +58,6 @@ mod registry_type_body;
 // file registry_type_body_with_enum.rs
 mod registry_type_body_with_enum;
 
-// файл registry_type_body_with_enum_element.rs
-// file registry_type_body_with_enum_element.rs
-mod registry_type_body_with_enum_element;
-
 // файл registry_type_base_type.rs
 // file registry_type_base_type.rs
 mod registry_type_base_type;

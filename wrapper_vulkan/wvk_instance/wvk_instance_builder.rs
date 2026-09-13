@@ -8,16 +8,16 @@
 
 use std::borrow::Cow;
 use std::sync::Arc;
-use crate::wvk::{WvkEnvironment, WvkEnvironment_0_1_0_0 };
+use crate::wvk::{WvkBackend, WvkBackend_0_1_0_0};
 use crate::wvk_error::WvkError;
-use crate::wvk_library::wvk_library::WvkLibrary;
+use crate::wvk_library::WvkLibrary;
 use crate::wvk_instance::wvk_instance::WvkInstance;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub struct WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkEnvironment {
+where TWvkBackend : WvkBackend {
     /// Ссылка на библиотеку врапера, с глобальными функциями.
     /// Link to the wrapper library with global functions.
     pub(in crate::wvk_instance) wvk_library : &'a WvkLibrary<TWvkBackend>,
@@ -40,7 +40,7 @@ where TWvkBackend : WvkEnvironment {
 /// Public associated functions.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkEnvironment {
+where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,13 +60,13 @@ where TWvkBackend : WvkEnvironment {
 /// Public methods.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkEnvironment {
+where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn build(self) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError>
     where 
-    TWvkBackend : WvkEnvironment_0_1_0_0 {
+    TWvkBackend : WvkBackend_0_1_0_0 {
         WvkInstance::s_create(&self)
     }
 

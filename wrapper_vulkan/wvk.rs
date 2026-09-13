@@ -22,79 +22,90 @@ mod sealed {
 // private area
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-pub trait WvkEnvironment : sealed::Sealed {
+mod private {
+    pub trait WvkBackendPrivate {}
+}
+
+pub trait WvkBackend : private::WvkBackendPrivate {
     const WVK_ENCODED_VULKAN_VERSION : u32;
 }
-pub trait WvkEnvironment_0_1_0_0 : WvkEnvironment {}
-pub trait WvkEnvironment_0_1_1_0 : WvkEnvironment_0_1_0_0 {}
-pub trait WvkEnvironment_0_1_2_0 : WvkEnvironment_0_1_1_0 {}
-pub trait WvkEnvironment_0_1_3_0 : WvkEnvironment_0_1_2_0 {}
-pub trait WvkEnvironment_0_1_4_0 : WvkEnvironment_0_1_3_0 {}
+pub trait WvkBackend_0_1_0_0 : WvkBackend {}
+pub trait WvkBackend_0_1_1_0 : WvkBackend_0_1_0_0 {}
+pub trait WvkBackend_0_1_2_0 : WvkBackend_0_1_1_0 {}
+pub trait WvkBackend_0_1_3_0 : WvkBackend_0_1_2_0 {}
+pub trait WvkBackend_0_1_4_0 : WvkBackend_0_1_3_0 {}
+pub trait WvkBackend_Max : WvkBackend_0_1_4_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Вулкан 1.0
 // Vulkan 1.0
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_0_1_0_0 {}
-impl WvkEnvironment for WVK_0_1_0_0 {
+impl private::WvkBackendPrivate for WVK_0_1_0_0 {}
+impl WvkBackend for WVK_0_1_0_0 {
     const WVK_ENCODED_VULKAN_VERSION : u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 0, 0);
 }
-impl WvkEnvironment_0_1_0_0 for WVK_0_1_0_0 {}
+impl WvkBackend_0_1_0_0 for WVK_0_1_0_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Вулкан 1.1
 // Vulkan 1.1
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_0_1_1_0 {}
-impl WvkEnvironment for WVK_0_1_1_0 {
+impl private::WvkBackendPrivate for WVK_0_1_1_0 {}
+impl WvkBackend for WVK_0_1_1_0 {
     const WVK_ENCODED_VULKAN_VERSION : u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 1, 0);
 }
-impl WvkEnvironment_0_1_0_0 for WVK_0_1_1_0 {}
-impl WvkEnvironment_0_1_1_0 for WVK_0_1_1_0 {}
+impl WvkBackend_0_1_0_0 for WVK_0_1_1_0 {}
+impl WvkBackend_0_1_1_0 for WVK_0_1_1_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Вулкан 1.2
 // Vulkan 1.2
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_0_1_2_0 {}
-impl WvkEnvironment for WVK_0_1_2_0 {
+impl private::WvkBackendPrivate for WVK_0_1_2_0 {}
+impl WvkBackend for WVK_0_1_2_0 {
     const WVK_ENCODED_VULKAN_VERSION : u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 2, 0);
 }
-impl WvkEnvironment_0_1_0_0 for WVK_0_1_2_0 {}
-impl WvkEnvironment_0_1_1_0 for WVK_0_1_2_0 {}
-impl WvkEnvironment_0_1_2_0 for WVK_0_1_2_0 {}
+impl WvkBackend_0_1_0_0 for WVK_0_1_2_0 {}
+impl WvkBackend_0_1_1_0 for WVK_0_1_2_0 {}
+impl WvkBackend_0_1_2_0 for WVK_0_1_2_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Вулкан 1.3
 // Vulkan 1.3
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_0_1_3_0 {}
-impl WvkEnvironment for WVK_0_1_3_0 {
+impl private::WvkBackendPrivate for WVK_0_1_3_0 {}
+impl WvkBackend for WVK_0_1_3_0 {
     const WVK_ENCODED_VULKAN_VERSION : u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 3, 0);
 }
-impl WvkEnvironment_0_1_0_0 for WVK_0_1_3_0 {}
-impl WvkEnvironment_0_1_1_0 for WVK_0_1_3_0 {}
-impl WvkEnvironment_0_1_2_0 for WVK_0_1_3_0 {}
-impl WvkEnvironment_0_1_3_0 for WVK_0_1_3_0 {}
+impl WvkBackend_0_1_0_0 for WVK_0_1_3_0 {}
+impl WvkBackend_0_1_1_0 for WVK_0_1_3_0 {}
+impl WvkBackend_0_1_2_0 for WVK_0_1_3_0 {}
+impl WvkBackend_0_1_3_0 for WVK_0_1_3_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Вулкан 1.4
 // Vulkan 1.4
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-impl sealed::Sealed for WVK_0_1_4_0 {}
-impl WvkEnvironment for WVK_0_1_4_0 {
+impl private::WvkBackendPrivate for WVK_0_1_4_0 {}
+impl WvkBackend for WVK_0_1_4_0 {
     const WVK_ENCODED_VULKAN_VERSION: u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 4, 0);
 }
-impl WvkEnvironment_0_1_0_0 for WVK_0_1_4_0 {}
-impl WvkEnvironment_0_1_1_0 for WVK_0_1_4_0 {}
-impl WvkEnvironment_0_1_2_0 for WVK_0_1_4_0 {}
-impl WvkEnvironment_0_1_3_0 for WVK_0_1_4_0 {}
-impl WvkEnvironment_0_1_4_0 for WVK_0_1_4_0 {}
+impl WvkBackend_0_1_0_0 for WVK_0_1_4_0 {}
+impl WvkBackend_0_1_1_0 for WVK_0_1_4_0 {}
+impl WvkBackend_0_1_2_0 for WVK_0_1_4_0 {}
+impl WvkBackend_0_1_3_0 for WVK_0_1_4_0 {}
+impl WvkBackend_0_1_4_0 for WVK_0_1_4_0 {}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+impl WvkBackend_Max for WVK_0_1_4_0 {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
@@ -111,8 +122,8 @@ macro_rules! wvk_call_with_check {
     ($vk_command : expr) => {{
         let vk_result_ = $vk_command;
 
-        if vk_result_ != svk::VkResultValue::VK_SUCCESS {
-            return Err(WvkError::createWithDescription(WvkErrorType::WVK_VK_RESULT(vk_result_), &format!("Не удалось выполнить {}: {}.", stringify!($vk_command).replace("\n", " "), vk_result_)))
+        if vk_result_ != svk::VkResult::VK_SUCCESS {
+            return Err(WvkError::createWithDescription(WvkErrorType::WVK_VK_RESULT(vk_result_), &format!("Не удалось выполнить {}: {:?}.", stringify!($vk_command).replace("\n", " "), vk_result_)))
         }
     }};
 }
