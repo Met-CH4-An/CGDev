@@ -6,4 +6,5 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-pub(crate) mod VK_EXT_debug_utils;
+mod vk_ext_debug_utils;
+pub(crate) use vk_ext_debug_utils::VkExtDebugUtils;

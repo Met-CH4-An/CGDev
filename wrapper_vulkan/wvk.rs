@@ -111,8 +111,18 @@ impl WvkBackend_Max for WVK_0_1_4_0 {}
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-pub(crate) const WRAPPER_VULKAN_NAME : &'static CStr = c"Wrapper Vulkan: WVK";
+pub(crate) const WRAPPER_VULKAN_NAME : &'static str = "Wrapper Vulkan: WVK";
 pub(crate) const WRAPPER_VULKAN_NAME_COW : Cow<'static, CStr> = Cow::Borrowed(c"Wrapper Vulkan: WVK");
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#[macro_export]
+macro_rules! wvk_call {
+    ($vk_command : expr) => {{
+        $vk_command;
+    }};
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //

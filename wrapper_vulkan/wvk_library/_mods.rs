@@ -17,6 +17,9 @@ pub use wvk_library_builder::WvkLibraryBuilder;
 
 mod wvk_library_0_1_0_0;
 mod wvk_library_0_1_1_0;
+mod wvk_library_0_1_2_0;
+mod wvk_library_0_1_3_0;
+mod wvk_library_0_1_4_0;
 
 #[cfg(test)]
 mod _tests;

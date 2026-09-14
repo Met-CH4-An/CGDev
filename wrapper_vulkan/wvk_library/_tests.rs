@@ -2,7 +2,6 @@
 // Copyright (c) 2026 None
 
 use crate::wvk::WVK_0_1_0_0;
-use crate::wvk_error::WvkErrorType;
 use crate::wvk_library::wvk_library_builder::WvkLibraryBuilder;
 
 #[test]

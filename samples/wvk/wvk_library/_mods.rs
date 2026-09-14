@@ -64,7 +64,7 @@ fn main() {
             };
             let spec_version_ = property.specVersion;
 
-            println!("layerName: {}", extension_name_);
+            println!("extensionName: {}", extension_name_);
             println!("specVersion: {}\n", spec_version_);
         }
 

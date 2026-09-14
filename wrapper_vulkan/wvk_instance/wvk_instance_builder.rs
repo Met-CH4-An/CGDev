@@ -7,7 +7,6 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::borrow::Cow;
-use std::sync::Arc;
 use crate::wvk::{WvkBackend, WvkBackend_0_1_0_0};
 use crate::wvk_error::WvkError;
 use crate::wvk_library::WvkLibrary;
@@ -23,110 +22,71 @@ where TWvkBackend : WvkBackend {
     pub(in crate::wvk_instance) wvk_library : &'a WvkLibrary<TWvkBackend>,
     /// Опционально. Название приложения. Метаданные, которые используются только информативно.
     /// Optional. Application name. Metadata used for informational purposes only.
-    pub(in crate::wvk_instance) application_name__opt: Option<Cow<'a, std::ffi::CStr>>,
+    pub(in crate::wvk_instance) application_name: Option<Cow<'a, str>>,
     /// Опционально. Версия приложения. Метаданные, которые используются только информативно.
     /// Optional. Application version. Metadata used for informational purposes only.
-    pub(in crate::wvk_instance) application_version : u32,
+    pub(in crate::wvk_instance) application_version : Option<u32>,
     /// Опционально. Название движка. Метаданные, которые используются только информативно.
     /// Optional. Engine name. Metadata used for informational purposes only.
-    pub(in crate::wvk_instance) engine_name__opt: Option<Cow<'a, std::ffi::CStr>>,
+    pub(in crate::wvk_instance) engine_name: Option<Cow<'a, str>>,
     /// Опционально. Версия движка. Метаданные, которые используются только информативно.
     /// Optional. Engine version. Metadata used for informational purposes only.
-    pub(in crate::wvk_instance) engine_version : u32,
+    pub(in crate::wvk_instance) engine_version : Option<u32>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
 where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create(wvk_library : &'a WvkLibrary<TWvkBackend>) -> Self {
+    pub fn create(wvk_library: &'a WvkLibrary<TWvkBackend>) -> Self {
         Self {
             wvk_library: wvk_library,
-            application_name__opt: None,
-            application_version : 0,
-            engine_name__opt: Some(crate::wvk::WRAPPER_VULKAN_NAME_COW),
-            engine_version : 0,
+            application_name: None,
+            application_version : None,
+            engine_name: Some(Cow::Borrowed(crate::wvk::WRAPPER_VULKAN_NAME)),
+            engine_version : None,
         }
     }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkBackend {
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError>
+    pub fn build(self) -> Result<WvkInstance<TWvkBackend>, WvkError>
     where 
     TWvkBackend : WvkBackend_0_1_0_0 {
-        WvkInstance::s_create(&self)
+        WvkInstance::create(&self)
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn applicationNameFromCStr<T>(mut self, name : T) -> Self
-    where T : Into<Cow<'a, std::ffi::CStr>> {
-        let name_cow_cstr_ = name.into();
-        self.application_name__opt = Some(name_cow_cstr_);
+    pub fn applicationName(mut self, name: &'a str) -> Self {
+        self.application_name = Some(Cow::from(name));
         self
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn applicationName<T>(mut self, name : T) -> Self
-    where T : Into<Cow<'a, str>> {
-        let name_cow_str_ = name.into();
-        let name_cstring_ = std::ffi::CString::new(name_cow_str_.as_ref()).unwrap();
-        let name_cow_cstr_ = name_cstring_.into();
-        self.application_name__opt = Some(name_cow_cstr_);
+    pub fn applicationVersion(mut self, version: u32) -> Self {
+        self.application_version = Some(version);
         self
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn applicationVersion(mut self, version : u32) -> Self {
-        self.application_version = version;
+    pub fn engineName<T>(mut self, name: impl Into<Cow<'a, str>>) -> Self{
+        self.engine_name = Some(name.into());
         self
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn engineNameFromCStr<T>(mut self, name : T) -> Self
-    where T : Into<Cow<'a, std::ffi::CStr>> {
-        let name_cow_cstr_ = name.into();
-        self.engine_name__opt = Some(name_cow_cstr_);
-        self
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn engineName<T>(mut self, name : T) -> Self
-    where T : Into<Cow<'a, str>> {
-        let name_cow_str_ = name.into();
-        let name_cstring_ = std::ffi::CString::new(name_cow_str_.as_ref()).unwrap();
-        let name_cow_cstr_ = name_cstring_.into();
-        self.engine_name__opt = Some(name_cow_cstr_);
-        self
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn engineVersion(mut self, version : u32) -> Self {
-        self.engine_version = version;
+    pub fn engineVersion(mut self, version: u32) -> Self {
+        self.engine_version = Some(version);
         self
     }
 }

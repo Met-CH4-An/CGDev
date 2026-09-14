@@ -9,7 +9,7 @@
 use std::marker::PhantomData;
 use std::mem::MaybeUninit;
 use crate::wvk::{WvkBackend};
-use crate::wvk_error::{ WvkError, WvkErrorType };
+use crate::wvk_error::{WvkError, WvkErrorType};
 use crate::wvk_library::dispatch_table::WvkDispatchTablePlatform;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,16 +36,6 @@ pub struct WvkDispatchTable<TWvkBackend> {
     pub(in crate::wvk_library) vk_enumerate_instance_version : MaybeUninit<svk::PFN_vkEnumerateInstanceVersion>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend> WvkDispatchTable<TWvkBackend> {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkDispatchTable<TWvkBackend>
 where
 TWvkBackend: WvkBackend {
@@ -106,7 +96,7 @@ TWvkBackend: WvkBackend {
     /// Функция загружает адреса команд вулкана, через первичную главную функцию PFN_vkGetInstanceProcAddr.
     /// The function loads the addresses of the volcano commands through the primary main function PFN vkGetInstanceProcAddr.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library) fn loadCommandAddress<TCommand>(vk_get_instance_proc_addr: MaybeUninit<svk::PFN_vkGetInstanceProcAddr>, name_cstr: &std::ffi::CStr) -> Result<TCommand, WvkError> {
+    fn loadCommandAddress<TCommand>(vk_get_instance_proc_addr: MaybeUninit<svk::PFN_vkGetInstanceProcAddr>, name_cstr: &std::ffi::CStr) -> Result<TCommand, WvkError> {
         // Загружаем команду через vkGetInstanceProcAddr.
         // Load the command via vkGetInstanceProcAddr.
         let command_cvoid_ = unsafe {vk_get_instance_proc_addr.assume_init()(std::ptr::null_mut(), name_cstr.as_ptr() as *const i8)};
@@ -126,56 +116,4 @@ TWvkBackend: WvkBackend {
         Ok(command_)
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend> WvkDispatchTable<TWvkBackend>
-where
-TWvkBackend: WvkBackend {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Функция загружает dll вулкана 'vulkan-1.dll' и затем получает из загруженной
-    /// dll адрес функции 'vkGetInstanceProcAddr'.
-    /// Для этого используется официальный крейт 'windows' от MSWindows и их официальный WinAPI.
-    ///
-    /// The function loads the Vulkan DLL 'vulkan-1.dll' and then obtains the address of the 'vkGetInstanceProcAddr' function from the loaded
-    /// DLL.
-    /// This uses the official 'windows' crate from MSWindows and their official WinAPI.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #[cfg(target_os = "windows")]
-    fn loadVkGetInstanceProcAddr(&mut self) -> Result<(), WvkError> {
-        // Загружаем vulkan-1.dll.
-        // Loading vulkan-1.dll.
-        let _hmodule = unsafe {
-            windows::Win32::System::LibraryLoader::LoadLibraryA(windows::core::PCSTR(c"vulkan-1.dll".as_ptr() as *const u8))
-                .map_err(|windows_core_error| {
-                    WvkError::createWithDescription(
-                        WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED,
-                        &format!("Не удалось загрузить vulkan-1.dll. LoadLibraryA вернула. Failed to load vulkan-1.dll. LoadLibraryA returned {}.", &windows_core_error.message())
-                    )
-                })
-        }?;
-
-
-        // Получаем адрес vkGetInstanceProcAddr.
-        // Get the address vkGetInstanceProcAddr.
-        let _proc = unsafe {
-            windows::Win32::System::LibraryLoader::GetProcAddress(_hmodule, windows::core::PCSTR(c"vkGetInstanceProcAddr".as_ptr() as *const u8))
-                .ok_or_else(|| {
-                    WvkError::createWithDescription(
-                        WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED,
-                        "Не удалось получить адрес vkGetInstanceProcAddr. Функция не найдена в vulkan-1.dll. Failed to get vkGetInstanceProcAddr address. Function not found in vulkan-1.dll."
-                    )
-                })
-        }?;
-
-        // Преобразовываем в памяти в нужный тип.
-        // Convert in memory to the required type.
-        unsafe {self.vk_get_instance_proc_addr.write(std::mem::transmute::<_,svk::PFN_vkGetInstanceProcAddr>(_proc))};
-
-        Ok(())
-    }
-}
-
 

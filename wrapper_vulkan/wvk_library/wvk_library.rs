@@ -8,7 +8,6 @@
 
 use std::marker::PhantomData;
 use crate::wvk::{WvkBackend};
-use crate::wvk_error::{ WvkError };
 use crate::wvk_library::dispatch_table::{WvkDispatchTable};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,21 +19,5 @@ TWvkBackend : WvkBackend {
     pub(in crate::wvk_library) phantom : PhantomData<TWvkBackend>,
     /// Таблица функций вулкана, которые создаются без инстанса и без логического устройства. Глобальные функции.
     /// Table of Vulcan functions that are created without an instance and without a logical device. Global functions.
-    pub(crate) wvk_dispatch_table : WvkDispatchTable<TWvkBackend>,
-}
-
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-    TWvkBackend : WvkBackend {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library) fn create() -> Result<Self, WvkError> {
-        let wvk_dispatch_table_ = WvkDispatchTable::<TWvkBackend>::create()?;
-
-        Ok(Self{
-            phantom : PhantomData,
-            wvk_dispatch_table : wvk_dispatch_table_,
-        })
-    }
+    pub(in crate::wvk_library) wvk_dispatch_table : WvkDispatchTable<TWvkBackend>,
 }

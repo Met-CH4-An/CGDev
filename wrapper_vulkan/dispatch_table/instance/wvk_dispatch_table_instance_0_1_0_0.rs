@@ -11,20 +11,6 @@ use crate::dispatch_table::{WvkDispatchTableInstance, WVK_DISPATCH_TABLE_GLOBAL}
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 use crate::wvk_error::WvkError;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where
-TWvkBackend: WvkBackend_0_1_0_0,
-TLevel: WvkDispatchTableInstance, {
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
 TWvkBackend: WvkBackend_0_1_0_0,
@@ -53,15 +39,6 @@ TLevel: WvkDispatchTableInstance, {
         unsafe { self.vk_get_physical_device_properties.assume_init()(physicalDevice, pProperties) }
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where
-TWvkBackend: WvkBackend_0_1_0_0,
-TLevel: WvkDispatchTableInstance, {}
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

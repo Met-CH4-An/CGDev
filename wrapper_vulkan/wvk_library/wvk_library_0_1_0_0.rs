@@ -6,9 +6,11 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+use std::marker::PhantomData;
 use crate::wvk_call_with_check;
 use crate::wvk::{WvkBackend_0_1_0_0};
 use crate::wvk_error::{WvkError, WvkErrorType};
+use crate::wvk_library::dispatch_table::WvkDispatchTable;
 use crate::wvk_library::WvkLibrary;
 
 impl<TWvkBackend> WvkLibrary<TWvkBackend>
@@ -131,7 +133,7 @@ TWvkBackend : WvkBackend_0_1_0_0
 
         wvk_call_with_check!(
             unsafe {
-                self.wvk_dispatch_table.vk_enumerate_instance_extension_properties.assume_init()(layer_name_ptr_, &mut count_, std::ptr::null_mut())
+                self.wvk_dispatch_table.vk_enumerate_instance_extension_properties.assume_init()(layer_name_ptr_, &mut count_, properties_.as_mut_ptr())
             }
         );
 
@@ -178,5 +180,17 @@ TWvkBackend : WvkBackend_0_1_0_0
         );
 
         Ok(vk_instance_)
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(in crate::wvk_library) fn create() -> Result<Self, WvkError> {
+        let wvk_dispatch_table_ = WvkDispatchTable::<TWvkBackend>::create()?;
+
+        Ok(Self{
+            phantom : PhantomData,
+            wvk_dispatch_table : wvk_dispatch_table_,
+        })
     }
 }

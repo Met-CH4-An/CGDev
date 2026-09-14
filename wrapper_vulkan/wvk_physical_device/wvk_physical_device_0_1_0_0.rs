@@ -56,7 +56,7 @@ TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_physical_device) fn s_create(wvk_physical_device_builder__ref: & WvkPhysicalDeviceBuilder<TWvkBackend>) -> Result<Self, WvkError> {
+    pub(in crate::wvk_physical_device) fn create(wvk_physical_device_builder__ref: & WvkPhysicalDeviceBuilder<TWvkBackend>) -> Result<Self, WvkError> {
         Ok(
             Self {
                 phantom_data: PhantomData,
