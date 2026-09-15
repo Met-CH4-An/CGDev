@@ -6,8 +6,8 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#[path = "dispatch_table/_mods.rs"]
-mod dispatch_table;
+#[path = "platform/_mods.rs"]
+pub(in crate::wvk_library) mod platform;
 
 mod wvk_library;
 pub use wvk_library::WvkLibrary;

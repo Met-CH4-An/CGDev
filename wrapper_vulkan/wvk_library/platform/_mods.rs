@@ -6,5 +6,7 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mod dispatch_table;
-pub(in crate::wvk_instance) use dispatch_table::WvkDispatchTable;
+#[cfg(target_os = "windows")]
+#[path = "windows/_mods.rs"]
+pub(in crate::wvk_library::platform) mod windows;
+pub(in crate::wvk_library) type WvkLibraryPlatform = windows::WvkLibraryWindows;

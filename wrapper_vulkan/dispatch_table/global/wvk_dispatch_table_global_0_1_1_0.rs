@@ -10,15 +10,6 @@ use crate::wvk::{WvkBackend_0_1_1_0};
 use crate::dispatch_table::{WvkDispatchTableGlobal};
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
     TWvkBackend: WvkBackend_0_1_1_0,
@@ -30,18 +21,4 @@ where
         unsafe { self.vk_enumerate_instance_version.assume_init()(pApiVersion) }
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-// private area
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные ассоциированные функции.
-/// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where 
-TWvkBackend: WvkBackend_0_1_1_0,
-TLevel: WvkDispatchTableGlobal, {}
 

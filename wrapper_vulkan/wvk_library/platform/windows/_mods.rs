@@ -6,5 +6,5 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mod dispatch_table_mswindows;
-pub(in crate::wvk_library::dispatch_table) use dispatch_table_mswindows::WvkDispatchTableMSWindows;
+mod wvk_library_windows;
+pub(in crate::wvk_library::platform) use wvk_library_windows::WvkLibraryWindows;

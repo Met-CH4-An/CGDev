@@ -13,15 +13,15 @@ use crate::wvk_error::{WvkError, WvkErrorType};
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkDispatchTableMSWindows {
+pub struct WvkLibraryWindows {
     h_module: HMODULE,
 }
 
-impl WvkDispatchTableMSWindows {
+impl WvkLibraryWindows {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library::dispatch_table) fn create() -> Result<Self, WvkError> {
+    pub(in crate::wvk_library) fn create() -> Result<Self, WvkError> {
         // Загружаем vulkan-1.dll.
         // Loading vulkan-1.dll.
         let h_module_ = unsafe {
@@ -42,7 +42,7 @@ impl WvkDispatchTableMSWindows {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library::dispatch_table) fn loadVkGetInstanceProcAddr(&self) -> Result<svk::PFN_vkGetInstanceProcAddr, WvkError> {
+    pub(in crate::wvk_library) fn loadVkGetInstanceProcAddr(&self) -> Result<svk::PFN_vkGetInstanceProcAddr, WvkError> {
         // Получаем адрес vkGetInstanceProcAddr.
         // Get the address vkGetInstanceProcAddr.
         let address_raw_ = unsafe {
@@ -66,7 +66,7 @@ impl WvkDispatchTableMSWindows {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// Деструктор.
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl Drop for WvkDispatchTableMSWindows {
+impl Drop for WvkLibraryWindows {
     fn drop(&mut self) {
         unsafe {self.h_module.free()};
     }

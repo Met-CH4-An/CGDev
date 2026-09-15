@@ -6,24 +6,16 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// папка global
-// folder global
 #[path = "global/_mods.rs"]
-pub(crate) mod global;
+mod global;
 
-// папка instance
-// folder instance
 #[path = "instance/_mods.rs"]
-pub(crate) mod instance;
+mod instance;
 
-// файл dispatch_table
-// file dispatch_table
-pub(crate) mod wvk_dispatch_table;
+mod wvk_dispatch_table;
 pub use wvk_dispatch_table::WvkDispatchTable;
 
-// файл wvk_dispatch_table_builder.rs
-// file wvk_dispatch_table_builder.rs
-pub(crate) mod wvk_dispatch_table_builder;
+mod wvk_dispatch_table_builder;
 pub use wvk_dispatch_table_builder::WvkDispatchTableBuilder;
 
 #[cfg(test)]

@@ -40,35 +40,3 @@ TLevel: WvkDispatchTableInstance, {
     }
 }
 
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where
-TWvkBackend: WvkBackend_0_1_0_0,
-TLevel: WvkDispatchTableInstance, {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Получение адресов команд вулкана, которые можно получить с помощью экземпляра.
-    /// Getting the addresses of the volcano commands that can be obtained using the instance.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::dispatch_table) fn loadCommandWithInstance_0_1_0_0(&mut self, wvk_dispatch_table_global: &WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>, vk_instance: svk::VkInstance) -> Result<(), WvkError> {
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Vulkan commands: Instance
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        self.vk_destroy_instance.write(
-            self.loadCommandAddress::<svk::PFN_vkDestroyInstance>(vk_instance, c"vkDestroyInstance")? );
-
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Vulkan commands: VkPhysicalDevice
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        self.vk_enumerate_physical_devices.write(self.loadCommandAddress::<svk::PFN_vkEnumeratePhysicalDevices>(vk_instance, c"vkEnumeratePhysicalDevices")? );
-        self.vk_get_physical_device_properties.write(self.loadCommandAddress::<svk::PFN_vkGetPhysicalDeviceProperties>(vk_instance, c"vkGetPhysicalDeviceProperties")? );
-
-        Ok(())
-    }
-}
-

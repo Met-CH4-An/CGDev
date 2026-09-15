@@ -52,37 +52,18 @@ pub struct WvkDispatchTable<TWvkBackend, TLevel> {
     pub(in crate::dispatch_table) vk_get_physical_device_properties_2 : MaybeUninit<svk::PFN_vkGetPhysicalDeviceProperties2>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel> {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
 where
 TWvkBackend: WvkBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::dispatch_table) fn s_createWithGlobal(_wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
-        let mut self_ = Self::s_create();
+    pub(in crate::dispatch_table) fn createAsGlobal(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
+        let mut self_ = Self::create();
 
-        self_.loadCommand()?;
+        self_.vk_get_instance_proc_addr.write(wvk_dispatch_table_builder.vk_get_instance_proc_addr.unwrap());
 
-        Ok(self_)
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::dispatch_table) fn s_createWithInstance(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
-        let mut self_ = Self::s_create();
-
-        self_.loadCommandWithInstance(&wvk_dispatch_table_builder.wvk_dispatch_table_global__opt.unwrap(), wvk_dispatch_table_builder.vk_instance__opt.unwrap())?;
+        self_.loadCommandAsGlobal()?;
 
         Ok(self_)
     }
@@ -90,7 +71,38 @@ TWvkBackend: WvkBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn s_create() -> Self {
+    pub(in crate::dispatch_table) fn createAsInstance(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
+        let mut self_ = Self::create();
+
+        // Глобальные команды просто копируются из таблицы глобальных команд.
+        // Global commands are simply copied from the global commands table.
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Vulkan commands: Global
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        // Vulkan 1.0
+
+        self_.vk_get_instance_proc_addr = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_get_instance_proc_addr;
+        self_.vk_enumerate_instance_layer_properties = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_enumerate_instance_layer_properties;
+        self_.vk_enumerate_instance_extension_properties = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_enumerate_instance_extension_properties;
+        self_.vk_create_instance = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_create_instance;
+
+        // Vulkan 1.1
+
+        if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
+            self_.vk_enumerate_instance_version = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_enumerate_instance_version;
+        }
+
+        self_.loadCommandAsInstance(wvk_dispatch_table_builder.vk_instance.unwrap())?;
+
+        Ok(self_)
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn create() -> Self {
         Self {
             _phantom_data: PhantomData,
 
@@ -128,67 +140,12 @@ TWvkBackend: WvkBackend {
             vk_get_physical_device_properties_2: MaybeUninit::uninit(),
         }
     }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where
-TWvkBackend: WvkBackend {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Функция загружает dll вулкана 'vulkan-1.dll' и затем получает из загруженной
-    /// dll адрес функции 'vkGetInstanceProcAddr'.
-    /// Для этого используется официальный крейт 'windows' от MSWindows и их официальный WinAPI.
-    ///
-    /// The function loads the Vulkan DLL 'vulkan-1.dll' and then obtains the address of the 'vkGetInstanceProcAddr' function from the loaded
-    /// DLL.
-    /// This uses the official 'windows' crate from MSWindows and their official WinAPI.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #[cfg(target_os = "windows")]
-    fn loadVkGetInstanceProcAddr(&mut self) -> Result<(), WvkError> {
-        // Загружаем vulkan-1.dll.
-        // Loading vulkan-1.dll.
-        let _hmodule = unsafe {
-            windows::Win32::System::LibraryLoader::LoadLibraryA(windows::core::PCSTR(c"vulkan-1.dll".as_ptr() as *const u8))
-                .map_err(|windows_core_error| {
-                    WvkError::createWithDescription(
-                        WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED,
-                        &format!("Не удалось загрузить vulkan-1.dll. LoadLibraryA вернула. Failed to load vulkan-1.dll. LoadLibraryA returned {}.", &windows_core_error.message())
-                    )
-                })
-        }?;
-
-
-        // Получаем адрес vkGetInstanceProcAddr.
-        // Get the address vkGetInstanceProcAddr.
-        let _proc = unsafe {
-            windows::Win32::System::LibraryLoader::GetProcAddress(_hmodule, windows::core::PCSTR(c"vkGetInstanceProcAddr".as_ptr() as *const u8))
-                .ok_or_else(|| {
-                    WvkError::createWithDescription(
-                        WvkErrorType::WVK_LIBRARY_VULKAN_LIBRARY_LOAD_FAILED,
-                        "Не удалось получить адрес vkGetInstanceProcAddr. Функция не найдена в vulkan-1.dll. Failed to get vkGetInstanceProcAddr address. Function not found in vulkan-1.dll."
-                    )
-                })
-        }?;
-
-        // Преобразовываем в памяти в нужный тип.
-        // Convert in memory to the required type.
-        unsafe {self.vk_get_instance_proc_addr.write(std::mem::transmute::<_,svk::PFN_vkGetInstanceProcAddr>(_proc))};
-
-        Ok(())
-    }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Получение адресов команд вулкана, которые можно получить с без помощи экземпляра.
-    /// Obtaining addresses of volcano commands that can be obtained from without the help of an instance.
+    /// Получение адресов команд вулкана, которые можно получить без помощи экземпляра. Так называемые глобальные команды.
+    /// Retrieving the addresses of Vulcan commands that can be obtained without using an instance. These are known as global commands.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn loadCommand(&mut self) -> Result<(), WvkError> {
-        // Получаем адрес vkGetInstanceProcAddr.
-        // Get the address vkGetInstanceProcAddr.
-        self.loadVkGetInstanceProcAddr()?;
-
+    fn loadCommandAsGlobal(&mut self) -> Result<(), WvkError> {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Vulkan commands: Global
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,27 +167,7 @@ TWvkBackend: WvkBackend {
     /// Получение адресов команд вулкана, которые можно получить с помощью экземпляра.
     /// Getting the addresses of the volcano commands that can be obtained using the instance.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn loadCommandWithInstance(&mut self, wvk_dispatch_table_global: &WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>, vk_instance: svk::VkInstance) -> Result<(), WvkError> {
-        // Глобальные команды просто копируются из WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL.
-        // Global commands are simply copied from WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL.
-
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Vulkan commands: Global
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        // Vulkan 1.0
-
-        self.vk_get_instance_proc_addr = wvk_dispatch_table_global.vk_get_instance_proc_addr;
-        self.vk_enumerate_instance_layer_properties = wvk_dispatch_table_global.vk_enumerate_instance_layer_properties;
-        self.vk_enumerate_instance_extension_properties = wvk_dispatch_table_global.vk_enumerate_instance_extension_properties;
-        self.vk_create_instance = wvk_dispatch_table_global.vk_create_instance;
-
-        // Vulkan 1.1
-
-        if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
-            self.vk_enumerate_instance_version = wvk_dispatch_table_global.vk_enumerate_instance_version;
-        }
-
+    fn loadCommandAsInstance(&mut self, vk_instance: svk::VkInstance) -> Result<(), WvkError> {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Vulkan commands: Instance
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -258,8 +195,6 @@ TWvkBackend: WvkBackend {
         Ok(())
     }
 
-
-
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Функция загружает адреса команд вулкана, через первичную главную функцию PFN_vkGetInstanceProcAddr.
     /// The function loads the addresses of the volcano commands through the primary main function PFN vkGetInstanceProcAddr.
@@ -284,12 +219,4 @@ TWvkBackend: WvkBackend {
         Ok(command_)
     }
 }
-
-impl<TWvkBackend, TLevel> Drop for WvkDispatchTable<TWvkBackend, TLevel> {
-    fn drop(&mut self) {
-        //self.
-        todo!()
-    }
-}
-
 

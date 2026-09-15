@@ -6,12 +6,14 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+use std::sync::Arc;
 use std::marker::PhantomData;
+use crate::dispatch_table::{WvkDispatchTableBuilder, WVK_DISPATCH_TABLE_GLOBAL};
 use crate::wvk_call_with_check;
 use crate::wvk::{WvkBackend_0_1_0_0};
 use crate::wvk_error::{WvkError, WvkErrorType};
-use crate::wvk_library::dispatch_table::WvkDispatchTable;
-use crate::wvk_library::WvkLibrary;
+use crate::wvk_library::platform::WvkLibraryPlatform;
+use crate::wvk_library::{WvkLibraryBuilder, WvkLibrary};
 
 impl<TWvkBackend> WvkLibrary<TWvkBackend>
 where
@@ -20,12 +22,10 @@ TWvkBackend : WvkBackend_0_1_0_0
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkGetInstanceProcAddr<TCommand>(&self, vk_instance_ptr: svk::VkInstance, name_cstr: &std::ffi::CStr) -> Result<TCommand, WvkError> {
+    pub fn wvkGetInstanceProcAddr<TCommand>(self: &Arc<Self>, vk_instance_ptr: svk::VkInstance, name_cstr: &std::ffi::CStr) -> Result<TCommand, WvkError> {
         // Загружаем команду через vkGetInstanceProcAddr.
         // Load the command via vkGetInstanceProcAddr.
-        let command_cvoid_ = unsafe {
-            self.wvk_dispatch_table.vk_get_instance_proc_addr.assume_init()(vk_instance_ptr, name_cstr.as_ptr())
-        };
+        let command_cvoid_ = self.wvk_dispatch_table.vkGetInstanceProcAddr(vk_instance_ptr, name_cstr.as_ptr());
 
         // если не удалось
         if command_cvoid_.is_null() {
@@ -47,7 +47,7 @@ TWvkBackend : WvkBackend_0_1_0_0
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkEnumerateInstanceLayerProperties(&self) -> Result<Vec<svk::VkLayerProperties>, WvkError> {
+    pub fn wvkEnumerateInstanceLayerProperties(self: &Arc<Self>) -> Result<Vec<svk::VkLayerProperties>, WvkError> {
         let mut properties_: Vec<svk::VkLayerProperties> = Vec::new();
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,9 +57,7 @@ TWvkBackend : WvkBackend_0_1_0_0
 
         let mut count_: u32 = 0;
         wvk_call_with_check!(
-            unsafe {
-                self.wvk_dispatch_table.vk_enumerate_instance_layer_properties.assume_init()(&mut count_, std::ptr::null_mut())
-            }
+            self.wvk_dispatch_table.vkEnumerateInstanceLayerProperties(&mut count_, std::ptr::null_mut())
         );
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,9 +72,7 @@ TWvkBackend : WvkBackend_0_1_0_0
         };
 
         wvk_call_with_check!(
-            unsafe {
-                self.wvk_dispatch_table.vk_enumerate_instance_layer_properties.assume_init()(&mut count_, properties_.as_mut_ptr())
-            }
+            self.wvk_dispatch_table.vkEnumerateInstanceLayerProperties(&mut count_, properties_.as_mut_ptr())
         );
 
         Ok(properties_)
@@ -85,7 +81,7 @@ TWvkBackend : WvkBackend_0_1_0_0
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkEnumerateInstanceExtensionProperties(&self, layer_name: Option<&str>) -> Result<Vec<svk::VkExtensionProperties>, WvkError> {
+    pub fn wvkEnumerateInstanceExtensionProperties(self: &Arc<Self>, layer_name: Option<&str>) -> Result<Vec<svk::VkExtensionProperties>, WvkError> {
         let mut properties_ = Vec::<svk::VkExtensionProperties>::new();
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,11 +110,9 @@ TWvkBackend : WvkBackend_0_1_0_0
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_: u32 = 0;
-
+        
         wvk_call_with_check!(
-            unsafe {
-                self.wvk_dispatch_table.vk_enumerate_instance_extension_properties.assume_init()(layer_name_ptr_, &mut count_, std::ptr::null_mut())
-            }
+            self.wvk_dispatch_table.vkEnumerateInstanceExtensionProperties(layer_name_ptr_, &mut count_, std::ptr::null_mut())
         );
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,9 +126,7 @@ TWvkBackend : WvkBackend_0_1_0_0
         }
 
         wvk_call_with_check!(
-            unsafe {
-                self.wvk_dispatch_table.vk_enumerate_instance_extension_properties.assume_init()(layer_name_ptr_, &mut count_, properties_.as_mut_ptr())
-            }
+            self.wvk_dispatch_table.vkEnumerateInstanceExtensionProperties(layer_name_ptr_, &mut count_, properties_.as_mut_ptr())
         );
 
         Ok(properties_)
@@ -143,7 +135,7 @@ TWvkBackend : WvkBackend_0_1_0_0
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkCreateInstance(&self, create_info: &svk::VkInstanceCreateInfo, allocator_opt: Option<&svk::VkAllocationCallbacks>) -> Result<svk::VkInstance, WvkError> {
+    pub fn wvkCreateInstance(self: &Arc<Self>, create_info: &svk::VkInstanceCreateInfo, allocator_opt: Option<&svk::VkAllocationCallbacks>) -> Result<svk::VkInstance, WvkError> {
         /*let allocator_ptr_ = match allocator {
             Some(value) => {
                 value as *const svk::VkAllocationCallbacks
@@ -174,23 +166,30 @@ TWvkBackend : WvkBackend_0_1_0_0
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         wvk_call_with_check!(
-            unsafe {
-                self.wvk_dispatch_table.vk_create_instance.assume_init()(create_info, allocator_ptr_, &mut vk_instance_)
-            }
+            self.wvk_dispatch_table.vkCreateInstance(create_info, allocator_ptr_, &mut vk_instance_)
         );
 
         Ok(vk_instance_)
     }
+}
 
+impl<TWvkBackend> WvkLibrary<TWvkBackend>
+where
+TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library) fn create() -> Result<Self, WvkError> {
-        let wvk_dispatch_table_ = WvkDispatchTable::<TWvkBackend>::create()?;
+    pub(in crate::wvk_library) fn create(_builder: WvkLibraryBuilder<TWvkBackend>) -> Result<Arc<Self>, WvkError> {
+        let wvk_library_platform_ = WvkLibraryPlatform::create()?;
+        let vk_get_instance_proc_addr_ = wvk_library_platform_.loadVkGetInstanceProcAddr()?;
+        let wvk_dispatch_table = WvkDispatchTableBuilder::<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>::create(vk_get_instance_proc_addr_).build()?;
 
-        Ok(Self{
-            phantom : PhantomData,
-            wvk_dispatch_table : wvk_dispatch_table_,
-        })
+        let self_ = Self {
+            _phantom: PhantomData,
+            _wvk_library_platform: wvk_library_platform_,
+            wvk_dispatch_table: wvk_dispatch_table,
+        };
+                    
+        Ok(Arc::new(self_))
     }
 }

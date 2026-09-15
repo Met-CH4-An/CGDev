@@ -7,7 +7,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::marker::PhantomData;
-
+use std::sync::Arc;
 use crate::wvk::{WvkBackend, WvkBackend_0_1_0_0};
 use crate::wvk_error::WvkError;
 use crate::wvk_library::wvk_library::WvkLibrary;
@@ -35,9 +35,9 @@ TWvkBackend : WvkBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkLibrary<TWvkBackend>, WvkError>
+    pub fn build(self) -> Result<Arc<WvkLibrary<TWvkBackend>>, WvkError>
     where
     TWvkBackend: WvkBackend_0_1_0_0 {
-        WvkLibrary::<TWvkBackend>::create()
+        WvkLibrary::<TWvkBackend>::create(self)
     }
 }
