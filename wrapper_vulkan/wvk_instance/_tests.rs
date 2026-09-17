@@ -7,7 +7,7 @@ use crate::wvk_instance::wvk_instance_builder::WvkInstanceBuilder;
 
 #[test]
 fn wvk_instance__create() {
-    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_0_0>::s_create().build().ok().unwrap();
+    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_0_0>::create().build().ok().unwrap();
 
     let wvk_instance_ = WvkInstanceBuilder::<WVK_0_1_0_0>::create(&wvk_library_).build();
 

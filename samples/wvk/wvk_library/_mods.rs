@@ -7,7 +7,7 @@ use wvk::wvk_library::{ WvkLibraryBuilder };
 fn main() {
     println!("пример: создание WvkLibrary\n");
     
-    let wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::s_create().build() {
+    let wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::create().build() {
         Ok(wvk_library) => wvk_library,
         Err(wvk_error) => {
             println!("{}", wvk_error.getMessage());

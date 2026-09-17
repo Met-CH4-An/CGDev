@@ -7,16 +7,17 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ffi::CString;
+use std::fmt::{Debug, Formatter};
 use std::marker::PhantomData;
+use std::mem::MaybeUninit;
 use std::sync::Arc;
 use crate::wvk_call_with_check;
 use crate::wvk::{ WvkBackend_0_1_0_0 };
 use crate::wvk_error::{ WvkError, WvkErrorType };
-use crate::dispatch_table::{WvkDispatchTableBuilder, WvkDispatchTable, WVK_DISPATCH_TABLE_INSTANCE};
+use crate::dispatch_table::{WvkDispatchTableBuilder, WVK_DISPATCH_TABLE_INSTANCE};
 use crate::wvk_instance::wvk_instance_builder::WvkInstanceBuilder;
 use crate::wvk_instance::wvk_instance::WvkInstance;
-use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
-use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
+use crate::wvk_physical_device::{WvkPhysicalDeviceBuilder, WvkPhysicalDevice};
 
 impl<TWvkBackend> WvkInstance<TWvkBackend>
 where TWvkBackend : WvkBackend_0_1_0_0 {
@@ -30,8 +31,7 @@ where TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //pub fn wvkEnumeratePhysicalDevices(self: &Arc<Self>) -> Result<Vec<WvkPhysicalDevice<TWvkBackend>>, WvkError> {
-    pub fn wvkEnumeratePhysicalDevices(self: &Arc<Self>) -> Result<Vec<WvkPhysicalDevice<TWvkBackend>>, WvkError> {
+    pub fn wvkEnumeratePhysicalDevices(self: &Arc<Self>) -> Result<Vec<Arc<WvkPhysicalDevice<TWvkBackend>>>, WvkError> {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Получаем количество физических устройств VkPhysicalDevice.
         // Get the number of physical devices VkPhysicalDevice.
@@ -64,25 +64,25 @@ where TWvkBackend : WvkBackend_0_1_0_0 {
         // We iterate over the received list of physical devices VkPhysicalDevice and form WvkPhysicalDevice wrappers.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        //vk_physical_devices_
-        //    .iter()
-        //    .map(|v| {
-        //        WvkPhysicalDeviceBuilder::<TWvkBackend>::create();
-        //    });
-        let mut wvk_physical_devices_ = Vec::<WvkPhysicalDevice<TWvkBackend>>::with_capacity(count_ as usize);
-        wvk_physical_devices_
+        let wvk_physical_devices_ = vk_physical_devices_
             .iter()
-            .for_each(|v| {
-
-            });
-
-       // for vk_physical_device_ in &vk_physical_devices_ {
-        //    let wvk_physical_device_ = WvkPhysicalDeviceBuilder::<TWvkBackend>::s_create(*vk_physical_device_, self.clone()).build()?;
-
-        //    wvk_physical_devices_.push(wvk_physical_device_);
-        //}
+            .map(|v| {
+                WvkPhysicalDeviceBuilder::<TWvkBackend>::create(*v, &self).build()
+            })
+            .collect::<Result<Vec<Arc<WvkPhysicalDevice<TWvkBackend>>>, WvkError>>()?;
 
         Ok(wvk_physical_devices_)
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(crate) fn vkGetPhysicalDeviceProperties(self: &Arc<Self>, vk_physical_device: svk::VkPhysicalDevice) -> svk::VkPhysicalDeviceProperties {
+        let mut output_ = MaybeUninit::<svk::VkPhysicalDeviceProperties>::uninit();
+
+        self.wvk_dispatch_table.vkGetPhysicalDeviceProperties(vk_physical_device, output_.as_mut_ptr());
+
+        unsafe {output_.assume_init()}
     }
 }
 
@@ -91,7 +91,7 @@ where TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_instance) fn create(builder: & WvkInstanceBuilder<TWvkBackend>) -> Result<WvkInstance<TWvkBackend>, WvkError> {
+    pub(in crate::wvk_instance) fn create(builder: & WvkInstanceBuilder<TWvkBackend>) -> Result<Arc<Self>, WvkError> {
         // Создаем непосредственно VkInstance.
         // Create VkInstance directly.
         let vk_instance_ = Self::createVkInstance(&builder)?;
@@ -107,7 +107,7 @@ where TWvkBackend : WvkBackend_0_1_0_0 {
             vk_instance : vk_instance_,
         };
 
-        Ok(self_)
+        Ok(Arc::new(self_))
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

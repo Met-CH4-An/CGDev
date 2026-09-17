@@ -53,7 +53,7 @@ where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkInstance<TWvkBackend>, WvkError>
+    pub fn build(self) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError>
     where 
     TWvkBackend : WvkBackend_0_1_0_0 {
         WvkInstance::create(&self)
@@ -62,8 +62,8 @@ where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn applicationName(mut self, name: &'static str) -> Self {
-        self.application_name = Some(Cow::from(name));
+    pub fn applicationName(mut self, name: impl Into<Cow<'static, str>>) -> Self {
+        self.application_name = Some(name.into());
         self
     }
 
@@ -78,7 +78,7 @@ where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn engineName<T>(mut self, name: impl Into<Cow<'static, str>>) -> Self{
+    pub fn engineName(mut self, name: impl Into<Cow<'static, str>>) -> Self{
         self.engine_name = Some(name.into());
         self
     }

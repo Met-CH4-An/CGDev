@@ -7,62 +7,37 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::marker::PhantomData;
-use std::mem::MaybeUninit;
+use std::sync::Arc;
 use crate::wvk::{ WvkBackend_0_1_0_0 };
 use crate::wvk_error::WvkError;
 use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_0_0 {
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
 TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //pub fn wvkGetPhysicalDeviceProperties(self: & Arc<Self>) -> svk::VkPhysicalDeviceProperties {
     pub fn wvkGetPhysicalDeviceProperties(&self) -> svk::VkPhysicalDeviceProperties {
-        let mut vk_props_ = MaybeUninit::<svk::VkPhysicalDeviceProperties>::uninit();
-
-        //self.wvk_instance_arc.getDispatchTable().vkGetPhysicalDeviceProperties(self.vk_physical_device, vk_props_.as_mut_ptr());
-
-        unsafe { vk_props_.assume_init() }
+        self.wvk_instance.vkGetPhysicalDeviceProperties(self.vk_physical_device)
     }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-// private area
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные ассоциированные функции.
-/// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
 TWvkBackend : WvkBackend_0_1_0_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_physical_device) fn create(wvk_physical_device_builder__ref: & WvkPhysicalDeviceBuilder<TWvkBackend>) -> Result<Self, WvkError> {
-        Ok(
-            Self {
-                phantom_data: PhantomData,
-                wvk_instance_arc: wvk_physical_device_builder__ref.wvk_instance_arc.clone(),
-                vk_physical_device: wvk_physical_device_builder__ref.vk_physical_device,
-            }
-        )
+    pub(in crate::wvk_physical_device) fn create(builder: WvkPhysicalDeviceBuilder<TWvkBackend>) -> Result<Arc<Self>, WvkError> {
+        let self_ = Self {
+            phantom_data: PhantomData,
+            wvk_instance: builder.wvk_instance.clone(),
+            vk_physical_device: builder.vk_physical_device,
+        };
+
+        Ok(Arc::new(self_))
     }
 }

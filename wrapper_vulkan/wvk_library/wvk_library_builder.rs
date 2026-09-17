@@ -26,7 +26,7 @@ TWvkBackend : WvkBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create() -> Self {
+    pub fn create() -> Self {
         Self{
             phantom_data: PhantomData,
         }

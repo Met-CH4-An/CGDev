@@ -33,6 +33,32 @@ use crate::registry_type_requires::RegistryTypeRequires;
 use crate::registry_type_struct::RegistryTypeStruct;
 use crate::registry_type_struct_member::RegistryTypeStructMember;
 
+macro_rules! snake_case {
+    ($name:expr) => {{
+        let mut result_ = String::with_capacity($name.len() + 8);
+
+        for (i_, c_) in $name.chars().enumerate() {
+            if c_.is_uppercase() {
+                if i_ != 0 {
+                    result_.push('_');
+                }
+
+                result_.extend(c_.to_lowercase());
+            } else if c_.is_ascii_digit() {
+                if i_ != 0 && !result_.ends_with('_') {
+                    result_.push('_');
+                }
+
+                result_.push(c_);
+            } else {
+                result_.push(c_);
+            }
+        }
+
+        result_
+    }};
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2166,12 +2192,18 @@ impl Generator {
     fn generateWvk(&self, data: &[u8], registry: &Registry) -> Result<String, String> {
         let mut output_wvk_ = String::new();
 
+        let mut physical_device_properties_all_indices_ = Vec::<Vec<usize>>::new();
+
         registry.registry_types_vec
             .iter()
-            .for_each(|types_| {
+            .enumerate()
+            .for_each(|(id_types_, types_)| {
+                let mut physical_device_properties_indices_ = Vec::<usize>::new();
+
                 types_.element_vec
                     .iter()
-                    .for_each(|types_element_|{
+                    .enumerate()
+                    .for_each(|(id_type_, types_element_)|{
                         match &types_element_ {
                             RegistryTypesElement::TYPE(type_) => {
                                 match &type_.r#type {
@@ -2236,9 +2268,18 @@ impl Generator {
                                         output_wvk_.push_str(&format!("\tprivate: [u8; 0]\n"));
                                         output_wvk_.push_str(&format!("}}\n"));
                                     }
-
+                                    //physical_device_properties_structs_
                                     RegistryTypeType::TYPE_STRUCT(type_) => {
                                         let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.name_rng.start() ..= *type_.name_rng.end()])};
+                                        let struct_extends_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.struct_extends_rng.start() ..= *type_.struct_extends_rng.end()])};
+
+                                        // Если структура является расширением для VkPhysicalDeviceProperties2. Запишем индексы в массив.
+                                        // Дальше по этим структурам сгенерируем код для wvk_physical_device_x_properties::WvkPhysicalDeviceXProperties2.
+                                        // If the structure is an extension of VkPhysicalDeviceProperties2, we'll store the indices in an array.
+                                        // Next, we'll use these structures to generate code for wvk_physical_device_x_properties::WvkPhysicalDeviceXProperties2.
+                                        if struct_extends_str_ == "VkPhysicalDeviceProperties2" {
+                                            physical_device_properties_indices_.push(id_type_);
+                                        }
 
                                         if name_str_.is_empty() {
                                             return;
@@ -2377,7 +2418,9 @@ impl Generator {
 
                             }
                         }
-                    })
+                    });
+
+                physical_device_properties_all_indices_.push(physical_device_properties_indices_);
             });
 
         registry.registry_enums_vec
@@ -2486,8 +2529,70 @@ impl Generator {
                 Ok(())
             })?;
 
-        println!("asd");
+        self.generateWvkPhysicalDeviceXProperties2(registry, physical_device_properties_all_indices_);
 
         Ok(output_wvk_)
     }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn generateWvkPhysicalDeviceXProperties2(&self, registry: &Registry, indices: Vec::<Vec<usize>>) {
+        let mut struct_field_output_ = String::new();
+        let mut struct_create_output_ = String::new();
+
+        // Итерируем внешние индексы:
+        // id_types_ — индекс элемента в Registry::registry_types,
+        // types_ — вложенный вектор индексов RegistryTypesElement.
+
+        // Option<MaybeUninit<svk::VkPhysicalDeviceVulkan11Properties>>,
+        // vk_physical_device_vulkan_11_properties: Some(maybe_init!(svk::VkPhysicalDeviceVulkan11Properties, svk::VkStructureType::VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES)),
+        indices
+            .iter()
+            .enumerate()
+            .for_each(|(id_types_, types_)| {
+                types_
+                    .iter()
+                    .for_each(|id_type_| {
+                        let types_element_ = &registry.registry_types_vec[id_types_].element_vec[*id_type_];
+
+                        match &types_element_ {
+                            RegistryTypesElement::TYPE(type_) => {
+                                match &type_.r#type {
+                                    RegistryTypeType::TYPE_STRUCT(type_) => {
+                                        let name_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*type_.name_rng.start() ..= *type_.name_rng.end()])};
+                                        let name_field_ = snake_case!(name_);
+                                        println!("{}", name_);
+
+
+
+                                        let pos_ = name_
+                                            .chars()
+                                            .position(|v| {
+                                                v.is_uppercase()
+                                            });
+
+                                        let member_ = &type_.member_vec[0];
+                                        let values_member_ = unsafe {std::str::from_utf8_unchecked(&self.data_rc.as_slice()[*member_.values_rng.start() ..= *member_.values_rng.end()])};
+                                        println!("{}", values_member_);
+
+                                        struct_field_output_.push_str(&format!("\tpub {}: Option<MaybeUninit<svk::{}>>,\n", name_field_, name_));
+                                        struct_create_output_.push_str(&format!("\t\t\t{}: Some(maybe_init!(svk::{}, svk::VkStructureType::{})),\n", name_field_, name_, values_member_));
+                                    }
+
+                                    _ => {}
+                                }
+                            }
+                            _ => {}
+                        }
+                        //RegistryTypeType::TYPE_STRUCT(type_);
+                        //let a = RegistryTypesElement::TYPE(RegistryTypeType::TYPE_STRUCT(&type_));
+
+
+                    });
+        });
+
+        println!("asdasdas");
+    }
 }
+

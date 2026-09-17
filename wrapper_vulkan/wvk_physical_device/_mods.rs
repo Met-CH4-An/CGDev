@@ -6,32 +6,16 @@
 // connecting modules
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// файл wvk_physical_device.rs
-// file wvk_physical_device.rs
-pub(crate) mod wvk_physical_device;
+mod wvk_physical_device;
 pub use wvk_physical_device::WvkPhysicalDevice;
 
-// файл wvk_physical_device_builder.rs
-// file wvk_physical_device_builder.rs
-pub(crate) mod wvk_physical_device_builder;
+mod wvk_physical_device_builder;
 pub use wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
 
-// файл wvk_physical_device_0_1_0_0.rs
-// file wvk_physical_device_0_1_0_0.rs
-pub(crate) mod wvk_physical_device_0_1_0_0;
+mod wvk_physical_device_0_1_0_0;
+mod wvk_physical_device_0_1_1_0;
+mod wvk_physical_device_0_1_2_0;
+mod wvk_physical_device_0_1_3_0;
+mod wvk_physical_device_0_1_4_0;
 
-// файл wvk_physical_device_0_1_1_0.rs
-// file wvk_physical_device_0_1_1_0.rs
-pub(crate) mod wvk_physical_device_0_1_1_0;
-
-// файл wvk_physical_device_0_1_2_0.rs
-// file wvk_physical_device_0_1_2_0.rs
-pub(crate) mod wvk_physical_device_0_1_2_0;
-
-// файл wvk_physical_device_0_1_3_0.rs
-// file wvk_physical_device_0_1_3_0.rs
-pub(crate) mod wvk_physical_device_0_1_3_0;
-
-// файл wvk_physical_device_0_1_4_0.rs
-// file wvk_physical_device_0_1_4_0.rs
-pub(crate) mod wvk_physical_device_0_1_4_0;
+mod wvk_physical_device_x_properties;

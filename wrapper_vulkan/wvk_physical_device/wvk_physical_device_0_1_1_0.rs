@@ -6,65 +6,22 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::mem::MaybeUninit;
-use svk::VkStructureType;
 use crate::wvk::{ WvkBackend_0_1_1_0 };
 use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
+use crate::wvk_physical_device::wvk_physical_device_x_properties::WvkPhysicalDeviceXProperties2;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
-where
-    TWvkBackend : WvkBackend_0_1_1_0 {
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
 where
     TWvkBackend : WvkBackend_0_1_1_0 {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ////
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //pub fn wvkGetPhysicalDeviceProperties2(&self) -> svk::VkPhysicalDeviceProperties2 {
-        /*let vk_props_ = svk::VkPhysicalDeviceProperties2 {
-            sType: svk::VkStructureTypeValue::VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-            pNext: std::ptr::null_mut(),
-            properties: svk::VkPhysicalDeviceProperties {
-                apiVersion: 0,
-                driverVersion: 0,
-                vendorID: 0,
-                deviceID: 0,
-                VkPhysicalDeviceType                deviceType;
-                char                                deviceName[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
-                uint8_t                             pipelineCacheUUID[VK_UUID_SIZE];
-                VkPhysicalDeviceLimits              limits;
-                VkPhysicalDeviceSparseProperties    sparseProperties;
-            }
-        };
-        let mut vk_props_ = MaybeUninit::<svk::VkPhysicalDeviceProperties2>::uninit();
+    pub fn wvkGetPhysicalDeviceProperties2(&self) -> WvkPhysicalDeviceXProperties2 {
+        let mut wvk_physical_device_x_properties2_ = WvkPhysicalDeviceXProperties2::create();
+        let p_pnext_ = wvk_physical_device_x_properties2_.buildPNext();
 
-        self.wvk_instance_arc.getDispatchTable().vkGetPhysicalDeviceProperties2(self.vk_physical_device, vk_props_.as_mut_ptr());
+        self.wvk_instance.vkGetPhysicalDeviceProperties2(self.vk_physical_device, p_pnext_);
 
-        unsafe { vk_props_.assume_init() }*/
-    //}
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-// private area
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные ассоциированные функции.
-/// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TWvkBackend> WvkPhysicalDevice<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_1_0 {
-    
+        wvk_physical_device_x_properties2_
+    }
 }
