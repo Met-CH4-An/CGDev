@@ -105,7 +105,7 @@ impl RegistryTypeStructMember {
             feature_link_rng: 1 ..= 0,
             flags_extend_rng: 1 ..= 0,
             flags_extend_member_rng: 1 ..= 0,
-            type_body_with_enum: RegistryTypeBodyWithEnum::s_create(),
+            type_body_with_enum: RegistryTypeBodyWithEnum::create(),
         }
     }
 }

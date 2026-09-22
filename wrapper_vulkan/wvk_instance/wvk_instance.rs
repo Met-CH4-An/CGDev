@@ -19,6 +19,9 @@ use crate::wvk_library::WvkLibrary;
 pub struct WvkInstance<TWvkBackend>
 where
 TWvkBackend : WvkBackend {
+    pub(crate) extensions: Vec<&'static str>,
+    
+    
     pub(in crate::wvk_instance) _phantom_data: PhantomData<TWvkBackend>,
 
     /// Родительский WvkLibrary. 

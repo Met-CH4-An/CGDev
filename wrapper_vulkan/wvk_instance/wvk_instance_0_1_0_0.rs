@@ -167,6 +167,11 @@ where TWvkBackend : WvkBackend_0_1_0_0 {
             .map(|vk_debug_utils_create_info_ref| vk_debug_utils_create_info_ref as *const _ as *const _)
             .unwrap_or(std::ptr::null());
 
+        println!("{}.{}.{}.{}", svk::VK_API_VERSION_VARIANT(TWvkBackend::WVK_ENCODED_VULKAN_VERSION),
+                 svk::VK_API_VERSION_MAJOR(TWvkBackend::WVK_ENCODED_VULKAN_VERSION),
+                 svk::VK_API_VERSION_MINOR(TWvkBackend::WVK_ENCODED_VULKAN_VERSION),
+                 svk::VK_API_VERSION_PATCH(TWvkBackend::WVK_ENCODED_VULKAN_VERSION));
+
         // В вулкане можно описать своё приложение через VkApplicationInfo
         // In Vulkan, you can describe your application using VkApplicationInfo
         let vk_application_info_ = svk::VkApplicationInfo {

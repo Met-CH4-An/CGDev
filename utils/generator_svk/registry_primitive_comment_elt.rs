@@ -7,32 +7,22 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_primitive_comment_elt::RegistryPrimitiveCommentElt;
-use crate::registry_type::RegistryType;
-
-pub(crate) enum RegistryTypesElementDeclaration {
-    TYPE(RegistryType),
-    COMMENT_ELT(RegistryPrimitiveCommentElt),
-}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Types = element types { CommentAttr?, (Type | CommentElt)* }
+/// CommentElt = element comment { text }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryTypes {
-    /// CommentAttr?,
+pub(crate) struct RegistryPrimitiveCommentElt {
+    /// text
     pub(crate) comment_rng: RangeInclusive<usize>,
-    /// (Type | CommentElt)*
-    pub(crate) registry_types_element_declaration_vec: Vec<RegistryTypesElementDeclaration>,
 }
 
-impl RegistryTypes {
+impl RegistryPrimitiveCommentElt {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
             comment_rng: 1 ..= 0,
-            registry_types_element_declaration_vec: Vec::new(),
         }
     }
 }

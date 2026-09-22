@@ -8,9 +8,24 @@
 
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-use std::ops::RangeInclusive;
+
 use crate::registry_types::RegistryTypes;
 use crate::registry_enums::RegistryEnums;
+
+use crate::registry_primitive_comment_elt::RegistryPrimitiveCommentElt;
+use crate::registry_primitive_element_enum::RegistryPrimitiveElementEnum;
+use crate::registry_primitive_element_name::RegistryPrimitiveElementName;
+use crate::registry_primitive_element_type::RegistryPrimitiveElementType;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum PrimitiveElementDeclaration {
+    ELEMENT_TYPE(RegistryPrimitiveElementType),
+    ELEMENT_NAME(RegistryPrimitiveElementName),
+    ELEMENT_ENUM(RegistryPrimitiveElementEnum),
+    COMMENT_ELT(RegistryPrimitiveCommentElt),
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///

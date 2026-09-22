@@ -17,6 +17,8 @@ where
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub fn wvkGetPhysicalDeviceProperties2(&self) -> WvkPhysicalDeviceXProperties2 {
+        //self.wvk_instance.
+
         let mut wvk_physical_device_x_properties2_ = WvkPhysicalDeviceXProperties2::create();
         let p_pnext_ = wvk_physical_device_x_properties2_.buildPNext();
 

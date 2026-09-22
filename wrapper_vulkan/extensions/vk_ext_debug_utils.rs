@@ -10,10 +10,10 @@
 ///
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct VkExtDebugUtils {
+pub struct VkExtDebugUtils {
 }
 
 impl VkExtDebugUtils {
-    pub(crate) const NAME: &'static str = "VK_EXT_debug_utils";
-    pub(crate) const NAME_C: &'static std::ffi::CStr = c"VK_EXT_debug_utils";
+    pub const NAME: &'static str = "VK_EXT_debug_utils";
+    pub const NAME_C: &'static std::ffi::CStr = c"VK_EXT_debug_utils";
 }

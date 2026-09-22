@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use wvk::wvk::WVK_0_1_1_0;
+use wvk::wvk::{WVK_0_1_1_0, WVK_0_1_4_0};
 use wvk::wvk_library::{ WvkLibraryBuilder };
 use wvk::wvk_instance::{ WvkInstanceBuilder };
 
@@ -299,8 +299,8 @@ pub fn printVkPhysicalDeviceVulkan12Properties(properties: &wvk::svk::VkPhysical
 fn main() {
     println!("Пример получения списка физических устройств. Example of getting a list of physical devices.");
 
-    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_1_0>::create().build().ok().unwrap();
-    let wvk_instance_= WvkInstanceBuilder::<WVK_0_1_1_0>::create(&wvk_library_).build().ok().unwrap();
+    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_4_0>::create().build().ok().unwrap();
+    let wvk_instance_= WvkInstanceBuilder::<WVK_0_1_4_0>::create(&wvk_library_).build().ok().unwrap();
 
     let wvk_physical_devices_ = wvk_instance_.wvkEnumeratePhysicalDevices().ok().unwrap();
 
@@ -318,8 +318,24 @@ fn main() {
         let vk_properties_2_ = wvk_physical_device_.wvkGetPhysicalDeviceProperties2();
 
         printVkPhysicalDeviceVulkan12Properties(unsafe {&vk_properties_2_.vk_physical_device_vulkan_1_2_properties.unwrap().assume_init()});
+
+        let asd1= unsafe {vk_properties_2_.vk_physical_device_vulkan_1_1_properties.as_ref().unwrap().assume_init_ref()};
+        dbg!(asd1.deviceLUIDValid);
+
+        let asd= unsafe {vk_properties_2_.vk_physical_device_descriptor_heap_tensor_properties_arm.as_ref().unwrap().assume_init_ref()};
+        let mut count = asd.tensorCaptureReplayOpaqueDataSize;
         //printVkPhysicalDeviceProperties(&vk_properties_2_.properties);
         //vk_properties_2_.vk_physical_device_vulkan_1_1_properties;
+
+        //dbg!(asd);
+        dbg!(count);
+
+        println!("asdasd");
+        println!("{}", count);
+
+        count += 3;
+
+        println!("{}", count);
     }
 
 }

@@ -22,21 +22,21 @@ pub use generator::Generator;
 // file registry.rs
 mod registry;
 
-// файл registry_comment_elt.rs
-// file registry_comment_elt.rs
-mod registry_comment_elt;
+// файл registry_primitive_comment_elt
+// file registry_primitive_comment_elt
+mod registry_primitive_comment_elt;
 
-// файл registry_element_type.rs
-// file registry_element_type.rs
-mod registry_element_type;
+// файл registry_primitive_element_type
+// file registry_primitive_element_type
+mod registry_primitive_element_type;
 
-// файл registry_element_name.rs
-// file registry_element_name.rs
-mod registry_element_name;
+// файл registry_primitive_element_name
+// file registry_primitive_element_name
+mod registry_primitive_element_name;
 
-// файл registry_element_enum.rs
-// file registry_element_enum.rs
-mod registry_element_enum;
+// файл registry_primitive_element_enum
+// file registry_primitive_element_enum
+mod registry_primitive_element_enum;
 
 // файл registry_types.rs
 // file registry_types.rs

@@ -6,7 +6,9 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::RangeInclusive;
+use crate::registry::PrimitiveElementDeclaration;
+use crate::registry_primitive_element_name::RegistryPrimitiveElementName;
+use crate::registry_primitive_element_type::RegistryPrimitiveElementType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeBody =
@@ -23,45 +25,29 @@ use std::ops::RangeInclusive;
 ///         }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryTypeBody {
-    /// element type { TypeName_t }
-    pub(crate) type_rng: RangeInclusive<usize>,
+    /// mixed {
+    ///     element type { TypeName_t }
+    /// }*,
+    pub(crate) registry_primitive_element_type_vec: Vec<RegistryPrimitiveElementType>,
     /// element name { attribute alias { text }?, TypeName_t }?
-    pub(crate) name_rng: RangeInclusive<usize>,
-    /// CommentElt
-    pub(crate) comment_rng: RangeInclusive<usize>,
+    pub(crate) registry_primitive_element_name: RegistryPrimitiveElementName,
+    /// mixed {
+    ///     ( element type { TypeName_t }
+    ///         | CommentElt
+    ///     )
+    /// }*
+    pub(crate) registry_primitive_element_declaration_vec: Vec<PrimitiveElementDeclaration>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeBody {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeBody {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl RegistryTypeBody {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_create() -> Self {
+    pub(crate) fn create() -> Self {
         Self {
-            type_rng: 1 ..= 0,
-            name_rng: 1 ..= 0,
-            comment_rng: 1 ..= 0,
+            registry_primitive_element_type_vec: Vec::<RegistryPrimitiveElementType>::new(),
+            registry_primitive_element_name: RegistryPrimitiveElementName::create(),
+            registry_primitive_element_declaration_vec: Vec::<PrimitiveElementDeclaration>::new(),
         }
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeBody {}

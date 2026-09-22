@@ -30,13 +30,13 @@ use crate::registry_type_struct::RegistryTypeStruct;
 ///       | TypeStruct
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum RegistryTypeType{
+pub(crate) enum RegistryTypeElementDeclaration{
     UNKNOWN,
     TYPE_BASE_TYPE(RegistryTypeBaseType),
     TYPE_BITMASK(RegistryTypeBitmask),
     TYPE_DEFINE(RegistryTypeDefine),
     TYPE_ENUM(RegistryTypeEnum),
-    TYPE_FUNCPOINTER(RegistryTypeFuncpointer),
+    TYPE_FUNC_POINTER(RegistryTypeFuncpointer),
     TYPE_HANDLE(RegistryTypeHandle),
     TYPE_INCLUDE(RegistryTypeInclude),
     TYPE_REQUIRES(RegistryTypeRequires),
@@ -58,38 +58,16 @@ pub(crate) enum RegistryTypeType{
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryType {
-    pub(crate) r#type: RegistryTypeType,
+    pub(crate) registry_type_element_declaration: RegistryTypeElementDeclaration,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryType {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryType {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl RegistryType {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_create() -> Self {
+    pub(crate) fn create() -> Self {
         Self {
-            r#type: RegistryTypeType::UNKNOWN,
+            registry_type_element_declaration: RegistryTypeElementDeclaration::UNKNOWN,
         }
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryType {}
