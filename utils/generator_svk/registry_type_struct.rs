@@ -8,7 +8,16 @@
 
 use std::ops::RangeInclusive;
 use crate::registry_common_type_attributes::RegistryCommonTypeAttributes;
+use crate::registry_primitive_comment_elt::RegistryPrimitiveCommentElt;
 use crate::registry_type_struct_member::RegistryTypeStructMember;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Конструктор.
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum RegistryTypeStructElementVariant {
+    MEMBER(RegistryTypeStructMember),
+    COMMENT_ELT(RegistryPrimitiveCommentElt)
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeStruct =
@@ -66,14 +75,14 @@ pub(crate) struct RegistryTypeStruct {
     /// attribute requiredlimittype { "true" }?
     pub(crate) required_limit_type_rng: RangeInclusive<usize>,
     ///
-    pub(crate) member_vec: Vec<RegistryTypeStructMember>,
+    pub(crate) element_variant_vec: Vec<RegistryTypeStructElementVariant>,
 }
 
 impl RegistryTypeStruct {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_create() -> Self {
+    pub(crate) fn create() -> Self {
         Self {
             common_type_attributes: RegistryCommonTypeAttributes::create(),
             category_rng: 1 ..= 0,
@@ -83,7 +92,7 @@ impl RegistryTypeStruct {
             struct_extends_rng: 1 ..= 0,
             allow_duplicate_rng: 1 ..= 0,
             required_limit_type_rng: 1 ..= 0,
-            member_vec: Vec::new(),
+            element_variant_vec: Vec::new(),
         }
     }
 }

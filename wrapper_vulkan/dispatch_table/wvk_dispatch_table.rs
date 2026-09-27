@@ -15,8 +15,8 @@ use crate::wvk_error::{ WvkError, WvkErrorType };
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkDispatchTable<TWvkBackend, TLevel> {
-    _phantom_data: PhantomData<(TWvkBackend, TLevel)>,
+pub struct WvkDispatchTable<TLevel> {
+    _phantom_data: PhantomData<TLevel>,
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Vulkan commands: Global
@@ -50,15 +50,29 @@ pub struct WvkDispatchTable<TWvkBackend, TLevel> {
     // Vulkan 1.1
 
     pub(in crate::dispatch_table) vk_get_physical_device_properties_2 : MaybeUninit<svk::PFN_vkGetPhysicalDeviceProperties2>,
+
+    /*// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // VK_EXT_debug_utils
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    pub(in crate::dispatch_table) vk_cmd_begin_debug_utils_label_ext : MaybeUninit<svk::PFN_vkCmdBeginDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_cmd_end_debug_utils_label_ext : MaybeUninit<svk::PFN_vkCmdEndDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_cmd_insert_debug_utils_label_ext : MaybeUninit<svk::PFN_vkCmdInsertDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_create_debug_utils_messenger_ext : MaybeUninit<svk::PFN_vkCreateDebugUtilsMessengerEXT>,
+    pub(in crate::dispatch_table) vk_destroy_debug_utils_messenger_ext : MaybeUninit<svk::PFN_vkDestroyDebugUtilsMessengerEXT>,
+    pub(in crate::dispatch_table) vk_queue_begin_debug_utils_label_ext : MaybeUninit<svk::PFN_vkQueueBeginDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_queue_end_debug_utils_label_ext : MaybeUninit<svk::PFN_vkQueueEndDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_queue_insert_debug_utils_label_ext : MaybeUninit<svk::PFN_vkQueueInsertDebugUtilsLabelEXT>,
+    pub(in crate::dispatch_table) vk_set_debug_utils_object_name_ext : MaybeUninit<svk::PFN_vkSetDebugUtilsObjectNameEXT>,
+    pub(in crate::dispatch_table) vk_set_begin_debug_object_tag_ext : MaybeUninit<svk::PFN_vkSetDebugUtilsObjectTagEXT>,
+    pub(in crate::dispatch_table) vk_submit_debug_utils_message_ext : MaybeUninit<svk::PFN_vkSubmitDebugUtilsMessageEXT>,*/
 }
 
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
-where
-TWvkBackend: WvkBackend {
+impl<TLevel> WvkDispatchTable<TLevel> {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::dispatch_table) fn createAsGlobal(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
+    pub(in crate::dispatch_table) fn createAsGlobal(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TLevel>) -> Result<Self, WvkError> {
         let mut self_ = Self::create();
 
         self_.vk_get_instance_proc_addr.write(wvk_dispatch_table_builder.vk_get_instance_proc_addr.unwrap());
@@ -71,7 +85,7 @@ TWvkBackend: WvkBackend {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::dispatch_table) fn createAsInstance(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TWvkBackend, TLevel>) -> Result<Self, WvkError> {
+    pub(in crate::dispatch_table) fn createAsInstance(wvk_dispatch_table_builder: WvkDispatchTableBuilder<TLevel>) -> Result<Self, WvkError> {
         let mut self_ = Self::create();
 
         // Глобальные команды просто копируются из таблицы глобальных команд.
@@ -90,9 +104,9 @@ TWvkBackend: WvkBackend {
 
         // Vulkan 1.1
 
-        if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
-            self_.vk_enumerate_instance_version = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_enumerate_instance_version;
-        }
+        //if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
+        //    self_.vk_enumerate_instance_version = wvk_dispatch_table_builder.wvk_dispatch_table_global.unwrap().vk_enumerate_instance_version;
+        //}
 
         self_.loadCommandAsInstance(wvk_dispatch_table_builder.vk_instance.unwrap())?;
 
@@ -156,9 +170,9 @@ TWvkBackend: WvkBackend {
         self.vk_enumerate_instance_extension_properties.write(self.loadCommandAddress::<svk::PFN_vkEnumerateInstanceExtensionProperties>(std::ptr::null_mut(), c"vkEnumerateInstanceExtensionProperties")? );
         self.vk_create_instance.write(self.loadCommandAddress::<svk::PFN_vkCreateInstance>(std::ptr::null_mut(), c"vkCreateInstance")? );
 
-        if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
-            self.vk_enumerate_instance_version.write(self.loadCommandAddress::<svk::PFN_vkEnumerateInstanceVersion>(std::ptr::null_mut(), c"vkEnumerateInstanceVersion")? );
-        }
+        //if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
+        //    self.vk_enumerate_instance_version.write(self.loadCommandAddress::<svk::PFN_vkEnumerateInstanceVersion>(std::ptr::null_mut(), c"vkEnumerateInstanceVersion")? );
+        //}
 
         Ok(())
     }
@@ -188,9 +202,9 @@ TWvkBackend: WvkBackend {
 
         // Vulkan 1.1
 
-        if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
-            self.vk_get_physical_device_properties_2.write(self.loadCommandAddress::<svk::PFN_vkGetPhysicalDeviceProperties2>(vk_instance, c"vkGetPhysicalDeviceProperties2")? );
-        }
+        //if TWvkBackend::WVK_ENCODED_VULKAN_VERSION >= svk::VK_MAKE_API_VERSION(0, 1, 1,0) {
+        //    self.vk_get_physical_device_properties_2.write(self.loadCommandAddress::<svk::PFN_vkGetPhysicalDeviceProperties2>(vk_instance, c"vkGetPhysicalDeviceProperties2")? );
+        //}
 
         Ok(())
     }

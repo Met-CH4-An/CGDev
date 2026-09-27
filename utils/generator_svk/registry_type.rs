@@ -30,17 +30,17 @@ use crate::registry_type_struct::RegistryTypeStruct;
 ///       | TypeStruct
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum RegistryTypeElementDeclaration{
+pub(crate) enum RegistryTypeElementVariant{
     UNKNOWN,
-    TYPE_BASE_TYPE(RegistryTypeBaseType),
-    TYPE_BITMASK(RegistryTypeBitmask),
-    TYPE_DEFINE(RegistryTypeDefine),
-    TYPE_ENUM(RegistryTypeEnum),
-    TYPE_FUNC_POINTER(RegistryTypeFuncpointer),
-    TYPE_HANDLE(RegistryTypeHandle),
-    TYPE_INCLUDE(RegistryTypeInclude),
-    TYPE_REQUIRES(RegistryTypeRequires),
-    TYPE_STRUCT(RegistryTypeStruct),
+    BASE_TYPE(RegistryTypeBaseType),
+    BITMASK(RegistryTypeBitmask),
+    DEFINE(RegistryTypeDefine),
+    ENUM(RegistryTypeEnum),
+    FUNC_POINTER(RegistryTypeFuncpointer),
+    HANDLE(RegistryTypeHandle),
+    INCLUDE(RegistryTypeInclude),
+    REQUIRES(RegistryTypeRequires),
+    STRUCT(RegistryTypeStruct),
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +58,7 @@ pub(crate) enum RegistryTypeElementDeclaration{
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct RegistryType {
-    pub(crate) registry_type_element_declaration: RegistryTypeElementDeclaration,
+    pub(crate) registry_type_element_variant: RegistryTypeElementVariant,
 }
 
 impl RegistryType {
@@ -67,7 +67,7 @@ impl RegistryType {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            registry_type_element_declaration: RegistryTypeElementDeclaration::UNKNOWN,
+            registry_type_element_variant: RegistryTypeElementVariant::UNKNOWN,
         }
     }
 }

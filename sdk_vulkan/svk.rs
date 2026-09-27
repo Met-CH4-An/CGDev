@@ -292,44 +292,44 @@ pub type NvSciBufObj = std::ffi::c_void;
 
 
 
-pub type ANativeWindow = *mut std::ffi::c_void; //
+pub type ANativeWindow = *mut std::ffi::c_void; // 
 
-pub type AHardwareBuffer = *mut std::ffi::c_void; //
+pub type AHardwareBuffer = *mut std::ffi::c_void; // 
 
-pub type CAMetalLayer = *mut std::ffi::c_void; //
+pub type CAMetalLayer = *mut std::ffi::c_void; // 
 
-pub type MTLDevice_id = *mut std::ffi::c_void; //
+pub type MTLDevice_id = *mut std::ffi::c_void; // 
 
-pub type MTLCommandQueue_id = *mut std::ffi::c_void; //
+pub type MTLCommandQueue_id = *mut std::ffi::c_void; // 
 
-pub type MTLBuffer_id = *mut std::ffi::c_void; //
+pub type MTLBuffer_id = *mut std::ffi::c_void; // 
 
-pub type MTLTexture_id = *mut std::ffi::c_void; //
+pub type MTLTexture_id = *mut std::ffi::c_void; // 
 
-pub type MTLSharedEvent_id = *mut std::ffi::c_void; //
+pub type MTLSharedEvent_id = *mut std::ffi::c_void; // 
 
-pub type IOSurfaceRef = *mut std::ffi::c_void; //
+pub type IOSurfaceRef = *mut std::ffi::c_void; // 
 
-pub type VkSampleMask = u32; //
+pub type VkSampleMask = u32; // 
 
-pub type VkBool32 = u32; //
+pub type VkBool32 = u32; // 
 
-pub type VkFlags = u32; //
+pub type VkFlags = u32; // 
 
-pub type VkFlags64 = u64; //
+pub type VkFlags64 = u64; // 
 
-pub type VkDeviceSize = u64; //
+pub type VkDeviceSize = u64; // 
 
-pub type VkDeviceAddress = u64; //
+pub type VkDeviceAddress = u64; // 
 
-pub type OHNativeWindow = *mut std::ffi::c_void; //
+pub type OHNativeWindow = *mut std::ffi::c_void; // 
 
-pub type OHBufferHandle = *mut std::ffi::c_void; //
+pub type OHBufferHandle = *mut std::ffi::c_void; // 
 
-pub type OH_NativeBuffer = *mut std::ffi::c_void; //
+pub type OH_NativeBuffer = *mut std::ffi::c_void; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFramebufferCreateFlags(pub VkFlags); //
+pub struct VkFramebufferCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkFramebufferCreateFlags {
     type Output = Self;
 
@@ -339,7 +339,7 @@ impl std::ops::BitAnd for VkFramebufferCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkQueryPoolCreateFlags(pub VkFlags); //
+pub struct VkQueryPoolCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkQueryPoolCreateFlags {
     type Output = Self;
 
@@ -349,7 +349,7 @@ impl std::ops::BitAnd for VkQueryPoolCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkRenderPassCreateFlags(pub VkFlags); //
+pub struct VkRenderPassCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkRenderPassCreateFlags {
     type Output = Self;
 
@@ -359,7 +359,7 @@ impl std::ops::BitAnd for VkRenderPassCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSamplerCreateFlags(pub VkFlags); //
+pub struct VkSamplerCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSamplerCreateFlags {
     type Output = Self;
 
@@ -369,7 +369,7 @@ impl std::ops::BitAnd for VkSamplerCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineLayoutCreateFlags(pub VkFlags); //
+pub struct VkPipelineLayoutCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineLayoutCreateFlags {
     type Output = Self;
 
@@ -379,7 +379,7 @@ impl std::ops::BitAnd for VkPipelineLayoutCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCacheCreateFlags(pub VkFlags); //
+pub struct VkPipelineCacheCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCacheCreateFlags {
     type Output = Self;
 
@@ -389,7 +389,7 @@ impl std::ops::BitAnd for VkPipelineCacheCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineDepthStencilStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineDepthStencilStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineDepthStencilStateCreateFlags {
     type Output = Self;
 
@@ -399,7 +399,7 @@ impl std::ops::BitAnd for VkPipelineDepthStencilStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineDynamicStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineDynamicStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineDynamicStateCreateFlags {
     type Output = Self;
 
@@ -409,7 +409,7 @@ impl std::ops::BitAnd for VkPipelineDynamicStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineColorBlendStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineColorBlendStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineColorBlendStateCreateFlags {
     type Output = Self;
 
@@ -419,7 +419,7 @@ impl std::ops::BitAnd for VkPipelineColorBlendStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineMultisampleStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineMultisampleStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineMultisampleStateCreateFlags {
     type Output = Self;
 
@@ -429,7 +429,7 @@ impl std::ops::BitAnd for VkPipelineMultisampleStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineRasterizationStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineRasterizationStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineRasterizationStateCreateFlags {
     type Output = Self;
 
@@ -439,7 +439,7 @@ impl std::ops::BitAnd for VkPipelineRasterizationStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineViewportStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineViewportStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineViewportStateCreateFlags {
     type Output = Self;
 
@@ -449,7 +449,7 @@ impl std::ops::BitAnd for VkPipelineViewportStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineTessellationStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineTessellationStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineTessellationStateCreateFlags {
     type Output = Self;
 
@@ -459,7 +459,7 @@ impl std::ops::BitAnd for VkPipelineTessellationStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineInputAssemblyStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineInputAssemblyStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineInputAssemblyStateCreateFlags {
     type Output = Self;
 
@@ -469,7 +469,7 @@ impl std::ops::BitAnd for VkPipelineInputAssemblyStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineVertexInputStateCreateFlags(pub VkFlags); //
+pub struct VkPipelineVertexInputStateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineVertexInputStateCreateFlags {
     type Output = Self;
 
@@ -479,7 +479,7 @@ impl std::ops::BitAnd for VkPipelineVertexInputStateCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineShaderStageCreateFlags(pub VkFlags); //
+pub struct VkPipelineShaderStageCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineShaderStageCreateFlags {
     type Output = Self;
 
@@ -489,7 +489,7 @@ impl std::ops::BitAnd for VkPipelineShaderStageCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDescriptorSetLayoutCreateFlags(pub VkFlags); //
+pub struct VkDescriptorSetLayoutCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDescriptorSetLayoutCreateFlags {
     type Output = Self;
 
@@ -499,7 +499,7 @@ impl std::ops::BitAnd for VkDescriptorSetLayoutCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBufferViewCreateFlags(pub VkFlags); //
+pub struct VkBufferViewCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkBufferViewCreateFlags {
     type Output = Self;
 
@@ -509,7 +509,7 @@ impl std::ops::BitAnd for VkBufferViewCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkInstanceCreateFlags(pub VkFlags); //
+pub struct VkInstanceCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkInstanceCreateFlags {
     type Output = Self;
 
@@ -519,7 +519,7 @@ impl std::ops::BitAnd for VkInstanceCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceCreateFlags(pub VkFlags); //
+pub struct VkDeviceCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceCreateFlags {
     type Output = Self;
 
@@ -529,7 +529,7 @@ impl std::ops::BitAnd for VkDeviceCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceQueueCreateFlags(pub VkFlags); //
+pub struct VkDeviceQueueCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceQueueCreateFlags {
     type Output = Self;
 
@@ -539,7 +539,7 @@ impl std::ops::BitAnd for VkDeviceQueueCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkQueueFlags(pub VkFlags); //
+pub struct VkQueueFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkQueueFlags {
     type Output = Self;
 
@@ -549,7 +549,7 @@ impl std::ops::BitAnd for VkQueueFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryPropertyFlags(pub VkFlags); //
+pub struct VkMemoryPropertyFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkMemoryPropertyFlags {
     type Output = Self;
 
@@ -559,7 +559,7 @@ impl std::ops::BitAnd for VkMemoryPropertyFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryHeapFlags(pub VkFlags); //
+pub struct VkMemoryHeapFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkMemoryHeapFlags {
     type Output = Self;
 
@@ -569,7 +569,7 @@ impl std::ops::BitAnd for VkMemoryHeapFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccessFlags(pub VkFlags); //
+pub struct VkAccessFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkAccessFlags {
     type Output = Self;
 
@@ -579,7 +579,7 @@ impl std::ops::BitAnd for VkAccessFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBufferUsageFlags(pub VkFlags); //
+pub struct VkBufferUsageFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkBufferUsageFlags {
     type Output = Self;
 
@@ -589,7 +589,7 @@ impl std::ops::BitAnd for VkBufferUsageFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBufferCreateFlags(pub VkFlags); //
+pub struct VkBufferCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkBufferCreateFlags {
     type Output = Self;
 
@@ -599,7 +599,7 @@ impl std::ops::BitAnd for VkBufferCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkShaderStageFlags(pub VkFlags); //
+pub struct VkShaderStageFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkShaderStageFlags {
     type Output = Self;
 
@@ -609,7 +609,7 @@ impl std::ops::BitAnd for VkShaderStageFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageUsageFlags(pub VkFlags); //
+pub struct VkImageUsageFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageUsageFlags {
     type Output = Self;
 
@@ -619,7 +619,7 @@ impl std::ops::BitAnd for VkImageUsageFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageCreateFlags(pub VkFlags); //
+pub struct VkImageCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageCreateFlags {
     type Output = Self;
 
@@ -629,7 +629,7 @@ impl std::ops::BitAnd for VkImageCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageViewCreateFlags(pub VkFlags); //
+pub struct VkImageViewCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageViewCreateFlags {
     type Output = Self;
 
@@ -639,7 +639,7 @@ impl std::ops::BitAnd for VkImageViewCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCreateFlags(pub VkFlags); //
+pub struct VkPipelineCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCreateFlags {
     type Output = Self;
 
@@ -649,7 +649,7 @@ impl std::ops::BitAnd for VkPipelineCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkColorComponentFlags(pub VkFlags); //
+pub struct VkColorComponentFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkColorComponentFlags {
     type Output = Self;
 
@@ -659,7 +659,7 @@ impl std::ops::BitAnd for VkColorComponentFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFenceCreateFlags(pub VkFlags); //
+pub struct VkFenceCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkFenceCreateFlags {
     type Output = Self;
 
@@ -669,7 +669,7 @@ impl std::ops::BitAnd for VkFenceCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSemaphoreCreateFlags(pub VkFlags); //
+pub struct VkSemaphoreCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSemaphoreCreateFlags {
     type Output = Self;
 
@@ -679,7 +679,7 @@ impl std::ops::BitAnd for VkSemaphoreCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFormatFeatureFlags(pub VkFlags); //
+pub struct VkFormatFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkFormatFeatureFlags {
     type Output = Self;
 
@@ -689,7 +689,7 @@ impl std::ops::BitAnd for VkFormatFeatureFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkQueryControlFlags(pub VkFlags); //
+pub struct VkQueryControlFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkQueryControlFlags {
     type Output = Self;
 
@@ -699,7 +699,7 @@ impl std::ops::BitAnd for VkQueryControlFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkQueryResultFlags(pub VkFlags); //
+pub struct VkQueryResultFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkQueryResultFlags {
     type Output = Self;
 
@@ -709,7 +709,7 @@ impl std::ops::BitAnd for VkQueryResultFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkShaderModuleCreateFlags(pub VkFlags); //
+pub struct VkShaderModuleCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkShaderModuleCreateFlags {
     type Output = Self;
 
@@ -719,7 +719,7 @@ impl std::ops::BitAnd for VkShaderModuleCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkEventCreateFlags(pub VkFlags); //
+pub struct VkEventCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkEventCreateFlags {
     type Output = Self;
 
@@ -729,7 +729,7 @@ impl std::ops::BitAnd for VkEventCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCommandPoolCreateFlags(pub VkFlags); //
+pub struct VkCommandPoolCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCommandPoolCreateFlags {
     type Output = Self;
 
@@ -739,7 +739,7 @@ impl std::ops::BitAnd for VkCommandPoolCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCommandPoolResetFlags(pub VkFlags); //
+pub struct VkCommandPoolResetFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCommandPoolResetFlags {
     type Output = Self;
 
@@ -749,7 +749,7 @@ impl std::ops::BitAnd for VkCommandPoolResetFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCommandBufferResetFlags(pub VkFlags); //
+pub struct VkCommandBufferResetFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCommandBufferResetFlags {
     type Output = Self;
 
@@ -759,7 +759,7 @@ impl std::ops::BitAnd for VkCommandBufferResetFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCommandBufferUsageFlags(pub VkFlags); //
+pub struct VkCommandBufferUsageFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCommandBufferUsageFlags {
     type Output = Self;
 
@@ -769,7 +769,7 @@ impl std::ops::BitAnd for VkCommandBufferUsageFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkQueryPipelineStatisticFlags(pub VkFlags); //
+pub struct VkQueryPipelineStatisticFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkQueryPipelineStatisticFlags {
     type Output = Self;
 
@@ -779,7 +779,7 @@ impl std::ops::BitAnd for VkQueryPipelineStatisticFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryMapFlags(pub VkFlags); //
+pub struct VkMemoryMapFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkMemoryMapFlags {
     type Output = Self;
 
@@ -789,7 +789,7 @@ impl std::ops::BitAnd for VkMemoryMapFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryUnmapFlags(pub VkFlags); //
+pub struct VkMemoryUnmapFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkMemoryUnmapFlags {
     type Output = Self;
 
@@ -798,10 +798,10 @@ impl std::ops::BitAnd for VkMemoryUnmapFlags {
     }
 }
 
-pub type VkMemoryUnmapFlagsKHR = VkMemoryUnmapFlags; //
+pub type VkMemoryUnmapFlagsKHR = VkMemoryUnmapFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageAspectFlags(pub VkFlags); //
+pub struct VkImageAspectFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageAspectFlags {
     type Output = Self;
 
@@ -811,7 +811,7 @@ impl std::ops::BitAnd for VkImageAspectFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSparseMemoryBindFlags(pub VkFlags); //
+pub struct VkSparseMemoryBindFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSparseMemoryBindFlags {
     type Output = Self;
 
@@ -821,7 +821,7 @@ impl std::ops::BitAnd for VkSparseMemoryBindFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSparseImageFormatFlags(pub VkFlags); //
+pub struct VkSparseImageFormatFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSparseImageFormatFlags {
     type Output = Self;
 
@@ -831,7 +831,7 @@ impl std::ops::BitAnd for VkSparseImageFormatFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSubpassDescriptionFlags(pub VkFlags); //
+pub struct VkSubpassDescriptionFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSubpassDescriptionFlags {
     type Output = Self;
 
@@ -841,7 +841,7 @@ impl std::ops::BitAnd for VkSubpassDescriptionFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineStageFlags(pub VkFlags); //
+pub struct VkPipelineStageFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineStageFlags {
     type Output = Self;
 
@@ -851,7 +851,7 @@ impl std::ops::BitAnd for VkPipelineStageFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSampleCountFlags(pub VkFlags); //
+pub struct VkSampleCountFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSampleCountFlags {
     type Output = Self;
 
@@ -861,7 +861,7 @@ impl std::ops::BitAnd for VkSampleCountFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAttachmentDescriptionFlags(pub VkFlags); //
+pub struct VkAttachmentDescriptionFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkAttachmentDescriptionFlags {
     type Output = Self;
 
@@ -871,7 +871,7 @@ impl std::ops::BitAnd for VkAttachmentDescriptionFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkStencilFaceFlags(pub VkFlags); //
+pub struct VkStencilFaceFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkStencilFaceFlags {
     type Output = Self;
 
@@ -881,7 +881,7 @@ impl std::ops::BitAnd for VkStencilFaceFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCullModeFlags(pub VkFlags); //
+pub struct VkCullModeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCullModeFlags {
     type Output = Self;
 
@@ -891,7 +891,7 @@ impl std::ops::BitAnd for VkCullModeFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDescriptorPoolCreateFlags(pub VkFlags); //
+pub struct VkDescriptorPoolCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDescriptorPoolCreateFlags {
     type Output = Self;
 
@@ -901,7 +901,7 @@ impl std::ops::BitAnd for VkDescriptorPoolCreateFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDescriptorPoolResetFlags(pub VkFlags); //
+pub struct VkDescriptorPoolResetFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDescriptorPoolResetFlags {
     type Output = Self;
 
@@ -911,7 +911,7 @@ impl std::ops::BitAnd for VkDescriptorPoolResetFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDependencyFlags(pub VkFlags); //
+pub struct VkDependencyFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDependencyFlags {
     type Output = Self;
 
@@ -921,7 +921,7 @@ impl std::ops::BitAnd for VkDependencyFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSubgroupFeatureFlags(pub VkFlags); //
+pub struct VkSubgroupFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSubgroupFeatureFlags {
     type Output = Self;
 
@@ -931,7 +931,7 @@ impl std::ops::BitAnd for VkSubgroupFeatureFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkIndirectCommandsLayoutUsageFlagsNV(pub VkFlags); //
+pub struct VkIndirectCommandsLayoutUsageFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkIndirectCommandsLayoutUsageFlagsNV {
     type Output = Self;
 
@@ -941,7 +941,7 @@ impl std::ops::BitAnd for VkIndirectCommandsLayoutUsageFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkIndirectStateFlagsNV(pub VkFlags); //
+pub struct VkIndirectStateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkIndirectStateFlagsNV {
     type Output = Self;
 
@@ -951,7 +951,7 @@ impl std::ops::BitAnd for VkIndirectStateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkGeometryFlagsKHR(pub VkFlags); //
+pub struct VkGeometryFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkGeometryFlagsKHR {
     type Output = Self;
 
@@ -960,10 +960,10 @@ impl std::ops::BitAnd for VkGeometryFlagsKHR {
     }
 }
 
-pub type VkGeometryFlagsNV = VkGeometryFlagsKHR; //
+pub type VkGeometryFlagsNV = VkGeometryFlagsKHR; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkGeometryInstanceFlagsKHR(pub VkFlags); //
+pub struct VkGeometryInstanceFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkGeometryInstanceFlagsKHR {
     type Output = Self;
 
@@ -972,10 +972,10 @@ impl std::ops::BitAnd for VkGeometryInstanceFlagsKHR {
     }
 }
 
-pub type VkGeometryInstanceFlagsNV = VkGeometryInstanceFlagsKHR; //
+pub type VkGeometryInstanceFlagsNV = VkGeometryInstanceFlagsKHR; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkClusterAccelerationStructureGeometryFlagsNV(pub VkFlags); //
+pub struct VkClusterAccelerationStructureGeometryFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkClusterAccelerationStructureGeometryFlagsNV {
     type Output = Self;
 
@@ -985,7 +985,7 @@ impl std::ops::BitAnd for VkClusterAccelerationStructureGeometryFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkClusterAccelerationStructureClusterFlagsNV(pub VkFlags); //
+pub struct VkClusterAccelerationStructureClusterFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkClusterAccelerationStructureClusterFlagsNV {
     type Output = Self;
 
@@ -995,7 +995,7 @@ impl std::ops::BitAnd for VkClusterAccelerationStructureClusterFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkClusterAccelerationStructureAddressResolutionFlagsNV(pub VkFlags); //
+pub struct VkClusterAccelerationStructureAddressResolutionFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkClusterAccelerationStructureAddressResolutionFlagsNV {
     type Output = Self;
 
@@ -1005,7 +1005,7 @@ impl std::ops::BitAnd for VkClusterAccelerationStructureAddressResolutionFlagsNV
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBuildAccelerationStructureFlagsKHR(pub VkFlags); //
+pub struct VkBuildAccelerationStructureFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkBuildAccelerationStructureFlagsKHR {
     type Output = Self;
 
@@ -1014,10 +1014,10 @@ impl std::ops::BitAnd for VkBuildAccelerationStructureFlagsKHR {
     }
 }
 
-pub type VkBuildAccelerationStructureFlagsNV = VkBuildAccelerationStructureFlagsKHR; //
+pub type VkBuildAccelerationStructureFlagsNV = VkBuildAccelerationStructureFlagsKHR; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPrivateDataSlotCreateFlags(pub VkFlags); //
+pub struct VkPrivateDataSlotCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPrivateDataSlotCreateFlags {
     type Output = Self;
 
@@ -1026,10 +1026,10 @@ impl std::ops::BitAnd for VkPrivateDataSlotCreateFlags {
     }
 }
 
-pub type VkPrivateDataSlotCreateFlagsEXT = VkPrivateDataSlotCreateFlags; //
+pub type VkPrivateDataSlotCreateFlagsEXT = VkPrivateDataSlotCreateFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccelerationStructureCreateFlagsKHR(pub VkFlags); //
+pub struct VkAccelerationStructureCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkAccelerationStructureCreateFlagsKHR {
     type Output = Self;
 
@@ -1039,7 +1039,7 @@ impl std::ops::BitAnd for VkAccelerationStructureCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDescriptorUpdateTemplateCreateFlags(pub VkFlags); //
+pub struct VkDescriptorUpdateTemplateCreateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDescriptorUpdateTemplateCreateFlags {
     type Output = Self;
 
@@ -1048,10 +1048,10 @@ impl std::ops::BitAnd for VkDescriptorUpdateTemplateCreateFlags {
     }
 }
 
-pub type VkDescriptorUpdateTemplateCreateFlagsKHR = VkDescriptorUpdateTemplateCreateFlags; //
+pub type VkDescriptorUpdateTemplateCreateFlagsKHR = VkDescriptorUpdateTemplateCreateFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCreationFeedbackFlags(pub VkFlags); //
+pub struct VkPipelineCreationFeedbackFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCreationFeedbackFlags {
     type Output = Self;
 
@@ -1060,10 +1060,10 @@ impl std::ops::BitAnd for VkPipelineCreationFeedbackFlags {
     }
 }
 
-pub type VkPipelineCreationFeedbackFlagsEXT = VkPipelineCreationFeedbackFlags; //
+pub type VkPipelineCreationFeedbackFlagsEXT = VkPipelineCreationFeedbackFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPerformanceCounterDescriptionFlagsKHR(pub VkFlags); //
+pub struct VkPerformanceCounterDescriptionFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkPerformanceCounterDescriptionFlagsKHR {
     type Output = Self;
 
@@ -1073,7 +1073,7 @@ impl std::ops::BitAnd for VkPerformanceCounterDescriptionFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAcquireProfilingLockFlagsKHR(pub VkFlags); //
+pub struct VkAcquireProfilingLockFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkAcquireProfilingLockFlagsKHR {
     type Output = Self;
 
@@ -1083,7 +1083,7 @@ impl std::ops::BitAnd for VkAcquireProfilingLockFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSemaphoreWaitFlags(pub VkFlags); //
+pub struct VkSemaphoreWaitFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSemaphoreWaitFlags {
     type Output = Self;
 
@@ -1092,10 +1092,10 @@ impl std::ops::BitAnd for VkSemaphoreWaitFlags {
     }
 }
 
-pub type VkSemaphoreWaitFlagsKHR = VkSemaphoreWaitFlags; //
+pub type VkSemaphoreWaitFlagsKHR = VkSemaphoreWaitFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCompilerControlFlagsAMD(pub VkFlags); //
+pub struct VkPipelineCompilerControlFlagsAMD(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCompilerControlFlagsAMD {
     type Output = Self;
 
@@ -1105,7 +1105,7 @@ impl std::ops::BitAnd for VkPipelineCompilerControlFlagsAMD {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkShaderCorePropertiesFlagsAMD(pub VkFlags); //
+pub struct VkShaderCorePropertiesFlagsAMD(pub VkFlags); // 
 impl std::ops::BitAnd for VkShaderCorePropertiesFlagsAMD {
     type Output = Self;
 
@@ -1115,7 +1115,7 @@ impl std::ops::BitAnd for VkShaderCorePropertiesFlagsAMD {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceDiagnosticsConfigFlagsNV(pub VkFlags); //
+pub struct VkDeviceDiagnosticsConfigFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceDiagnosticsConfigFlagsNV {
     type Output = Self;
 
@@ -1125,7 +1125,7 @@ impl std::ops::BitAnd for VkDeviceDiagnosticsConfigFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkRefreshObjectFlagsKHR(pub VkFlags); //
+pub struct VkRefreshObjectFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkRefreshObjectFlagsKHR {
     type Output = Self;
 
@@ -1135,7 +1135,7 @@ impl std::ops::BitAnd for VkRefreshObjectFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccessFlags2(pub VkFlags64); //
+pub struct VkAccessFlags2(pub VkFlags64); // 
 impl std::ops::BitAnd for VkAccessFlags2 {
     type Output = Self;
 
@@ -1144,10 +1144,10 @@ impl std::ops::BitAnd for VkAccessFlags2 {
     }
 }
 
-pub type VkAccessFlags2KHR = VkAccessFlags2; //
+pub type VkAccessFlags2KHR = VkAccessFlags2; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineStageFlags2(pub VkFlags64); //
+pub struct VkPipelineStageFlags2(pub VkFlags64); // 
 impl std::ops::BitAnd for VkPipelineStageFlags2 {
     type Output = Self;
 
@@ -1156,10 +1156,10 @@ impl std::ops::BitAnd for VkPipelineStageFlags2 {
     }
 }
 
-pub type VkPipelineStageFlags2KHR = VkPipelineStageFlags2; //
+pub type VkPipelineStageFlags2KHR = VkPipelineStageFlags2; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccelerationStructureMotionInfoFlagsNV(pub VkFlags); //
+pub struct VkAccelerationStructureMotionInfoFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkAccelerationStructureMotionInfoFlagsNV {
     type Output = Self;
 
@@ -1169,7 +1169,7 @@ impl std::ops::BitAnd for VkAccelerationStructureMotionInfoFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccelerationStructureMotionInstanceFlagsNV(pub VkFlags); //
+pub struct VkAccelerationStructureMotionInstanceFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkAccelerationStructureMotionInstanceFlagsNV {
     type Output = Self;
 
@@ -1179,7 +1179,7 @@ impl std::ops::BitAnd for VkAccelerationStructureMotionInstanceFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFormatFeatureFlags2(pub VkFlags64); //
+pub struct VkFormatFeatureFlags2(pub VkFlags64); // 
 impl std::ops::BitAnd for VkFormatFeatureFlags2 {
     type Output = Self;
 
@@ -1188,10 +1188,10 @@ impl std::ops::BitAnd for VkFormatFeatureFlags2 {
     }
 }
 
-pub type VkFormatFeatureFlags2KHR = VkFormatFeatureFlags2; //
+pub type VkFormatFeatureFlags2KHR = VkFormatFeatureFlags2; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFormatFeatureFlags4KHR(pub VkFlags64); //
+pub struct VkFormatFeatureFlags4KHR(pub VkFlags64); // 
 impl std::ops::BitAnd for VkFormatFeatureFlags4KHR {
     type Output = Self;
 
@@ -1201,7 +1201,7 @@ impl std::ops::BitAnd for VkFormatFeatureFlags4KHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkRenderingFlags(pub VkFlags); //
+pub struct VkRenderingFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkRenderingFlags {
     type Output = Self;
 
@@ -1211,7 +1211,7 @@ impl std::ops::BitAnd for VkRenderingFlags {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryDecompressionMethodFlagsEXT(pub VkFlags64); //
+pub struct VkMemoryDecompressionMethodFlagsEXT(pub VkFlags64); // 
 impl std::ops::BitAnd for VkMemoryDecompressionMethodFlagsEXT {
     type Output = Self;
 
@@ -1220,12 +1220,12 @@ impl std::ops::BitAnd for VkMemoryDecompressionMethodFlagsEXT {
     }
 }
 
-pub type VkMemoryDecompressionMethodFlagsNV = VkMemoryDecompressionMethodFlagsEXT; //
+pub type VkMemoryDecompressionMethodFlagsNV = VkMemoryDecompressionMethodFlagsEXT; // 
 
-pub type VkRenderingFlagsKHR = VkRenderingFlags; //
+pub type VkRenderingFlagsKHR = VkRenderingFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceFaultFlagsKHR(pub VkFlags); //
+pub struct VkDeviceFaultFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceFaultFlagsKHR {
     type Output = Self;
 
@@ -1235,7 +1235,7 @@ impl std::ops::BitAnd for VkDeviceFaultFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBuildMicromapFlagsEXT(pub VkFlags); //
+pub struct VkBuildMicromapFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkBuildMicromapFlagsEXT {
     type Output = Self;
 
@@ -1245,7 +1245,7 @@ impl std::ops::BitAnd for VkBuildMicromapFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMicromapCreateFlagsEXT(pub VkFlags); //
+pub struct VkMicromapCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkMicromapCreateFlagsEXT {
     type Output = Self;
 
@@ -1255,7 +1255,7 @@ impl std::ops::BitAnd for VkMicromapCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkIndirectCommandsLayoutUsageFlagsEXT(pub VkFlags); //
+pub struct VkIndirectCommandsLayoutUsageFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkIndirectCommandsLayoutUsageFlagsEXT {
     type Output = Self;
 
@@ -1265,7 +1265,7 @@ impl std::ops::BitAnd for VkIndirectCommandsLayoutUsageFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkIndirectCommandsInputModeFlagsEXT(pub VkFlags); //
+pub struct VkIndirectCommandsInputModeFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkIndirectCommandsInputModeFlagsEXT {
     type Output = Self;
 
@@ -1275,7 +1275,7 @@ impl std::ops::BitAnd for VkIndirectCommandsInputModeFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDirectDriverLoadingFlagsLUNARG(pub VkFlags); //
+pub struct VkDirectDriverLoadingFlagsLUNARG(pub VkFlags); // 
 impl std::ops::BitAnd for VkDirectDriverLoadingFlagsLUNARG {
     type Output = Self;
 
@@ -1285,7 +1285,7 @@ impl std::ops::BitAnd for VkDirectDriverLoadingFlagsLUNARG {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCreateFlags2(pub VkFlags64); //
+pub struct VkPipelineCreateFlags2(pub VkFlags64); // 
 impl std::ops::BitAnd for VkPipelineCreateFlags2 {
     type Output = Self;
 
@@ -1294,10 +1294,10 @@ impl std::ops::BitAnd for VkPipelineCreateFlags2 {
     }
 }
 
-pub type VkPipelineCreateFlags2KHR = VkPipelineCreateFlags2; //
+pub type VkPipelineCreateFlags2KHR = VkPipelineCreateFlags2; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkBufferUsageFlags2(pub VkFlags64); //
+pub struct VkBufferUsageFlags2(pub VkFlags64); // 
 impl std::ops::BitAnd for VkBufferUsageFlags2 {
     type Output = Self;
 
@@ -1306,10 +1306,10 @@ impl std::ops::BitAnd for VkBufferUsageFlags2 {
     }
 }
 
-pub type VkBufferUsageFlags2KHR = VkBufferUsageFlags2; //
+pub type VkBufferUsageFlags2KHR = VkBufferUsageFlags2; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageUsageFlags2KHR(pub VkFlags64); //
+pub struct VkImageUsageFlags2KHR(pub VkFlags64); // 
 impl std::ops::BitAnd for VkImageUsageFlags2KHR {
     type Output = Self;
 
@@ -1319,7 +1319,7 @@ impl std::ops::BitAnd for VkImageUsageFlags2KHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageCreateFlags2KHR(pub VkFlags64); //
+pub struct VkImageCreateFlags2KHR(pub VkFlags64); // 
 impl std::ops::BitAnd for VkImageCreateFlags2KHR {
     type Output = Self;
 
@@ -1329,7 +1329,7 @@ impl std::ops::BitAnd for VkImageCreateFlags2KHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAddressCopyFlagsKHR(pub VkFlags); //
+pub struct VkAddressCopyFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkAddressCopyFlagsKHR {
     type Output = Self;
 
@@ -1339,7 +1339,7 @@ impl std::ops::BitAnd for VkAddressCopyFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkTensorCreateFlagsARM(pub VkFlags64); //
+pub struct VkTensorCreateFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkTensorCreateFlagsARM {
     type Output = Self;
 
@@ -1349,7 +1349,7 @@ impl std::ops::BitAnd for VkTensorCreateFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkTensorUsageFlagsARM(pub VkFlags64); //
+pub struct VkTensorUsageFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkTensorUsageFlagsARM {
     type Output = Self;
 
@@ -1359,7 +1359,7 @@ impl std::ops::BitAnd for VkTensorUsageFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkTensorViewCreateFlagsARM(pub VkFlags64); //
+pub struct VkTensorViewCreateFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkTensorViewCreateFlagsARM {
     type Output = Self;
 
@@ -1369,7 +1369,7 @@ impl std::ops::BitAnd for VkTensorViewCreateFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphPipelineSessionCreateFlagsARM(pub VkFlags64); //
+pub struct VkDataGraphPipelineSessionCreateFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkDataGraphPipelineSessionCreateFlagsARM {
     type Output = Self;
 
@@ -1379,7 +1379,7 @@ impl std::ops::BitAnd for VkDataGraphPipelineSessionCreateFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphPipelineDispatchFlagsARM(pub VkFlags64); //
+pub struct VkDataGraphPipelineDispatchFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkDataGraphPipelineDispatchFlagsARM {
     type Output = Self;
 
@@ -1389,7 +1389,7 @@ impl std::ops::BitAnd for VkDataGraphPipelineDispatchFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeRgbModelConversionFlagsVALVE(pub VkFlags); //
+pub struct VkVideoEncodeRgbModelConversionFlagsVALVE(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeRgbModelConversionFlagsVALVE {
     type Output = Self;
 
@@ -1399,7 +1399,7 @@ impl std::ops::BitAnd for VkVideoEncodeRgbModelConversionFlagsVALVE {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeRgbRangeCompressionFlagsVALVE(pub VkFlags); //
+pub struct VkVideoEncodeRgbRangeCompressionFlagsVALVE(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeRgbRangeCompressionFlagsVALVE {
     type Output = Self;
 
@@ -1409,7 +1409,7 @@ impl std::ops::BitAnd for VkVideoEncodeRgbRangeCompressionFlagsVALVE {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeRgbChromaOffsetFlagsVALVE(pub VkFlags); //
+pub struct VkVideoEncodeRgbChromaOffsetFlagsVALVE(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeRgbChromaOffsetFlagsVALVE {
     type Output = Self;
 
@@ -1419,7 +1419,7 @@ impl std::ops::BitAnd for VkVideoEncodeRgbChromaOffsetFlagsVALVE {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSpirvResourceTypeFlagsEXT(pub VkFlags); //
+pub struct VkSpirvResourceTypeFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkSpirvResourceTypeFlagsEXT {
     type Output = Self;
 
@@ -1429,7 +1429,7 @@ impl std::ops::BitAnd for VkSpirvResourceTypeFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkGpaSqShaderStageFlagsAMD(pub VkFlags); //
+pub struct VkGpaSqShaderStageFlagsAMD(pub VkFlags); // 
 impl std::ops::BitAnd for VkGpaSqShaderStageFlagsAMD {
     type Output = Self;
 
@@ -1439,7 +1439,7 @@ impl std::ops::BitAnd for VkGpaSqShaderStageFlagsAMD {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkGpaPerfBlockPropertiesFlagsAMD(pub VkFlags); //
+pub struct VkGpaPerfBlockPropertiesFlagsAMD(pub VkFlags); // 
 impl std::ops::BitAnd for VkGpaPerfBlockPropertiesFlagsAMD {
     type Output = Self;
 
@@ -1449,7 +1449,7 @@ impl std::ops::BitAnd for VkGpaPerfBlockPropertiesFlagsAMD {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPhysicalDeviceGpaPropertiesFlagsAMD(pub VkFlags); //
+pub struct VkPhysicalDeviceGpaPropertiesFlagsAMD(pub VkFlags); // 
 impl std::ops::BitAnd for VkPhysicalDeviceGpaPropertiesFlagsAMD {
     type Output = Self;
 
@@ -1459,7 +1459,7 @@ impl std::ops::BitAnd for VkPhysicalDeviceGpaPropertiesFlagsAMD {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAddressCommandFlagsKHR(pub VkFlags); //
+pub struct VkAddressCommandFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkAddressCommandFlagsKHR {
     type Output = Self;
 
@@ -1469,7 +1469,7 @@ impl std::ops::BitAnd for VkAddressCommandFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCompositeAlphaFlagsKHR(pub VkFlags); //
+pub struct VkCompositeAlphaFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkCompositeAlphaFlagsKHR {
     type Output = Self;
 
@@ -1479,7 +1479,7 @@ impl std::ops::BitAnd for VkCompositeAlphaFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDisplayPlaneAlphaFlagsKHR(pub VkFlags); //
+pub struct VkDisplayPlaneAlphaFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkDisplayPlaneAlphaFlagsKHR {
     type Output = Self;
 
@@ -1489,7 +1489,7 @@ impl std::ops::BitAnd for VkDisplayPlaneAlphaFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSurfaceTransformFlagsKHR(pub VkFlags); //
+pub struct VkSurfaceTransformFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkSurfaceTransformFlagsKHR {
     type Output = Self;
 
@@ -1499,7 +1499,7 @@ impl std::ops::BitAnd for VkSurfaceTransformFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSwapchainCreateFlagsKHR(pub VkFlags); //
+pub struct VkSwapchainCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkSwapchainCreateFlagsKHR {
     type Output = Self;
 
@@ -1509,7 +1509,7 @@ impl std::ops::BitAnd for VkSwapchainCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDisplayModeCreateFlagsKHR(pub VkFlags); //
+pub struct VkDisplayModeCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkDisplayModeCreateFlagsKHR {
     type Output = Self;
 
@@ -1519,7 +1519,7 @@ impl std::ops::BitAnd for VkDisplayModeCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDisplaySurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkDisplaySurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkDisplaySurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1529,7 +1529,7 @@ impl std::ops::BitAnd for VkDisplaySurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAndroidSurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkAndroidSurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkAndroidSurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1539,7 +1539,7 @@ impl std::ops::BitAnd for VkAndroidSurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkViSurfaceCreateFlagsNN(pub VkFlags); //
+pub struct VkViSurfaceCreateFlagsNN(pub VkFlags); // 
 impl std::ops::BitAnd for VkViSurfaceCreateFlagsNN {
     type Output = Self;
 
@@ -1549,7 +1549,7 @@ impl std::ops::BitAnd for VkViSurfaceCreateFlagsNN {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkWaylandSurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkWaylandSurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkWaylandSurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1559,7 +1559,7 @@ impl std::ops::BitAnd for VkWaylandSurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkUbmSurfaceCreateFlagsSEC(pub VkFlags); //
+pub struct VkUbmSurfaceCreateFlagsSEC(pub VkFlags); // 
 impl std::ops::BitAnd for VkUbmSurfaceCreateFlagsSEC {
     type Output = Self;
 
@@ -1569,7 +1569,7 @@ impl std::ops::BitAnd for VkUbmSurfaceCreateFlagsSEC {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkWin32SurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkWin32SurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkWin32SurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1579,7 +1579,7 @@ impl std::ops::BitAnd for VkWin32SurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkXlibSurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkXlibSurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkXlibSurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1589,7 +1589,7 @@ impl std::ops::BitAnd for VkXlibSurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkXcbSurfaceCreateFlagsKHR(pub VkFlags); //
+pub struct VkXcbSurfaceCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkXcbSurfaceCreateFlagsKHR {
     type Output = Self;
 
@@ -1599,7 +1599,7 @@ impl std::ops::BitAnd for VkXcbSurfaceCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDirectFBSurfaceCreateFlagsEXT(pub VkFlags); //
+pub struct VkDirectFBSurfaceCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDirectFBSurfaceCreateFlagsEXT {
     type Output = Self;
 
@@ -1609,7 +1609,7 @@ impl std::ops::BitAnd for VkDirectFBSurfaceCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkIOSSurfaceCreateFlagsMVK(pub VkFlags); //
+pub struct VkIOSSurfaceCreateFlagsMVK(pub VkFlags); // 
 impl std::ops::BitAnd for VkIOSSurfaceCreateFlagsMVK {
     type Output = Self;
 
@@ -1619,7 +1619,7 @@ impl std::ops::BitAnd for VkIOSSurfaceCreateFlagsMVK {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMacOSSurfaceCreateFlagsMVK(pub VkFlags); //
+pub struct VkMacOSSurfaceCreateFlagsMVK(pub VkFlags); // 
 impl std::ops::BitAnd for VkMacOSSurfaceCreateFlagsMVK {
     type Output = Self;
 
@@ -1629,7 +1629,7 @@ impl std::ops::BitAnd for VkMacOSSurfaceCreateFlagsMVK {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMetalSurfaceCreateFlagsEXT(pub VkFlags); //
+pub struct VkMetalSurfaceCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkMetalSurfaceCreateFlagsEXT {
     type Output = Self;
 
@@ -1639,7 +1639,7 @@ impl std::ops::BitAnd for VkMetalSurfaceCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImagePipeSurfaceCreateFlagsFUCHSIA(pub VkFlags); //
+pub struct VkImagePipeSurfaceCreateFlagsFUCHSIA(pub VkFlags); // 
 impl std::ops::BitAnd for VkImagePipeSurfaceCreateFlagsFUCHSIA {
     type Output = Self;
 
@@ -1649,7 +1649,7 @@ impl std::ops::BitAnd for VkImagePipeSurfaceCreateFlagsFUCHSIA {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkStreamDescriptorSurfaceCreateFlagsGGP(pub VkFlags); //
+pub struct VkStreamDescriptorSurfaceCreateFlagsGGP(pub VkFlags); // 
 impl std::ops::BitAnd for VkStreamDescriptorSurfaceCreateFlagsGGP {
     type Output = Self;
 
@@ -1659,7 +1659,7 @@ impl std::ops::BitAnd for VkStreamDescriptorSurfaceCreateFlagsGGP {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkHeadlessSurfaceCreateFlagsEXT(pub VkFlags); //
+pub struct VkHeadlessSurfaceCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkHeadlessSurfaceCreateFlagsEXT {
     type Output = Self;
 
@@ -1669,7 +1669,7 @@ impl std::ops::BitAnd for VkHeadlessSurfaceCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkScreenSurfaceCreateFlagsQNX(pub VkFlags); //
+pub struct VkScreenSurfaceCreateFlagsQNX(pub VkFlags); // 
 impl std::ops::BitAnd for VkScreenSurfaceCreateFlagsQNX {
     type Output = Self;
 
@@ -1679,7 +1679,7 @@ impl std::ops::BitAnd for VkScreenSurfaceCreateFlagsQNX {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPeerMemoryFeatureFlags(pub VkFlags); //
+pub struct VkPeerMemoryFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkPeerMemoryFeatureFlags {
     type Output = Self;
 
@@ -1688,10 +1688,10 @@ impl std::ops::BitAnd for VkPeerMemoryFeatureFlags {
     }
 }
 
-pub type VkPeerMemoryFeatureFlagsKHR = VkPeerMemoryFeatureFlags; //
+pub type VkPeerMemoryFeatureFlagsKHR = VkPeerMemoryFeatureFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkMemoryAllocateFlags(pub VkFlags); //
+pub struct VkMemoryAllocateFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkMemoryAllocateFlags {
     type Output = Self;
 
@@ -1700,10 +1700,10 @@ impl std::ops::BitAnd for VkMemoryAllocateFlags {
     }
 }
 
-pub type VkMemoryAllocateFlagsKHR = VkMemoryAllocateFlags; //
+pub type VkMemoryAllocateFlagsKHR = VkMemoryAllocateFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceGroupPresentModeFlagsKHR(pub VkFlags); //
+pub struct VkDeviceGroupPresentModeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceGroupPresentModeFlagsKHR {
     type Output = Self;
 
@@ -1713,7 +1713,7 @@ impl std::ops::BitAnd for VkDeviceGroupPresentModeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDebugReportFlagsEXT(pub VkFlags); //
+pub struct VkDebugReportFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDebugReportFlagsEXT {
     type Output = Self;
 
@@ -1723,7 +1723,7 @@ impl std::ops::BitAnd for VkDebugReportFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCommandPoolTrimFlags(pub VkFlags); //
+pub struct VkCommandPoolTrimFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkCommandPoolTrimFlags {
     type Output = Self;
 
@@ -1732,10 +1732,10 @@ impl std::ops::BitAnd for VkCommandPoolTrimFlags {
     }
 }
 
-pub type VkCommandPoolTrimFlagsKHR = VkCommandPoolTrimFlags; //
+pub type VkCommandPoolTrimFlagsKHR = VkCommandPoolTrimFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalMemoryHandleTypeFlagsNV(pub VkFlags); //
+pub struct VkExternalMemoryHandleTypeFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalMemoryHandleTypeFlagsNV {
     type Output = Self;
 
@@ -1745,7 +1745,7 @@ impl std::ops::BitAnd for VkExternalMemoryHandleTypeFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkClusterAccelerationStructureIndexFormatFlagsNV(pub VkFlags); //
+pub struct VkClusterAccelerationStructureIndexFormatFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkClusterAccelerationStructureIndexFormatFlagsNV {
     type Output = Self;
 
@@ -1755,7 +1755,7 @@ impl std::ops::BitAnd for VkClusterAccelerationStructureIndexFormatFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalMemoryFeatureFlagsNV(pub VkFlags); //
+pub struct VkExternalMemoryFeatureFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalMemoryFeatureFlagsNV {
     type Output = Self;
 
@@ -1765,7 +1765,7 @@ impl std::ops::BitAnd for VkExternalMemoryFeatureFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalMemoryHandleTypeFlags(pub VkFlags); //
+pub struct VkExternalMemoryHandleTypeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalMemoryHandleTypeFlags {
     type Output = Self;
 
@@ -1774,10 +1774,10 @@ impl std::ops::BitAnd for VkExternalMemoryHandleTypeFlags {
     }
 }
 
-pub type VkExternalMemoryHandleTypeFlagsKHR = VkExternalMemoryHandleTypeFlags; //
+pub type VkExternalMemoryHandleTypeFlagsKHR = VkExternalMemoryHandleTypeFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalMemoryFeatureFlags(pub VkFlags); //
+pub struct VkExternalMemoryFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalMemoryFeatureFlags {
     type Output = Self;
 
@@ -1786,10 +1786,10 @@ impl std::ops::BitAnd for VkExternalMemoryFeatureFlags {
     }
 }
 
-pub type VkExternalMemoryFeatureFlagsKHR = VkExternalMemoryFeatureFlags; //
+pub type VkExternalMemoryFeatureFlagsKHR = VkExternalMemoryFeatureFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalSemaphoreHandleTypeFlags(pub VkFlags); //
+pub struct VkExternalSemaphoreHandleTypeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalSemaphoreHandleTypeFlags {
     type Output = Self;
 
@@ -1798,10 +1798,10 @@ impl std::ops::BitAnd for VkExternalSemaphoreHandleTypeFlags {
     }
 }
 
-pub type VkExternalSemaphoreHandleTypeFlagsKHR = VkExternalSemaphoreHandleTypeFlags; //
+pub type VkExternalSemaphoreHandleTypeFlagsKHR = VkExternalSemaphoreHandleTypeFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalSemaphoreFeatureFlags(pub VkFlags); //
+pub struct VkExternalSemaphoreFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalSemaphoreFeatureFlags {
     type Output = Self;
 
@@ -1810,10 +1810,10 @@ impl std::ops::BitAnd for VkExternalSemaphoreFeatureFlags {
     }
 }
 
-pub type VkExternalSemaphoreFeatureFlagsKHR = VkExternalSemaphoreFeatureFlags; //
+pub type VkExternalSemaphoreFeatureFlagsKHR = VkExternalSemaphoreFeatureFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSemaphoreImportFlags(pub VkFlags); //
+pub struct VkSemaphoreImportFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSemaphoreImportFlags {
     type Output = Self;
 
@@ -1822,10 +1822,10 @@ impl std::ops::BitAnd for VkSemaphoreImportFlags {
     }
 }
 
-pub type VkSemaphoreImportFlagsKHR = VkSemaphoreImportFlags; //
+pub type VkSemaphoreImportFlagsKHR = VkSemaphoreImportFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalFenceHandleTypeFlags(pub VkFlags); //
+pub struct VkExternalFenceHandleTypeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalFenceHandleTypeFlags {
     type Output = Self;
 
@@ -1834,10 +1834,10 @@ impl std::ops::BitAnd for VkExternalFenceHandleTypeFlags {
     }
 }
 
-pub type VkExternalFenceHandleTypeFlagsKHR = VkExternalFenceHandleTypeFlags; //
+pub type VkExternalFenceHandleTypeFlagsKHR = VkExternalFenceHandleTypeFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExternalFenceFeatureFlags(pub VkFlags); //
+pub struct VkExternalFenceFeatureFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkExternalFenceFeatureFlags {
     type Output = Self;
 
@@ -1846,10 +1846,10 @@ impl std::ops::BitAnd for VkExternalFenceFeatureFlags {
     }
 }
 
-pub type VkExternalFenceFeatureFlagsKHR = VkExternalFenceFeatureFlags; //
+pub type VkExternalFenceFeatureFlagsKHR = VkExternalFenceFeatureFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFenceImportFlags(pub VkFlags); //
+pub struct VkFenceImportFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkFenceImportFlags {
     type Output = Self;
 
@@ -1858,10 +1858,10 @@ impl std::ops::BitAnd for VkFenceImportFlags {
     }
 }
 
-pub type VkFenceImportFlagsKHR = VkFenceImportFlags; //
+pub type VkFenceImportFlagsKHR = VkFenceImportFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSurfaceCounterFlagsEXT(pub VkFlags); //
+pub struct VkSurfaceCounterFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkSurfaceCounterFlagsEXT {
     type Output = Self;
 
@@ -1871,7 +1871,7 @@ impl std::ops::BitAnd for VkSurfaceCounterFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineViewportSwizzleStateCreateFlagsNV(pub VkFlags); //
+pub struct VkPipelineViewportSwizzleStateCreateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineViewportSwizzleStateCreateFlagsNV {
     type Output = Self;
 
@@ -1881,7 +1881,7 @@ impl std::ops::BitAnd for VkPipelineViewportSwizzleStateCreateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineDiscardRectangleStateCreateFlagsEXT(pub VkFlags); //
+pub struct VkPipelineDiscardRectangleStateCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineDiscardRectangleStateCreateFlagsEXT {
     type Output = Self;
 
@@ -1891,7 +1891,7 @@ impl std::ops::BitAnd for VkPipelineDiscardRectangleStateCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCoverageToColorStateCreateFlagsNV(pub VkFlags); //
+pub struct VkPipelineCoverageToColorStateCreateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCoverageToColorStateCreateFlagsNV {
     type Output = Self;
 
@@ -1901,7 +1901,7 @@ impl std::ops::BitAnd for VkPipelineCoverageToColorStateCreateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCoverageModulationStateCreateFlagsNV(pub VkFlags); //
+pub struct VkPipelineCoverageModulationStateCreateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCoverageModulationStateCreateFlagsNV {
     type Output = Self;
 
@@ -1911,7 +1911,7 @@ impl std::ops::BitAnd for VkPipelineCoverageModulationStateCreateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineCoverageReductionStateCreateFlagsNV(pub VkFlags); //
+pub struct VkPipelineCoverageReductionStateCreateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineCoverageReductionStateCreateFlagsNV {
     type Output = Self;
 
@@ -1921,7 +1921,7 @@ impl std::ops::BitAnd for VkPipelineCoverageReductionStateCreateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkValidationCacheCreateFlagsEXT(pub VkFlags); //
+pub struct VkValidationCacheCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkValidationCacheCreateFlagsEXT {
     type Output = Self;
 
@@ -1931,7 +1931,7 @@ impl std::ops::BitAnd for VkValidationCacheCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDebugUtilsMessageSeverityFlagsEXT(pub VkFlags); //
+pub struct VkDebugUtilsMessageSeverityFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDebugUtilsMessageSeverityFlagsEXT {
     type Output = Self;
 
@@ -1941,7 +1941,7 @@ impl std::ops::BitAnd for VkDebugUtilsMessageSeverityFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDebugUtilsMessageTypeFlagsEXT(pub VkFlags); //
+pub struct VkDebugUtilsMessageTypeFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDebugUtilsMessageTypeFlagsEXT {
     type Output = Self;
 
@@ -1951,7 +1951,7 @@ impl std::ops::BitAnd for VkDebugUtilsMessageTypeFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDebugUtilsMessengerCreateFlagsEXT(pub VkFlags); //
+pub struct VkDebugUtilsMessengerCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDebugUtilsMessengerCreateFlagsEXT {
     type Output = Self;
 
@@ -1961,7 +1961,7 @@ impl std::ops::BitAnd for VkDebugUtilsMessengerCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDebugUtilsMessengerCallbackDataFlagsEXT(pub VkFlags); //
+pub struct VkDebugUtilsMessengerCallbackDataFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDebugUtilsMessengerCallbackDataFlagsEXT {
     type Output = Self;
 
@@ -1971,7 +1971,7 @@ impl std::ops::BitAnd for VkDebugUtilsMessengerCallbackDataFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceMemoryReportFlagsEXT(pub VkFlags); //
+pub struct VkDeviceMemoryReportFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceMemoryReportFlagsEXT {
     type Output = Self;
 
@@ -1981,7 +1981,7 @@ impl std::ops::BitAnd for VkDeviceMemoryReportFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineRasterizationConservativeStateCreateFlagsEXT(pub VkFlags); //
+pub struct VkPipelineRasterizationConservativeStateCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineRasterizationConservativeStateCreateFlagsEXT {
     type Output = Self;
 
@@ -1991,7 +1991,7 @@ impl std::ops::BitAnd for VkPipelineRasterizationConservativeStateCreateFlagsEXT
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDescriptorBindingFlags(pub VkFlags); //
+pub struct VkDescriptorBindingFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkDescriptorBindingFlags {
     type Output = Self;
 
@@ -2000,10 +2000,10 @@ impl std::ops::BitAnd for VkDescriptorBindingFlags {
     }
 }
 
-pub type VkDescriptorBindingFlagsEXT = VkDescriptorBindingFlags; //
+pub type VkDescriptorBindingFlagsEXT = VkDescriptorBindingFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkConditionalRenderingFlagsEXT(pub VkFlags); //
+pub struct VkConditionalRenderingFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkConditionalRenderingFlagsEXT {
     type Output = Self;
 
@@ -2013,7 +2013,7 @@ impl std::ops::BitAnd for VkConditionalRenderingFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkResolveModeFlags(pub VkFlags); //
+pub struct VkResolveModeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkResolveModeFlags {
     type Output = Self;
 
@@ -2022,10 +2022,10 @@ impl std::ops::BitAnd for VkResolveModeFlags {
     }
 }
 
-pub type VkResolveModeFlagsKHR = VkResolveModeFlags; //
+pub type VkResolveModeFlagsKHR = VkResolveModeFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineRasterizationStateStreamCreateFlagsEXT(pub VkFlags); //
+pub struct VkPipelineRasterizationStateStreamCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineRasterizationStateStreamCreateFlagsEXT {
     type Output = Self;
 
@@ -2035,7 +2035,7 @@ impl std::ops::BitAnd for VkPipelineRasterizationStateStreamCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPipelineRasterizationDepthClipStateCreateFlagsEXT(pub VkFlags); //
+pub struct VkPipelineRasterizationDepthClipStateCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPipelineRasterizationDepthClipStateCreateFlagsEXT {
     type Output = Self;
 
@@ -2045,7 +2045,7 @@ impl std::ops::BitAnd for VkPipelineRasterizationDepthClipStateCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSwapchainImageUsageFlagsANDROID(pub VkFlags); //
+pub struct VkSwapchainImageUsageFlagsANDROID(pub VkFlags); // 
 impl std::ops::BitAnd for VkSwapchainImageUsageFlagsANDROID {
     type Output = Self;
 
@@ -2055,7 +2055,7 @@ impl std::ops::BitAnd for VkSwapchainImageUsageFlagsANDROID {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkToolPurposeFlags(pub VkFlags); //
+pub struct VkToolPurposeFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkToolPurposeFlags {
     type Output = Self;
 
@@ -2064,10 +2064,10 @@ impl std::ops::BitAnd for VkToolPurposeFlags {
     }
 }
 
-pub type VkToolPurposeFlagsEXT = VkToolPurposeFlags; //
+pub type VkToolPurposeFlagsEXT = VkToolPurposeFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSubmitFlags(pub VkFlags); //
+pub struct VkSubmitFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkSubmitFlags {
     type Output = Self;
 
@@ -2076,10 +2076,10 @@ impl std::ops::BitAnd for VkSubmitFlags {
     }
 }
 
-pub type VkSubmitFlagsKHR = VkSubmitFlags; //
+pub type VkSubmitFlagsKHR = VkSubmitFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageFormatConstraintsFlagsFUCHSIA(pub VkFlags); //
+pub struct VkImageFormatConstraintsFlagsFUCHSIA(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageFormatConstraintsFlagsFUCHSIA {
     type Output = Self;
 
@@ -2089,7 +2089,7 @@ impl std::ops::BitAnd for VkImageFormatConstraintsFlagsFUCHSIA {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkHostImageCopyFlags(pub VkFlags); //
+pub struct VkHostImageCopyFlags(pub VkFlags); // 
 impl std::ops::BitAnd for VkHostImageCopyFlags {
     type Output = Self;
 
@@ -2098,10 +2098,10 @@ impl std::ops::BitAnd for VkHostImageCopyFlags {
     }
 }
 
-pub type VkHostImageCopyFlagsEXT = VkHostImageCopyFlags; //
+pub type VkHostImageCopyFlagsEXT = VkHostImageCopyFlags; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPartitionedAccelerationStructureInstanceFlagsNV(pub VkFlags); //
+pub struct VkPartitionedAccelerationStructureInstanceFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkPartitionedAccelerationStructureInstanceFlagsNV {
     type Output = Self;
 
@@ -2111,7 +2111,7 @@ impl std::ops::BitAnd for VkPartitionedAccelerationStructureInstanceFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageConstraintsInfoFlagsFUCHSIA(pub VkFlags); //
+pub struct VkImageConstraintsInfoFlagsFUCHSIA(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageConstraintsInfoFlagsFUCHSIA {
     type Output = Self;
 
@@ -2121,7 +2121,7 @@ impl std::ops::BitAnd for VkImageConstraintsInfoFlagsFUCHSIA {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkGraphicsPipelineLibraryFlagsEXT(pub VkFlags); //
+pub struct VkGraphicsPipelineLibraryFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkGraphicsPipelineLibraryFlagsEXT {
     type Output = Self;
 
@@ -2131,7 +2131,7 @@ impl std::ops::BitAnd for VkGraphicsPipelineLibraryFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageCompressionFlagsEXT(pub VkFlags); //
+pub struct VkImageCompressionFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageCompressionFlagsEXT {
     type Output = Self;
 
@@ -2141,7 +2141,7 @@ impl std::ops::BitAnd for VkImageCompressionFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkImageCompressionFixedRateFlagsEXT(pub VkFlags); //
+pub struct VkImageCompressionFixedRateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkImageCompressionFixedRateFlagsEXT {
     type Output = Self;
 
@@ -2151,7 +2151,7 @@ impl std::ops::BitAnd for VkImageCompressionFixedRateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkExportMetalObjectTypeFlagsEXT(pub VkFlags); //
+pub struct VkExportMetalObjectTypeFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkExportMetalObjectTypeFlagsEXT {
     type Output = Self;
 
@@ -2161,7 +2161,7 @@ impl std::ops::BitAnd for VkExportMetalObjectTypeFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkRenderingAttachmentFlagsKHR(pub VkFlags); //
+pub struct VkRenderingAttachmentFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkRenderingAttachmentFlagsKHR {
     type Output = Self;
 
@@ -2171,7 +2171,7 @@ impl std::ops::BitAnd for VkRenderingAttachmentFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkResolveImageFlagsKHR(pub VkFlags); //
+pub struct VkResolveImageFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkResolveImageFlagsKHR {
     type Output = Self;
 
@@ -2181,7 +2181,7 @@ impl std::ops::BitAnd for VkResolveImageFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDeviceAddressBindingFlagsEXT(pub VkFlags); //
+pub struct VkDeviceAddressBindingFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkDeviceAddressBindingFlagsEXT {
     type Output = Self;
 
@@ -2191,7 +2191,7 @@ impl std::ops::BitAnd for VkDeviceAddressBindingFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkOpticalFlowGridSizeFlagsNV(pub VkFlags); //
+pub struct VkOpticalFlowGridSizeFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkOpticalFlowGridSizeFlagsNV {
     type Output = Self;
 
@@ -2201,7 +2201,7 @@ impl std::ops::BitAnd for VkOpticalFlowGridSizeFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkOpticalFlowUsageFlagsNV(pub VkFlags); //
+pub struct VkOpticalFlowUsageFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkOpticalFlowUsageFlagsNV {
     type Output = Self;
 
@@ -2211,7 +2211,7 @@ impl std::ops::BitAnd for VkOpticalFlowUsageFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkOpticalFlowSessionCreateFlagsNV(pub VkFlags); //
+pub struct VkOpticalFlowSessionCreateFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkOpticalFlowSessionCreateFlagsNV {
     type Output = Self;
 
@@ -2221,7 +2221,7 @@ impl std::ops::BitAnd for VkOpticalFlowSessionCreateFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkOpticalFlowExecuteFlagsNV(pub VkFlags); //
+pub struct VkOpticalFlowExecuteFlagsNV(pub VkFlags); // 
 impl std::ops::BitAnd for VkOpticalFlowExecuteFlagsNV {
     type Output = Self;
 
@@ -2231,7 +2231,7 @@ impl std::ops::BitAnd for VkOpticalFlowExecuteFlagsNV {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkFrameBoundaryFlagsEXT(pub VkFlags); //
+pub struct VkFrameBoundaryFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkFrameBoundaryFlagsEXT {
     type Output = Self;
 
@@ -2241,7 +2241,7 @@ impl std::ops::BitAnd for VkFrameBoundaryFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPresentScalingFlagsKHR(pub VkFlags); //
+pub struct VkPresentScalingFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkPresentScalingFlagsKHR {
     type Output = Self;
 
@@ -2250,10 +2250,10 @@ impl std::ops::BitAnd for VkPresentScalingFlagsKHR {
     }
 }
 
-pub type VkPresentScalingFlagsEXT = VkPresentScalingFlagsKHR; //
+pub type VkPresentScalingFlagsEXT = VkPresentScalingFlagsKHR; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPresentGravityFlagsKHR(pub VkFlags); //
+pub struct VkPresentGravityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkPresentGravityFlagsKHR {
     type Output = Self;
 
@@ -2262,10 +2262,10 @@ impl std::ops::BitAnd for VkPresentGravityFlagsKHR {
     }
 }
 
-pub type VkPresentGravityFlagsEXT = VkPresentGravityFlagsKHR; //
+pub type VkPresentGravityFlagsEXT = VkPresentGravityFlagsKHR; // 
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkShaderCreateFlagsEXT(pub VkFlags); //
+pub struct VkShaderCreateFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkShaderCreateFlagsEXT {
     type Output = Self;
 
@@ -2275,7 +2275,7 @@ impl std::ops::BitAnd for VkShaderCreateFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkTileShadingRenderPassFlagsQCOM(pub VkFlags); //
+pub struct VkTileShadingRenderPassFlagsQCOM(pub VkFlags); // 
 impl std::ops::BitAnd for VkTileShadingRenderPassFlagsQCOM {
     type Output = Self;
 
@@ -2285,7 +2285,7 @@ impl std::ops::BitAnd for VkTileShadingRenderPassFlagsQCOM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPhysicalDeviceSchedulingControlsFlagsARM(pub VkFlags64); //
+pub struct VkPhysicalDeviceSchedulingControlsFlagsARM(pub VkFlags64); // 
 impl std::ops::BitAnd for VkPhysicalDeviceSchedulingControlsFlagsARM {
     type Output = Self;
 
@@ -2295,7 +2295,7 @@ impl std::ops::BitAnd for VkPhysicalDeviceSchedulingControlsFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSurfaceCreateFlagsOHOS(pub VkFlags); //
+pub struct VkSurfaceCreateFlagsOHOS(pub VkFlags); // 
 impl std::ops::BitAnd for VkSurfaceCreateFlagsOHOS {
     type Output = Self;
 
@@ -2305,7 +2305,7 @@ impl std::ops::BitAnd for VkSurfaceCreateFlagsOHOS {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPresentStageFlagsEXT(pub VkFlags); //
+pub struct VkPresentStageFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPresentStageFlagsEXT {
     type Output = Self;
 
@@ -2315,7 +2315,7 @@ impl std::ops::BitAnd for VkPresentStageFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPastPresentationTimingFlagsEXT(pub VkFlags); //
+pub struct VkPastPresentationTimingFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPastPresentationTimingFlagsEXT {
     type Output = Self;
 
@@ -2325,7 +2325,7 @@ impl std::ops::BitAnd for VkPastPresentationTimingFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPresentTimingInfoFlagsEXT(pub VkFlags); //
+pub struct VkPresentTimingInfoFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkPresentTimingInfoFlagsEXT {
     type Output = Self;
 
@@ -2335,7 +2335,7 @@ impl std::ops::BitAnd for VkPresentTimingInfoFlagsEXT {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkSwapchainImageUsageFlagsOHOS(pub VkFlags); //
+pub struct VkSwapchainImageUsageFlagsOHOS(pub VkFlags); // 
 impl std::ops::BitAnd for VkSwapchainImageUsageFlagsOHOS {
     type Output = Self;
 
@@ -2345,7 +2345,7 @@ impl std::ops::BitAnd for VkSwapchainImageUsageFlagsOHOS {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkPerformanceCounterDescriptionFlagsARM(pub VkFlags); //
+pub struct VkPerformanceCounterDescriptionFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkPerformanceCounterDescriptionFlagsARM {
     type Output = Self;
 
@@ -2355,7 +2355,7 @@ impl std::ops::BitAnd for VkPerformanceCounterDescriptionFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkShaderInstrumentationValuesFlagsARM(pub VkFlags); //
+pub struct VkShaderInstrumentationValuesFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkShaderInstrumentationValuesFlagsARM {
     type Output = Self;
 
@@ -2365,7 +2365,7 @@ impl std::ops::BitAnd for VkShaderInstrumentationValuesFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphTOSAQualityFlagsARM(pub VkFlags); //
+pub struct VkDataGraphTOSAQualityFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkDataGraphTOSAQualityFlagsARM {
     type Output = Self;
 
@@ -2375,7 +2375,7 @@ impl std::ops::BitAnd for VkDataGraphTOSAQualityFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphOpticalFlowGridSizeFlagsARM(pub VkFlags); //
+pub struct VkDataGraphOpticalFlowGridSizeFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkDataGraphOpticalFlowGridSizeFlagsARM {
     type Output = Self;
 
@@ -2385,7 +2385,7 @@ impl std::ops::BitAnd for VkDataGraphOpticalFlowGridSizeFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphOpticalFlowImageUsageFlagsARM(pub VkFlags); //
+pub struct VkDataGraphOpticalFlowImageUsageFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkDataGraphOpticalFlowImageUsageFlagsARM {
     type Output = Self;
 
@@ -2395,7 +2395,7 @@ impl std::ops::BitAnd for VkDataGraphOpticalFlowImageUsageFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphOpticalFlowCreateFlagsARM(pub VkFlags); //
+pub struct VkDataGraphOpticalFlowCreateFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkDataGraphOpticalFlowCreateFlagsARM {
     type Output = Self;
 
@@ -2405,7 +2405,7 @@ impl std::ops::BitAnd for VkDataGraphOpticalFlowCreateFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkDataGraphOpticalFlowExecuteFlagsARM(pub VkFlags); //
+pub struct VkDataGraphOpticalFlowExecuteFlagsARM(pub VkFlags); // 
 impl std::ops::BitAnd for VkDataGraphOpticalFlowExecuteFlagsARM {
     type Output = Self;
 
@@ -2415,7 +2415,7 @@ impl std::ops::BitAnd for VkDataGraphOpticalFlowExecuteFlagsARM {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoCodecOperationFlagsKHR(pub VkFlags); //
+pub struct VkVideoCodecOperationFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoCodecOperationFlagsKHR {
     type Output = Self;
 
@@ -2425,7 +2425,7 @@ impl std::ops::BitAnd for VkVideoCodecOperationFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoCapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoCapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoCapabilityFlagsKHR {
     type Output = Self;
 
@@ -2435,7 +2435,7 @@ impl std::ops::BitAnd for VkVideoCapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoSessionCreateFlagsKHR(pub VkFlags); //
+pub struct VkVideoSessionCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoSessionCreateFlagsKHR {
     type Output = Self;
 
@@ -2445,7 +2445,7 @@ impl std::ops::BitAnd for VkVideoSessionCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoSessionParametersCreateFlagsKHR(pub VkFlags); //
+pub struct VkVideoSessionParametersCreateFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoSessionParametersCreateFlagsKHR {
     type Output = Self;
 
@@ -2455,7 +2455,7 @@ impl std::ops::BitAnd for VkVideoSessionParametersCreateFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoBeginCodingFlagsKHR(pub VkFlags); //
+pub struct VkVideoBeginCodingFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoBeginCodingFlagsKHR {
     type Output = Self;
 
@@ -2465,7 +2465,7 @@ impl std::ops::BitAnd for VkVideoBeginCodingFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEndCodingFlagsKHR(pub VkFlags); //
+pub struct VkVideoEndCodingFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEndCodingFlagsKHR {
     type Output = Self;
 
@@ -2475,7 +2475,7 @@ impl std::ops::BitAnd for VkVideoEndCodingFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoCodingControlFlagsKHR(pub VkFlags); //
+pub struct VkVideoCodingControlFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoCodingControlFlagsKHR {
     type Output = Self;
 
@@ -2485,7 +2485,7 @@ impl std::ops::BitAnd for VkVideoCodingControlFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoDecodeUsageFlagsKHR(pub VkFlags); //
+pub struct VkVideoDecodeUsageFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoDecodeUsageFlagsKHR {
     type Output = Self;
 
@@ -2495,7 +2495,7 @@ impl std::ops::BitAnd for VkVideoDecodeUsageFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoDecodeCapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoDecodeCapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoDecodeCapabilityFlagsKHR {
     type Output = Self;
 
@@ -2505,7 +2505,7 @@ impl std::ops::BitAnd for VkVideoDecodeCapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoDecodeFlagsKHR(pub VkFlags); //
+pub struct VkVideoDecodeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoDecodeFlagsKHR {
     type Output = Self;
 
@@ -2515,7 +2515,7 @@ impl std::ops::BitAnd for VkVideoDecodeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoDecodeH264PictureLayoutFlagsKHR(pub VkFlags); //
+pub struct VkVideoDecodeH264PictureLayoutFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoDecodeH264PictureLayoutFlagsKHR {
     type Output = Self;
 
@@ -2525,7 +2525,7 @@ impl std::ops::BitAnd for VkVideoDecodeH264PictureLayoutFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeFlagsKHR {
     type Output = Self;
 
@@ -2535,7 +2535,7 @@ impl std::ops::BitAnd for VkVideoEncodeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeUsageFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeUsageFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeUsageFlagsKHR {
     type Output = Self;
 
@@ -2545,7 +2545,7 @@ impl std::ops::BitAnd for VkVideoEncodeUsageFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeContentFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeContentFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeContentFlagsKHR {
     type Output = Self;
 
@@ -2555,7 +2555,7 @@ impl std::ops::BitAnd for VkVideoEncodeContentFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeCapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeCapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeCapabilityFlagsKHR {
     type Output = Self;
 
@@ -2565,7 +2565,7 @@ impl std::ops::BitAnd for VkVideoEncodeCapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeFeedbackFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeFeedbackFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeFeedbackFlagsKHR {
     type Output = Self;
 
@@ -2575,7 +2575,7 @@ impl std::ops::BitAnd for VkVideoEncodeFeedbackFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodePerPartitionFeedbackFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodePerPartitionFeedbackFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodePerPartitionFeedbackFlagsKHR {
     type Output = Self;
 
@@ -2585,7 +2585,7 @@ impl std::ops::BitAnd for VkVideoEncodePerPartitionFeedbackFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeRateControlFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeRateControlFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeRateControlFlagsKHR {
     type Output = Self;
 
@@ -2595,7 +2595,7 @@ impl std::ops::BitAnd for VkVideoEncodeRateControlFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeRateControlModeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeRateControlModeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeRateControlModeFlagsKHR {
     type Output = Self;
 
@@ -2605,7 +2605,7 @@ impl std::ops::BitAnd for VkVideoEncodeRateControlModeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeIntraRefreshModeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeIntraRefreshModeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeIntraRefreshModeFlagsKHR {
     type Output = Self;
 
@@ -2615,7 +2615,7 @@ impl std::ops::BitAnd for VkVideoEncodeIntraRefreshModeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoChromaSubsamplingFlagsKHR(pub VkFlags); //
+pub struct VkVideoChromaSubsamplingFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoChromaSubsamplingFlagsKHR {
     type Output = Self;
 
@@ -2625,7 +2625,7 @@ impl std::ops::BitAnd for VkVideoChromaSubsamplingFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoComponentBitDepthFlagsKHR(pub VkFlags); //
+pub struct VkVideoComponentBitDepthFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoComponentBitDepthFlagsKHR {
     type Output = Self;
 
@@ -2635,7 +2635,7 @@ impl std::ops::BitAnd for VkVideoComponentBitDepthFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH264CapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH264CapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH264CapabilityFlagsKHR {
     type Output = Self;
 
@@ -2645,7 +2645,7 @@ impl std::ops::BitAnd for VkVideoEncodeH264CapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH264StdFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH264StdFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH264StdFlagsKHR {
     type Output = Self;
 
@@ -2655,7 +2655,7 @@ impl std::ops::BitAnd for VkVideoEncodeH264StdFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH264RateControlFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH264RateControlFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH264RateControlFlagsKHR {
     type Output = Self;
 
@@ -2665,7 +2665,7 @@ impl std::ops::BitAnd for VkVideoEncodeH264RateControlFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH265CapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH265CapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH265CapabilityFlagsKHR {
     type Output = Self;
 
@@ -2675,7 +2675,7 @@ impl std::ops::BitAnd for VkVideoEncodeH265CapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH265StdFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH265StdFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH265StdFlagsKHR {
     type Output = Self;
 
@@ -2685,7 +2685,7 @@ impl std::ops::BitAnd for VkVideoEncodeH265StdFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH265RateControlFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH265RateControlFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH265RateControlFlagsKHR {
     type Output = Self;
 
@@ -2695,7 +2695,7 @@ impl std::ops::BitAnd for VkVideoEncodeH265RateControlFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH265CtbSizeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH265CtbSizeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH265CtbSizeFlagsKHR {
     type Output = Self;
 
@@ -2705,7 +2705,7 @@ impl std::ops::BitAnd for VkVideoEncodeH265CtbSizeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeH265TransformBlockSizeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeH265TransformBlockSizeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeH265TransformBlockSizeFlagsKHR {
     type Output = Self;
 
@@ -2715,7 +2715,7 @@ impl std::ops::BitAnd for VkVideoEncodeH265TransformBlockSizeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeAV1CapabilityFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeAV1CapabilityFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeAV1CapabilityFlagsKHR {
     type Output = Self;
 
@@ -2725,7 +2725,7 @@ impl std::ops::BitAnd for VkVideoEncodeAV1CapabilityFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeAV1StdFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeAV1StdFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeAV1StdFlagsKHR {
     type Output = Self;
 
@@ -2735,7 +2735,7 @@ impl std::ops::BitAnd for VkVideoEncodeAV1StdFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeAV1RateControlFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeAV1RateControlFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeAV1RateControlFlagsKHR {
     type Output = Self;
 
@@ -2745,7 +2745,7 @@ impl std::ops::BitAnd for VkVideoEncodeAV1RateControlFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkVideoEncodeAV1SuperblockSizeFlagsKHR(pub VkFlags); //
+pub struct VkVideoEncodeAV1SuperblockSizeFlagsKHR(pub VkFlags); // 
 impl std::ops::BitAnd for VkVideoEncodeAV1SuperblockSizeFlagsKHR {
     type Output = Self;
 
@@ -2755,7 +2755,7 @@ impl std::ops::BitAnd for VkVideoEncodeAV1SuperblockSizeFlagsKHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkAccessFlags3KHR(pub VkFlags64); //
+pub struct VkAccessFlags3KHR(pub VkFlags64); // 
 impl std::ops::BitAnd for VkAccessFlags3KHR {
     type Output = Self;
 
@@ -2765,7 +2765,7 @@ impl std::ops::BitAnd for VkAccessFlags3KHR {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct VkCooperativeMatrixFlagsEXT(pub VkFlags); //
+pub struct VkCooperativeMatrixFlagsEXT(pub VkFlags); // 
 impl std::ops::BitAnd for VkCooperativeMatrixFlagsEXT {
     type Output = Self;
 
@@ -3194,9 +3194,9 @@ pub struct VkDeviceCreateInfo {
     pub queueCreateInfoCount:  u32,
     pub pQueueCreateInfos: *const  VkDeviceQueueCreateInfo,
     pub enabledLayerCount:  u32,
-    pub ppEnabledLayerNames: *const  i8,
+    pub ppEnabledLayerNames: *const *const i8,
     pub enabledExtensionCount:  u32,
-    pub ppEnabledExtensionNames: *const  i8,
+    pub ppEnabledExtensionNames: *const *const i8,
     pub pEnabledFeatures: *const  VkPhysicalDeviceFeatures,
 }
 
@@ -3207,9 +3207,9 @@ pub struct VkInstanceCreateInfo {
     pub flags:  VkInstanceCreateFlags,
     pub pApplicationInfo: *const  VkApplicationInfo,
     pub enabledLayerCount:  u32,
-    pub ppEnabledLayerNames: *const  i8,
+    pub ppEnabledLayerNames: *const *const i8,
     pub enabledExtensionCount:  u32,
-    pub ppEnabledExtensionNames: *const  i8,
+    pub ppEnabledExtensionNames: *const *const i8,
 }
 
 #[repr(C)]
@@ -3711,8 +3711,8 @@ pub struct VkPipelineShaderStageCreateInfo {
     pub flags:  VkPipelineShaderStageCreateFlags,
     pub stage:  VkShaderStageFlagBits,
     pub module:  VkShaderModule,
-    pub pName: *const  i8,
     //pub pName: *const  i8,
+    pub pName: *const  i8,
     pub pSpecializationInfo: *const  VkSpecializationInfo,
 }
 
@@ -3897,8 +3897,8 @@ pub struct VkGraphicsPipelineCreateInfo {
     pub pNext: *const  std::ffi::c_void,
     pub flags:  VkPipelineCreateFlags,
     pub stageCount:  u32,
-    pub pStages: *const  VkPipelineShaderStageCreateInfo,
     //pub pStages: *const  VkPipelineShaderStageCreateInfo,
+    pub pStages: *const  VkPipelineShaderStageCreateInfo,
     pub pVertexInputState: *const  VkPipelineVertexInputStateCreateInfo,
     pub pInputAssemblyState: *const  VkPipelineInputAssemblyStateCreateInfo,
     pub pTessellationState: *const  VkPipelineTessellationStateCreateInfo,
@@ -3920,8 +3920,8 @@ pub struct VkPipelineCacheCreateInfo {
     pub sType:  VkStructureType,
     pub pNext: *const  std::ffi::c_void,
     pub flags:  VkPipelineCacheCreateFlags,
-    pub initialDataSize:  usize,
     //pub initialDataSize:  usize,
+    pub initialDataSize:  usize,
     pub pInitialData: *const  std::ffi::c_void,
 }
 
@@ -4693,8 +4693,8 @@ pub struct VkSwapchainCreateInfoKHR {
     pub compositeAlpha:  VkCompositeAlphaFlagBitsKHR,
     pub presentMode:  VkPresentModeKHR,
     pub clipped:  VkBool32,
-    pub oldSwapchain:  VkSwapchainKHR,
     //pub oldSwapchain:  VkSwapchainKHR,
+    pub oldSwapchain:  VkSwapchainKHR,
 }
 
 #[repr(C)]
@@ -4714,7 +4714,7 @@ pub struct VkDebugReportCallbackCreateInfoEXT {
     pub sType:  VkStructureType,
     pub pNext: *const  std::ffi::c_void,
     pub flags:  VkDebugReportFlagsEXT,
-    pub pfnCallback:  crate::svk_commands::PFN_vkDebugReportCallbackEXT,
+    //pub pfnCallback:  crate::svk_commands::PFN_vkDebugReportCallbackEXT,
     pub pUserData: *mut  std::ffi::c_void,
 }
 
@@ -10484,7 +10484,7 @@ pub struct VkAccelerationStructureBuildGeometryInfoKHR {
     pub dstAccelerationStructure:  VkAccelerationStructureKHR,
     pub geometryCount:  u32,
     pub pGeometries: *const  VkAccelerationStructureGeometryKHR,
-    pub ppGeometries: *const  VkAccelerationStructureGeometryKHR,
+    pub ppGeometries: *const *const VkAccelerationStructureGeometryKHR,
     pub scratchData:  VkDeviceOrHostAddressKHR,
 }
 
@@ -13616,7 +13616,7 @@ pub struct VkAccelerationStructureMotionInstanceNV {
     pub data:  VkAccelerationStructureMotionInstanceDataNV,
 }
 
-pub type VkRemoteAddressNV = *mut std::ffi::c_void; //
+pub type VkRemoteAddressNV = *mut std::ffi::c_void; // 
 
 #[repr(C)]
 pub struct VkMemoryGetRemoteAddressInfoNV {
@@ -13918,8 +13918,8 @@ pub struct VkCommandBufferInheritanceRenderingInfo {
     pub pNext: *const  std::ffi::c_void,
     pub flags:  VkRenderingFlags,
     pub viewMask:  u32,
-    pub colorAttachmentCount:  u32,
     //pub colorAttachmentCount:  u32,
+    pub colorAttachmentCount:  u32,
     pub pColorAttachmentFormats: *const  VkFormat,
     pub depthAttachmentFormat:  VkFormat,
     pub stencilAttachmentFormat:  VkFormat,
@@ -14251,7 +14251,7 @@ pub struct VkMicromapBuildInfoEXT {
     pub dstMicromap:  VkMicromapEXT,
     pub usageCountsCount:  u32,
     pub pUsageCounts: *const  VkMicromapUsageEXT,
-    pub ppUsageCounts: *const  VkMicromapUsageEXT,
+    pub ppUsageCounts: *const *const VkMicromapUsageEXT,
     pub data:  VkDeviceOrHostAddressConstKHR,
     pub scratchData:  VkDeviceOrHostAddressKHR,
     pub triangleArray:  VkDeviceOrHostAddressConstKHR,
@@ -14264,7 +14264,7 @@ pub struct VkAccelerationStructureGeometryMicromapDataKHR {
     pub pNext: *const  std::ffi::c_void,
     pub usageCountsCount:  u32,
     pub pUsageCounts: *const  VkMicromapUsageKHR,
-    pub ppUsageCounts: *const  VkMicromapUsageKHR,
+    pub ppUsageCounts: *const *const VkMicromapUsageKHR,
     pub data:  VkDeviceAddress,
     pub triangleArray:  VkDeviceAddress,
     pub triangleArrayStride:  VkDeviceSize,
@@ -14405,7 +14405,7 @@ pub struct VkAccelerationStructureTrianglesOpacityMicromapEXT {
     pub baseTriangle:  u32,
     pub usageCountsCount:  u32,
     pub pUsageCounts: *const  VkMicromapUsageEXT,
-    pub ppUsageCounts: *const  VkMicromapUsageEXT,
+    pub ppUsageCounts: *const *const VkMicromapUsageEXT,
     pub micromap:  VkMicromapEXT,
 }
 
@@ -14441,7 +14441,7 @@ pub struct VkAccelerationStructureTrianglesDisplacementMicromapNV {
     pub baseTriangle:  u32,
     pub usageCountsCount:  u32,
     pub pUsageCounts: *const  VkMicromapUsageEXT,
-    pub ppUsageCounts: *const  VkMicromapUsageEXT,
+    pub ppUsageCounts: *const *const VkMicromapUsageEXT,
     pub micromap:  VkMicromapEXT,
 }
 
@@ -18302,7 +18302,7 @@ impl VkSubpassContents {
     pub const VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS: Self = Self(1);
 }
 
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialOrd, PartialEq, Debug)]
 pub struct VkResult(i32); //API result codes
 impl VkResult {
     pub const VK_SUCCESS: Self = Self(0);
@@ -20947,6 +20947,12 @@ impl VkImageTilingControlEXT {
     pub const VK_IMAGE_TILING_CONTROL_MIN_SIZE_EXT: Self = Self(1);
     pub const VK_IMAGE_TILING_CONTROL_MAX_PERFORMANCE_EXT: Self = Self(2);
 }
+
+
+
+
+
+
 
 
 

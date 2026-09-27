@@ -8,7 +8,6 @@
 
 use std::borrow::Cow;
 use std::sync::Arc;
-use crate::wvk::{WvkBackend, WvkBackend_0_1_0_0};
 use crate::wvk_error::WvkError;
 use crate::wvk_library::WvkLibrary;
 use crate::wvk_instance::wvk_instance::WvkInstance;
@@ -16,11 +15,13 @@ use crate::wvk_instance::wvk_instance::WvkInstance;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkBackend {
+pub struct WvkInstanceBuilder {
     /// Ссылка на библиотеку врапера, с глобальными функциями.
     /// Link to the wrapper library with global functions.
-    pub(in crate::wvk_instance) wvk_library : &'a Arc<WvkLibrary<TWvkBackend>>,
+    pub(in crate::wvk_instance) wvk_library : Arc<WvkLibrary>,
+    /// Набор расширений.
+    /// A set of extensions.
+    pub(in crate::wvk_instance) extension_name_vec: Vec<Cow<'static, str>>,
     /// Опционально. Название приложения. Метаданные, которые используются только информативно.
     /// Optional. Application name. Metadata used for informational purposes only.
     pub(in crate::wvk_instance) application_name: Option<Cow<'static, str>>,
@@ -35,14 +36,14 @@ where TWvkBackend : WvkBackend {
     pub(in crate::wvk_instance) engine_version : Option<u32>,
 }
 
-impl<'a, TWvkBackend> WvkInstanceBuilder<'a, TWvkBackend>
-where TWvkBackend : WvkBackend {
+impl WvkInstanceBuilder {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn create(wvk_library: &'a Arc<WvkLibrary<TWvkBackend>>) -> Self {
+    pub fn create(wvk_library: Arc<WvkLibrary>) -> Self {
         Self {
             wvk_library: wvk_library,
+            extension_name_vec: Vec::new(),
             application_name: None,
             application_version : None,
             engine_name: Some(Cow::Borrowed(crate::wvk::WRAPPER_VULKAN_NAME)),
@@ -53,10 +54,16 @@ where TWvkBackend : WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<Arc<WvkInstance<TWvkBackend>>, WvkError>
-    where 
-    TWvkBackend : WvkBackend_0_1_0_0 {
-        WvkInstance::create(&self)
+    pub fn build(self) -> Result<Arc<WvkInstance>, WvkError> {
+        WvkInstance::create(self)
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn addExtension(mut self, name_extension: Cow<'static, str>) -> Self {
+        self.extension_name_vec.push(name_extension);
+        self
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,5 +96,16 @@ where TWvkBackend : WvkBackend {
     pub fn engineVersion(mut self, version: u32) -> Self {
         self.engine_version = Some(version);
         self
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(crate) fn isExtension(&self, name: &str) -> bool {
+        self.extension_name_vec
+            .iter()
+            .any(|v|{
+                v.as_ref() == name
+            })
     }
 }

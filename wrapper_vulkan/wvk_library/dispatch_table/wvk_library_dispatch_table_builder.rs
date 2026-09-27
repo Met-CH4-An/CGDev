@@ -6,32 +6,33 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::sync::Arc;
 use crate::wvk::WvkVersion;
 use crate::wvk_error::WvkError;
-use crate::wvk_library::wvk_library::WvkLibrary;
+use crate::wvk_library::dispatch_table::WvkLibraryDispatchTable;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkLibraryBuilder {
-    pub(in crate::wvk_library) wvk_version: WvkVersion, 
+pub(in crate::wvk_library) struct WvkLibraryDispatchTableBuilder {
+    pub(in crate::wvk_library::dispatch_table) wvk_version: WvkVersion,
+    pub(in crate::wvk_library::dispatch_table) vk_get_instance_proc_addr: svk::PFN_vkGetInstanceProcAddr,
 }
 
-impl WvkLibraryBuilder {
+impl WvkLibraryDispatchTableBuilder {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn create(wvk_version: WvkVersion) -> Self {
+    pub(in crate::wvk_library) fn create(wvk_version: WvkVersion, vk_get_instance_proc_addr: svk::PFN_vkGetInstanceProcAddr) -> Self {
         Self{
             wvk_version: wvk_version,
+            vk_get_instance_proc_addr: vk_get_instance_proc_addr,
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<Arc<WvkLibrary>, WvkError> {
-        WvkLibrary::create(self)
+    pub(in crate::wvk_library) fn build(self) -> Result<WvkLibraryDispatchTable, WvkError> {
+        WvkLibraryDispatchTable::create(self)
     }
 }

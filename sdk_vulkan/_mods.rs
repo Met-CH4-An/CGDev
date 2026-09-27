@@ -16,5 +16,5 @@ mod svk_commands;
 pub use svk_commands::*;
 // файл p.rs
 // file svk.rs
-//#[path = "parser/_mods.rs"]
+//#[path = "parser/_mods.rs.rs"]
 //mod parser;

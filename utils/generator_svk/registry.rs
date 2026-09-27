@@ -20,16 +20,6 @@ use crate::registry_primitive_element_type::RegistryPrimitiveElementType;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum PrimitiveElementDeclaration {
-    ELEMENT_TYPE(RegistryPrimitiveElementType),
-    ELEMENT_NAME(RegistryPrimitiveElementName),
-    ELEMENT_ENUM(RegistryPrimitiveElementEnum),
-    COMMENT_ELT(RegistryPrimitiveCommentElt),
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct Registry {
     pub(crate) registry_types_vec: Vec<RegistryTypes>,
     pub(crate) registry_enums_vec: Vec<RegistryEnums>,

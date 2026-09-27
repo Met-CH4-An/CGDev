@@ -7,18 +7,11 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::sync::Arc;
-use std::marker::PhantomData;
-use crate::dispatch_table::{WvkDispatchTableBuilder, WVK_DISPATCH_TABLE_GLOBAL};
 use crate::wvk_call_with_check;
-use crate::wvk::{WvkBackend_0_1_0_0};
 use crate::wvk_error::{WvkError, WvkErrorType};
-use crate::wvk_library::platform::WvkLibraryPlatform;
-use crate::wvk_library::{WvkLibraryBuilder, WvkLibrary};
+use crate::wvk_library::{WvkLibrary};
 
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_0_0
-{
+impl WvkLibrary {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,26 +163,5 @@ TWvkBackend : WvkBackend_0_1_0_0
         );
 
         Ok(vk_instance_)
-    }
-}
-
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_0_0 {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_library) fn create(_builder: WvkLibraryBuilder<TWvkBackend>) -> Result<Arc<Self>, WvkError> {
-        let wvk_library_platform_ = WvkLibraryPlatform::create()?;
-        let vk_get_instance_proc_addr_ = wvk_library_platform_.loadVkGetInstanceProcAddr()?;
-        let wvk_dispatch_table = WvkDispatchTableBuilder::<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>::create(vk_get_instance_proc_addr_).build()?;
-
-        let self_ = Self {
-            _phantom: PhantomData,
-            _wvk_library_platform: wvk_library_platform_,
-            wvk_dispatch_table: wvk_dispatch_table,
-        };
-                    
-        Ok(Arc::new(self_))
     }
 }

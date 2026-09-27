@@ -12,6 +12,9 @@ pub use wvk_instance::WvkInstance;
 mod wvk_instance_builder;
 pub use wvk_instance_builder::WvkInstanceBuilder;
 
+#[path = "dispatch_table/_mods.rs"]
+pub(in crate::wvk_instance) mod dispatch_table;
+
 mod wvk_instance_0_1_0_0;
 mod wvk_instance_0_1_1_0;
 mod wvk_instance_0_1_2_0;

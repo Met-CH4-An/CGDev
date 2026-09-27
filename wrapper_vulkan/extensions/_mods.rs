@@ -7,4 +7,4 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 mod vk_ext_debug_utils;
-pub(crate) use vk_ext_debug_utils::VkExtDebugUtils;
+pub use vk_ext_debug_utils::VkExtDebugUtils;

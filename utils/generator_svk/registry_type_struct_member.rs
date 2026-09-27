@@ -64,30 +64,14 @@ pub(crate) struct RegistryTypeStructMember {
     /// attribute flagsextendmember { TypeName_t }?
     pub(crate) flags_extend_member_rng: RangeInclusive<usize>,
     /// TypeBodyWithEnum
-    pub(crate) type_body_with_enum: RegistryTypeBodyWithEnum,
+    pub(crate) registry_type_body_with_enum: RegistryTypeBodyWithEnum,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeStructMember {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeStructMember {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl RegistryTypeStructMember {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_create() -> Self {
+    pub(crate) fn create() -> Self {
         Self {
             api_rng: 1 ..= 0,
             len_rng: 1 ..= 0,
@@ -105,13 +89,7 @@ impl RegistryTypeStructMember {
             feature_link_rng: 1 ..= 0,
             flags_extend_rng: 1 ..= 0,
             flags_extend_member_rng: 1 ..= 0,
-            type_body_with_enum: RegistryTypeBodyWithEnum::create(),
+            registry_type_body_with_enum: RegistryTypeBodyWithEnum::create(),
         }
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryTypeStructMember {}

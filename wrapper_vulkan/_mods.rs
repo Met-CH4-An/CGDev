@@ -54,6 +54,6 @@ pub mod wvk_physical_device;
 // папка с расширениями
 // folder with extensions
 #[path = "extensions/_mods.rs"]
-mod extensions;
+pub mod extensions;
 pub(crate) use extensions::*;
 

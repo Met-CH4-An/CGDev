@@ -10,13 +10,15 @@ edition = "2021"
 path = "_mods.rs"
 
 [features]
-# default = ["vulkan_1_0"]
+default = ["vulkan_1_0"]
 
-# vulkan_1_0 = []
-# vulkan_1_1 = ["vulkan_1_0"]
-# vulkan_1_2 = ["vulkan_1_1"]
-# vulkan_1_3 = ["vulkan_1_2"]
-# vulkan_1_4 = ["vulkan_1_3"]
+vulkan_1_0 = []
+vulkan_1_1 = ["vulkan_1_0"]
+vulkan_1_2 = ["vulkan_1_1"]
+vulkan_1_3 = ["vulkan_1_2"]
+vulkan_1_4 = ["vulkan_1_3"]
+
+VK_EXT_debug_utils = []
 
 [dependencies]
 common = {

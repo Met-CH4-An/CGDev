@@ -14,14 +14,10 @@ use crate::wvk_instance::WvkInstance;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkPhysicalDevice<TWvkBackend>
-where
-TWvkBackend: WvkBackend {
-    pub(in crate::wvk_physical_device) phantom_data: PhantomData<TWvkBackend>,
-
+pub struct WvkPhysicalDevice {
     /// Обёртка моего враппера WvkInstance для управления VkInstance. Нужна, т.к. хранит таблицу диспетчеризации инстанс команд вулкана.
     /// A wrapper for my WvkInstance wrapper for managing VkInstance. It's needed because it stores the Vulkan instance command dispatch table.
-    pub(in crate::wvk_physical_device) wvk_instance: Arc<WvkInstance<TWvkBackend>>,
+    pub(in crate::wvk_physical_device) wvk_instance: Arc<WvkInstance>,
     /// Полученный через vkEnumeratePhysicalDevices тип физического устройства. VkPhysicalDevice
     /// Physical device type obtained via vkEnumeratePhysicalDevices. VkPhysicalDevice
     pub(in crate::wvk_physical_device) vk_physical_device : svk::VkPhysicalDevice,

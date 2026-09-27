@@ -6,12 +6,9 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::wvk::{WvkBackend_0_1_3_0};
 use crate::wvk_library::WvkLibrary;
 
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-    TWvkBackend : WvkBackend_0_1_3_0 {
+impl WvkLibrary {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ////
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

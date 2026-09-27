@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use wvk::wvk::WVK_0_1_4_0;
+use std::borrow::Cow;
+use wvk::wvk::{WvkVersion};
+use wvk::extensions::VkExtDebugUtils;
 use wvk::wvk_library::{ WvkLibraryBuilder };
 use wvk::wvk_instance::{ WvkInstanceBuilder };
 
 
 fn main() {
-    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_4_0>::create().build().ok().unwrap();
+    let wvk_library_ = WvkLibraryBuilder::create(WvkVersion::WVK_0_1_4_0).build().ok().unwrap();
 
     let application_name_string_ = String::from("name");
     let application_name_str_ = "name";
@@ -17,7 +19,7 @@ fn main() {
 
     // Метаданные, которые вулканом не используются. Но могут храниться
     // Metadata that is not used by the volcano. But can be stored
-    let _wvk_instance_= WvkInstanceBuilder::<WVK_0_1_4_0>::create(&wvk_library_)
+    let _wvk_instance_= WvkInstanceBuilder::create(wvk_library_)
         .applicationName(application_name_string_)
         .applicationName(application_name_str_)
         .applicationName("name")
@@ -26,5 +28,6 @@ fn main() {
         .engineName(engine_name_str_)
         .engineName("name")
         .engineVersion(1)
+        .addExtension(VkExtDebugUtils::NAME.into())
         .build();
 }

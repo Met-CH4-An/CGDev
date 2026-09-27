@@ -11,9 +11,9 @@ use crate::dispatch_table::{WvkDispatchTableInstance, WVK_DISPATCH_TABLE_GLOBAL}
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 use crate::wvk_error::WvkError;
 
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
+#[cfg(feature = "vulkan_1_1")]
+impl<TLevel> WvkDispatchTable<TLevel>
 where
-TWvkBackend: WvkBackend_0_1_1_0,
 TLevel: WvkDispatchTableInstance, {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///

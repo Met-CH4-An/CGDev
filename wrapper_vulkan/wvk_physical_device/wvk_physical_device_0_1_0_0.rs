@@ -13,9 +13,7 @@ use crate::wvk_error::WvkError;
 use crate::wvk_physical_device::wvk_physical_device::WvkPhysicalDevice;
 use crate::wvk_physical_device::wvk_physical_device_builder::WvkPhysicalDeviceBuilder;
 
-impl<'a, TWvkBackend> WvkPhysicalDevice<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_0_0 {
+impl<'a> WvkPhysicalDevice {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,15 +23,12 @@ TWvkBackend : WvkBackend_0_1_0_0 {
     }
 }
 
-impl<TWvkBackend> WvkPhysicalDevice<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_0_0 {
+impl WvkPhysicalDevice {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(in crate::wvk_physical_device) fn create(builder: WvkPhysicalDeviceBuilder<TWvkBackend>) -> Result<Arc<Self>, WvkError> {
+    pub(in crate::wvk_physical_device) fn create(builder: WvkPhysicalDeviceBuilder) -> Result<Arc<Self>, WvkError> {
         let self_ = Self {
-            phantom_data: PhantomData,
             wvk_instance: builder.wvk_instance.clone(),
             vk_physical_device: builder.vk_physical_device,
         };

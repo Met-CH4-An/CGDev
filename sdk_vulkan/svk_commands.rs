@@ -477,23 +477,7 @@ pub type PFN_vkEnumerateInstanceVersion = unsafe extern "system" fn (
     pApiVersion : *mut u32) 
     -> crate::svk::VkResult;
 
-// Provided by VK_EXT_debug_report
-pub type PFN_vkDebugReportCallbackEXT = unsafe extern "system" fn (
-    flags : crate::svk::VkDebugReportFlagsEXT,
-    objectType : crate::svk::VkDebugReportObjectTypeEXT,
-    object : u64,
-    location : usize,
-    messageCode : i32,
-    pLayerPrefix : *const std::ffi::c_char,
-    pMessage : *const std::ffi::c_char,
-    pUserData : *mut std::ffi::c_void) -> bool;
 
-// Provided by VK_EXT_debug_utils
-pub type PFN_vkDebugUtilsMessengerCallbackEXT = unsafe extern "system" fn (
-    messageSeverity : crate::svk::VkDebugUtilsMessageSeverityFlagBitsEXT,
-    messageTypes : crate::svk::VkDebugUtilsMessageTypeFlagsEXT,
-    pCallbackData : *const crate::svk::VkDebugUtilsMessengerCallbackDataEXT,
-    pUserData : *mut std::ffi::c_void) -> bool;
 
 // Provided by VK_VERSION_1_0
 pub type PFN_vkEnumeratePhysicalDevices = unsafe extern "system" fn (
@@ -516,3 +500,71 @@ pub type PFN_vkGetPhysicalDeviceProperties2 = unsafe extern "system" fn (
 pub type PFN_vkDestroyInstance = unsafe extern "system" fn (
     instance: crate::svk::VkInstance,
     pAllocator: *const crate::svk::VkAllocationCallbacks);
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Provided by VK_EXT_debug_utils
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+pub type PFN_vkCmdBeginDebugUtilsLabelEXT = unsafe extern "system" fn (
+    commandBuffer: crate::svk::VkCommandBuffer,
+    pLabelInfo: *const crate::svk::VkDebugUtilsLabelEXT,
+);
+
+pub type PFN_vkCmdEndDebugUtilsLabelEXT = unsafe extern "system" fn (
+    commandBuffer: crate::svk::VkCommandBuffer,
+);
+
+pub type PFN_vkCmdInsertDebugUtilsLabelEXT = unsafe extern "system" fn (
+    commandBuffer: crate::svk::VkCommandBuffer,
+    pLabelInfo: *const crate::svk::VkDebugUtilsLabelEXT,
+);
+
+pub type PFN_vkCreateDebugUtilsMessengerEXT = unsafe extern "system" fn (
+    instance: crate::svk::VkInstance,
+    pCreateInfo: *const crate::svk::VkDebugUtilsMessengerCreateInfoEXT,
+    pAllocator: *const crate::svk::VkAllocationCallbacks,
+    pDebugMessenger: *mut crate::svk::VkDebugUtilsMessengerEXT,
+) -> crate::svk::VkResult;
+
+pub type PFN_vkDestroyDebugUtilsMessengerEXT = unsafe extern "system" fn (
+    instance: crate::svk::VkInstance,
+    debugMessenger: crate::svk::VkDebugUtilsMessengerEXT,
+    pAllocator: *const crate::svk::VkAllocationCallbacks,
+);
+
+pub type PFN_vkQueueBeginDebugUtilsLabelEXT = unsafe extern "system" fn (
+    queue: crate::svk::VkQueue,
+    pLabelInfo: *const crate::svk::VkDebugUtilsLabelEXT,
+);
+
+pub type PFN_vkQueueEndDebugUtilsLabelEXT = unsafe extern "system" fn (
+    queue: crate::svk::VkQueue,
+);
+
+pub type PFN_vkQueueInsertDebugUtilsLabelEXT = unsafe extern "system" fn (
+    queue: crate::svk::VkQueue,
+    pLabelInfo: *const crate::svk::VkDebugUtilsLabelEXT,
+);
+
+pub type PFN_vkSetDebugUtilsObjectNameEXT = unsafe extern "system" fn (
+    device: crate::svk::VkDevice,
+    pNameInfo: *const crate::svk::VkDebugUtilsObjectNameInfoEXT,
+) -> crate::svk::VkResult;
+
+pub type PFN_vkSetDebugUtilsObjectTagEXT = unsafe extern "system" fn (
+    device: crate::svk::VkDevice,
+    pTagInfo: *const crate::svk::VkDebugUtilsObjectTagInfoEXT,
+) -> crate::svk::VkResult;
+
+pub type PFN_vkSubmitDebugUtilsMessageEXT = unsafe extern "system" fn (
+    instance: crate::svk::VkInstance,
+    messageSeverity: crate::svk::VkDebugUtilsMessageSeverityFlagBitsEXT,
+    messageTypes: crate::svk::VkDebugUtilsMessageTypeFlagsEXT,
+    pCallbackData: *const crate::svk::VkDebugUtilsMessengerCallbackDataEXT,
+);
+
+pub type PFN_vkDebugUtilsMessengerCallbackEXT = unsafe extern "system" fn (
+    messageSeverity : crate::svk::VkDebugUtilsMessageSeverityFlagBitsEXT,
+    messageTypes : crate::svk::VkDebugUtilsMessageTypeFlagsEXT,
+    pCallbackData : *const crate::svk::VkDebugUtilsMessengerCallbackDataEXT,
+    pUserData : *mut std::ffi::c_void) -> bool;

@@ -16,8 +16,8 @@ use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct WvkDispatchTableBuilder<'a, TWvkBackend, TLevel> {
-    _phantom_data: PhantomData<(TWvkBackend, TLevel)>,
+pub struct WvkDispatchTableBuilder<'a, TLevel> {
+    _phantom_data: PhantomData<(TLevel)>,
     /// Команда вулкана, с помощью которой можно получить адреса для всех остальных команд.
     /// A Vulkan command that can be used to retrieve the addresses for all other commands.
     pub(in crate::dispatch_table) vk_get_instance_proc_addr: Option<svk::PFN_vkGetInstanceProcAddr>,
@@ -26,12 +26,10 @@ pub struct WvkDispatchTableBuilder<'a, TWvkBackend, TLevel> {
     pub(in crate::dispatch_table) vk_instance: Option<svk::VkInstance>,
     /// Таблица команд, которые были получены бех экземпляра вулкана. Глобальные команды.
     /// Table of commands received by the Volcano instance. Global commands.
-    pub(in crate::dispatch_table) wvk_dispatch_table_global: Option<&'a WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>>,
+    pub(in crate::dispatch_table) wvk_dispatch_table_global: Option<&'a WvkDispatchTable<WVK_DISPATCH_TABLE_GLOBAL>>,
 }
 
-impl<'a, TWvkBackend> WvkDispatchTableBuilder<'a, TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>
-where
-TWvkBackend: WvkBackend {
+impl<'a> WvkDispatchTableBuilder<'a, WVK_DISPATCH_TABLE_GLOBAL> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,18 +45,16 @@ TWvkBackend: WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>, WvkError> {
-        WvkDispatchTable::<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>::createAsGlobal(self)
+    pub fn build(self) -> Result<WvkDispatchTable<WVK_DISPATCH_TABLE_GLOBAL>, WvkError> {
+        WvkDispatchTable::<WVK_DISPATCH_TABLE_GLOBAL>::createAsGlobal(self)
     }
 }
 
-impl<'a, TWvkBackend> WvkDispatchTableBuilder<'a, TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>
-where
-TWvkBackend: WvkBackend {
+impl<'a> WvkDispatchTableBuilder<'a, WVK_DISPATCH_TABLE_INSTANCE> {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn create(vk_instance: svk::VkInstance, wvk_dispatch_table_global: &'a WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_GLOBAL>) -> Self {
+    pub fn create(vk_instance: svk::VkInstance, wvk_dispatch_table_global: &'a WvkDispatchTable<WVK_DISPATCH_TABLE_GLOBAL>) -> Self {
         Self {
             _phantom_data: PhantomData,
             vk_get_instance_proc_addr: None,
@@ -71,7 +67,7 @@ TWvkBackend: WvkBackend {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn build(self) -> Result<WvkDispatchTable<TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>, WvkError> {
-        WvkDispatchTable::<TWvkBackend, WVK_DISPATCH_TABLE_INSTANCE>::createAsInstance(self)
+    pub fn build(self) -> Result<WvkDispatchTable<WVK_DISPATCH_TABLE_INSTANCE>, WvkError> {
+        WvkDispatchTable::<WVK_DISPATCH_TABLE_INSTANCE>::createAsInstance(self)
     }
 }

@@ -38,7 +38,7 @@ pub(crate) struct RegistryTypeHandle {
     /// attribute objtypeenum { text }
     pub(crate) objtypeenum_rng: RangeInclusive<usize>,
     /// TypeBody
-    pub(crate) type_body: RegistryTypeBody,
+    pub(crate) registry_type_body: RegistryTypeBody,
 }
 
 impl RegistryTypeHandle {
@@ -53,7 +53,7 @@ impl RegistryTypeHandle {
             alias_rng: 1 ..= 0,
             parent_rng: 1 ..= 0,
             objtypeenum_rng: 1 ..= 0,
-            type_body: RegistryTypeBody::create(),
+            registry_type_body: RegistryTypeBody::create(),
         }
     }
 }

@@ -11,4 +11,4 @@ path = "_mods.rs"
 
 #[[bin]]
 #name = "svk_parserutils__tokenizer_xml"
-#path = "parser/_mods.rs"
+#path = "parser/_mods.rs.rs"

@@ -7,11 +7,10 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::mem::MaybeUninit;
-use crate::wvk::{ WvkBackend_0_1_1_0 };
 use crate::wvk_instance::wvk_instance::WvkInstance;
 
-impl<TWvkBackend> WvkInstance<TWvkBackend>
-where TWvkBackend : WvkBackend_0_1_1_0 {
+#[cfg(feature = "vulkan_1_1")]
+impl WvkInstance {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

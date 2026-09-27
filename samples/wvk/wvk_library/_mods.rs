@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: None
 // Copyright (c) 2026 None
 
-use wvk::wvk::{ WVK_0_1_4_0 };
+use wvk::wvk::{WvkVersion};
 use wvk::wvk_library::{ WvkLibraryBuilder };
 
 fn main() {
     println!("пример: создание WvkLibrary\n");
     
-    let wvk_library = match WvkLibraryBuilder::<WVK_0_1_4_0>::create().build() {
+    let wvk_library = match WvkLibraryBuilder::create(WvkVersion::WVK_0_1_4_0).build() {
         Ok(wvk_library) => wvk_library,
         Err(wvk_error) => {
             println!("{}", wvk_error.getMessage());

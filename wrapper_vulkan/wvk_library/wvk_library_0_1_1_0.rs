@@ -7,13 +7,10 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use crate::wvk_call_with_check;
-use crate::wvk::WvkBackend_0_1_1_0;
 use crate::wvk_error::{WvkError, WvkErrorType};
 use crate::wvk_library::WvkLibrary;
 
-impl<TWvkBackend> WvkLibrary<TWvkBackend>
-where
-TWvkBackend : WvkBackend_0_1_1_0 {
+impl WvkLibrary {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

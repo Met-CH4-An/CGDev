@@ -111,6 +111,20 @@ impl WvkBackend_Max for WVK_0_1_4_0 {}
 //
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#[derive(Clone, PartialOrd, PartialEq)]
+pub enum WvkVersion {
+    WVK_0_1_0_0,
+    WVK_0_1_1_0,
+    WVK_0_1_2_0,
+    WVK_0_1_3_0,
+    WVK_0_1_4_0,
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+pub(crate) const WVK_ENCODED_VULKAN_VERSION : u32 = crate::svk::VK_MAKE_API_VERSION(0, 1, 4, 0);
 pub(crate) const WRAPPER_VULKAN_NAME : &'static str = "Wrapper Vulkan: WVK";
 pub(crate) const WRAPPER_VULKAN_NAME_COW : Cow<'static, CStr> = Cow::Borrowed(c"Wrapper Vulkan: WVK");
 

@@ -6,9 +6,19 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::registry::PrimitiveElementDeclaration;
+use crate::registry_primitive_comment_elt::RegistryPrimitiveCommentElt;
+use crate::registry_primitive_element_enum::RegistryPrimitiveElementEnum;
 use crate::registry_primitive_element_name::RegistryPrimitiveElementName;
 use crate::registry_primitive_element_type::RegistryPrimitiveElementType;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum RegistryTypeBodyWithEnumElementVariant {
+    TYPE(RegistryPrimitiveElementType),
+    ENUM(RegistryPrimitiveElementEnum),
+    COMMENT(RegistryPrimitiveCommentElt),
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeBodyWithEnum =
@@ -38,7 +48,7 @@ pub(crate) struct RegistryTypeBodyWithEnum {
     ///     | CommentElt
     ///     )
     /// }*
-    pub(crate) registry_primitive_element_declaration_vec: Vec<PrimitiveElementDeclaration>,
+    pub(crate) registry_type_body_with_enum_element_variant_vec: Vec<RegistryTypeBodyWithEnumElementVariant>,
 }
 impl RegistryTypeBodyWithEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +58,7 @@ impl RegistryTypeBodyWithEnum {
         Self {
             registry_primitive_element_type_vec: Vec::new(),
             registry_primitive_element_name: RegistryPrimitiveElementName::create(),
-            registry_primitive_element_declaration_vec: Vec::new(),
+            registry_type_body_with_enum_element_variant_vec: Vec::new(),
         }
     }
 }

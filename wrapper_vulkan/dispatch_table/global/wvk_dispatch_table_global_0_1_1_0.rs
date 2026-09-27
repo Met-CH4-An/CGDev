@@ -10,10 +10,10 @@ use crate::wvk::{WvkBackend_0_1_1_0};
 use crate::dispatch_table::{WvkDispatchTableGlobal};
 use crate::dispatch_table::wvk_dispatch_table::WvkDispatchTable;
 
-impl<TWvkBackend, TLevel> WvkDispatchTable<TWvkBackend, TLevel>
+#[cfg(feature = "vulkan_1_1")]
+impl<TLevel> WvkDispatchTable<TLevel>
 where
-    TWvkBackend: WvkBackend_0_1_1_0,
-    TLevel: WvkDispatchTableGlobal, {
+TLevel: WvkDispatchTableGlobal, {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
