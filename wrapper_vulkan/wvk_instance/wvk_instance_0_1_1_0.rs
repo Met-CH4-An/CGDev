@@ -9,12 +9,11 @@
 use std::mem::MaybeUninit;
 use crate::wvk_instance::wvk_instance::WvkInstance;
 
-#[cfg(feature = "vulkan_1_1")]
 impl WvkInstance {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn vkGetPhysicalDeviceProperties2(&self, physicalDevice: svk::VkPhysicalDevice, p_next: *mut std::ffi::c_void) -> svk::VkPhysicalDeviceProperties2 {
+    pub(crate) fn wvkGetPhysicalDeviceProperties2(&self, physicalDevice: svk::VkPhysicalDevice, p_next: *mut std::ffi::c_void) -> svk::VkPhysicalDeviceProperties2 {
         let mut pProperties_ = MaybeUninit::<svk::VkPhysicalDeviceProperties2>::uninit();
 
         unsafe {

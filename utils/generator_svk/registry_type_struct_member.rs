@@ -7,7 +7,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_type_body_with_enum::RegistryTypeBodyWithEnum;
+use crate::type_body_with_enum::RegistryTypeBodyWithEnum;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// element member {

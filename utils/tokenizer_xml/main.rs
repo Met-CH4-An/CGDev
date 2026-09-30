@@ -10,7 +10,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::rc::Rc;
+use std::sync::Arc;
 use std::time::Duration;
 use utils__tokenizer_xml::token::TokenType;
 use utils__tokenizer_xml::{AVX2, Tokenizer};
@@ -18,9 +18,9 @@ use utils__tokenizer_xml::{AVX2, Tokenizer};
 fn main() {
     let data_ = loadDataFromFile("vk.xml").ok().unwrap();
 
-    let data_ = Rc::new(data_);
+    let data_ = Arc::new(data_);
 
-    let mut tokenizer_ = Tokenizer::<AVX2>::s_create();
+    let mut tokenizer_ = Tokenizer::<AVX2>::create();
 
     tokenizer_.setData(data_.clone());
 

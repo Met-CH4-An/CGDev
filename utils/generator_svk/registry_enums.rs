@@ -7,15 +7,19 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_enum::RegistryEnum;
+use utils__tokenizer_xml::token::TokenType;
+use utils__tokenizer_xml::{Tokenizer, AVX2};
+use crate::registry_enum::Enum;
+use crate::comment_elt::CommentElt;
+use crate::unused::Unused;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum RegistryEnumsType {
-    UNKNOWN,
-    ENUM,
-    BITMASK
+pub(crate) enum EnumsElementVariant {
+    ENUM(Enum),
+    UNUSED(Unused),
+    COMMENT_ELT(CommentElt)
 } 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,52 +32,144 @@ pub(crate) enum RegistryEnumsType {
 ///         (Enum | Unused | CommentElt)*
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryEnums {
+pub(crate) struct Enums {
     /// attribute name { text }?,
-    pub(crate) name_rng: RangeInclusive<usize>,
+    pub(crate) name: RangeInclusive<usize>,
     /// attribute type { text },
-    pub(crate) type_rng: RangeInclusive<usize>,
+    pub(crate) r#type: RangeInclusive<usize>,
     /// attribute bitwidth { "32" | "64" } ?,
-    pub(crate) bitwidth_rng: RangeInclusive<usize>,
+    pub(crate) bitwidth: RangeInclusive<usize>,
     /// CommentAttr?,
-    pub(crate) comment_rng: RangeInclusive<usize>,
+    pub(crate) comment: RangeInclusive<usize>,
     /// (Enum | Unused | CommentElt)*
-    pub(crate) registry_enum_vec: Vec<RegistryEnum>,
+    pub(crate) element_variants: Vec<EnumsElementVariant>,
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryEnums {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryEnums {}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryEnums {
+impl Enums {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn s_create() -> Self {
-        Self {
-            name_rng: 1 ..= 0,
-            type_rng: 1 ..= 0,
-            bitwidth_rng: 1 ..= 0,
-            comment_rng: 1 ..= 0,
-            registry_enum_vec: Vec::new(),
-        }
+    pub(crate) fn create(tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<Self, String> {
+        let mut self_ = Self {
+            name: 1 ..= 0,
+            r#type: 1 ..= 0,
+            bitwidth: 1 ..= 0,
+            comment: 1 ..= 0,
+            element_variants: Vec::new(),
+        };
+
+        self_.parse(tokenizer, data)?;
+
+        Ok(self_)
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Enums =
+    ///     element enums {
+    ///         attribute name { text }?,
+    ///         attribute type { text },
+    ///         attribute bitwidth { "32" | "64" } ?,
+    ///         CommentAttr?,
+    ///         (Enum | Unused | CommentElt)*                       <---
+    ///     }
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+        let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
+
+        if is_body_ {
+            loop {
+                let token_ = (&mut *tokenizer).nextToken1();
+
+                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
+                    let enum_ = Enum::create(tokenizer, data)?;
+
+                    (&mut *self).element_variants.push(EnumsElementVariant::ENUM(enum_));
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "unused"} {
+                    let unused_ = Unused::create(tokenizer, data)?;
+
+                    (&mut *self).element_variants.push(EnumsElementVariant::UNUSED(unused_));
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
+                    let comment_elt_ = CommentElt::create(tokenizer, data)?;
+
+                    (&mut *self).element_variants.push(EnumsElementVariant::COMMENT_ELT(comment_elt_));
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enums"} {
+                    break;
+                }
+
+                // Если встретился не валидный токен или конечный токен.
+                // If an invalid token or final token is encountered.
+                else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                    return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
+                }
+            } // loop {
+        } // if is_body_ {
+
+        Ok(())
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Enums =
+    ///     element enums {
+    ///         attribute name { text }?,                           <---
+    ///         attribute type { text },                            <---
+    ///         attribute bitwidth { "32" | "64" } ?,               <---
+    ///         CommentAttr?,                                       <---
+    ///         (Enum | Unused | CommentElt)*
+    ///     }
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
+        let is_body_ = loop {
+            let token_ = (&mut *tokenizer).nextToken1();
+
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "name" {
+                let token_ = (&mut *tokenizer).nextToken1();
+
+                self.name = token_.asRange();
+            }
+
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "type" {
+                let token_ = (&mut *tokenizer).nextToken1();
+
+                self.r#type = token_.asRange();
+            }
+
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "bitwidth" {
+                let token_ = (&mut *tokenizer).nextToken1();
+
+                self.bitwidth = token_.asRange();
+            }
+
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "comment" {
+                let token_ = (&mut *tokenizer).nextToken1();
+
+                self.comment = token_.asRange();
+            }
+
+            // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
+            // If we encounter a simple closing end tag ('>'), we report that there is a body.
+            else if token_.asType() == TokenType::TAG_END {
+                break true;
+            }
+
+            // Если встретили самозакрывающийся конец тега ('/>'), сообщаем что тела нет.
+            // If we encounter a self-closing end tag ('/>'), we report that there is no body.
+            else if token_.asType() == TokenType::TAG_END_CLOSE {
+                break false;
+            }
+
+            // Если встретился не валидный токен или конечный токен.
+            // If an invalid token or final token is encountered.
+            else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
+            }
+        }; // let is_body_ = loop {
+
+        Ok(is_body_)
     }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl RegistryEnums {}

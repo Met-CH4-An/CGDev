@@ -6,7 +6,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::rc::Rc;
+use std::sync::Arc;
 use crate::backend::backend::Backend;
 use crate::token::{Token, TokenType};
 use crate::chunk_mask::ChunkMask;
@@ -27,135 +27,6 @@ enum TokenizerState {
     TAG_ATTRIBUTE_VALUE_READING,
     END,
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-///
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct Tokenizer<TBackend>
-where
-TBackend: Backend {
-    /// Регистры для построения масок.
-    /// Registers for constructing masks.
-    register_preset: ChunkMaskRegister<TBackend>,
-    /// Данные для обработки.
-    /// Data to be processed.
-    data_ptr: *const u8,
-    data_length: usize,
-    data_rc: Rc<Vec<u8>>,
-    /// Текущее состояние токенайзера.
-    /// Current state of the tokenizer.
-    state : TokenizerState,
-    /// Текущее смещение внутри данных.
-    /// Current offset within the data.
-    current_in_data_position: usize,
-    /// Текущее смещение внутри чанка.
-    /// Current offset within the chunk.
-    current_in_chunk_position: usize,
-    /// Текущий чанк масок.
-    /// Current chunk of masks.
-    current_chunk_mask: ChunkMask<TBackend>,
-    /// Ожидающий токен. Токен, который был найден при поиске другого.
-    /// Pending token. A token that was found while searching for another.
-    pending_token: Token,
-    last_r_chevron: usize,
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные ассоциированные функции.
-/// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TBackend> Tokenizer<TBackend>
-where
-TBackend: Backend {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_create() -> Self {
-        Self {
-            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
-            data_ptr: std::ptr::null(),
-            data_length: 0,
-            data_rc: Rc::<Vec<u8>>::new(Vec::<u8>::new()),
-            state: TokenizerState::TAG_BEGIN_FIND,
-            current_in_data_position: 0,
-            current_in_chunk_position: 0,
-            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
-            pending_token: Token::s_createEmpty(),
-            last_r_chevron: 0,
-        }
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn s_createWithData(data_rc: Rc<Vec<u8>>) -> Self {
-        Self {
-            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
-            data_ptr: data_rc.as_ptr(),
-            data_length: 0,
-            data_rc: data_rc,
-            state: TokenizerState::TAG_BEGIN_FIND,
-            current_in_data_position: 0,
-            current_in_chunk_position: 0,
-            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
-            pending_token: Token::s_createEmpty(),
-            last_r_chevron: 0,
-        }
-    }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Публичные методы.
-/// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-impl<TBackend> Tokenizer<TBackend>
-where
-TBackend: Backend {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Установка новых данных. Установка приводит к полному сбросу состояния токенайзера.
-    /// Installing new data. This causes a complete reset of the tokenizer state.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn setData(&mut self, data_rc: Rc<Vec<u8>>) {
-        self.reset();
-
-        self.data_rc = data_rc;
-        self.data_ptr = self.data_rc.as_ptr();
-        self.data_length = self.data_rc.len();
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Сброс текущего состояния токенайзера. Токенайзер приводится в начальное состояние.
-    /// Resets the current state of the tokenizer. The tokenizer is returned to its initial state.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn reset(&mut self) {
-        // Строим первый чанк.
-        // Building the first chunk.
-        //let mut chunk_ = TokenizerChunkMask::<TBackend>::s_create();
-        //unsafe { TBackend::buildChunk(&mut chunk_, self.data_ptr); }
-
-        self.state = TokenizerState::TAG_BEGIN_FIND;
-        self.current_in_data_position = 0;
-        self.current_in_chunk_position = 0;
-        self.current_chunk_mask = ChunkMask::<TBackend>::s_create();
-        self.pending_token = Token::s_createEmpty();
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn nextToken1(&mut self) -> Token {
-        let token_ = self.processState();
-
-        token_
-    }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// приватная область
-//
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 macro_rules! FIND_VALID_TZ {
     //($self: ident, $token_type: ident, $token_data_rng: ident,  $chunk_loop: lifetime, $analyze_loop: lifetime) => {{
@@ -230,17 +101,114 @@ macro_rules! FIND_VALID_TZ_WITH {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные ассоциированные функции.
-/// Private associated functions.
+///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct Tokenizer<TBackend>
+where
+TBackend: Backend {
+    /// Регистры для построения масок.
+    /// Registers for constructing masks.
+    register_preset: ChunkMaskRegister<TBackend>,
+    /// Данные для обработки.
+    /// Data to be processed.
+    data_ptr: *const u8,
+    data_length: usize,
+    data: Arc<Vec<u8>>,
+    /// Текущее состояние токенайзера.
+    /// Current state of the tokenizer.
+    state : TokenizerState,
+    /// Текущее смещение внутри данных.
+    /// Current offset within the data.
+    current_in_data_position: usize,
+    /// Текущее смещение внутри чанка.
+    /// Current offset within the chunk.
+    current_in_chunk_position: usize,
+    /// Текущий чанк масок.
+    /// Current chunk of masks.
+    current_chunk_mask: ChunkMask<TBackend>,
+    /// Ожидающий токен. Токен, который был найден при поиске другого.
+    /// Pending token. A token that was found while searching for another.
+    pending_token: Token,
+    last_r_chevron: usize,
+}
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// Приватные методы.
-/// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 impl<TBackend> Tokenizer<TBackend>
 where
 TBackend: Backend {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn create() -> Self {
+        Self {
+            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
+            data_ptr: std::ptr::null(),
+            data_length: 0,
+            data: Arc::<Vec<u8>>::new(Vec::<u8>::new()),
+            state: TokenizerState::TAG_BEGIN_FIND,
+            current_in_data_position: 0,
+            current_in_chunk_position: 0,
+            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
+            pending_token: Token::s_createEmpty(),
+            last_r_chevron: 0,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn createWithData(data: Arc<Vec<u8>>) -> Self {
+        Self {
+            register_preset: unsafe {TBackend::buildChunkMaskRegister()},
+            data_ptr: data.as_ptr(),
+            data_length: 0,
+            data: data,
+            state: TokenizerState::TAG_BEGIN_FIND,
+            current_in_data_position: 0,
+            current_in_chunk_position: 0,
+            current_chunk_mask: ChunkMask::<TBackend>::s_create(),
+            pending_token: Token::s_createEmpty(),
+            last_r_chevron: 0,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Установка новых данных. Установка приводит к полному сбросу состояния токенайзера.
+    /// Installing new data. This causes a complete reset of the tokenizer state.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn setData(&mut self, data: Arc<Vec<u8>>) {
+        self.reset();
+
+        self.data = data;
+        self.data_ptr = self.data.as_ptr();
+        self.data_length = self.data.len();
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Сброс текущего состояния токенайзера. Токенайзер приводится в начальное состояние.
+    /// Resets the current state of the tokenizer. The tokenizer is returned to its initial state.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn reset(&mut self) {
+        // Строим первый чанк.
+        // Building the first chunk.
+        //let mut chunk_ = TokenizerChunkMask::<TBackend>::s_create();
+        //unsafe { TBackend::buildChunk(&mut chunk_, self.data_ptr); }
+
+        self.state = TokenizerState::TAG_BEGIN_FIND;
+        self.current_in_data_position = 0;
+        self.current_in_chunk_position = 0;
+        self.current_chunk_mask = ChunkMask::<TBackend>::s_create();
+        self.pending_token = Token::s_createEmpty();
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn nextToken1(&mut self) -> Token {
+        let token_ = self.processState();
+
+        token_
+    }
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,9 +234,9 @@ TBackend: Backend {
                         if self.current_in_data_position + valid_tz_ as usize - self.last_r_chevron >= 1 {
                             let begin_ = self.last_r_chevron;
                             let end_ = self.current_in_data_position + valid_tz_ as usize - 1;
-                            
+
                             let token_= Token::s_create(TokenType::TEXT, begin_ ..= end_);
-                            
+
                             break 'chunk token_;
                         }
                     } // TokenizerState::TAG_BEGIN_FIND

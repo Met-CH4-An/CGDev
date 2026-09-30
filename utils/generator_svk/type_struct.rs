@@ -7,8 +7,8 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_common_type_attributes::RegistryCommonTypeAttributes;
-use crate::registry_primitive_comment_elt::RegistryPrimitiveCommentElt;
+use crate::common_type_attributes::CommonTypeAttributes;
+use crate::comment_elt::CommentElt;
 use crate::registry_type_struct_member::RegistryTypeStructMember;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,7 +16,7 @@ use crate::registry_type_struct_member::RegistryTypeStructMember;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) enum RegistryTypeStructElementVariant {
     MEMBER(RegistryTypeStructMember),
-    COMMENT_ELT(RegistryPrimitiveCommentElt)
+    COMMENT_ELT(CommentElt)
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,42 +57,23 @@ pub(crate) enum RegistryTypeStructElementVariant {
 ///        )
 ///     )
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryTypeStruct {
+pub(crate) struct TypeStruct {
     /// CommonTypeAttributes,
-    pub(crate) common_type_attributes: RegistryCommonTypeAttributes,
+    pub(crate) common_type_attributes: CommonTypeAttributes,
     /// attribute category { "struct" | "union" },
-    pub(crate) category_rng: RangeInclusive<usize>,
+    pub(crate) category: RangeInclusive<usize>,
     /// NameAttr,
-    pub(crate) name_rng: RangeInclusive<usize>,
+    pub(crate) name: RangeInclusive<usize>,
     /// attribute alias { text }?
-    pub(crate) alias_rng: RangeInclusive<usize>,
+    pub(crate) alias: RangeInclusive<usize>,
     /// attribute returnedonly { "true" }?
-    pub(crate) returned_only_rng: RangeInclusive<usize>,
+    pub(crate) returned_only: RangeInclusive<usize>,
     /// attribute structextends { StringList_t }?
-    pub(crate) struct_extends_rng: RangeInclusive<usize>,
+    pub(crate) struct_extends: RangeInclusive<usize>,
     /// attribute allowduplicate { "true" | "false" }?
-    pub(crate) allow_duplicate_rng: RangeInclusive<usize>,
+    pub(crate) allow_duplicate: RangeInclusive<usize>,
     /// attribute requiredlimittype { "true" }?
-    pub(crate) required_limit_type_rng: RangeInclusive<usize>,
+    pub(crate) required_limit_type: RangeInclusive<usize>,
     ///
     pub(crate) element_variant_vec: Vec<RegistryTypeStructElementVariant>,
-}
-
-impl RegistryTypeStruct {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Конструктор.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn create() -> Self {
-        Self {
-            common_type_attributes: RegistryCommonTypeAttributes::create(),
-            category_rng: 1 ..= 0,
-            name_rng: 1 ..= 0,
-            alias_rng: 1 ..= 0,
-            returned_only_rng: 1 ..= 0,
-            struct_extends_rng: 1 ..= 0,
-            allow_duplicate_rng: 1 ..= 0,
-            required_limit_type_rng: 1 ..= 0,
-            element_variant_vec: Vec::new(),
-        }
-    }
 }

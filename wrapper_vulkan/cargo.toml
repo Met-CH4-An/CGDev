@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: None
 # Copyright (c) 2026 None
 
+[profile.dev.build-override]
+debug = true
+
 [package]
 name = "wvk"
 version = "0.0.0"

@@ -29,6 +29,7 @@ pub(in crate::wvk_instance) struct WvkInstanceDispatchTable {
 
     pub(in crate::wvk_instance::dispatch_table) vk_enumerate_physical_devices: svk::PFN_vkEnumeratePhysicalDevices,
     pub(in crate::wvk_instance::dispatch_table) vk_get_physical_device_properties: svk::PFN_vkGetPhysicalDeviceProperties,
+    pub(in crate::wvk_instance::dispatch_table) vk_enumerate_device_extension_properties: svk::PFN_vkEnumerateDeviceExtensionProperties,
 
     // Vulkan 1.1
 
@@ -91,7 +92,8 @@ impl WvkInstanceDispatchTable {
 
             vk_enumerate_physical_devices: init_command!(builder, WVK_0_1_0_0, svk::PFN_vkEnumeratePhysicalDevices, vk_instance, c"vkEnumeratePhysicalDevices", Self::vkEnumeratePhysicalDevicesDummy),
             vk_get_physical_device_properties: init_command!(builder, WVK_0_1_0_0, svk::PFN_vkGetPhysicalDeviceProperties, vk_instance, c"vkGetPhysicalDeviceProperties", Self::vkGetPhysicalDevicePropertiesDummy),
-
+            vk_enumerate_device_extension_properties: init_command!(builder, WVK_0_1_0_0, svk::PFN_vkEnumerateDeviceExtensionProperties, vk_instance, c"vkEnumerateDeviceExtensionProperties", Self::vkEnumerateDeviceExtensionPropertiesDummy),
+            
             // Vulkan 1.1
 
             vk_get_physical_device_properties_2: init_command!(builder, WVK_0_1_1_0, svk::PFN_vkGetPhysicalDeviceProperties2, vk_instance, c"vkGetPhysicalDeviceProperties2", Self::vkGetPhysicalDeviceProperties2Dummy),

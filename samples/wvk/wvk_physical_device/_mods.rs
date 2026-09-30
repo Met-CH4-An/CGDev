@@ -299,8 +299,8 @@ pub fn printVkPhysicalDeviceVulkan12Properties(properties: &wvk::svk::VkPhysical
 fn main() {
     println!("Пример получения списка физических устройств. Example of getting a list of physical devices.");
 
-    let wvk_library_ = WvkLibraryBuilder::<WVK_0_1_4_0>::create().build().ok().unwrap();
-    let wvk_instance_= WvkInstanceBuilder::<WVK_0_1_4_0>::create(&wvk_library_).build().ok().unwrap();
+    let wvk_library_ = WvkLibraryBuilder::create(wvk::wvk::WvkVersion::WVK_0_1_0_0).build().ok().unwrap();
+    let wvk_instance_= WvkInstanceBuilder::create(wvk_library_).build().ok().unwrap();
 
     let wvk_physical_devices_ = wvk_instance_.wvkEnumeratePhysicalDevices().ok().unwrap();
 

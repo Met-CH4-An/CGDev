@@ -56,8 +56,9 @@ impl VkExtDebugUtils {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn createWithInstance(
         wvk_library: &Arc<WvkLibrary>,
-        vk_instance: svk::VkInstance
-    ) -> Result<Self, WvkError> {
+        vk_instance: svk::VkInstance)
+        -> Result<Self, WvkError>
+    {
         let mut self_ = Self::create()?;
 
         self_.vk_create_debug_utils_messenger_ext = wvk_library.wvkGetInstanceProcAddr::<svk::PFN_vkCreateDebugUtilsMessengerEXT>(vk_instance, c"vkCreateDebugUtilsMessengerEXT")?;

@@ -407,6 +407,14 @@ pub type VkSemaphoreSciSyncPoolNV = VkSemaphoreSciSyncPoolNV_T;
 // Copyright (c) 2026 None
 
 // Provided by VK_VERSION_1_0
+pub type PFN_vkEnumerateDeviceExtensionProperties = unsafe extern "system" fn (
+    physicalDevice: crate::VkPhysicalDevice,
+    pLayerName: *const std::ffi::c_char,
+    pPropertyCount: *mut u32,
+    pProperties: *mut crate::VkExtensionProperties)
+    -> crate::svk::VkResult;
+
+// Provided by VK_VERSION_1_0
 pub type PFN_vkAllocationFunction = unsafe extern "system" fn (
     pUserData : *mut std::ffi::c_void,
     size : usize,

@@ -17,17 +17,22 @@ impl WvkInstance {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn wvkDestroyInstance(&self) {
+    fn wvkDestroyInstance(
+        &self)
+    {
         self.wvk_dispatch_table.vkDestroyInstance(self.vk_instance, std::ptr::null_mut());
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn wvkEnumeratePhysicalDevices(self: &Arc<Self>) -> Result<Vec<Arc<WvkPhysicalDevice>>, WvkError> {
+    pub fn wvkEnumeratePhysicalDevices(
+        self: &Arc<Self>)
+        -> Result<Vec<Arc<WvkPhysicalDevice>>, WvkError>
+    {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Получаем количество физических устройств VkPhysicalDevice.
-        // Get the number of physical devices VkPhysicalDevice.
+        // Получаем количество.
+        // Get the quantity.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         let mut count_ : u32 = 0;
@@ -44,8 +49,8 @@ impl WvkInstance {
         unsafe { vk_physical_devices_.set_len(count_ as usize) }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // Получаем список физических устройств VkPhysicalDevice.
-        // We get a list of physical devices VkPhysicalDevice.
+        // Получаем список.
+        // Here is the list.
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         wvk_call_with_check!(
@@ -60,7 +65,7 @@ impl WvkInstance {
         let wvk_physical_devices_ = vk_physical_devices_
             .iter()
             .map(|v| {
-                WvkPhysicalDeviceBuilder::create(*v, &self).build()
+                WvkPhysicalDeviceBuilder::create(*v, self.clone()).build()
             })
             .collect::<Result<Vec<Arc<WvkPhysicalDevice>>, WvkError>>()?;
 
@@ -70,12 +75,55 @@ impl WvkInstance {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn vkGetPhysicalDeviceProperties(self: &Arc<Self>, vk_physical_device: svk::VkPhysicalDevice) -> svk::VkPhysicalDeviceProperties {
+    pub(crate) fn wvkGetPhysicalDeviceProperties(
+        self: &Arc<Self>,
+        vk_physical_device: svk::VkPhysicalDevice)
+        -> svk::VkPhysicalDeviceProperties
+    {
         let mut output_ = MaybeUninit::<svk::VkPhysicalDeviceProperties>::uninit();
 
         self.wvk_dispatch_table.vkGetPhysicalDeviceProperties(vk_physical_device, output_.as_mut_ptr());
 
         unsafe {output_.assume_init()}
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub(crate) fn wvkEnumerateDeviceExtensionProperties(
+        &self,
+        physicalDevice: svk::VkPhysicalDevice,
+        pLayerName: *const std::ffi::c_char)
+        -> Result<Vec<svk::VkExtensionProperties>, WvkError>
+    {
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Получаем количество.
+        // Get the quantity.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        let mut count_ : u32 = 0;
+        wvk_call_with_check!(
+            self.wvk_dispatch_table.vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &mut count_, std::ptr::null_mut())
+        );
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Выделить место для данных, исходя из полученного количества.
+        // Allocate space for data based on the received quantity.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        let mut vk_extension_properties_vec_ = Vec::<svk::VkExtensionProperties>::with_capacity(count_ as usize);
+        unsafe { vk_extension_properties_vec_.set_len(count_ as usize) }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Получаем список.
+        // Here is the list.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        wvk_call_with_check!(
+            self.wvk_dispatch_table.vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &mut count_, vk_extension_properties_vec_.as_mut_ptr())
+        );
+
+        Ok(vk_extension_properties_vec_)
     }
 }
 

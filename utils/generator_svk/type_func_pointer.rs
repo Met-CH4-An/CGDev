@@ -7,8 +7,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
-use crate::registry_common_type_attributes::RegistryCommonTypeAttributes;
-use crate::registry_type_body::RegistryTypeBody;
+use crate::common_type_attributes::CommonTypeAttributes;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
@@ -37,21 +36,9 @@ use crate::registry_type_body::RegistryTypeBody;
 ///         }
 ///     }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryTypeFuncpointer {
+pub(crate) struct TypeFuncPointer {
     /// CommonTypeAttributes,
-    pub(crate) common_type_attributes: RegistryCommonTypeAttributes,
+    pub(crate) common_type_attributes: CommonTypeAttributes,
     /// attribute category { "bitmask" },
-    pub(crate) category_rng: RangeInclusive<usize>,
-}
-
-impl RegistryTypeFuncpointer {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Конструктор.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn create() -> Self {
-        Self {
-            common_type_attributes: RegistryCommonTypeAttributes::create(),
-            category_rng: 1 ..= 0,
-        }
-    }
+    pub(crate) category: RangeInclusive<usize>,
 }

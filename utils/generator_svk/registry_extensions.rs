@@ -7,22 +7,28 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::ops::RangeInclusive;
+use crate::registry_extension::RegistryExtension;
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// CommentElt = element comment { text }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct RegistryPrimitiveCommentElt {
-    /// text
-    pub(crate) comment_rng: RangeInclusive<usize>,
+pub(crate) enum RegistryExtensionsElementVariant {
+    EXTENSION(RegistryExtension),
+    COMMENT(RangeInclusive<usize>),
 }
 
-impl RegistryPrimitiveCommentElt {
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// Extensions = element extensions { CommentAttr?, Extension* }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) struct RegistryExtensions {
+    ///element extensions { CommentAttr?, Extension* }
+    element_variant_vec: Vec<RegistryExtensionsElementVariant>,
+}
+
+impl RegistryExtensions {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            comment_rng: 1 ..= 0,
+            element_variant_vec: Vec::new(),
         }
     }
 }

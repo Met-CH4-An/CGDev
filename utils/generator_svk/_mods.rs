@@ -13,98 +13,47 @@
 use std::hash::{Hash, Hasher};
 use utils__tokenizer_xml;
 
-// файл generator.rs
-// file generator.rs
-mod generator;
-pub use generator::Generator;
-
-// файл registry.rs
-// file registry.rs
 mod registry;
+pub use registry::Registry;
 
-// файл registry_primitive_comment_elt
-// file registry_primitive_comment_elt
-mod registry_primitive_comment_elt;
 
-// файл registry_primitive_element_type
-// file registry_primitive_element_type
 mod registry_primitive_element_type;
-
-// файл registry_primitive_element_name
-// file registry_primitive_element_name
 mod registry_primitive_element_name;
-
-// файл registry_primitive_element_enum
-// file registry_primitive_element_enum
 mod registry_primitive_element_enum;
 
-// файл registry_types.rs
-// file registry_types.rs
-mod registry_types;
+mod types;
 
-// файл registry_type.rs
-// file registry_type.rs
-mod registry_type;
+mod common_type_attributes;
 
-// файл registry_common_type_attributes.rs
-// file registry_common_type_attributes.rs
-mod registry_common_type_attributes;
+mod type_body;
+mod type_body_type;
+mod type_body_name;
 
-// файл registry_type_body.rs
-// file registry_type_body.rs
-mod registry_type_body;
+mod type_body_with_enum;
+mod type_body_with_enum_type;
+mod type_body_with_enum_name;
+mod type_body_with_enum_enum;
 
-// файл registry_type_body_with_enum.rs
-// file registry_type_body_with_enum.rs
-mod registry_type_body_with_enum;
-
-// файл registry_type_base_type.rs
-// file registry_type_base_type.rs
-mod registry_type_base_type;
-
-// файл registry_type_bitmask.rs
-// file registry_type_bitmask.rs
-mod registry_type_bitmask;
-
-// файл registry_type_define.rs
-// file registry_type_define.rs
-mod registry_type_define;
-
-// файл registry_type_enum.rs
-// file registry_type_enum.rs
-mod registry_type_enum;
-
-// файл registry_type_funcpointer.rs
-// file registry_type_funcpointer.rs
-mod registry_type_funcpointer;
-
-// файл registry_type_handle.rs
-// file registry_type_handle.rs
-mod registry_type_handle;
-
-// файл registry_type_include.rs
-// file registry_type_include.rs
-mod registry_type_include;
-
-// файл registry_type_requires.rs
-// file registry_type_requires.rs
-mod registry_type_requires;
-
-// файл registry_type_struct.rs
-// file registry_type_struct.rs
-mod registry_type_struct;
-
-// файл registry_type_struct_member.rs
-// file registry_type_struct_member.rs
+mod r#type;
+mod type_base_type;
+mod type_bitmask;
+mod type_define;
+mod type_enum;
+mod type_func_pointer;
+mod type_handle;
+mod type_include;
+mod type_requires;
+mod type_struct;
 mod registry_type_struct_member;
 
-// файл registry_enums
-// file registry_enums
 mod registry_enums;
-
-// файл registry_enum.rs
-// file registry_enum.rs
 mod registry_enum;
+
+mod registry_extensions;
+mod registry_extension;
+
+mod comment_elt;
+mod unused;
 
 pub(crate) fn makeHash(data: &str) -> u64 {
     let mut hasher_ = std::hash::DefaultHasher::new();
@@ -115,23 +64,3 @@ pub(crate) fn makeHash(data: &str) -> u64 {
 
     hash_
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные ассоциированные функции.
-// Public associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Публичные методы.
-// Public methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные ассоциированные функции.
-// Private associated functions.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Приватные методы.
-// Private methods.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

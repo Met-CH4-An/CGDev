@@ -6,7 +6,7 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use crate::registry_type_base_type::RegistryTypeBaseType;
+use crate::type_base_type::RegistryTypeBaseType;
 use crate::registry_type_bitmask::RegistryTypeBitmask;
 use crate::registry_type_define::RegistryTypeDefine;
 use crate::registry_type_enum::RegistryTypeEnum;
