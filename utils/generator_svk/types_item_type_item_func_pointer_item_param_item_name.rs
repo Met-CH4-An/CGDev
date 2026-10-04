@@ -11,6 +11,37 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerItemParamItemNameView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointerItemParamItemName,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerItemParamItemNameView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn prefix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.prefix.start() ..= *self.content.prefix.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn postfix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.postfix.start() ..= *self.content.postfix.end()]) }
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
 ///     CommonTypeAttributes,
 ///     attribute category { "funcpointer" },

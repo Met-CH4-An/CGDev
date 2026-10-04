@@ -6,15 +6,17 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+use std::ops::RangeInclusive;
 use std::sync::Arc;
 use utils__tokenizer_xml::{AVX2, Tokenizer};
 use utils__tokenizer_xml::token::TokenType;
-use crate::types::{Types, TypesElementVariant};
-use crate::types_item_type::TypesItemTypeElementVariant;
-use crate::type_body_with_enum::TypeBodyWithEnumElementVariant;
-use crate::type_struct::TypeStructElementVariant;
+use crate::types::{TypesView, Types, TypesVariant};
+use crate::types_item_type::TypesItemTypeVariant;
+use crate::types_item_type_item_type_body_with_enum::TypesItemTypeItemTypeBodyWithEnumVariant;
+use crate::types_item_type_item_struct::TypesItemTypeItemStructVariant;
 use crate::enums::Enums;
 use crate::commands::Commands;
+use crate::extensions::Extensions;
 
 macro_rules! snake_case {
     ($name:expr) => {{
@@ -53,8 +55,9 @@ pub struct Registry {
     /// Tokenizer.
     pub(crate) tokenizer: Tokenizer<AVX2>,
     pub(crate) typess: Vec<Types>,
-    pub(crate) enums: Vec<Enums>,
+    pub(crate) enumss: Vec<Enums>,
     pub(crate) commandss: Vec<Commands>,
+    pub(crate) extensionss: Vec<Extensions>,
     //pub(crate) requires_cash: HashMap<u64, (usize, usize)>,
 }
 
@@ -67,8 +70,9 @@ impl Registry {
             data: Arc::new(Vec::new()),
             tokenizer: Tokenizer::create(),
             typess: Vec::new(),
-            enums: Vec::new(),
+            enumss: Vec::new(),
             commandss: Vec::new(),
+            extensionss: Vec::new(),
             //requires_cash: HashMap::new(),
         }
     }
@@ -81,9 +85,9 @@ impl Registry {
             data: data.clone(),
             tokenizer: Tokenizer::createWithData(data),
             typess: Vec::new(),
-            enums: Vec::new(),
+            enumss: Vec::new(),
             commandss: Vec::new(),
-            //registry_enums_vec: Vec::new(),
+            extensionss: Vec::new(),
             //requires_cash: HashMap::new(),
         }
     }
@@ -109,24 +113,31 @@ impl Registry {
 
             // Ищем <types>
             if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data.as_ptr()) } == "types" {
-                let mut types_ = Types::create();
-                types_.parse(&mut self.tokenizer, self.data.as_slice())?;
+                let mut new_ = Types::create();
+                new_.parse(&mut self.tokenizer, self.data.as_slice())?;
 
-                self.typess.push(types_);
+                self.typess.push(new_);
             }
 
             else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data.as_ptr()) } == "enums" {
-                let mut enums_ = Enums::create();
-                enums_.parse(&mut self.tokenizer, self.data.as_slice())?;
+                let mut new_ = Enums::create();
+                new_.parse(&mut self.tokenizer, self.data.as_slice())?;
 
-                self.enums.push(enums_);
+                self.enumss.push(new_);
             }
 
-            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data.as_ptr()) } == "enums" {
-                let mut enums_ = Enums::create();
-                enums_.parse(&mut self.tokenizer, self.data.as_slice())?;
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data.as_ptr()) } == "commands" {
+                let mut new_ = Commands::create();
+                new_.parse(&mut self.tokenizer, self.data.as_slice())?;
 
-                self.enums.push(enums_);
+                self.commandss.push(new_);
+            }
+
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(self.data.as_ptr()) } == "extensions" {
+                let mut new_ = Extensions::create();
+                new_.parse(&mut self.tokenizer, self.data.as_slice())?;
+
+                self.extensionss.push(new_);
             }
 
             if token_.asType() == TokenType::INVALID {
@@ -136,10 +147,41 @@ impl Registry {
 
         Ok(())
     }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn types(&self) -> Vec<TypesView<'_>> {
+        self.typess
+            .iter()
+            .map(|v| {
+                TypesView { data: self.data.as_slice(), content: v, } })
+            .collect() }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn enums(&self) -> &Vec<Enums> {
+        &self.enumss
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commands(&self) -> &Vec<Commands> {
+        &self.commandss
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn extensions(&self) -> &Vec<Extensions> {
+        &self.extensionss
+    }
 }
 
 impl Registry {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /*// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn generateWvk(&self, data: &[u8], registry: &Registry) -> Result<String, String> {
@@ -153,16 +195,16 @@ impl Registry {
             .for_each(|(id_types_, types_)| {
                 let mut physical_device_properties_indices_ = Vec::<usize>::new();
 
-                types_.elements
+                types_.content
                     .iter()
                     .enumerate()
                     .for_each(|(id_type_, types_element_)|{
                         match &types_element_ {
-                            TypesElementVariant::TYPE(type_) => {
+                            TypesVariant::TYPE(type_) => {
                                 match &type_.0 {
-                                    TypesItemTypeElementVariant::BASE_TYPE(type_) => {
-                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.type_body_name.name.start() ..= *type_.type_body.type_body_name.name.end()])};
-                                        let type_str_ = if let Some(v) = type_.type_body.type_body_types.first() {
+                                    TypesItemTypeVariant::BASE_TYPE(type_) => {
+                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.name.value.start() ..= *type_.type_body.name.value.end()])};
+                                        let type_str_ = if let Some(v) = type_.type_body.types.first() {
                                             unsafe {std::str::from_utf8_unchecked(&data[*v.r#type.start() ..= *v.r#type.end()])}
                                         }
                                         else {
@@ -188,12 +230,12 @@ impl Registry {
                                         output_wvk_.push_str(&format!("pub type {} = {}; // \n\n", name_str_, type_str_));
                                     }
 
-                                    TypesItemTypeElementVariant::BITMASK(type_) => {
+                                    TypesItemTypeVariant::BITMASK(type_) => {
                                         let alias_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.alias.start() ..= *type_.alias.end()])};
                                         let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.name.start() ..= *type_.name.end()])};
-                                        let name_body_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.type_body_name.name.start() ..= *type_.type_body.type_body_name.name.end()])};
+                                        let name_body_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.name.value.start() ..= *type_.type_body.name.value.end()])};
 
-                                        let type_str_ = if let Some(v) = type_.type_body.type_body_types.first() {
+                                        let type_str_ = if let Some(v) = type_.type_body.types.first() {
                                             unsafe {std::str::from_utf8_unchecked(&data[*v.r#type.start() ..= *v.r#type.end()])}
                                         }
                                         else {
@@ -222,9 +264,9 @@ impl Registry {
                                     // pub struct VkPhysicalDevice_T {
                                     //     _private: [u8; 0],
                                     // }
-                                    TypesItemTypeElementVariant::HANDLE(type_) => {
-                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.type_body_name.name.start() ..= *type_.type_body.type_body_name.name.end()])};
-                                        let type_str_ = if let Some(v) = type_.type_body.type_body_types.first() {
+                                    TypesItemTypeVariant::HANDLE(type_) => {
+                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.type_body.name.value.start() ..= *type_.type_body.name.value.end()])};
+                                        let type_str_ = if let Some(v) = type_.type_body.types.first() {
                                             unsafe {std::str::from_utf8_unchecked(&data[*v.r#type.start() ..= *v.r#type.end()])}
                                         }
                                         else {
@@ -244,7 +286,7 @@ impl Registry {
                                         output_wvk_.push_str(&format!("}}\n"));
                                     }
                                     //physical_device_properties_structs_
-                                    TypesItemTypeElementVariant::STRUCT(type_) => {
+                                    TypesItemTypeVariant::STRUCT(type_) => {
                                         let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.name.start() ..= *type_.name.end()])};
                                         let struct_extends_str_ = unsafe {std::str::from_utf8_unchecked(&data[*type_.struct_extends.start() ..= *type_.struct_extends.end()])};
 
@@ -266,15 +308,15 @@ impl Registry {
                                         output_wvk_.push_str(&format!("#[repr(C)]\n"));
                                         output_wvk_.push_str(&format!("pub struct {} {{\n", name_str_));
 
-                                        type_.element_variants
+                                        type_.variants
                                             .iter()
                                             .for_each(|v| {
                                                 match v {
-                                                    TypeStructElementVariant::MEMBER(member_) => {
-                                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.type_body_with_enum_name.name.start() ..= *member_.type_body_with_enum.type_body_with_enum_name.name.end()])};
-                                                        let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.type_body_with_enum_types[0].r#type.start() ..= *member_.type_body_with_enum.type_body_with_enum_types[0].r#type.end()])};
-                                                        let prefix_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.type_body_with_enum_types[0].prefix.start() ..= *member_.type_body_with_enum.type_body_with_enum_types[0].prefix.end()])};
-                                                        let postfix_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.type_body_with_enum_types[0].postfix.start() ..= *member_.type_body_with_enum.type_body_with_enum_types[0].postfix.end()])};
+                                                    TypesItemTypeItemStructVariant::MEMBER(member_) => {
+                                                        let name_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.name.value.start() ..= *member_.type_body_with_enum.name.value.end()])};
+                                                        let type_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.types[0].r#type.start() ..= *member_.type_body_with_enum.types[0].r#type.end()])};
+                                                        let prefix_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.types[0].prefix.start() ..= *member_.type_body_with_enum.types[0].prefix.end()])};
+                                                        let postfix_str_ = unsafe {std::str::from_utf8_unchecked(&data[*member_.type_body_with_enum.types[0].postfix.start() ..= *member_.type_body_with_enum.types[0].postfix.end()])};
 
                                                         if name_str_ == "ppEnabledExtensionNames" {
                                                             println!("stope");
@@ -385,7 +427,7 @@ impl Registry {
                                                             type_str_
                                                         };
 
-                                                        let type_rust_str_ = if let Some(TypeBodyWithEnumElementVariant::ENUM(enum_)) = member_.type_body_with_enum.type_body_with_enum_element_variants.first() {
+                                                        let type_rust_str_ = if let Some(TypesItemTypeItemTypeBodyWithEnumVariant::ENUM(enum_)) = member_.type_body_with_enum.variants.first() {
                                                             let enum_str_ = unsafe {std::str::from_utf8_unchecked(&data[*enum_.r#enum.start() ..= *enum_.r#enum.end()])};
                                                             let enum_str_ = format!("[{}; {} as usize]", type_rust_str_,enum_str_);
                                                             enum_str_
@@ -410,7 +452,7 @@ impl Registry {
                                 }
                             }
 
-                            TypesElementVariant::COMMENT_ELT(comment_elt_) => {
+                            TypesVariant::COMMENT_ELT(comment_elt_) => {
 
                             }
                         }
@@ -719,6 +761,6 @@ impl Registry {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn generatingExtensionFiles(&self, registry: &Registry) {
         
-    }
+    }*/
 }
 

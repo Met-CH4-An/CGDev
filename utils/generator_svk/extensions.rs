@@ -42,21 +42,14 @@ impl Extensions {
             loop {
                 let token_ = tokenizer.nextToken1();
 
-                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut type_ = TypesItemType::create();
-                    type_.parse(tokenizer, data)?;
+                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "extension"} {
+                    let mut new_ = ExtensionsItemExtension::create();
+                    new_.parse(tokenizer, data)?;
 
-                    self.elements.push(TypesElementVariant::TYPE(type_));
+                    self.elements.push(new_);
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
-                    let mut comment_elt_ = CommentElt::create();
-                    comment_elt_.parse(tokenizer, data)?;
-
-                    self.elements.push(TypesElementVariant::COMMENT_ELT(comment_elt_));
-                }
-
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/types"} {
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/extensions"} {
                     break;
                 }
 

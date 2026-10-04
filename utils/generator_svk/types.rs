@@ -9,10 +9,56 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::comment_elt::CommentElt;
-use crate::types_item_type::TypesItemType;
+use crate::comment_elt::{CommentElt, CommentEltView};
+use crate::types_item_type::{TypesItemType, TypesItemTypeView};
 
-pub(crate) enum TypesElementVariant {
+pub enum TypesViewVariant<'a> {
+    TYPE(TypesItemTypeView<'a>),
+    COMMENT_ELT(CommentEltView<'a>),
+}
+
+pub struct TypesView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a Types,
+}
+
+impl<'a> TypesView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn comment(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.comment.start() ..= *self.content.comment.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn content(&self) -> Vec<TypesViewVariant<'a>> {
+        self.content
+            .content
+            .iter()
+            .map(|element| match element {
+                TypesVariant::TYPE(v) => {
+                    let view_ = TypesItemTypeView {
+                        data: self.data,
+                        content: v,
+                    };
+                    TypesViewVariant::TYPE(view_)
+                }
+                
+                TypesVariant::COMMENT_ELT(v) => {
+                    let view_ = CommentEltView {
+                        data: self.data,
+                        content: v,
+                    };
+                    TypesViewVariant::COMMENT_ELT(view_)
+                }                    
+            })
+            .collect()
+    }
+}
+
+pub(crate) enum TypesVariant {
     TYPE(TypesItemType),
     COMMENT_ELT(CommentElt),
 }
@@ -27,17 +73,39 @@ pub(crate) struct Types {
     /// CommentAttr?,
     pub(crate) comment: RangeInclusive<usize>,
     /// (Type | CommentElt)*
-    pub(crate) elements: Vec<TypesElementVariant>,
+    pub(crate) content: Vec<TypesVariant>,
 }
 
 impl Types {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commentAsStr(&self) -> &RangeInclusive<usize> {
+
+        &self.comment
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commentAsRange(&self) -> &RangeInclusive<usize> {
+        &self.comment
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn elements(&self) -> &Vec<TypesVariant> {
+        &self.content
+    }
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
             comment: 1 ..= 0,
-            elements: Vec::new(),
+            content: Vec::new(),
         }
     }
 
@@ -55,14 +123,14 @@ impl Types {
                     let mut type_ = TypesItemType::create();
                     type_.parse(tokenizer, data)?;
 
-                    self.elements.push(TypesElementVariant::TYPE(type_));
+                    self.content.push(TypesVariant::TYPE(type_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
                     let mut comment_elt_ = CommentElt::create();
                     comment_elt_.parse(tokenizer, data)?;
 
-                    self.elements.push(TypesElementVariant::COMMENT_ELT(comment_elt_));
+                    self.content.push(TypesVariant::COMMENT_ELT(comment_elt_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/types"} {

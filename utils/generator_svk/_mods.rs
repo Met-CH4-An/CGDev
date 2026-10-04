@@ -16,18 +16,18 @@ use utils__tokenizer_xml;
 mod registry;
 pub use registry::Registry;
 
-mod common_type_attributes;
-mod type_body;
-mod type_body_type;
-mod type_body_name;
+mod types_item_type_item_common_type_attributes;
+mod types_item_type_item_type_body;
+mod types_item_type_item_type_body_item_type;
+mod types_item_type_item_type_body_item_name;
 
 mod types;
 mod types_item_type;
 
-mod type_body_with_enum;
-mod type_body_with_enum_type;
-mod type_body_with_enum_name;
-mod type_body_with_enum_enum;
+mod types_item_type_item_type_body_with_enum;
+mod types_item_type_item_type_body_with_enum_item_type;
+mod types_item_type_item_type_body_with_enum_item_name;
+mod types_item_type_item_type_body_with_enum_item_enum;
 
 
 mod types_item_type_item_base_type;
@@ -43,9 +43,9 @@ mod types_item_type_item_func_pointer_item_proto_item_type;
 mod types_item_type_item_func_pointer_item_proto_item_name;
 mod types_item_type_item_handle;
 mod types_item_type_item_include;
-mod type_requires;
-mod type_struct;
-mod type_struct_member;
+mod types_item_type_item_requires;
+mod types_item_type_item_struct;
+mod types_item_type_item_struct_item_member;
 
 mod enums;
 mod enums_item_enum;
@@ -83,7 +83,9 @@ mod deprecate_element_item_command;
 mod deprecate_element_item_enum;
 mod deprecate_element_item_type;
 
-
+pub use types::TypesViewVariant;
+pub use types_item_type::{TypesItemTypeView, TypesItemTypeViewVariant};
+pub use types_item_type_item_struct::{TypesItemTypeItemStructView, TypesItemTypeItemStructViewVariant};
 
 pub(crate) fn makeHash(data: &str) -> u64 {
     let mut hasher_ = std::hash::DefaultHasher::new();

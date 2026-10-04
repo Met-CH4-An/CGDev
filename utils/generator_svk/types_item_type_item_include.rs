@@ -9,7 +9,48 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::common_type_attributes::CommonTypeAttributes;
+use crate::types_item_type_item_common_type_attributes::{TypesItemTypeItemCommonTypeAttributes, TypesItemCommonTypeAttributesView};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemIncludeView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemInclude,
+}
+
+impl<'a> TypesItemTypeItemIncludeView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commonTypeAttributes(&self) -> TypesItemCommonTypeAttributesView {
+        TypesItemCommonTypeAttributesView {
+            data: self.data,
+            content: &self.content.common_type_attributes,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn category(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.category.start() ..= *self.content.category.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.name.start() ..= *self.content.name.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn text(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.text.start() ..= *self.content.text.end()]) }
+    }
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeInclude =
@@ -20,7 +61,7 @@ use crate::common_type_attributes::CommonTypeAttributes;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct TypesItemTypeItemInclude {
     /// CommonTypeAttributes,
-    pub(crate) common_type_attributes: CommonTypeAttributes,
+    pub(crate) common_type_attributes: TypesItemTypeItemCommonTypeAttributes,
     /// attribute category { "define" },
     pub(crate) category: RangeInclusive<usize>,
     /// NameAttr,
@@ -35,7 +76,7 @@ impl TypesItemTypeItemInclude {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            common_type_attributes: CommonTypeAttributes::create(),
+            common_type_attributes: TypesItemTypeItemCommonTypeAttributes::create(),
             category: 1 ..= 0,
             name: 1 ..= 0,
             text: 1 ..= 0,

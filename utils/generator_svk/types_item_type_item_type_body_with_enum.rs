@@ -9,17 +9,100 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::comment_elt::CommentElt;
-use crate::type_body_with_enum_type::TypeBodyWithEnumType;
-use crate::type_body_with_enum_name::TypeBodyWithEnumName;
-use crate::type_body_with_enum_enum::TypeBodyWithEnumEnum;
+use crate::comment_elt::{CommentElt, CommentEltView};
+use crate::types_item_type_item_type_body_with_enum_item_type::{TypesItemTypeItemTypeBodyWithEnumItemType, TypesItemTypeItemTypeBodyWithEnumItemTypeView};
+use crate::types_item_type_item_type_body_with_enum_item_name::{TypesItemTypeItemTypeBodyWithEnumItemName, TypesItemTypeItemTypeBodyWithEnumItemNameView};
+use crate::types_item_type_item_type_body_with_enum_item_enum::{TypesItemTypeItemTypeBodyWithEnumItemEnum, TypesItemTypeItemTypeBodyWithEnumItemEnumView};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum TypeBodyWithEnumElementVariant {
-    TYPE(TypeBodyWithEnumType),
-    ENUM(TypeBodyWithEnumEnum),
+pub enum TypesItemTypeItemBodyWithEnumViewVariant<'a> {
+    TYPE(TypesItemTypeItemTypeBodyWithEnumItemTypeView<'a>),
+    ENUM(TypesItemTypeItemTypeBodyWithEnumItemEnumView<'a>),
+    COMMENT_ELT(CommentEltView<'a>),
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemTypeBodyWithEnumView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemTypeBodyWithEnum,
+}
+
+impl<'a> TypesItemTypeItemTypeBodyWithEnumView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn types(&self) -> Vec<TypesItemTypeItemTypeBodyWithEnumItemTypeView> {
+        self.content.types
+            .iter()
+            .map(|v| {
+                TypesItemTypeItemTypeBodyWithEnumItemTypeView {
+                    data: self.data,
+                    content: &v
+                }
+            })
+            .collect()
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> TypesItemTypeItemTypeBodyWithEnumItemNameView {
+        TypesItemTypeItemTypeBodyWithEnumItemNameView {
+            data: self.data,
+            content: &self.content.name
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn variants(&self) -> Vec<TypesItemTypeItemBodyWithEnumViewVariant> {
+        self.content.variants
+            .iter()
+            .map(|v| {
+                match v {
+                    TypesItemTypeItemTypeBodyWithEnumVariant::TYPE(v) => {
+                        let view_ = TypesItemTypeItemTypeBodyWithEnumItemTypeView {
+                            data: self.data,
+                            content: v
+                        };
+
+                        TypesItemTypeItemBodyWithEnumViewVariant::TYPE(view_)
+                    }
+
+                    TypesItemTypeItemTypeBodyWithEnumVariant::ENUM(v) => {
+                        let view_ = TypesItemTypeItemTypeBodyWithEnumItemEnumView {
+                            data: self.data,
+                            content: v
+                        };
+
+                        TypesItemTypeItemBodyWithEnumViewVariant::ENUM(view_)
+                    }
+
+                    TypesItemTypeItemTypeBodyWithEnumVariant::COMMENT_ELT(v) => {
+                        let view_ = CommentEltView {
+                            data: self.data,
+                            content: v
+                        };
+
+                        TypesItemTypeItemBodyWithEnumViewVariant::COMMENT_ELT(view_)
+                    }
+                }
+            })
+            .collect()
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum TypesItemTypeItemTypeBodyWithEnumVariant {
+    TYPE(TypesItemTypeItemTypeBodyWithEnumItemType),
+    ENUM(TypesItemTypeItemTypeBodyWithEnumItemEnum),
     COMMENT_ELT(CommentElt),
 }
 
@@ -38,44 +121,32 @@ pub(crate) enum TypeBodyWithEnumElementVariant {
 ///           )
 ///         }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnum {
+pub(crate) struct TypesItemTypeItemTypeBodyWithEnum {
     /// mixed { element type { TypeName_t } }*,
-    pub(crate) type_body_with_enum_types: Vec<TypeBodyWithEnumType>,
+    pub(crate) types: Vec<TypesItemTypeItemTypeBodyWithEnumItemType>,
     /// element name { attribute alias { text }?, TypeName_t }?
-    pub(crate) type_body_with_enum_name: TypeBodyWithEnumName,
+    pub(crate) name: TypesItemTypeItemTypeBodyWithEnumItemName,
     /// mixed {
     ///     ( element type { TypeName_t }
     ///         | CommentElt
     ///     )
     /// }*
-    pub(crate) type_body_with_enum_element_variants: Vec<TypeBodyWithEnumElementVariant>,
+    pub(crate) variants: Vec<TypesItemTypeItemTypeBodyWithEnumVariant>,
 }
-impl TypeBodyWithEnum {
+impl TypesItemTypeItemTypeBodyWithEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            type_body_with_enum_types: Vec::new(),
-            type_body_with_enum_name: TypeBodyWithEnumName::create(),
-            type_body_with_enum_element_variants: Vec::new(),
+            types: Vec::new(),
+            name: TypesItemTypeItemTypeBodyWithEnumItemName::create(),
+            variants: Vec::new(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// TypeBodyWithEnum =
-    ///         mixed {                                                             <---
-    ///           element type { TypeName_t }                                       <---
-    ///         }*,                                                                 <---
-    ///         mixed {                                                             <---
-    ///           element name { attribute alias { text }?, TypeName_t }?           <---
-    ///         }?,                                                                 <---
-    ///         mixed {                                                             <---
-    ///           ( element type { TypeName_t }                                     <---
-    ///             | element enum { VkDefineOrEnumName_t }                         <---
-    ///             | CommentElt                                                    <---
-    ///           )                                                                 <---
-    ///         }*                                                                  <---
+    ///                                                                <---
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
@@ -95,7 +166,7 @@ impl TypeBodyWithEnum {
                 }
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create();
+                    let mut type_body_with_enum_type_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
                     type_body_with_enum_type_.parse(tokenizer, data)?;
 
                     // Если текстовый токен существует, забираем. Это префикс к type.
@@ -104,16 +175,16 @@ impl TypeBodyWithEnum {
                         type_body_with_enum_type_.prefix = v;
                     }
 
-                    self.type_body_with_enum_types.push(type_body_with_enum_type_);
+                    self.types.push(type_body_with_enum_type_);
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
-                    let mut type_body_with_enum_name_ = TypeBodyWithEnumName::create();
+                    let mut type_body_with_enum_name_ = TypesItemTypeItemTypeBodyWithEnumItemName::create();
                     type_body_with_enum_name_.parse(tokenizer, data)?;
 
                     // Если до этого был хоть один type. Берем последний. Это постфикс к type.
                     // If there was at least one `type` before this, we take the last one. This is a postfix for `type`.
-                    if let Some(v) = self.type_body_with_enum_types.last_mut() {
+                    if let Some(v) = self.types.last_mut() {
                         if let Some(v1) = text.take() {
                             v.postfix = v1;
                         }
@@ -125,7 +196,7 @@ impl TypeBodyWithEnum {
                         type_body_with_enum_name_.prefix = v1;
                     }
 
-                    self.type_body_with_enum_name = type_body_with_enum_name_;
+                    self.name = type_body_with_enum_name_;
 
                     // Останавливаем луп, потому что после <name> идет следующий mixed {}*
                     // Stop the loop because <name> is followed by the next mixed {}*
@@ -154,7 +225,7 @@ impl TypeBodyWithEnum {
                     }
 
                     if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                        let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create();
+                        let mut type_body_with_enum_type_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
                         type_body_with_enum_type_.parse(tokenizer, data)?;
 
                         // Если текстовый токен существует, забираем. Это префикс к type.
@@ -163,14 +234,14 @@ impl TypeBodyWithEnum {
                             type_body_with_enum_type_.prefix = v;
                         }
 
-                        self.type_body_with_enum_element_variants.push(TypeBodyWithEnumElementVariant::TYPE(type_body_with_enum_type_));
+                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::TYPE(type_body_with_enum_type_));
                     }
 
                     else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
-                        let mut type_body_with_enum_enum_ = TypeBodyWithEnumEnum::create();
+                        let mut type_body_with_enum_enum_ = TypesItemTypeItemTypeBodyWithEnumItemEnum::create();
                         type_body_with_enum_enum_.parse(tokenizer, data)?;
 
-                        self.type_body_with_enum_element_variants.push(TypeBodyWithEnumElementVariant::ENUM(type_body_with_enum_enum_));
+                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::ENUM(type_body_with_enum_enum_));
 
                     }
 
@@ -178,7 +249,7 @@ impl TypeBodyWithEnum {
                         let mut comment_elt_ = CommentElt::create();
                         comment_elt_.parse(tokenizer, data)?;
 
-                        self.type_body_with_enum_element_variants.push(TypeBodyWithEnumElementVariant::COMMENT_ELT(comment_elt_));
+                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::COMMENT_ELT(comment_elt_));
 
                     }
 
@@ -195,26 +266,11 @@ impl TypeBodyWithEnum {
             }
         }
 
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }
-
         Ok(())
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// TypeBody =
-    ///         mixed {
-    ///           element type { TypeName_t }
-    ///         }*,
-    ///         mixed {
-    ///          element name { attribute alias { text }?, TypeName_t }?
-    ///         }?,
-    ///         mixed {
-    ///           ( element type { TypeName_t }
-    ///             | CommentElt
-    ///           )
-    ///         }*
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

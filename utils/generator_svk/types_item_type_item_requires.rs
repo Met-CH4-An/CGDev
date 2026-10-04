@@ -8,33 +8,35 @@
 
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
-use crate::types_item_type_item_common_type_attributes::{TypesItemTypeItemCommonTypeAttributes, TypesItemCommonTypeAttributesView};
-
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub struct TypesItemTypeItemEnumView<'a> {
+pub struct TypesItemTypeItemRequiresView<'a> {
     pub(crate) data: &'a [u8],
-    pub(crate) content: &'a TypesItemTypeItemEnum,
+    pub(crate) content: &'a TypesItemTypeItemRequires,
 }
 
-impl<'a> TypesItemTypeItemEnumView<'a> {
+impl<'a> TypesItemTypeItemRequiresView<'a> {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn commonTypeAttributes(&self) -> TypesItemCommonTypeAttributesView {
-        TypesItemCommonTypeAttributesView {
-            data: self.data,
-            content: &self.content.common_type_attributes,
-        }
+    pub fn api(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.api.start() ..= *self.content.api.end()]) }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn category(&self) -> &str {
-        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.category.start() ..= *self.content.category.end()]) }
+    pub fn comment(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.comment.start() ..= *self.content.comment.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn deprecated(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.deprecated.start() ..= *self.content.deprecated.end()]) }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,46 +49,50 @@ impl<'a> TypesItemTypeItemEnumView<'a> {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn alias(&self) -> &str {
-        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.alias.start() ..= *self.content.alias.end()]) }
+    pub fn requires(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.requires.start() ..= *self.content.requires.end()]) }
     }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// TypeEnum =
-///     CommonTypeAttributes,
-///     attribute category { "enum" },
-///     NameAttr,
-///     attribute alias { text }?
+/// TypeRequires =
+///     ApiAttr?,
+///     CommentAttr?,
+///     attribute deprecated { "unused" | "true" }?,
+///     attribute name { TypeName_t },
+///     attribute requires { text }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypesItemTypeItemEnum {
-    /// CommonTypeAttributes,
-    pub(crate) common_type_attributes: TypesItemTypeItemCommonTypeAttributes,
-    /// attribute category { "define" },
-    pub(crate) category: RangeInclusive<usize>,
-    /// NameAttr,
+pub(crate) struct TypesItemTypeItemRequires {
+    /// ApiAttr?,
+    pub(crate) api: RangeInclusive<usize>,
+    /// CommentAttr?,
+    pub(crate) comment: RangeInclusive<usize>,
+    /// attribute deprecated { "unused" | "true" }?
+    pub(crate) deprecated: RangeInclusive<usize>,
+    /// attribute name { TypeName_t },
     pub(crate) name: RangeInclusive<usize>,
-    /// attribute alias { text }?
-    pub(crate) alias: RangeInclusive<usize>,
+    /// attribute requires { text }
+    pub(crate) requires: RangeInclusive<usize>,
 }
 
-impl TypesItemTypeItemEnum {
+impl TypesItemTypeItemRequires {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            common_type_attributes: TypesItemTypeItemCommonTypeAttributes::create(),
-            category: 1 ..= 0,
+            api: 1 ..= 0,
+            comment: 1 ..= 0,
+            deprecated: 1 ..= 0,
             name: 1 ..= 0,
-            alias: 1 ..= 0,
+            requires: 1 ..= 0,
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ///
+    /// <type> ... </type>
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn parse(&mut self, _tokenizer: &mut Tokenizer<AVX2>, _data: &[u8], is_body: bool) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, _tokenizer: &mut Tokenizer<AVX2>, _data: &[u8], _is_body: bool) -> Result<(), String> {
         Ok(())
     }
 }

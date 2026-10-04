@@ -9,15 +9,88 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::comment_elt::CommentElt;
-use crate::type_body_type::TypeBodyType;
-use crate::type_body_name::TypeBodyName;
+use crate::comment_elt::{CommentElt, CommentEltView};
+use crate::types_item_type_item_type_body_item_type::{TypesItemTypeItemTypeBodyItemType, TypesItemTypeItemTypeBodyItemTypeView};
+use crate::types_item_type_item_type_body_item_name::{TypesItemTypeItemTypeBodyItemName, TypesItemTypeItemTypeBodyItemNameView};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum TypeBodyElementVariant {
-    TYPE(TypeBodyType),
+pub enum TypesItemTypeItemTypeBodyVariantView<'a> {
+    TYPE(TypesItemTypeItemTypeBodyItemTypeView<'a>),
+    COMMENT_ELT(CommentEltView<'a>),
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemTypeBodyView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemTypeBody,
+}
+
+impl<'a> TypesItemTypeItemTypeBodyView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn types(&self) -> Vec<TypesItemTypeItemTypeBodyItemTypeView> {
+        self.content.types
+            .iter()
+            .map(|v| {
+                TypesItemTypeItemTypeBodyItemTypeView {
+                    data: self.data,
+                    content: v,
+                }
+            })
+            .collect()
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> TypesItemTypeItemTypeBodyItemNameView {
+        TypesItemTypeItemTypeBodyItemNameView {
+            data: self.data,
+            content: &self.content.name,
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn variants(&self) -> Vec<TypesItemTypeItemTypeBodyVariantView> {
+        self.content.contents
+            .iter()
+            .map(|v| {
+                match v {
+                    TypesItemTypeItemTypeBodyVariant::TYPE(v) => {
+                        let view_= TypesItemTypeItemTypeBodyItemTypeView {
+                            data: self.data,
+                            content: v,
+                        };
+                        
+                        TypesItemTypeItemTypeBodyVariantView::TYPE(view_)
+                    }
+
+                    TypesItemTypeItemTypeBodyVariant::COMMENT_ELT(v) => {
+                        let view_= CommentEltView {
+                            data: self.data,
+                            content: v,
+                        };
+
+                        TypesItemTypeItemTypeBodyVariantView::COMMENT_ELT(view_)
+                    }
+                }
+            })
+            .collect()
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) enum TypesItemTypeItemTypeBodyVariant {
+    TYPE(TypesItemTypeItemTypeBodyItemType),
     COMMENT_ELT(CommentElt),
 }
 
@@ -35,44 +108,33 @@ pub(crate) enum TypeBodyElementVariant {
 ///           )
 ///         }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBody {
+pub(crate) struct TypesItemTypeItemTypeBody {
     /// mixed { element type { TypeName_t } }*,
-    pub(crate) type_body_types: Vec<TypeBodyType>,
+    pub(crate) types: Vec<TypesItemTypeItemTypeBodyItemType>,
     /// element name { attribute alias { text }?, TypeName_t }?
-    pub(crate) type_body_name: TypeBodyName,
+    pub(crate) name: TypesItemTypeItemTypeBodyItemName,
     /// mixed {
     ///     ( element type { TypeName_t }
     ///         | CommentElt
     ///     )
     /// }*
-    pub(crate) type_body_element_variants: Vec<TypeBodyElementVariant>,
+    pub(crate) contents: Vec<TypesItemTypeItemTypeBodyVariant>,
 }
 
-impl TypeBody {
+impl TypesItemTypeItemTypeBody {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            type_body_types: Vec::new(),
-            type_body_name: TypeBodyName::create(),
-            type_body_element_variants: Vec::new(),
+            types: Vec::new(),
+            name: TypesItemTypeItemTypeBodyItemName::create(),
+            contents: Vec::new(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// TypeBody =
-    ///         mixed {
-    ///           element type { TypeName_t }
-    ///         }*,
-    ///         mixed {
-    ///          element name { attribute alias { text }?, TypeName_t }?
-    ///         }?,
-    ///         mixed {
-    ///           ( element type { TypeName_t }
-    ///             | CommentElt
-    ///           )
-    ///         }*
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
@@ -92,7 +154,7 @@ impl TypeBody {
                 }
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut type_body_type_ = TypeBodyType::create();
+                    let mut type_body_type_ = TypesItemTypeItemTypeBodyItemType::create();
                     type_body_type_.parse(tokenizer, data)?;
 
                     // Если текстовый токен существует, забираем. Это префикс к type.
@@ -101,16 +163,16 @@ impl TypeBody {
                         type_body_type_.prefix = v;
                     }
 
-                    self.type_body_types.push(type_body_type_);
+                    self.types.push(type_body_type_);
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
-                    let mut type_body_name_ = TypeBodyName::create();
+                    let mut type_body_name_ = TypesItemTypeItemTypeBodyItemName::create();
                     type_body_name_.parse(tokenizer, data)?;
 
                     // Если до этого был хоть один type. Берем последний. Это постфикс к type.
                     // If there was at least one `type` before this, we take the last one. This is a postfix for `type`.
-                    if let Some(v) = self.type_body_types.last_mut() {
+                    if let Some(v) = self.types.last_mut() {
                         if let Some(v1) = text.take() {
                             v.postfix = v1;
                         }
@@ -122,7 +184,7 @@ impl TypeBody {
                         type_body_name_.prefix = v1;
                     }
 
-                    self.type_body_name = type_body_name_;
+                    self.name = type_body_name_;
 
                     // Останавливаем луп, потому что после <name> идет следующий mixed {}*
                     // Stop the loop because <name> is followed by the next mixed {}*
@@ -151,7 +213,7 @@ impl TypeBody {
                     }
 
                     if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                        let mut type_body_type_ = TypeBodyType::create();
+                        let mut type_body_type_ = TypesItemTypeItemTypeBodyItemType::create();
                         type_body_type_.parse(tokenizer, data)?;
 
                         // Если текстовый токен существует, забираем. Это префикс к type.
@@ -160,14 +222,14 @@ impl TypeBody {
                             type_body_type_.prefix = v;
                         }
 
-                        self.type_body_element_variants.push(TypeBodyElementVariant::TYPE(type_body_type_));
+                        self.contents.push(TypesItemTypeItemTypeBodyVariant::TYPE(type_body_type_));
                     }
 
                     else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
                         let mut comment_elt_ = CommentElt::create();
                         comment_elt_.parse(tokenizer, data)?;
 
-                        self.type_body_element_variants.push(TypeBodyElementVariant::COMMENT_ELT(comment_elt_));
+                        self.contents.push(TypesItemTypeItemTypeBodyVariant::COMMENT_ELT(comment_elt_));
 
                     }
 
@@ -183,27 +245,12 @@ impl TypeBody {
                 }
             }
         }
-        
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }        
 
         Ok(())
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// TypeBody =
-    ///         mixed {
-    ///           element type { TypeName_t }
-    ///         }*,
-    ///         mixed {
-    ///          element name { attribute alias { text }?, TypeName_t }?
-    ///         }?,
-    ///         mixed {
-    ///           ( element type { TypeName_t }
-    ///             | CommentElt
-    ///           )
-    ///         }*
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

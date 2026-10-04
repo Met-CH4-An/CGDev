@@ -9,7 +9,139 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::type_body_with_enum::TypeBodyWithEnum;
+use crate::types_item_type_item_type_body_with_enum::{TypesItemTypeItemTypeBodyWithEnum, TypesItemTypeItemTypeBodyWithEnumView};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemStructItemMemberView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemStructItemMember,
+}
+
+impl<'a> TypesItemTypeItemStructItemMemberView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn api(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.api.start() ..= *self.content.api.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn len(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.len.start() ..= *self.content.len.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn altLen(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.alt_len.start() ..= *self.content.alt_len.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn stride(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.stride.start() ..= *self.content.stride.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn externSync(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.extern_sync.start() ..= *self.content.extern_sync.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn optional(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.optional.start() ..= *self.content.optional.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn selector(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.selector.start() ..= *self.content.selector.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn selection(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.selection.start() ..= *self.content.selection.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn noAutoValidity(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.no_auto_validity.start() ..= *self.content.no_auto_validity.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn values(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.values.start() ..= *self.content.values.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn limitType(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.limit_type.start() ..= *self.content.limit_type.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn objectType(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.object_type.start() ..= *self.content.object_type.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn deprecated(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.deprecated.start() ..= *self.content.deprecated.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn featureLink(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.feature_link.start() ..= *self.content.feature_link.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn flagsExtend(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.flags_extend.start() ..= *self.content.flags_extend.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn flagsExtendMember(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.flags_extend_member.start() ..= *self.content.flags_extend_member.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn typeBodyWithEnum(&self) -> TypesItemTypeItemTypeBodyWithEnumView {
+        TypesItemTypeItemTypeBodyWithEnumView {
+            data: self.data,
+            content: &self.content.type_body_with_enum
+        }
+    }
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// element member {
@@ -32,7 +164,7 @@ use crate::type_body_with_enum::TypeBodyWithEnum;
 ///                TypeBodyWithEnum
 ///            }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeStructMember {
+pub(crate) struct TypesItemTypeItemStructItemMember {
     /// ApiAttr?,
     pub(crate) api: RangeInclusive<usize>,
     /// attribute len { text }?
@@ -44,13 +176,13 @@ pub(crate) struct TypeStructMember {
     /// attribute externsync { text }?
     pub(crate) extern_sync: RangeInclusive<usize>,
     /// OptionalAttr?
-    pub(crate) optional_attr: RangeInclusive<usize>,
+    pub(crate) optional: RangeInclusive<usize>,
     /// attribute selector { text }?
     pub(crate) selector: RangeInclusive<usize>,
     /// attribute selection { VkEnumNameList_t }?
     pub(crate) selection: RangeInclusive<usize>,
     /// NoAutoValidityAttr?
-    pub(crate) no_auto_validity_attr: RangeInclusive<usize>,
+    pub(crate) no_auto_validity: RangeInclusive<usize>,
     /// attribute values { VkEnumNameList_t }?
     pub(crate) values: RangeInclusive<usize>,
     /// attribute limittype { text }?
@@ -66,10 +198,10 @@ pub(crate) struct TypeStructMember {
     /// attribute flagsextendmember { TypeName_t }?
     pub(crate) flags_extend_member: RangeInclusive<usize>,
     /// TypeBodyWithEnum
-    pub(crate) type_body_with_enum: TypeBodyWithEnum,
+    pub(crate) type_body_with_enum: TypesItemTypeItemTypeBodyWithEnum,
 }
 
-impl TypeStructMember {
+impl TypesItemTypeItemStructItemMember {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -80,10 +212,10 @@ impl TypeStructMember {
             alt_len: 1 ..= 0,
             stride: 1 ..= 0,
             extern_sync: 1 ..= 0,
-            optional_attr: 1 ..= 0,
+            optional: 1 ..= 0,
             selector: 1 ..= 0,
             selection: 1 ..= 0,
-            no_auto_validity_attr: 1 ..= 0,
+            no_auto_validity: 1 ..= 0,
             values: 1 ..= 0,
             limit_type: 1 ..= 0,
             object_type: 1 ..= 0,
@@ -91,7 +223,7 @@ impl TypeStructMember {
             feature_link: 1 ..= 0,
             flags_extend: 1 ..= 0,
             flags_extend_member: 1 ..= 0,
-            type_body_with_enum: TypeBodyWithEnum::create(),
+            type_body_with_enum: TypesItemTypeItemTypeBodyWithEnum::create(),
         }
     }
 
@@ -152,7 +284,7 @@ impl TypeStructMember {
             else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "optional" {
                 let token_ = tokenizer.nextToken1();
 
-                self.optional_attr = token_.asRange();
+                self.optional = token_.asRange();
             }
 
             else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "selector" {
@@ -170,7 +302,7 @@ impl TypeStructMember {
             else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "noautovalidity" {
                 let token_ = tokenizer.nextToken1();
 
-                self.no_auto_validity_attr = token_.asRange();
+                self.no_auto_validity = token_.asRange();
             }
 
             else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "values" {

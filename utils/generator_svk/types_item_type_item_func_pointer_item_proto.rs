@@ -8,8 +8,38 @@
 
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::types_item_type_item_func_pointer_item_proto_item_type::TypesItemTypeItemFuncPointerItemProtoItemType;
-use crate::types_item_type_item_func_pointer_item_proto_item_name::TypeFuncPointerProtoName;
+use crate::types_item_type_item_func_pointer_item_proto_item_type::{TypesItemTypeItemFuncPointerItemProtoItemType, TypesItemTypeItemFuncPointerItemProtoItemTypeView};
+use crate::types_item_type_item_func_pointer_item_proto_item_name::{TypesItemTypeItemFuncPointerItemProtoItemName, TypesItemTypeItemFuncPointerItemProtoItemNameView};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerItemProtoView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointerItemProto,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerItemProtoView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn r#type(&self) -> TypesItemTypeItemFuncPointerItemProtoItemTypeView {
+        TypesItemTypeItemFuncPointerItemProtoItemTypeView {
+            data: self.data,
+            content: &self.content.r#type
+        }
+    }
+    
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> TypesItemTypeItemFuncPointerItemProtoItemNameView {
+        TypesItemTypeItemFuncPointerItemProtoItemNameView {
+            data: self.data,
+            content: &self.content.name
+        }
+    }
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
@@ -42,7 +72,7 @@ pub(crate) struct TypesItemTypeItemFuncPointerItemProto {
     /// element type { TypeName_t }
     pub(crate) r#type: TypesItemTypeItemFuncPointerItemProtoItemType,
     /// element name { text }
-    pub(crate) name: TypeFuncPointerProtoName,
+    pub(crate) name: TypesItemTypeItemFuncPointerItemProtoItemName,
 }
 
 impl TypesItemTypeItemFuncPointerItemProto {
@@ -52,7 +82,7 @@ impl TypesItemTypeItemFuncPointerItemProto {
     pub(crate) fn create() -> Self {
         Self {
             r#type: TypesItemTypeItemFuncPointerItemProtoItemType::create(),
-            name: TypeFuncPointerProtoName::create(),
+            name: TypesItemTypeItemFuncPointerItemProtoItemName::create(),
         }
     }
 
@@ -86,7 +116,7 @@ impl TypesItemTypeItemFuncPointerItemProto {
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
-                    let mut type_func_pointer_proto_name_ = TypeFuncPointerProtoName::create();
+                    let mut type_func_pointer_proto_name_ = TypesItemTypeItemFuncPointerItemProtoItemName::create();
                     type_func_pointer_proto_name_.parse(tokenizer, data)?;
 
                     // Если текстовый токен существует, забираем. Это префикс к type.

@@ -11,7 +11,11 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 use std::sync::Arc;
-use utils__generator_svk__lib::Registry;
+use utils__generator_svk__lib::{Registry, TypesItemTypeItemStructView};
+use utils__generator_svk__lib::{
+    TypesViewVariant,
+    TypesItemTypeViewVariant
+};
 
 fn main() {
     // Загружаем данные.
@@ -22,13 +26,15 @@ fn main() {
 
     // Создаем генератор.
     // Create a generator.
-    let mut generator_ = Registry::create();
-    
-    generator_.setData(data_rc_);
+    let mut registry_ = Registry::create();
+
+    registry_.setData(data_rc_);
     
     // Получаем сгенерированный svk.
     // Get the generated svk.
-    let _svk_ = generator_.build();
+    registry_.build().unwrap();
+
+    svk_generating(registry_);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,3 +59,33 @@ fn loadDataFromFile(name : &str) -> Result<Vec<u8>, ()> {
 
     Ok(data_)
 }
+
+fn svk_generating(registry: Registry) {
+    registry.types()
+        .iter()
+        .for_each(|types_view_| {
+            println!("{}", types_view_.comment());
+            types_view_.content()
+                .iter()
+                .for_each(|v| {
+                    match v {
+                        TypesViewVariant::TYPE(item_type_) => {
+                            match &item_type_.variant() {
+                                TypesItemTypeViewVariant::STRUCT(item_struct_) => {
+                                    svk_struct_generating(item_struct_);
+                                }
+
+                                _ => {}
+                            }
+
+                        }
+                        _ => {}
+                    }
+                })
+        });
+}
+
+fn svk_struct_generating(item_struct: &TypesItemTypeItemStructView) {
+    item_struct.name()
+}
+

@@ -11,6 +11,37 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerItemProtoItemNameView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointerItemProtoItemName,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerItemProtoItemNameView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn prefix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.prefix.start() ..= *self.content.prefix.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn postfix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.postfix.start() ..= *self.content.postfix.end()]) }
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
 ///     CommonTypeAttributes,
 ///     attribute category { "funcpointer" },
@@ -37,22 +68,22 @@ use utils__tokenizer_xml::token::TokenType;
 ///         }
 ///     }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeFuncPointerProtoName {
+pub(crate) struct TypesItemTypeItemFuncPointerItemProtoItemName {
     ///
-    pub(crate) _prefix: RangeInclusive<usize>,
+    pub(crate) prefix: RangeInclusive<usize>,
     /// TypeName_t
     pub(crate) value: RangeInclusive<usize>,
     ///
     pub(crate) postfix: RangeInclusive<usize>,
 }
 
-impl TypeFuncPointerProtoName {
+impl TypesItemTypeItemFuncPointerItemProtoItemName {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            _prefix: 1 ..= 0,
+            prefix: 1 ..= 0,
             value: 1 ..= 0,
             postfix: 1 ..= 0,
         }
@@ -83,10 +114,6 @@ impl TypeFuncPointerProtoName {
                 }
             }; // loop {
         } // if is_body_ {
-
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }
 
         Ok(())
     }

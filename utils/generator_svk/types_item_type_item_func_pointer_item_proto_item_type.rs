@@ -11,6 +11,37 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerItemProtoItemTypeView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointerItemProtoItemType,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerItemProtoItemTypeView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn prefix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.prefix.start() ..= *self.content.prefix.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn r#type(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn postfix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.postfix.start() ..= *self.content.postfix.end()]) }
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
 ///     CommonTypeAttributes,
 ///     attribute category { "funcpointer" },
@@ -83,10 +114,6 @@ impl TypesItemTypeItemFuncPointerItemProtoItemType {
                 }
             }; // loop {
         } // if is_body_ {
-
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }
 
         Ok(())
     }

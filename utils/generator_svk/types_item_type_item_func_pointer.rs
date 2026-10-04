@@ -9,9 +9,61 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::common_type_attributes::CommonTypeAttributes;
-use crate::types_item_type_item_func_pointer_item_proto::TypesItemTypeItemFuncPointerItemProto;
-use crate::types_item_type_item_func_pointer_item_param::TypesItemTypeItemFuncPointerItemParam;
+use crate::types_item_type_item_common_type_attributes::{TypesItemTypeItemCommonTypeAttributes, TypesItemCommonTypeAttributesView};
+use crate::types_item_type_item_func_pointer_item_proto::{TypesItemTypeItemFuncPointerItemProto, TypesItemTypeItemFuncPointerItemProtoView};
+use crate::types_item_type_item_func_pointer_item_param::{TypesItemTypeItemFuncPointerItemParam, TypesItemTypeItemFuncPointerItemParamView};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointer,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn commonTypeAttributes(&self) -> TypesItemCommonTypeAttributesView {
+        TypesItemCommonTypeAttributesView {
+            data: self.data,
+            content: &self.content.common_type_attributes
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn category(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.category.start() ..= *self.content.category.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn proto(&self) -> TypesItemTypeItemFuncPointerItemProtoView {
+        TypesItemTypeItemFuncPointerItemProtoView {
+            data: self.data,
+            content: &self.content.proto
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn params(&self) -> Vec<TypesItemTypeItemFuncPointerItemParamView> {
+        self.content.params
+            .iter()
+            .map(|v| {
+                TypesItemTypeItemFuncPointerItemParamView {
+                    data: self.data,
+                    content: v,
+                }
+            })
+            .collect()
+    }
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =
@@ -42,7 +94,7 @@ use crate::types_item_type_item_func_pointer_item_param::TypesItemTypeItemFuncPo
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct TypesItemTypeItemFuncPointer {
     /// CommonTypeAttributes,
-    pub(crate) common_type_attributes: CommonTypeAttributes,
+    pub(crate) common_type_attributes: TypesItemTypeItemCommonTypeAttributes,
     /// attribute category { "bitmask" },
     pub(crate) category: RangeInclusive<usize>,
     ///element proto {
@@ -57,7 +109,7 @@ impl TypesItemTypeItemFuncPointer {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            common_type_attributes: CommonTypeAttributes::create(),
+            common_type_attributes: TypesItemTypeItemCommonTypeAttributes::create(),
             category: 1 ..= 0,
             proto: TypesItemTypeItemFuncPointerItemProto::create(),
             params: Vec::new(),

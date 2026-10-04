@@ -11,40 +11,59 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// element name {
-///     attribute alias { text }?,
-///     TypeName_t
-/// }?
+///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnumName {
-    /// attribute alias { text }
-    pub(crate) alias: RangeInclusive<usize>,
+pub struct TypesItemTypeItemTypeBodyWithEnumItemTypeView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemTypeBodyWithEnumItemType,
+}
+
+impl<'a> TypesItemTypeItemTypeBodyWithEnumItemTypeView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn prefix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.prefix.start() ..= *self.content.prefix.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn r#type(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn postfix(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.postfix.start() ..= *self.content.postfix.end()]) }
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// element type { TypeName_t }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub(crate) struct TypesItemTypeItemTypeBodyWithEnumItemType {
     ///
     pub(crate) prefix: RangeInclusive<usize>,
     /// TypeName_t
-    pub(crate) name: RangeInclusive<usize>,
+    pub(crate) value: RangeInclusive<usize>,
     ///
     pub(crate) postfix: RangeInclusive<usize>,
 }
 
-impl TypeBodyWithEnumName {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Конструктор.
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+impl TypesItemTypeItemTypeBodyWithEnumItemType {
     pub(crate) fn create() -> Self {
         Self {
-            alias: 1 ..= 0,
             prefix: 1 ..= 0,
-            name: 1 ..= 0,
+            value: 1 ..= 0,
             postfix: 1 ..= 0,
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element name {
-    ///     attribute alias { text }?,
-    ///     TypeName_t                                  <---
-    /// }?
+    /// element type { TypeName_t }     <---
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
@@ -54,10 +73,10 @@ impl TypeBodyWithEnumName {
                 let token_ = tokenizer.nextToken1();
 
                 if token_.asType() == TokenType::TEXT {
-                    self.name = token_.asRange();
+                    self.value = token_.asRange();
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/name"} {
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/type"} {
                     break true;
                 }
 
@@ -69,32 +88,19 @@ impl TypeBodyWithEnumName {
             }; // loop {
         } // if is_body_ {
 
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }
-
         Ok(())
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element name {
-    ///     attribute alias { text }?,              <---
-    ///     TypeName_t
-    /// }?
+    /// element type { TypeName_t }
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {
             let token_ = (&mut *tokenizer).nextToken1();
 
-            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "alias" {
-                let token_ = (&mut *tokenizer).nextToken1();
-
-                self.alias = token_.asRange();
-            }
-
             // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
             // If we encounter a simple closing end tag ('>'), we report that there is a body.
-            else if token_.asType() == TokenType::TAG_END {
+            if token_.asType() == TokenType::TAG_END {
                 break true;
             }
 

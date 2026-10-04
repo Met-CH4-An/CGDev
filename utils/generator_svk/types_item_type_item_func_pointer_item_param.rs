@@ -9,8 +9,108 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
-use crate::types_item_type_item_func_pointer_item_param_item_type::TypesItemTypeItemFuncPointerItemParamItemType;
-use crate::types_item_type_item_func_pointer_item_param_item_name::TypesItemTypeItemFuncPointerItemParamItemName;
+use crate::types_item_type_item_func_pointer_item_param_item_type::{TypesItemTypeItemFuncPointerItemParamItemType, TypesItemTypeItemFuncPointerItemParamItemTypeView};
+use crate::types_item_type_item_func_pointer_item_param_item_name::{TypesItemTypeItemFuncPointerItemParamItemName, TypesItemTypeItemFuncPointerItemParamItemNameView};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pub struct TypesItemTypeItemFuncPointerItemParamView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a TypesItemTypeItemFuncPointerItemParam,
+}
+
+impl<'a> TypesItemTypeItemFuncPointerItemParamView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn api(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.api.start() ..= *self.content.api.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn len(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.len.start() ..= *self.content.len.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn altLen(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.alt_len.start() ..= *self.content.alt_len.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn stride(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.stride.start() ..= *self.content.stride.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn externSync(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.extern_sync.start() ..= *self.content.extern_sync.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn optional(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.optional.start() ..= *self.content.optional.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn selector(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.selector.start() ..= *self.content.selector.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn noAutoValidity(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.no_auto_validity.start() ..= *self.content.no_auto_validity.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn objectType(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.object_type.start() ..= *self.content.object_type.end()]) }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn validStructs(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.valid_structs.start() ..= *self.content.valid_structs.end()]) }
+    }
+    
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn r#type(&self) -> TypesItemTypeItemFuncPointerItemParamItemTypeView {
+        TypesItemTypeItemFuncPointerItemParamItemTypeView {
+            data: self.data,
+            content: &self.content.r#type
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn name(&self) -> TypesItemTypeItemFuncPointerItemParamItemNameView {
+        TypesItemTypeItemFuncPointerItemParamItemNameView {
+            data: self.data,
+            content: &self.content.name
+        }
+    }
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// TypeFuncpointer =

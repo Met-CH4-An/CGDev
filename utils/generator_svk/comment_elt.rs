@@ -10,12 +10,26 @@ use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
+pub struct CommentEltView<'a> {
+    pub(crate) data: &'a [u8],
+    pub(crate) content: &'a CommentElt,
+}
+
+impl<'a> CommentEltView<'a> {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ///
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pub fn comment(&self) -> &str {
+        unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
+    }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// CommentElt = element comment { text }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) struct CommentElt {
     /// text
-    pub(crate) comment: RangeInclusive<usize>,
+    pub(crate) value: RangeInclusive<usize>,
 }
 
 impl CommentElt {
@@ -24,7 +38,7 @@ impl CommentElt {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            comment: 1 ..= 0,
+            value: 1 ..= 0,
         }
     }
 
@@ -39,7 +53,7 @@ impl CommentElt {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 if token_.asType() == TokenType::TEXT {
-                    self.comment = token_.asRange();
+                    self.value = token_.asRange();
                 }
                     
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/comment"} {
