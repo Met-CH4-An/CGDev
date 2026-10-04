@@ -9,44 +9,55 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
+use crate::extensions_item_extension::ExtensionsItemExtension;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// element enum { VkDefineOrEnumName_t }
+/// Extensions = element extensions { CommentAttr?, Extension* }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnumEnum {
+pub(crate) struct Extensions {
+    /// CommentAttr?
+    pub(crate) comment: RangeInclusive<usize>,
     ///
-    pub(crate) prefix: RangeInclusive<usize>,
-    /// TypeName_t
-    pub(crate) r#enum: RangeInclusive<usize>,
-    ///
-    pub(crate) postfix: RangeInclusive<usize>,
+    pub(crate) elements: Vec<ExtensionsItemExtension>,
 }
 
-impl TypeBodyWithEnumEnum {
+impl Extensions {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Конструктор.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            prefix: 1 ..= 0,
-            r#enum: 1 ..= 0,
-            postfix: 1 ..= 0,
+            comment: 1 ..= 0,
+            elements: Vec::new(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }     <---
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
-        let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
+        let is_body_ = self.parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {
             loop {
                 let token_ = tokenizer.nextToken1();
 
-                if token_.asType() == TokenType::TEXT {
-                    self.r#enum = token_.asRange();
+                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
+                    let mut type_ = TypesItemType::create();
+                    type_.parse(tokenizer, data)?;
+
+                    self.elements.push(TypesElementVariant::TYPE(type_));
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enum"} {
-                    break true;
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
+                    let mut comment_elt_ = CommentElt::create();
+                    comment_elt_.parse(tokenizer, data)?;
+
+                    self.elements.push(TypesElementVariant::COMMENT_ELT(comment_elt_));
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/types"} {
+                    break;
                 }
 
                 // Если встретился не валидный токен или конечный токен.
@@ -54,26 +65,28 @@ impl TypeBodyWithEnumEnum {
                 else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
                     return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
                 }
-            }; // loop {
+            } // loop {
         } // if is_body_ {
-
-        else {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-        }
 
         Ok(())
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {
-            let token_ = (&mut *tokenizer).nextToken1();
+            let token_ = tokenizer.nextToken1();
+
+            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "comment" {
+                let token_ = tokenizer.nextToken1();
+
+                self.comment = token_.asRange();
+            }
 
             // Если встретили просто закрывающийся конец тега ('>'), сообщаем что есть тело.
             // If we encounter a simple closing end tag ('>'), we report that there is a body.
-            if token_.asType() == TokenType::TAG_END {
+            else if token_.asType() == TokenType::TAG_END {
                 break true;
             }
 

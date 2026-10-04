@@ -9,7 +9,7 @@
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::token::TokenType;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
-use crate::registry_enum::Enum;
+use crate::enums_item_enum::EnumsItemEnum;
 use crate::comment_elt::CommentElt;
 use crate::unused::Unused;
 
@@ -17,7 +17,7 @@ use crate::unused::Unused;
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pub(crate) enum EnumsElementVariant {
-    ENUM(Enum),
+    ENUM(EnumsItemEnum),
     UNUSED(Unused),
     COMMENT_ELT(CommentElt)
 } 
@@ -49,31 +49,20 @@ impl Enums {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn create(tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<Self, String> {
-        let mut self_ = Self {
+    pub(crate) fn create() -> Self {
+        Self {
             name: 1 ..= 0,
             r#type: 1 ..= 0,
             bitwidth: 1 ..= 0,
             comment: 1 ..= 0,
             element_variants: Vec::new(),
-        };
-
-        self_.parse(tokenizer, data)?;
-
-        Ok(self_)
+        }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Enums =
-    ///     element enums {
-    ///         attribute name { text }?,
-    ///         attribute type { text },
-    ///         attribute bitwidth { "32" | "64" } ?,
-    ///         CommentAttr?,
-    ///         (Enum | Unused | CommentElt)*                       <---
-    ///     }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {
@@ -81,21 +70,23 @@ impl Enums {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
-                    let enum_ = Enum::create(tokenizer, data)?;
+                    let mut new_ = EnumsItemEnum::create();
+                    new_.parse(tokenizer, data)?;
 
-                    (&mut *self).element_variants.push(EnumsElementVariant::ENUM(enum_));
+                    (&mut *self).element_variants.push(EnumsElementVariant::ENUM(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "unused"} {
-                    let unused_ = Unused::create(tokenizer, data)?;
+                    let new_ = Unused::create(tokenizer, data)?;
 
-                    (&mut *self).element_variants.push(EnumsElementVariant::UNUSED(unused_));
+                    (&mut *self).element_variants.push(EnumsElementVariant::UNUSED(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
-                    let comment_elt_ = CommentElt::create(tokenizer, data)?;
+                    let mut new_ = CommentElt::create();
+                    new_.parse(tokenizer, data)?;
 
-                    (&mut *self).element_variants.push(EnumsElementVariant::COMMENT_ELT(comment_elt_));
+                    (&mut *self).element_variants.push(EnumsElementVariant::COMMENT_ELT(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enums"} {
@@ -114,14 +105,7 @@ impl Enums {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Enums =
-    ///     element enums {
-    ///         attribute name { text }?,                           <---
-    ///         attribute type { text },                            <---
-    ///         attribute bitwidth { "32" | "64" } ?,               <---
-    ///         CommentAttr?,                                       <---
-    ///         (Enum | Unused | CommentElt)*
-    ///     }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {
@@ -133,19 +117,19 @@ impl Enums {
                 self.name = token_.asRange();
             }
 
-            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "type" {
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "type" {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 self.r#type = token_.asRange();
             }
 
-            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "bitwidth" {
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "bitwidth" {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 self.bitwidth = token_.asRange();
             }
 
-            if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "comment" {
+            else if token_.asType() == TokenType::ATTRIBUTE_NAME && unsafe { token_.asStr(data.as_ptr()) } == "comment" {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 self.comment = token_.asRange();

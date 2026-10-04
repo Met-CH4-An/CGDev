@@ -6,33 +6,75 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
+use crate::commands_item_command_item_implicit_extern_sync_params_item_param::CommandsItemCommandItemImplicitExternSyncParamsItemParam;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// element enum { VkDefineOrEnumName_t }
+/// Command =
+///     element command {
+///         (attribute name { VkFuncName_t },
+///          attribute alias { VkFuncName_t },
+///          ApiAttr?)
+///         | (attribute tasks { StringList_t }?,
+///            attribute queues { StringList_t }?,
+///            attribute successcodes { VkEnumNameList_t }?,
+///            attribute errorcodes { VkEnumNameList_t }?,
+///            attribute renderpass { "inside" | "outside" | "both" }?,
+///            attribute videocoding { "inside" | "outside" | "both" }?,
+///            attribute conditionalrendering { "true" | "false" }?,
+///            attribute cmdbufferlevel { CmdbufferList_t }?,
+///            attribute allownoqueues { StringBool_t } ? ,
+///            attribute prefix { text }?,
+///            attribute suffix { text }?,
+///            attribute export { StringList_t }?,
+///            ApiAttr?,
+///            CommentAttr?,
+///            element proto {
+///                mixed {
+///                    element type { TypeName_t }?,
+///                    element name { text }
+///                }
+///            },
+///            element param {
+///                ApiAttr?,
+///                attribute len { text }?,
+///                attribute altlen { text }?,
+///                attribute stride { text }?,
+///                attribute externsync { text }?,
+///                OptionalAttr?,
+///                attribute selector { text }?,
+///                NoAutoValidityAttr?,
+///                attribute objecttype { text }?,
+///                attribute validstructs { VkTypeNameListRef_t }?,
+///                mixed {
+///                    element type { TypeName_t }?,
+///                    element name { text }?
+///                }
+///            }*,
+///            (element alias { NameAttr }?
+///             & element description { text }?
+///             & element implicitexternsyncparams {                        <---
+///                   element param { text }*
+///               }?))
+///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnumEnum {
-    ///
-    pub(crate) prefix: RangeInclusive<usize>,
-    /// TypeName_t
-    pub(crate) r#enum: RangeInclusive<usize>,
-    ///
-    pub(crate) postfix: RangeInclusive<usize>,
+pub(crate) struct CommandsItemCommandItemImplicitExternSyncParams {
+    params: Vec<CommandsItemCommandItemImplicitExternSyncParamsItemParam>,
 }
 
-impl TypeBodyWithEnumEnum {
+impl CommandsItemCommandItemImplicitExternSyncParams {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Конструктор.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            prefix: 1 ..= 0,
-            r#enum: 1 ..= 0,
-            postfix: 1 ..= 0,
+            params: Vec::new(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }     <---
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
@@ -41,11 +83,15 @@ impl TypeBodyWithEnumEnum {
             loop {
                 let token_ = tokenizer.nextToken1();
 
-                if token_.asType() == TokenType::TEXT {
-                    self.r#enum = token_.asRange();
+                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "param"} {
+                    let mut new_ = CommandsItemCommandItemImplicitExternSyncParamsItemParam::create();
+
+                    new_.parse(tokenizer, data)?;
+
+                    self.params.push(new_);
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enum"} {
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/implicitexternsyncparams"} {
                     break true;
                 }
 
@@ -65,7 +111,7 @@ impl TypeBodyWithEnumEnum {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

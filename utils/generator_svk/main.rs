@@ -10,19 +10,19 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::rc::Rc;
-use utils__generator_svk__lib::Generator;
+use std::sync::Arc;
+use utils__generator_svk__lib::Registry;
 
 fn main() {
     // Загружаем данные.
     // Loading data.
     let data_vec_ = loadDataFromFile("vk.xml").expect("Не удалось загрузить файл. Failed to upload file.");
 
-    let data_rc_ = Rc::new(data_vec_);
+    let data_rc_ = Arc::new(data_vec_);
 
     // Создаем генератор.
     // Create a generator.
-    let mut generator_ = Generator::s_create();
+    let mut generator_ = Registry::create();
     
     generator_.setData(data_rc_);
     

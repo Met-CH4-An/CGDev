@@ -44,7 +44,7 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 ///         & CommentAttr?
 ///     }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct Enum {
+pub(crate) struct EnumsItemEnum {
     /// attribute value { text }
     pub(crate) value: RangeInclusive<usize>,
     /// attribute bitpos { xsd:long }
@@ -73,12 +73,12 @@ pub(crate) struct Enum {
     pub(crate) comment: RangeInclusive<usize>,
 }
 
-impl Enum {
+impl EnumsItemEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn create(tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<Self, String> {
-        let mut self_ = Self {
+    pub(crate) fn create() -> Self {
+        Self {
             value: 1 ..= 0,
             bit_pos: 1 ..= 0,
             ext_number: 1 ..= 0,
@@ -92,48 +92,13 @@ impl Enum {
             name: 1 ..= 0,
             deprecated: 1 ..= 0,
             comment: 1 ..= 0,
-        };
-
-        self_.parse(tokenizer, data)?;
-
-        Ok(self_)
+        }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Enum =
-    ///     element enum {
-    ///         ((attribute value { text }
-    ///           & # needs to be split to handle the string defines as well as ints
-    ///             attribute extends { TypeName_t }?)
-    ///          | (attribute bitpos { xsd:long }
-    ///             & attribute extends { VkTypeNameRef_t }?)
-    ///          | (attribute extnumber { xsd:long }?
-    ///             & attribute offset { xsd:long }
-    ///             & attribute dir { "-" }?
-    ///             & attribute extends { VkTypeNameRef_t })
-    ///          | (attribute extends { VkTypeNameRef_t }?
-    ///             & attribute alias {
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               })
-    ///          | (attribute value { text }
-    ///             & attribute extends { VkTypeNameRef_t }?
-    ///             & attribute alias {
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               })
-    ///          | (attribute bitpos { xsd:long }
-    ///             & attribute extends { VkTypeNameRef_t }?
-    ///             & attribute alias {
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               }))?
-    ///         & ProtectAttr?
-    ///         & ApiAttr?
-    ///         & attribute type { "uint8_t" | "uint32_t" | "uint64_t" | "float" }?
-    ///         & attribute name { VkDefineOrEnumName_t }
-    ///         & attribute deprecated { "aliased" | "unused" | "true" }?
-    ///         & CommentAttr?
-    ///     }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = self.parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {
@@ -144,38 +109,7 @@ impl Enum {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Enum =
-    ///     element enum {                                                                              
-    ///         ((attribute value { text }                                                  <---
-    ///           & # needs to be split to handle the string defines as well as ints
-    ///             attribute extends { TypeName_t }?)                                      <---
-    ///          | (attribute bitpos { xsd:long }                                           <---
-    ///             & attribute extends { VkTypeNameRef_t }?)                               <---
-    ///          | (attribute extnumber { xsd:long }?                                       <---
-    ///             & attribute offset { xsd:long }                                         <---
-    ///             & attribute dir { "-" }?                                                <---
-    ///             & attribute extends { VkTypeNameRef_t })                                <---
-    ///          | (attribute extends { VkTypeNameRef_t }?                                  <---
-    ///             & attribute alias {                                                     <---
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               })
-    ///          | (attribute value { text }                                                <---
-    ///             & attribute extends { VkTypeNameRef_t }?                                <---
-    ///             & attribute alias {                                                     <---
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               })
-    ///          | (attribute bitpos { xsd:long }                                           <---
-    ///             & attribute extends { VkTypeNameRef_t }?                                <---
-    ///             & attribute alias {                                                     <---
-    ///                   VkTypeNameRef_t | VkDefineOrEnumName_t
-    ///               }))?
-    ///         & ProtectAttr?                                                              <---
-    ///         & ApiAttr?                                                                  <---
-    ///         & attribute type { "uint8_t" | "uint32_t" | "uint64_t" | "float" }?         <---
-    ///         & attribute name { VkDefineOrEnumName_t }                                   <---
-    ///         & attribute deprecated { "aliased" | "unused" | "true" }?                   <---
-    ///         & CommentAttr?                                                              <---
-    ///     }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

@@ -23,22 +23,18 @@ pub(crate) struct TypeBodyWithEnumType {
 }
 
 impl TypeBodyWithEnumType {
-    pub(crate) fn create(tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<Self, String> {
-        let mut self_ = Self {
+    pub(crate) fn create() -> Self {
+        Self {
             prefix: 1 ..= 0,
             r#type: 1 ..= 0,
             postfix: 1 ..= 0,
-        };
-
-        self_.parse(tokenizer, data)?;
-
-        Ok(self_)
+        }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// element type { TypeName_t }     <---
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {

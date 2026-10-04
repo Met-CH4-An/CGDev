@@ -10,10 +10,10 @@ use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 use crate::comment_elt::CommentElt;
-use crate::r#type::Type;
+use crate::types_item_type::TypesItemType;
 
 pub(crate) enum TypesElementVariant {
-    TYPE(Type),
+    TYPE(TypesItemType),
     COMMENT_ELT(CommentElt),
 }
 
@@ -27,7 +27,7 @@ pub(crate) struct Types {
     /// CommentAttr?,
     pub(crate) comment: RangeInclusive<usize>,
     /// (Type | CommentElt)*
-    pub(crate) types_element_variants: Vec<TypesElementVariant>,
+    pub(crate) elements: Vec<TypesElementVariant>,
 }
 
 impl Types {
@@ -37,17 +37,14 @@ impl Types {
     pub(crate) fn create() -> Self {
         Self {
             comment: 1 ..= 0,
-            types_element_variants: Vec::new(),
+            elements: Vec::new(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Types = element types {
-    ///     CommentAttr?,
-    ///     (Type | CommentElt)*            <---
-    /// }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = self.parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {
@@ -55,15 +52,17 @@ impl Types {
                 let token_ = tokenizer.nextToken1();
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let type_ = Type::create(tokenizer, data)?;
+                    let mut type_ = TypesItemType::create();
+                    type_.parse(tokenizer, data)?;
 
-                    self.types_element_variants.push(TypesElementVariant::TYPE(type_));
+                    self.elements.push(TypesElementVariant::TYPE(type_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
-                    let comment_elt_ = CommentElt::create(tokenizer, data)?;
+                    let mut comment_elt_ = CommentElt::create();
+                    comment_elt_.parse(tokenizer, data)?;
 
-                    self.types_element_variants.push(TypesElementVariant::COMMENT_ELT(comment_elt_));
+                    self.elements.push(TypesElementVariant::COMMENT_ELT(comment_elt_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/types"} {
@@ -82,10 +81,7 @@ impl Types {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// Types = element types {
-    ///     CommentAttr?,                   <---
-    ///     (Type | CommentElt)* 
-    /// }
+    /// 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

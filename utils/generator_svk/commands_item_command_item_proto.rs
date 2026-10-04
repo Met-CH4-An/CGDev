@@ -6,47 +6,81 @@
 // dependencies
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
+use crate::commands_item_command_item_proto_item_name::CommandsItemCommandItemProtoItemName;
+use crate::commands_item_command_item_proto_item_type::CommandsItemCommandItemProtoItemType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// element enum { VkDefineOrEnumName_t }
+/// element proto {
+///                mixed {
+///                    element type { TypeName_t }?,
+///                    element name { text }
+///                }
+///            },
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnumEnum {
-    ///
-    pub(crate) prefix: RangeInclusive<usize>,
-    /// TypeName_t
-    pub(crate) r#enum: RangeInclusive<usize>,
-    ///
-    pub(crate) postfix: RangeInclusive<usize>,
+pub(crate) struct CommandsItemCommandItemProto {
+    /// element type { TypeName_t }
+    pub(crate) r#type: CommandsItemCommandItemProtoItemType,
+    /// element name { text }
+    pub(crate) name: CommandsItemCommandItemProtoItemName,
 }
 
-impl TypeBodyWithEnumEnum {
+impl CommandsItemCommandItemProto {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Конструктор.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            prefix: 1 ..= 0,
-            r#enum: 1 ..= 0,
-            postfix: 1 ..= 0,
+            r#type: CommandsItemCommandItemProtoItemType::create(),
+            name: CommandsItemCommandItemProtoItemName::create(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }     <---
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
+
+        let mut text_ = None;
 
         if is_body_ {
             loop {
                 let token_ = tokenizer.nextToken1();
 
                 if token_.asType() == TokenType::TEXT {
-                    self.r#enum = token_.asRange();
+                    text_ = Some(token_.asRange());
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enum"} {
-                    break true;
+                if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
+                    let mut new_ = CommandsItemCommandItemProtoItemType::create();
+                    new_.parse(tokenizer, data)?;
+
+                    // Если текстовый токен существует, забираем. Это префикс к type.
+                    // If the text token exists, we retrieve it. This is the prefix for the type.
+                    if let Some(v) = text_.take() {
+                        new_.prefix = v;
+                    }
+
+                    self.r#type = new_;
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
+                    let mut new_ = CommandsItemCommandItemProtoItemName::create();
+                    new_.parse(tokenizer, data)?;
+
+                    // Если текстовый токен существует, забираем. Это префикс к type.
+                    // If the text token exists, we retrieve it. This is the prefix for the type.
+                    if let Some(v) = text_.take() {
+                        self.r#type.postfix = v;
+                    }
+
+                    self.name = new_;
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/proto"} {
+                    break;
                 }
 
                 // Если встретился не валидный токен или конечный токен.
@@ -65,7 +99,7 @@ impl TypeBodyWithEnumEnum {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {

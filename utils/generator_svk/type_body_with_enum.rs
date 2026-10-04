@@ -54,21 +54,12 @@ impl TypeBodyWithEnum {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub(crate) fn create(tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<Self, String> {
-        let mut self_= Self {
+    pub(crate) fn create() -> Self {
+        Self {
             type_body_with_enum_types: Vec::new(),
-            type_body_with_enum_name: TypeBodyWithEnumName{
-                alias: 1 ..= 0,
-                prefix: 1 ..= 0,
-                name: 1 ..= 0,
-                postfix: 1 ..= 0,
-            },
+            type_body_with_enum_name: TypeBodyWithEnumName::create(),
             type_body_with_enum_element_variants: Vec::new(),
-        };
-
-        self_.parse(tokenizer, data)?;
-
-        Ok(self_)
+        }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,7 +77,7 @@ impl TypeBodyWithEnum {
     ///           )                                                                 <---
     ///         }*                                                                  <---
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
+    pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
 
         if is_body_ {
@@ -104,7 +95,8 @@ impl TypeBodyWithEnum {
                 }
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create(tokenizer, data)?;
+                    let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create();
+                    type_body_with_enum_type_.parse(tokenizer, data)?;
 
                     // Если текстовый токен существует, забираем. Это префикс к type.
                     // If the text token exists, we retrieve it. This is the prefix for the type.
@@ -116,7 +108,8 @@ impl TypeBodyWithEnum {
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
-                    let mut type_body_with_enum_name_ = TypeBodyWithEnumName::create(tokenizer, data)?;
+                    let mut type_body_with_enum_name_ = TypeBodyWithEnumName::create();
+                    type_body_with_enum_name_.parse(tokenizer, data)?;
 
                     // Если до этого был хоть один type. Берем последний. Это постфикс к type.
                     // If there was at least one `type` before this, we take the last one. This is a postfix for `type`.
@@ -161,7 +154,8 @@ impl TypeBodyWithEnum {
                     }
 
                     if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                        let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create(tokenizer, data)?;
+                        let mut type_body_with_enum_type_ = TypeBodyWithEnumType::create();
+                        type_body_with_enum_type_.parse(tokenizer, data)?;
 
                         // Если текстовый токен существует, забираем. Это префикс к type.
                         // If the text token exists, we retrieve it. This is the prefix for the type.
@@ -173,14 +167,16 @@ impl TypeBodyWithEnum {
                     }
 
                     else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
-                        let type_body_with_enum_enum_ = TypeBodyWithEnumEnum::create(tokenizer, data)?;
+                        let mut type_body_with_enum_enum_ = TypeBodyWithEnumEnum::create();
+                        type_body_with_enum_enum_.parse(tokenizer, data)?;
 
                         self.type_body_with_enum_element_variants.push(TypeBodyWithEnumElementVariant::ENUM(type_body_with_enum_enum_));
 
                     }
 
                     else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
-                        let comment_elt_ = CommentElt::create(tokenizer, data)?;
+                        let mut comment_elt_ = CommentElt::create();
+                        comment_elt_.parse(tokenizer, data)?;
 
                         self.type_body_with_enum_element_variants.push(TypeBodyWithEnumElementVariant::COMMENT_ELT(comment_elt_));
 

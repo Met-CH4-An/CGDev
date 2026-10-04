@@ -8,48 +8,53 @@
 
 use utils__tokenizer_xml::token::TokenType;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
-use crate::interface_element_item_type::InterfaceElementItemType;
-use crate::enums_item_enum::EnumsItemEnum;
-use crate::interface_element_item_command::InterfaceElementItemCommand;
-use crate::interface_element_item_feature::InterfaceElementItemFeature;
+use crate::deprecate_element_item_type::DeprecateElementItemType;
+use crate::deprecate_element_item_enum::DeprecateElementItemEnum;
+use crate::deprecate_element_item_command::DeprecateElementItemCommand;
+use crate::deprecate_element_item_feature::DeprecateElementItemFeature;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) enum InterfaceElementVariant {
-    TYPE(InterfaceElementItemType),
-    ENUM(EnumsItemEnum),
-    COMMAND(InterfaceElementItemCommand),
-    FEATURE(InterfaceElementItemFeature),
+pub(crate) enum DeprecateElementVariant {
+    TYPE(DeprecateElementItemType),
+    ENUM(DeprecateElementItemEnum),
+    COMMAND(DeprecateElementItemCommand),
+    FEATURE(DeprecateElementItemFeature),
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// InterfaceElement =
+/// DeprecateElement =
 ///     element type {
 /// # The 'name' can be an arbitrary string, such as a C #include path, in which case this fails
 /// #        attribute name { xsd:NCName },
 ///         attribute name { text },
-///         CommentAttr?,
-///         SimpleProtectAttr?
+///         attribute supersededby { text }?,
+///         CommentAttr?
 ///     }
-///     | Enum
+///     | element enum {
+///         attribute name { VkDefineOrEnumName_t },
+///         attribute supersededby { VkDefineOrEnumName_t }?,
+///         CommentAttr?
+///     }
 ///     | element command {
 ///           attribute name { VkFuncName_t },
-///           CommentAttr?,
-///           SimpleProtectAttr?
+///           attribute supersededby { VkFuncName_t }?,
+///           CommentAttr?
 ///       }
 ///     | element feature {
 ///           attribute name { text },
 ///           attribute struct { text },
+///           attribute supersededby { text }?,
 ///           CommentAttr?
 ///       }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct InterfaceElement {
+pub(crate) struct DeprecateElement {
     ///
-    pub(crate) elements: Vec<InterfaceElementVariant>,
+    pub(crate) elements: Vec<DeprecateElementVariant>,
 }
 
-impl InterfaceElement {
+impl DeprecateElement {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,31 +75,31 @@ impl InterfaceElement {
                 let token_ = (&mut *tokenizer).nextToken1();
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut new_ = InterfaceElementItemType::create();
+                    let mut new_ = DeprecateElementItemType::create();
                     new_.parse(tokenizer, data)?;
 
-                    (&mut *self).elements.push(InterfaceElementVariant::TYPE(new_));
+                    (&mut *self).elements.push(DeprecateElementVariant::TYPE(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
-                    let mut new_ = EnumsItemEnum::create();
+                    let mut new_ = DeprecateElementItemEnum::create();
                     new_.parse(tokenizer, data)?;
 
-                    (&mut *self).elements.push(InterfaceElementVariant::ENUM(new_));
+                    (&mut *self).elements.push(DeprecateElementVariant::ENUM(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "command"} {
-                    let mut new_ = InterfaceElementItemCommand::create();
+                    let mut new_ = DeprecateElementItemCommand::create();
                     new_.parse(tokenizer, data)?;
 
-                    (&mut *self).elements.push(InterfaceElementVariant::COMMAND(new_));
+                    (&mut *self).elements.push(DeprecateElementVariant::COMMAND(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "feature"} {
-                    let mut new_ = InterfaceElementItemFeature::create();
+                    let mut new_ = DeprecateElementItemFeature::create();
                     new_.parse(tokenizer, data)?;
 
-                    (&mut *self).elements.push(InterfaceElementVariant::FEATURE(new_));
+                    (&mut *self).elements.push(DeprecateElementVariant::FEATURE(new_));
                 }
 
                 else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/deprecate"} {

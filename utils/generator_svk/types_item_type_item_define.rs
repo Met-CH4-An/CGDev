@@ -8,54 +8,51 @@
 
 use std::ops::RangeInclusive;
 use utils__tokenizer_xml::{Tokenizer, AVX2};
-use utils__tokenizer_xml::token::TokenType;
 use crate::common_type_attributes::CommonTypeAttributes;
-use crate::types_item_type_item_include::TypesItemTypeItemInclude;
+use crate::type_body::TypeBody;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// TypeRequires =
-///     ApiAttr?,
-///     CommentAttr?,
-///     attribute deprecated { "unused" | "true" }?,
-///     attribute name { TypeName_t },
-///     attribute requires { text }
+/// TypeDefine =
+///     CommonTypeAttributes,
+///     attribute category { "define" },
+///     NameAttr?,
+///     TypeBody
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeRequires {
-    /// ApiAttr?,
-    pub(crate) api: RangeInclusive<usize>,
-    /// CommentAttr?,
-    pub(crate) comment: RangeInclusive<usize>,
-    /// attribute deprecated { "unused" | "true" }?
-    pub(crate) deprecated: RangeInclusive<usize>,
-    /// attribute name { TypeName_t },
+pub(crate) struct TypesItemTypeItemDefine {
+    /// CommonTypeAttributes,
+    pub(crate) common_type_attributes: CommonTypeAttributes,
+    /// attribute category { "define" },
+    pub(crate) category: RangeInclusive<usize>,
+    /// NameAttr,
     pub(crate) name: RangeInclusive<usize>,
-    /// attribute requires { text }
-    pub(crate) requires: RangeInclusive<usize>,
+    /// TypeBody
+    pub(crate) type_body: TypeBody,
 }
 
-impl TypeRequires {
+impl TypesItemTypeItemDefine {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /// Конструктор.
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
-            api: 1 ..= 0,
-            comment: 1 ..= 0,
-            deprecated: 1 ..= 0,
+            common_type_attributes: CommonTypeAttributes::create(),
+            category: 1 ..= 0,
             name: 1 ..= 0,
-            requires: 1 ..= 0,
+            type_body: TypeBody::create(),
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// <type> ... </type>
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8], is_body: bool) -> Result<(), String> {
-        let mut text_ = 1 ..= 0;
-
         if is_body {
-            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
+            self.type_body.parse(tokenizer, data)?;
         } // if is_body_ {
+
+        else {
+            return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
+        }
 
         Ok(())
     }

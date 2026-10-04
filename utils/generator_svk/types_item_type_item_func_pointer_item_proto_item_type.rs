@@ -11,28 +11,55 @@ use utils__tokenizer_xml::{Tokenizer, AVX2};
 use utils__tokenizer_xml::token::TokenType;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// element enum { VkDefineOrEnumName_t }
+/// TypeFuncpointer =
+///     CommonTypeAttributes,
+///     attribute category { "funcpointer" },
+///     element proto {
+///         mixed {
+///             element type { TypeName_t }?,                           <---
+///             element name { text }                                       
+///         }
+///     },
+///     element param {
+///         ApiAttr?,
+///         attribute len { text }?,
+///         attribute altlen { text }?,
+///         attribute stride { text }?,
+///         attribute externsync { text }?,
+///         OptionalAttr?,
+///         attribute selector { text }?,
+///         NoAutoValidityAttr?,
+///         attribute objecttype { text }?,
+///         attribute validstructs { VkTypeNameListRef_t }?,
+///         mixed {
+///             element type { TypeName_t }?,                               
+///             element name { text }? 
+///         }
+///     }*
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pub(crate) struct TypeBodyWithEnumEnum {
+pub(crate) struct TypesItemTypeItemFuncPointerItemProtoItemType {
     ///
     pub(crate) prefix: RangeInclusive<usize>,
     /// TypeName_t
-    pub(crate) r#enum: RangeInclusive<usize>,
+    pub(crate) value: RangeInclusive<usize>,
     ///
     pub(crate) postfix: RangeInclusive<usize>,
 }
 
-impl TypeBodyWithEnumEnum {
+impl TypesItemTypeItemFuncPointerItemProtoItemType {
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /// Конструктор.
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn create() -> Self {
         Self {
             prefix: 1 ..= 0,
-            r#enum: 1 ..= 0,
+            value: 1 ..= 0,
             postfix: 1 ..= 0,
         }
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }     <---
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
         let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
@@ -42,10 +69,10 @@ impl TypeBodyWithEnumEnum {
                 let token_ = tokenizer.nextToken1();
 
                 if token_.asType() == TokenType::TEXT {
-                    self.r#enum = token_.asRange();
+                    self.value = token_.asRange();
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/enum"} {
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/type"} {
                     break true;
                 }
 
@@ -65,9 +92,9 @@ impl TypeBodyWithEnumEnum {
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /// element enum { VkDefineOrEnumName_t }
+    ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<bool, String> {
+    fn parseAttributeTag(&mut self, tokenizer: &mut Tokenizer<AVX2>, _data: &[u8]) -> Result<bool, String> {
         let is_body_ = loop {
             let token_ = (&mut *tokenizer).nextToken1();
 

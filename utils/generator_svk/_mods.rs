@@ -16,44 +16,74 @@ use utils__tokenizer_xml;
 mod registry;
 pub use registry::Registry;
 
-
-mod registry_primitive_element_type;
-mod registry_primitive_element_name;
-mod registry_primitive_element_enum;
-
-mod types;
-
 mod common_type_attributes;
-
 mod type_body;
 mod type_body_type;
 mod type_body_name;
+
+mod types;
+mod types_item_type;
 
 mod type_body_with_enum;
 mod type_body_with_enum_type;
 mod type_body_with_enum_name;
 mod type_body_with_enum_enum;
 
-mod r#type;
-mod type_base_type;
-mod type_bitmask;
-mod type_define;
-mod type_enum;
-mod type_func_pointer;
-mod type_handle;
-mod type_include;
+
+mod types_item_type_item_base_type;
+mod types_item_type_item_bitmask;
+mod types_item_type_item_define;
+mod types_item_type_item_enum;
+mod types_item_type_item_func_pointer;
+mod types_item_type_item_func_pointer_item_param;
+mod types_item_type_item_func_pointer_item_param_item_type;
+mod types_item_type_item_func_pointer_item_param_item_name;
+mod types_item_type_item_func_pointer_item_proto;
+mod types_item_type_item_func_pointer_item_proto_item_type;
+mod types_item_type_item_func_pointer_item_proto_item_name;
+mod types_item_type_item_handle;
+mod types_item_type_item_include;
 mod type_requires;
 mod type_struct;
-mod registry_type_struct_member;
+mod type_struct_member;
 
-mod registry_enums;
-mod registry_enum;
+mod enums;
+mod enums_item_enum;
 
-mod registry_extensions;
-mod registry_extension;
+mod commands;
+mod commands_item_command;
+mod commands_item_command_item_alias;
+mod commands_item_command_item_param;
+mod commands_item_command_item_param_item_type;
+mod commands_item_command_item_param_item_name;
+mod commands_item_command_item_proto;
+mod commands_item_command_item_proto_item_name;
+mod commands_item_command_item_proto_item_type;
+mod commands_item_command_item_description;
+mod commands_item_command_item_implicit_extern_sync_params;
+mod commands_item_command_item_implicit_extern_sync_params_item_param;
+
+mod extensions;
+mod extensions_item_extension;
+mod extensions_item_extension_item_require;
+mod extensions_item_extension_item_deprecate;
+mod extensions_item_extension_item_remove;
 
 mod comment_elt;
 mod unused;
+
+mod interface_element;
+mod interface_element_item_type;
+mod interface_element_item_command;
+mod interface_element_item_feature;
+
+mod deprecate_element;
+mod deprecate_element_item_feature;
+mod deprecate_element_item_command;
+mod deprecate_element_item_enum;
+mod deprecate_element_item_type;
+
+
 
 pub(crate) fn makeHash(data: &str) -> u64 {
     let mut hasher_ = std::hash::DefaultHasher::new();
