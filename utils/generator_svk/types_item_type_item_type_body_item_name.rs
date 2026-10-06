@@ -36,7 +36,7 @@ impl<'a> TypesItemTypeItemTypeBodyItemNameView<'a> {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ///
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    pub fn name(&self) -> &str {
+    pub fn value(&self) -> &str {
         unsafe {std::str::from_utf8_unchecked(&self.data[*self.content.value.start() ..= *self.content.value.end()]) }
     }
 

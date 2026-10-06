@@ -149,119 +149,115 @@ impl TypesItemTypeItemTypeBodyWithEnum {
     ///                                                                <---
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     pub(crate) fn parse(&mut self, tokenizer: &mut Tokenizer<AVX2>, data: &[u8]) -> Result<(), String> {
-        let is_body_ = (&mut *self).parseAttributeTag(tokenizer, data)?;
+        let mut text: Option<RangeInclusive<usize>> = None;
 
-        if is_body_ {
-            let mut text: Option<RangeInclusive<usize>> = None;
+        // Лупаем первое множество mixed, пока не встретим <name>.
+        // Iterate through the first set, `mixed`, until we find <name>.
+        let is_end_= loop {
+            let token_ = tokenizer.nextToken1();
 
-            // Лупаем первое множество mixed, пока не встретим <name>.
-            // Iterate through the first set, `mixed`, until we find <name>.
-            let is_end_= loop {
+            // Перед <type> может быть текст.
+            // Text may precede <type>.
+            if token_.asType() == TokenType::TEXT {
+                text = Some(token_.asRange());
+            }
+
+            if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
+                let mut new_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
+                new_.parse(tokenizer, data)?;
+
+                // Если текстовый токен существует, забираем. Это префикс к type.
+                // If the text token exists, we retrieve it. This is the prefix for the type.
+                if let Some(v) = text.take() {
+                    new_.prefix = v;
+                }
+
+                self.types.push(new_);
+            }
+
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
+                let mut new_ = TypesItemTypeItemTypeBodyWithEnumItemName::create();
+                new_.parse(tokenizer, data)?;
+
+                // Если до этого был хоть один type. Берем последний. Это постфикс к type.
+                // If there was at least one `type` before this, we take the last one. This is a postfix for `type`.
+                if let Some(v) = self.types.last_mut() {
+                    if let Some(v1) = text.take() {
+                        v.postfix = v1;
+                    }
+                }
+
+                // Если не было ни одного type - значит это префикс к name.
+                // If there was no “type,” then it's a prefix for “name.”
+                else if let Some(v1) = text.take() {
+                    new_.prefix = v1;
+                }
+
+                self.name = new_;
+
+                // Останавливаем луп, потому что после <name> идет следующий mixed {}*
+                // Stop the loop because <name> is followed by the next mixed {}*
+                break false;
+            }
+
+            else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/member"} {
+                break true;
+            }
+
+            // Если встретился не валидный токен или конечный токен.
+            // If an invalid token or final token is encountered.
+            else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
+                return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
+            }
+        }; // loop {
+
+        if !is_end_ {
+            // Лупаем второе множество mixed.
+            // Let's examine the second set, “mixed.”
+            loop {
                 let token_ = tokenizer.nextToken1();
 
-                // Перед <type> может быть текст.
-                // Text may precede <type>.
                 if token_.asType() == TokenType::TEXT {
                     text = Some(token_.asRange());
                 }
 
                 if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                    let mut type_body_with_enum_type_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
-                    type_body_with_enum_type_.parse(tokenizer, data)?;
+                    let mut new_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
+                    new_.parse(tokenizer, data)?;
 
                     // Если текстовый токен существует, забираем. Это префикс к type.
                     // If the text token exists, we retrieve it. This is the prefix for the type.
                     if let Some(v) = text.take() {
-                        type_body_with_enum_type_.prefix = v;
+                        new_.prefix = v;
                     }
 
-                    self.types.push(type_body_with_enum_type_);
+                    self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::TYPE(new_));
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "name"} {
-                    let mut type_body_with_enum_name_ = TypesItemTypeItemTypeBodyWithEnumItemName::create();
-                    type_body_with_enum_name_.parse(tokenizer, data)?;
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
+                    let mut new_ = TypesItemTypeItemTypeBodyWithEnumItemEnum::create();
+                    new_.parse(tokenizer, data)?;
 
-                    // Если до этого был хоть один type. Берем последний. Это постфикс к type.
-                    // If there was at least one `type` before this, we take the last one. This is a postfix for `type`.
-                    if let Some(v) = self.types.last_mut() {
-                        if let Some(v1) = text.take() {
-                            v.postfix = v1;
-                        }
-                    }
+                    self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::ENUM(new_));
 
-                    // Если не было ни одного type - значит это префикс к name.
-                    // If there was no “type,” then it's a prefix for “name.”
-                    else if let Some(v1) = text.take() {
-                        type_body_with_enum_name_.prefix = v1;
-                    }
-
-                    self.name = type_body_with_enum_name_;
-
-                    // Останавливаем луп, потому что после <name> идет следующий mixed {}*
-                    // Stop the loop because <name> is followed by the next mixed {}*
-                    break false;
                 }
 
-                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/type"} {
-                    break true;
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
+                    let mut comment_elt_ = CommentElt::create();
+                    comment_elt_.parse(tokenizer, data)?;
+
+                    self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::COMMENT_ELT(comment_elt_));
+
+                }
+
+                else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/member" } {
+                    break;
                 }
 
                 // Если встретился не валидный токен или конечный токен.
                 // If an invalid token or final token is encountered.
                 else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
                     return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-                }
-            }; // loop {
-
-            if !is_end_ {
-                // Лупаем второе множество mixed.
-                // Let's examine the second set, “mixed.”
-                loop {
-                    let token_ = tokenizer.nextToken1();
-
-                    if token_.asType() == TokenType::TEXT {
-                        text = Some(token_.asRange());
-                    }
-
-                    if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "type"} {
-                        let mut type_body_with_enum_type_ = TypesItemTypeItemTypeBodyWithEnumItemType::create();
-                        type_body_with_enum_type_.parse(tokenizer, data)?;
-
-                        // Если текстовый токен существует, забираем. Это префикс к type.
-                        // If the text token exists, we retrieve it. This is the prefix for the type.
-                        if let Some(v) = text.take() {
-                            type_body_with_enum_type_.prefix = v;
-                        }
-
-                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::TYPE(type_body_with_enum_type_));
-                    }
-
-                    else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "enum"} {
-                        let mut type_body_with_enum_enum_ = TypesItemTypeItemTypeBodyWithEnumItemEnum::create();
-                        type_body_with_enum_enum_.parse(tokenizer, data)?;
-
-                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::ENUM(type_body_with_enum_enum_));
-
-                    }
-
-                    else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "comment"} {
-                        let mut comment_elt_ = CommentElt::create();
-                        comment_elt_.parse(tokenizer, data)?;
-
-                        self.variants.push(TypesItemTypeItemTypeBodyWithEnumVariant::COMMENT_ELT(comment_elt_));
-
-                    }
-
-                    else if token_.asType() == TokenType::TAG_NAME && unsafe { token_.asStr(data.as_ptr()) == "/type" } {
-                        break;
-                    }
-
-                    // Если встретился не валидный токен или конечный токен.
-                    // If an invalid token or final token is encountered.
-                    else if token_.asType() == TokenType::INVALID || token_.asType() == TokenType::END {
-                        return Err(String::from("Не валидный формат vk.xml. Invalid vk.xml format."));
-                    }
                 }
             }
         }
